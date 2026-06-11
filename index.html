@@ -1633,7 +1633,7 @@ function showLogin() {
 }
 function selectMember(name, color) {
   currentMember = name;
-  sessionStorage.setItem('bb6-member', name);
+  localStorage.setItem('bb6-member', name);
   const avatar = document.getElementById('login-avatar');
   const nameEl = document.getElementById('login-name');
   const chip   = document.getElementById('login-chip');
@@ -1835,48 +1835,66 @@ function taskToRowCol(mod, sec, taskId) {
 }
 
 function queueWrite(mod, sec, taskId, score, memberName) {
-  const key       = `${mod}|${sec}|${taskId}`;
+  const key          = `${mod}|${sec}|${taskId}`;
   const { row, col } = taskToRowCol(mod, sec, taskId);
-  writeQueue[key] = { mod, sec, taskId, score, member: memberName, row, col };
-  retryCount = 0;
+  writeQueue[key]    = { mod, sec, taskId, score, member: memberName, row, col };
 
-  if (flushTimer) clearTimeout(flushTimer);
-  setSyncStatus('syncing', '儲存中...');
-  flushTimer = setTimeout(flushQueue, 1200);
+  // Only reschedule if not already in flight (lockUI active)
+  const overlay = document.getElementById('sync-lock-overlay');
+  const locked  = overlay && overlay.style.display !== 'none';
+  if (!locked) {
+    if (flushTimer) clearTimeout(flushTimer);
+    setSyncStatus('syncing', '待儲存...');
+    flushTimer = setTimeout(flushQueue, 1200);
+  }
+  // If locked, the new item is in the queue and will be picked up
+  // when the current flush detects writeQueue.length > 0
 }
 
 async function flushQueue() {
   const items = Object.values(writeQueue);
-  if (items.length === 0) return;
+  if (items.length === 0) { unlockUI(); return; }
 
-  // Group by module (each module = one request)
+  // Snapshot current queue and clear it immediately
+  // so new changes during this request go into a fresh queue
+  const snapshot = { ...writeQueue };
+  writeQueue = {};
+
   const byModule = {};
-  items.forEach(item => {
+  Object.values(snapshot).forEach(item => {
     if (!byModule[item.mod]) byModule[item.mod] = [];
     byModule[item.mod].push(item);
   });
 
   lockUI();
   try {
-    await Promise.all(Object.entries(byModule).map(([mod, modItems]) =>
-      sendBatch(mod, modItems)
-    ));
-    writeQueue = {};   // clear only on success
+    // Send each module sequentially to avoid rate limits
+    for (const [mod, modItems] of Object.entries(byModule)) {
+      await sendBatch(mod, modItems);
+    }
     retryCount = 0;
     unlockUI();
     setSyncStatus('ok', '即時同步中');
     updateLastSynced('last-saved');
+    // If new items arrived during this send, flush again
+    if (Object.keys(writeQueue).length > 0) {
+      flushTimer = setTimeout(flushQueue, 400);
+    }
   } catch(e) {
+    // Put snapshot back into queue so nothing is lost
+    Object.assign(writeQueue, snapshot);
     retryCount++;
+    unlockUI();
     if (retryCount <= MAX_RETRY) {
-      const wait = retryCount * 2000;
-      unlockUI(); // unlock so user sees status, re-lock on next attempt
+      const wait = retryCount * 2500;
       setSyncStatus('syncing', `重試中（${retryCount}/${MAX_RETRY}）...`);
       flushTimer = setTimeout(flushQueue, wait);
     } else {
-      unlockUI();
-      setSyncStatus('error', '寫入失敗，請重新整理');
+      // Give up — clear queue, let user try again manually
+      writeQueue = {};
       retryCount = 0;
+      setSyncStatus('error', '同步失敗，請重試');
+      showToast('⚠ 同步失敗，請重新拖動滑桿');
     }
   }
 }
@@ -1889,7 +1907,11 @@ async function sendBatch(mod, items) {
       module:  mod,
       batch:   items.map(i => ({ row: i.row, col: i.col, score: i.score })),
       member:  items[0].member,
-      updated: new Date().toISOString()
+      updated: (() => {
+      const d = new Date();
+      const pad = n => String(n).padStart(2,'0');
+      return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    })()
     })
   });
   if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -2267,8 +2289,8 @@ function showToast(msg) {
 /* ═══════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════ */
-// Restore session member if returning
-const savedMember = sessionStorage.getItem('bb6-member');
+// Restore login from localStorage (persists across sessions/browser restarts)
+const savedMember = localStorage.getItem('bb6-member');
 if (savedMember && MEMBERS.includes(savedMember)) {
   selectMember(savedMember, MEMBER_COLORS[savedMember]);
 } else {
