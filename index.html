@@ -1975,17 +1975,17 @@ function renderGates() {
       row.className = 'task-row' + (isBlocked?' blocked':'') + (isOwner?' mine':'');
       row.id = 'task-row-' + task.id.replace('-','_');
 
-      const sliderAttr = canEdit
-        ? 'oninput="updateScore(\'' + task.id + '\', this.value)"'
-        : 'disabled style="opacity:.35;cursor:not-allowed"';
-
+      // Always attach oninput — use pointer-events for locking so DOM stays intact.
+      const sliderStyle = canEdit ? '' : 'opacity:.35;cursor:not-allowed;pointer-events:none';
       row.innerHTML =
         '<div class="task-row-top">' +
           '<div class="task-id-badge chip-'+OWNER_CLASS[task.owners[0]]+'">'+task.id+'</div>' +
           '<div class="task-row-name">'+task.name+'</div>' + chips +
         '</div>' +
         '<div class="score-row">' +
-          '<input type="range" class="score-slider" min="0" max="10" step="1" value="'+score+'" '+sliderAttr+'>' +
+          '<input type="range" class="score-slider" min="0" max="10" step="1" value="'+score+'"' +
+          ' oninput="updateScore(\''+task.id+'\', this.value)"' +
+          (sliderStyle ? ' style="'+sliderStyle+'"' : '') + '>' +
           '<span class="score-val" id="sval-'+task.id.replace('-','_')+'">'+score+'</span>' +
           '<span class="score-denom">/10</span>' +
         '</div>' + prereqText;
@@ -2093,9 +2093,9 @@ function refreshAll() {
     if (slider) {
       if (parseInt(slider.value) !== sc) slider.value = sc;
       const canEdit = isOwner && !(hasP && !prereqOk);
-      slider.disabled      = !canEdit;
-      slider.style.opacity = canEdit ? '' : '0.35';
-      slider.style.cursor  = canEdit ? '' : 'not-allowed';
+      slider.style.opacity       = canEdit ? '' : '0.35';
+      slider.style.cursor        = canEdit ? '' : 'not-allowed';
+      slider.style.pointerEvents = canEdit ? 'auto' : 'none';
     }
     if (valEl) valEl.textContent = sc;
   });
@@ -2165,17 +2165,20 @@ function renderOverview() {
 function exportCSV() {
   const now     = new Date();
   const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
-  var csv = 'BB6 課程製作進度備份,' + dateStr + '\n';
-  MODULES.forEach(function(mod) {
+  // One CSV with modules separated — matches 整體專案進度 小節細項 format
+  var allCsv = '';
+  MODULES.forEach(function(mod, modIdx) {
+    if (modIdx > 0) allCsv += '\n\n';
+    allCsv += '=== ' + mod + ' ===\n';
+    allCsv += '模組,小節,Gate 1 翻譯基礎完成,Gate 2 文字內容凍結,Gate 3 課程素材產出,Gate 4 上架執行,Gate 5 開課前 QC,完成度,狀態\n';
     getSections(mod).forEach(function(sec) {
-      csv += '\n模組,' + mod + ',小節,' + sec + '\n任務ID,Gate,任務名稱,負責人,分數,完成%\n';
-      TASKS.forEach(function(t) {
-        const sc = getScore(t.id, mod, sec);
-        csv += t.id+',Gate '+t.gate+',"'+t.name+'","'+t.owners.join('/')+'",' + sc + ',' + (sc*10) + '%\n';
-      });
+      const gPcts = GATES.map(function(g){ return gatePct(g.num,mod,sec)+'%'; });
+      const total = sectionPct(mod, sec);
+      const status = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
+      allCsv += mod+','+sec+','+gPcts.join(',')+','+total+'%,'+status+'\n';
     });
   });
-  const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\ufeff'+allCsv], { type:'text/csv;charset=utf-8;' });
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
   a.download = 'BB6_進度備份_' + dateStr + '.csv';
