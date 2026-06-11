@@ -1692,7 +1692,7 @@ function subscribeModule(mod) {
       });
     });
     if (changed) {
-      if (mod === currentModule) { renderGates(); refreshAll(); }
+      if (mod === currentModule) { refreshAll(); }
       const ovPage = document.getElementById('page-overview');
       if (ovPage && ovPage.classList.contains('active')) renderOverview();
     }
@@ -1826,6 +1826,7 @@ function updateScore(taskId, val) {
   const safeId = taskId.replace('-','_');
   const el = document.getElementById('sval-' + safeId);
   if (el) el.textContent = score;
+  // Don't re-render gates (would destroy active sliders) — just refresh state
   refreshAll();
 
   setSyncStatus('syncing', '儲存中...');
@@ -1867,12 +1868,18 @@ function switchRModule(mod) {
   document.getElementById('section-select').value = currentSection;
   updateReporterHeader();
   subscribeModule(mod);
+  // Force full rebuild when switching modules
+  const container = document.getElementById('gates-grid');
+  if (container) container.innerHTML = '';
   renderGates();
   renderMembers();
 }
 function switchSection(sec) {
   currentSection = sec;
   updateReporterHeader();
+  // Force full rebuild when switching sections
+  const container = document.getElementById('gates-grid');
+  if (container) container.innerHTML = '';
   renderGates();
   renderMembers();
 }
@@ -1914,6 +1921,12 @@ function toggleAcc(btn) {
 function renderGates() {
   const container = document.getElementById('gates-grid');
   if (!container) return;
+  // If gate columns already exist for this module+section, just refresh values
+  const existingCols = container.querySelectorAll('.gate-col');
+  if (existingCols.length === GATES.length) {
+    refreshAll();
+    return;
+  }
   container.innerHTML = '';
   const mod = currentModule, sec = currentSection;
 
