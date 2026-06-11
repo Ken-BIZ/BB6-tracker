@@ -1550,14 +1550,14 @@ function toggleAcc(btn) {
 
 <div class="toast" id="toast"></div>
 
-<script type="module">
-/* ═══════════════════════════════════════════════════════════
-   FIREBASE CONFIG
-═══════════════════════════════════════════════════════════ */
-import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getDatabase, ref, set, get, update, onValue, serverTimestamp }
-                                                  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+<!-- Firebase CDN (compat — no ES module import needed) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 
+<script>
+/* ═══════════════════════════════════════════════════════════
+   FIREBASE INIT
+═══════════════════════════════════════════════════════════ */
 const firebaseConfig = {
   apiKey:            "AIzaSyAhlqYFjRfRR-9jvQ1-jRRhPCHQNoRVBYs",
   authDomain:        "bb6-tracker.firebaseapp.com",
@@ -1567,23 +1567,21 @@ const firebaseConfig = {
   messagingSenderId: "735970532764",
   appId:             "1:735970532764:web:df073527110c572c183c59"
 };
-
-const app = initializeApp(firebaseConfig);
-const db  = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 /* ═══════════════════════════════════════════════════════════
-   GOOGLE SHEETS BACKUP (silent, non-blocking)
+   GOOGLE SHEETS SILENT BACKUP
 ═══════════════════════════════════════════════════════════ */
-const SHEET_ID        = '1vVcyNStGct_UrJpCwvzuUws1nStIXsxd91Z87lWVwgE';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3GBc6M8nYf7A2uNPT9kweMD7gAphvqo1wI0gahLmgQTBikIz06_dYy35HBZVTJa0A/exec';
 
-async function backupToSheet(mod, sec, taskId, score, memberName) {
+function backupToSheet(mod, sec, taskId, score, memberName) {
   try {
     const taskObj      = TASKS.find(t => t.id === taskId);
     const sectionTasks = TASKS.filter(t => !t.moduleLevel);
     const moduleTasks  = TASKS.filter(t =>  t.moduleLevel);
     let row, col;
-    if (taskObj?.moduleLevel) {
+    if (taskObj && taskObj.moduleLevel) {
       row = 22;
       col = moduleTasks.findIndex(t => t.id === taskId) + 2;
     } else {
@@ -1593,24 +1591,20 @@ async function backupToSheet(mod, sec, taskId, score, memberName) {
     }
     const d = new Date();
     const pad = n => String(n).padStart(2,'0');
-    const ts = `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    const ts = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
     fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        module: mod, batch: [{ row, col, score }],
-        member: memberName, updated: ts
-      })
-    }); // fire-and-forget, no await
+      body: JSON.stringify({ module: mod, batch: [{ row, col, score }], member: memberName, updated: ts })
+    });
   } catch(e) { /* silent */ }
 }
 
 /* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
-const MODULES              = ['C2','C3','C4'];
-const SECTIONS_PER_MODULE  = 20;
-const POLL_MS              = 10000;
+const MODULES             = ['C2','C3','C4'];
+const SECTIONS_PER_MODULE = 20;
 
 const TASKS = [
   { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],            prereqs:[],                        moduleLevel:false },
@@ -1637,11 +1631,11 @@ const GATES = [
   { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
   { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
 ];
-const MEMBERS      = ['Ken','Daniel','Ellen','Emily'];
-const OWNER_CLASS  = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
-const CHIP_CLASS   = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
-const MEMBER_COLORS= { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
-const GATE_COLORS  = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
+const MEMBERS       = ['Ken','Daniel','Ellen','Emily'];
+const OWNER_CLASS   = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
+const CHIP_CLASS    = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
+const MEMBER_COLORS = { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
+const GATE_COLORS   = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
 
 /* ═══════════════════════════════════════════════════════════
    STATE
@@ -1651,15 +1645,15 @@ let currentModule  = 'C2';
 let currentSection = '2.1';
 let currentOvTab   = 'all';
 let allScores      = {};
-let fbListeners    = {};   // active Firebase listeners
+let fbListeners    = {};
 
 function initScores() {
   MODULES.forEach(mod => {
     allScores[mod] = { '__module__': {} };
-    TASKS.filter(t => t.moduleLevel).forEach(t => allScores[mod]['__module__'][t.id] = 0);
+    TASKS.filter(t =>  t.moduleLevel).forEach(t => allScores[mod]['__module__'][t.id] = 0);
     const prefix = mod.replace('C','');
     for (let i = 1; i <= SECTIONS_PER_MODULE; i++) {
-      const sec = `${prefix}.${i}`;
+      const sec = prefix + '.' + i;
       allScores[mod][sec] = {};
       TASKS.filter(t => !t.moduleLevel).forEach(t => allScores[mod][sec][t.id] = 0);
     }
@@ -1669,31 +1663,24 @@ initScores();
 
 function getSections(mod) {
   const prefix = mod.replace('C','');
-  return Array.from({ length: SECTIONS_PER_MODULE }, (_,i) => `${prefix}.${i+1}`);
+  return Array.from({ length: SECTIONS_PER_MODULE }, function(_,i){ return prefix+'.'+(i+1); });
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FIREBASE READ/WRITE
+   FIREBASE READ / WRITE
 ═══════════════════════════════════════════════════════════ */
-// Firebase path: scores/{mod}/{sec}/{taskId}
-// Module-level:  scores/{mod}/__module__/{taskId}
-
-function fbPath(mod, sec, taskId) {
-  return `scores/${mod}/${sec}/${taskId}`;
-}
-
-// Subscribe to a module — real-time updates
 function subscribeModule(mod) {
-  if (fbListeners[mod]) return; // already subscribed
-  const modRef = ref(db, `scores/${mod}`);
-  fbListeners[mod] = onValue(modRef, snapshot => {
+  if (fbListeners[mod]) return;
+  fbListeners[mod] = true;
+  db.ref('scores/' + mod).on('value', function(snapshot) {
     const data = snapshot.val();
-    if (!data) return;
+    if (!data) { setSyncStatus('ok','即時同步中'); return; }
     let changed = false;
-    Object.entries(data).forEach(([sec, tasks]) => {
+    Object.keys(data).forEach(function(sec) {
       if (!allScores[mod][sec]) allScores[mod][sec] = {};
-      Object.entries(tasks).forEach(([tid, val]) => {
-        const score = parseInt(val) || 0;
+      const tasks = data[sec];
+      Object.keys(tasks).forEach(function(tid) {
+        const score = parseInt(tasks[tid]) || 0;
         if (allScores[mod][sec][tid] !== score) {
           allScores[mod][sec][tid] = score;
           changed = true;
@@ -1702,28 +1689,27 @@ function subscribeModule(mod) {
     });
     if (changed) {
       if (mod === currentModule) { renderGates(); refreshAll(); }
-      if (document.getElementById('page-overview')?.classList.contains('active')) renderOverview();
+      const ovPage = document.getElementById('page-overview');
+      if (ovPage && ovPage.classList.contains('active')) renderOverview();
     }
     setSyncStatus('ok', '即時同步中');
     updateLastSynced('last-saved');
     updateLastSynced('ov-last-synced');
-  }, err => {
-    setSyncStatus('error', '連線失敗');
+  }, function(err) {
+    setSyncStatus('error', '連線失敗：' + err.message);
   });
 }
 
-// Write a single score to Firebase
-async function writeScore(mod, sec, taskId, score, memberName) {
-  const path = fbPath(mod, sec, taskId);
-  await set(ref(db, path), score);
-  // Also write log entry
+function writeScore(mod, sec, taskId, score, memberName) {
+  const path = 'scores/' + mod + '/' + sec + '/' + taskId;
   const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  const ts = `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  const logRef = ref(db, `log/${Date.now()}`);
-  await set(logRef, { mod, sec, taskId, score, member: memberName, ts });
-  // Silent backup to sheet
-  backupToSheet(mod, sec, taskId, score, memberName);
+  const pad = function(n){ return String(n).padStart(2,'0'); };
+  const ts  = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+  return db.ref(path).set(score).then(function() {
+    return db.ref('log/' + Date.now()).set({ mod, sec, taskId, score, member: memberName, ts });
+  }).then(function() {
+    backupToSheet(mod, sec, taskId, score, memberName);
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1738,24 +1724,28 @@ function setSyncStatus(state, text) {
 }
 function updateLastSynced(elId) {
   const now = new Date();
-  const str = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} 同步`;
+  const str = now.getHours()+':'+String(now.getMinutes()).padStart(2,'0')+':'+String(now.getSeconds()).padStart(2,'0')+' 同步';
   const el  = document.getElementById(elId || 'last-saved');
   if (el) el.textContent = str;
 }
 function lockUI() {
-  document.getElementById('sync-lock-overlay').style.display = 'block';
-  document.getElementById('sync-lock-toast').classList.add('visible');
+  const ov = document.getElementById('sync-lock-overlay');
+  const t  = document.getElementById('sync-lock-toast');
+  if (ov) ov.style.display = 'block';
+  if (t)  t.classList.add('visible');
 }
 function unlockUI() {
-  document.getElementById('sync-lock-overlay').style.display = 'none';
-  document.getElementById('sync-lock-toast').classList.remove('visible');
+  const ov = document.getElementById('sync-lock-overlay');
+  const t  = document.getElementById('sync-lock-toast');
+  if (ov) ov.style.display = 'none';
+  if (t)  t.classList.remove('visible');
 }
 function showToast(msg) {
   const t = document.getElementById('toast');
   if (!t) return;
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1763,37 +1753,39 @@ function showToast(msg) {
 ═══════════════════════════════════════════════════════════ */
 function getScore(taskId, mod, sec) {
   mod = mod || currentModule; sec = sec || currentSection;
-  const task = TASKS.find(t => t.id === taskId);
-  if (task?.moduleLevel) return allScores[mod]?.['__module__']?.[taskId] ?? 0;
-  return allScores[mod]?.[sec]?.[taskId] ?? 0;
+  const task = TASKS.find(function(t){ return t.id === taskId; });
+  if (task && task.moduleLevel) return (allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][taskId]) || 0;
+  return (allScores[mod] && allScores[mod][sec] && allScores[mod][sec][taskId]) || 0;
 }
 function isPrereqMet(taskId, mod, sec) {
-  const task = TASKS.find(t => t.id === taskId);
   mod = mod || currentModule; sec = sec || currentSection;
-  return task.prereqs.every(p => {
-    const pt = TASKS.find(t => t.id === p);
-    if (pt?.moduleLevel) return (allScores[mod]?.['__module__']?.[p] ?? 0) >= 1;
+  const task = TASKS.find(function(t){ return t.id === taskId; });
+  return task.prereqs.every(function(p) {
+    const pt = TASKS.find(function(t){ return t.id === p; });
+    if (pt && pt.moduleLevel) return ((allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][p]) || 0) >= 1;
     return getScore(p, mod, sec) >= 1;
   });
 }
 function prereqPct(taskId, mod, sec) {
-  const task = TASKS.find(t => t.id === taskId);
+  const task = TASKS.find(function(t){ return t.id === taskId; });
   if (!task.prereqs.length) return 100;
-  return Math.round(task.prereqs.reduce((s,p) => s + getScore(p,mod,sec), 0) / task.prereqs.length * 10);
+  return Math.round(task.prereqs.reduce(function(s,p){ return s+getScore(p,mod,sec); },0) / task.prereqs.length * 10);
 }
-function getGateTasks(n)      { return TASKS.filter(t => t.gate === n); }
+function getGateTasks(n) { return TASKS.filter(function(t){ return t.gate === n; }); }
 function gatePct(n, mod, sec) {
   const ts = getGateTasks(n);
-  return Math.round(ts.reduce((s,t) => s + getScore(t.id,mod,sec), 0) / (ts.length*10) * 100);
+  return Math.round(ts.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (ts.length*10) * 100);
 }
 function sectionPct(mod, sec) {
-  return Math.round(TASKS.reduce((s,t) => s + getScore(t.id,mod,sec), 0) / (TASKS.length*10) * 100);
+  return Math.round(TASKS.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (TASKS.length*10) * 100);
 }
 function modulePct(mod) {
   const secs = getSections(mod);
-  return Math.round(secs.reduce((s,sec) => s + sectionPct(mod,sec), 0) / secs.length);
+  return Math.round(secs.reduce(function(s,sec){ return s+sectionPct(mod,sec); },0) / secs.length);
 }
-function isGateDone(n, mod, sec) { return getGateTasks(n).every(t => getScore(t.id,mod,sec) >= 10); }
+function isGateDone(n, mod, sec) {
+  return getGateTasks(n).every(function(t){ return getScore(t.id,mod,sec) >= 10; });
+}
 
 /* ═══════════════════════════════════════════════════════════
    LOGIN
@@ -1804,11 +1796,11 @@ function showLogin() {
 function selectMember(name, color) {
   currentMember = name;
   localStorage.setItem('bb6-member', name);
-  document.getElementById('login-avatar').textContent  = name[0];
-  document.getElementById('login-avatar').style.background = color;
-  document.getElementById('login-name').textContent    = name;
-  document.getElementById('login-chip').style.display  = 'flex';
-  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('login-avatar').textContent        = name[0];
+  document.getElementById('login-avatar').style.background   = color;
+  document.getElementById('login-name').textContent          = name;
+  document.getElementById('login-chip').style.display        = 'flex';
+  document.getElementById('login-overlay').style.display     = 'none';
   renderGates();
   renderMembers();
 }
@@ -1816,63 +1808,58 @@ function selectMember(name, color) {
 /* ═══════════════════════════════════════════════════════════
    UPDATE SCORE
 ═══════════════════════════════════════════════════════════ */
-async function updateScore(taskId, val) {
+function updateScore(taskId, val) {
   if (!currentMember) { showLogin(); return; }
-  const task    = TASKS.find(t => t.id === taskId);
-  const isOwner = task.owners.includes(currentMember);
+  const task    = TASKS.find(function(t){ return t.id === taskId; });
+  const isOwner = task.owners.indexOf(currentMember) >= 0;
   if (!isOwner) { showToast('這個任務不屬於你'); return; }
 
-  const score  = parseInt(val);
-  const sec    = task.moduleLevel ? '__module__' : currentSection;
-  // Update local state immediately for snappy UI
+  const score = parseInt(val);
+  const sec   = task.moduleLevel ? '__module__' : currentSection;
   if (!allScores[currentModule][sec]) allScores[currentModule][sec] = {};
   allScores[currentModule][sec][taskId] = score;
+
   const safeId = taskId.replace('-','_');
   const el = document.getElementById('sval-' + safeId);
   if (el) el.textContent = score;
   refreshAll();
 
-  // Write to Firebase (fast, no lock needed — onValue listener will sync others)
   lockUI();
   setSyncStatus('syncing', '儲存中...');
-  try {
-    await writeScore(currentModule, sec, taskId, score, currentMember);
-    // onValue will handle UI update for other clients
-  } catch(e) {
-    setSyncStatus('error', '寫入失敗，請重試');
-    showToast('⚠ 寫入失敗，請重新拖動');
-  } finally {
-    unlockUI();
-  }
+  writeScore(currentModule, sec, taskId, score, currentMember)
+    .then(function() {
+      unlockUI();
+    })
+    .catch(function(e) {
+      unlockUI();
+      setSyncStatus('error', '寫入失敗，請重試');
+      showToast('⚠ 寫入失敗，請重新拖動');
+    });
 }
-// Expose to global scope for inline oninput handlers
-window.updateScore  = updateScore;
-window.selectMember = selectMember;
-window.showLogin    = showLogin;
 
 /* ═══════════════════════════════════════════════════════════
    PAGE / MODULE / SECTION SWITCHING
 ═══════════════════════════════════════════════════════════ */
 function switchPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.page-tab').forEach(function(t){ t.classList.remove('active'); });
   document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('tab-' + page).classList.add('active');
+  document.getElementById('tab-'  + page).classList.add('active');
   document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
   document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
   document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
   window.scrollTo({ top:0, behavior:'smooth' });
   if (page === 'overview') {
-    // Subscribe to all modules for overview
-    MODULES.forEach(m => subscribeModule(m));
+    MODULES.forEach(function(m){ subscribeModule(m); });
     renderOverview();
   }
 }
-window.switchPage = switchPage;
-
 function switchRModule(mod) {
   currentModule = mod;
-  MODULES.forEach(m => document.getElementById('rtab-'+m)?.classList.toggle('active', m===mod));
+  MODULES.forEach(function(m){
+    var el = document.getElementById('rtab-'+m);
+    if (el) el.classList.toggle('active', m===mod);
+  });
   populateSectionSelect();
   currentSection = getSections(mod)[0];
   document.getElementById('section-select').value = currentSection;
@@ -1881,34 +1868,29 @@ function switchRModule(mod) {
   renderGates();
   renderMembers();
 }
-window.switchRModule = switchRModule;
-
 function switchSection(sec) {
   currentSection = sec;
   updateReporterHeader();
   renderGates();
   renderMembers();
 }
-window.switchSection = switchSection;
-
 function switchOvTab(tab) {
   currentOvTab = tab;
-  document.querySelectorAll('.ov-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('ovtab-'+tab)?.classList.add('active');
+  document.querySelectorAll('.ov-tab').forEach(function(t){ t.classList.remove('active'); });
+  var el = document.getElementById('ovtab-'+tab);
+  if (el) el.classList.add('active');
   renderOverview();
 }
-window.switchOvTab = switchOvTab;
-
 function populateSectionSelect() {
-  const sel = document.getElementById('section-select');
+  const sel      = document.getElementById('section-select');
   const sections = getSections(currentModule);
-  sel.innerHTML = sections.map(s => `<option value="${s}">${s}</option>`).join('');
+  sel.innerHTML  = sections.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
 }
 function updateReporterHeader() {
-  const tag   = document.getElementById('reporter-section-tag');
-  const title = document.getElementById('reporter-section-title');
-  if (tag)   tag.textContent   = `${currentModule} · ${currentSection}`;
-  if (title) title.textContent = `${currentSection} 任務進度填報`;
+  var tag   = document.getElementById('reporter-section-tag');
+  var title = document.getElementById('reporter-section-title');
+  if (tag)   tag.textContent   = currentModule + ' · ' + currentSection;
+  if (title) title.textContent = currentSection + ' 任務進度填報';
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1920,10 +1902,9 @@ function toggleAcc(btn) {
   const chevron = btn.querySelector('.acc-chevron');
   const isOpen  = item.classList.contains('open');
   item.classList.toggle('open', !isOpen);
-  body.style.maxHeight      = isOpen ? '0' : body.scrollHeight + 'px';
-  chevron.style.transform   = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+  body.style.maxHeight    = isOpen ? '0' : body.scrollHeight + 'px';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
 }
-window.toggleAcc = toggleAcc;
 
 /* ═══════════════════════════════════════════════════════════
    RENDER GATES
@@ -1934,59 +1915,66 @@ function renderGates() {
   container.innerHTML = '';
   const mod = currentModule, sec = currentSection;
 
-  GATES.forEach(gate => {
+  GATES.forEach(function(gate) {
     const tasks = getGateTasks(gate.num);
     const pct   = gatePct(gate.num, mod, sec);
     const done  = isGateDone(gate.num, mod, sec);
     const col   = document.createElement('div');
     col.className = 'gate-col';
-    col.innerHTML = `
-      <div class="gate-header">
-        <div class="gate-num">Gate ${gate.num}</div>
-        <div class="gate-name">${gate.name}</div>
-        <div class="gate-goal">${gate.goal}</div>
-      </div>
-      <div class="gate-progress-row">
-        <div class="gate-progress-track"><div class="gate-progress-fill" id="gfill-${gate.num}" style="width:${pct}%"></div></div>
-        <div class="gate-pct-text" id="gpct-${gate.num}">${pct}%</div>
-      </div>
-      <div class="gate-unlock">
-        <div class="unlock-dot ${done?'on':''}" id="udot-${gate.num}"></div>
-        <span id="utext-${gate.num}">${done?'已解鎖下一關':gate.unlock}</span>
-      </div>`;
+    col.innerHTML =
+      '<div class="gate-header">' +
+        '<div class="gate-num">Gate ' + gate.num + '</div>' +
+        '<div class="gate-name">' + gate.name + '</div>' +
+        '<div class="gate-goal">' + gate.goal + '</div>' +
+      '</div>' +
+      '<div class="gate-progress-row">' +
+        '<div class="gate-progress-track"><div class="gate-progress-fill" id="gfill-'+gate.num+'" style="width:'+pct+'%"></div></div>' +
+        '<div class="gate-pct-text" id="gpct-'+gate.num+'">'+pct+'%</div>' +
+      '</div>' +
+      '<div class="gate-unlock">' +
+        '<div class="unlock-dot '+(done?'on':'')+'" id="udot-'+gate.num+'"></div>' +
+        '<span id="utext-'+gate.num+'">'+(done?'已解鎖下一關':gate.unlock)+'</span>' +
+      '</div>';
 
     const taskWrap = document.createElement('div');
     taskWrap.className = 'task-rows';
-    tasks.forEach(task => {
+
+    tasks.forEach(function(task) {
       const score    = getScore(task.id, mod, sec);
       const prereqOk = isPrereqMet(task.id, mod, sec);
       const ppct     = prereqPct(task.id, mod, sec);
       const hasP     = task.prereqs.length > 0;
-      const isOwner  = currentMember && task.owners.includes(currentMember);
-      const isBlocked = hasP && !prereqOk;
-      const canEdit   = isOwner && !isBlocked;
+      const isOwner  = currentMember && task.owners.indexOf(currentMember) >= 0;
+      const isBlocked= hasP && !prereqOk;
+      const canEdit  = isOwner && !isBlocked;
 
       const prereqText = !hasP ? '' : prereqOk
-        ? `<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>`
-        : `<div class="prereq-hint blocked">⬡ 等待前置：${task.prereqs.join('、')}（目前 ${ppct}%）</div>`;
+        ? '<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>'
+        : '<div class="prereq-hint blocked">⬡ 等待前置：'+task.prereqs.join('、')+'（目前 '+ppct+'%）</div>';
 
-      const chips = task.owners.map(o =>
-        `<span class="owner-chip ${CHIP_CLASS[o]}">${o}</span>`).join('');
+      const chips = task.owners.map(function(o){
+        return '<span class="owner-chip '+CHIP_CLASS[o]+'">'+o+'</span>';
+      }).join('');
 
       const row = document.createElement('div');
       row.className = 'task-row' + (isBlocked?' blocked':'') + (isOwner?' mine':'');
       row.id = 'task-row-' + task.id.replace('-','_');
-      row.innerHTML = `
-        <div class="task-row-top">
-          <div class="task-id-badge chip-${OWNER_CLASS[task.owners[0]]}">${task.id}</div>
-          <div class="task-row-name">${task.name}</div>${chips}
-        </div>
-        <div class="score-row">
-          <input type="range" class="score-slider" min="0" max="10" step="1" value="${score}"
-            ${canEdit ? `oninput="updateScore('${task.id}', this.value)"` : 'disabled style="opacity:.35;cursor:not-allowed"'}>
-          <span class="score-val" id="sval-${task.id.replace('-','_')}">${score}</span>
-          <span class="score-denom">/10</span>
-        </div>${prereqText}`;
+
+      const sliderAttr = canEdit
+        ? 'oninput="updateScore(\'' + task.id + '\', this.value)"'
+        : 'disabled style="opacity:.35;cursor:not-allowed"';
+
+      row.innerHTML =
+        '<div class="task-row-top">' +
+          '<div class="task-id-badge chip-'+OWNER_CLASS[task.owners[0]]+'">'+task.id+'</div>' +
+          '<div class="task-row-name">'+task.name+'</div>' + chips +
+        '</div>' +
+        '<div class="score-row">' +
+          '<input type="range" class="score-slider" min="0" max="10" step="1" value="'+score+'" '+sliderAttr+'>' +
+          '<span class="score-val" id="sval-'+task.id.replace('-','_')+'">'+score+'</span>' +
+          '<span class="score-denom">/10</span>' +
+        '</div>' + prereqText;
+
       taskWrap.appendChild(row);
     });
     col.appendChild(taskWrap);
@@ -2003,54 +1991,54 @@ function renderMembers() {
   container.innerHTML = '';
   const mod = currentModule, sec = currentSection;
 
-  MEMBERS.forEach(member => {
-    const myTasks = TASKS.filter(t => t.owners.includes(member));
-    const myPct   = Math.round(myTasks.reduce((s,t) => s+getScore(t.id,mod,sec),0) / (myTasks.length*10) * 100);
-    const done    = myTasks.filter(t => getScore(t.id,mod,sec) >= 10).length;
-    const blocked = myTasks.filter(t => !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10);
-    const ready   = myTasks.filter(t =>  isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10);
+  MEMBERS.forEach(function(member) {
+    const myTasks = TASKS.filter(function(t){ return t.owners.indexOf(member) >= 0; });
+    const myPct   = Math.round(myTasks.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (myTasks.length*10) * 100);
+    const done    = myTasks.filter(function(t){ return getScore(t.id,mod,sec) >= 10; }).length;
+    const blocked = myTasks.filter(function(t){ return !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
+    const ready   = myTasks.filter(function(t){ return  isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
 
-    const capacityText = ready.length===0 && done===myTasks.length ? '本小節全部完成 🎉'
-      : ready.length===0 ? `等待前置（${blocked.map(t=>t.id).join('、')}）`
-      : `可進行 ${ready.length} 項：${ready.map(t=>t.id).join('、')}`;
+    const capText = ready.length===0 && done===myTasks.length ? '本小節全部完成 🎉'
+      : ready.length===0 ? '等待前置（'+blocked.map(function(t){return t.id;}).join('、')+'）'
+      : '可進行 '+ready.length+' 項：'+ready.map(function(t){return t.id;}).join('、');
 
-    const bClass = (ready.length>0||done===myTasks.length) ? 'clear':'waiting';
-    const bText  = ready.length>0 ? `✓ ${ready.length} 項可開始`
+    const bClass = (ready.length>0||done===myTasks.length) ? 'clear' : 'waiting';
+    const bText  = ready.length>0 ? '✓ '+ready.length+' 項可開始'
       : done===myTasks.length ? '✓ 全部完成'
-      : `⏸ 等待上游：${blocked[0]?.prereqs.join('、')||'-'}`;
+      : '⏸ 等待上游：'+(blocked[0] ? blocked[0].prereqs.join('、') : '-');
 
-    const taskRows = myTasks.map(t => {
+    const taskRows = myTasks.map(function(t) {
       const sc = getScore(t.id,mod,sec);
       const iB = !isPrereqMet(t.id,mod,sec) && sc < 10;
-      return `<div class="member-task-row">
-        <span class="mtask-id">${t.id}</span>
-        <span class="mtask-name" style="opacity:${iB?.4:1}">${t.name}</span>
-        <div class="mtask-bar-wrap"><div class="mtask-bar" style="width:${sc*10}%"></div></div>
-        <span class="mtask-score" style="opacity:${iB?.35:1}">${sc}</span>
-      </div>`;
+      return '<div class="member-task-row">' +
+        '<span class="mtask-id">'+t.id+'</span>' +
+        '<span class="mtask-name" style="opacity:'+(iB?'.4':'1')+'">'+t.name+'</span>' +
+        '<div class="mtask-bar-wrap"><div class="mtask-bar" style="width:'+(sc*10)+'%"></div></div>' +
+        '<span class="mtask-score" style="opacity:'+(iB?'.35':'1')+'">'+sc+'</span>' +
+      '</div>';
     }).join('');
 
     const card = document.createElement('div');
-    card.className = `member-card ${OWNER_CLASS[member]}`;
-    card.innerHTML = `
-      <div class="member-head">
-        <div class="member-name">${member}</div>
-        <div class="member-meta">${myTasks.length} 項 · ${done} 完成</div>
-      </div>
-      <div class="member-body">
-        <div class="member-stat-row">
-          <div class="member-stat"><div class="member-stat-label">完成度</div><div class="member-stat-val stat-yellow">${myPct}%</div></div>
-          <div class="member-stat"><div class="member-stat-label">可開始</div><div class="member-stat-val ${ready.length>0?'stat-green':'stat-red'}">${ready.length}</div></div>
-          <div class="member-stat"><div class="member-stat-label">待解鎖</div><div class="member-stat-val" style="color:rgba(255,255,255,.4)">${blocked.length}</div></div>
-        </div>
-        <div class="bottleneck-box ${bClass}">${bText}</div>
-        <div class="member-tasks-label">任務詳情</div>
-        ${taskRows}
-        <div class="capacity-box">
-          <div class="capacity-label">本週排程建議</div>
-          <div class="capacity-text">${capacityText}</div>
-        </div>
-      </div>`;
+    card.className = 'member-card ' + OWNER_CLASS[member];
+    card.innerHTML =
+      '<div class="member-head">' +
+        '<div class="member-name">'+member+'</div>' +
+        '<div class="member-meta">'+myTasks.length+' 項 · '+done+' 完成</div>' +
+      '</div>' +
+      '<div class="member-body">' +
+        '<div class="member-stat-row">' +
+          '<div class="member-stat"><div class="member-stat-label">完成度</div><div class="member-stat-val stat-yellow">'+myPct+'%</div></div>' +
+          '<div class="member-stat"><div class="member-stat-label">可開始</div><div class="member-stat-val '+(ready.length>0?'stat-green':'stat-red')+'">'+ready.length+'</div></div>' +
+          '<div class="member-stat"><div class="member-stat-label">待解鎖</div><div class="member-stat-val" style="color:rgba(255,255,255,.4)">'+blocked.length+'</div></div>' +
+        '</div>' +
+        '<div class="bottleneck-box '+bClass+'">'+bText+'</div>' +
+        '<div class="member-tasks-label">任務詳情</div>' +
+        taskRows +
+        '<div class="capacity-box">' +
+          '<div class="capacity-label">本週排程建議</div>' +
+          '<div class="capacity-text">'+capText+'</div>' +
+        '</div>' +
+      '</div>';
     container.appendChild(card);
   });
 }
@@ -2060,32 +2048,32 @@ function renderMembers() {
 ═══════════════════════════════════════════════════════════ */
 function refreshAll() {
   const mod = currentModule, sec = currentSection;
-  GATES.forEach(gate => {
+  GATES.forEach(function(gate) {
     const pct  = gatePct(gate.num, mod, sec);
     const done = isGateDone(gate.num, mod, sec);
-    const fill = document.getElementById('gfill-'+gate.num);
-    const pEl  = document.getElementById('gpct-'+gate.num);
-    const dot  = document.getElementById('udot-'+gate.num);
-    const utxt = document.getElementById('utext-'+gate.num);
+    var fill = document.getElementById('gfill-'+gate.num);
+    var pEl  = document.getElementById('gpct-'+gate.num);
+    var dot  = document.getElementById('udot-'+gate.num);
+    var utxt = document.getElementById('utext-'+gate.num);
     if (fill) fill.style.width  = pct+'%';
     if (pEl)  pEl.textContent   = pct+'%';
     if (dot)  dot.classList.toggle('on', done);
-    if (utxt) utxt.textContent  = done?'已解鎖下一關':GATES[gate.num-1].unlock;
+    if (utxt) utxt.textContent  = done ? '已解鎖下一關' : GATES[gate.num-1].unlock;
   });
-  TASKS.forEach(task => {
-    const row = document.getElementById('task-row-'+task.id.replace('-','_'));
+  TASKS.forEach(function(task) {
+    var row = document.getElementById('task-row-'+task.id.replace('-','_'));
     if (!row) return;
     const prereqOk = isPrereqMet(task.id, mod, sec);
     const hasP     = task.prereqs.length > 0;
-    const isOwner  = currentMember && task.owners.includes(currentMember);
+    const isOwner  = currentMember && task.owners.indexOf(currentMember) >= 0;
     row.classList.toggle('blocked', hasP && !prereqOk);
-    const hint = row.querySelector('.prereq-hint');
+    var hint = row.querySelector('.prereq-hint');
     if (hint) {
       if (prereqOk) { hint.className='prereq-hint ok'; hint.textContent='✓ 前置任務有產出，可進行'; }
-      else { hint.className='prereq-hint blocked'; hint.textContent=`⬡ 等待前置：${task.prereqs.join('、')}（${prereqPct(task.id,mod,sec)}%）`; }
+      else { hint.className='prereq-hint blocked'; hint.textContent='⬡ 等待前置：'+task.prereqs.join('、')+'（'+prereqPct(task.id,mod,sec)+'%）'; }
     }
-    const slider = row.querySelector('.score-slider');
-    const valEl  = document.getElementById('sval-'+task.id.replace('-','_'));
+    var slider = row.querySelector('.score-slider');
+    var valEl  = document.getElementById('sval-'+task.id.replace('-','_'));
     const sc = getScore(task.id, mod, sec);
     if (slider) {
       if (parseInt(slider.value) !== sc) slider.value = sc;
@@ -2106,49 +2094,50 @@ function renderOverview() {
   const modsToDraw = currentOvTab === 'all' ? MODULES : [currentOvTab];
   const cardsEl    = document.getElementById('ov-module-cards');
   if (cardsEl) {
-    cardsEl.innerHTML = modsToDraw.map(mod => {
+    cardsEl.innerHTML = modsToDraw.map(function(mod) {
       const pct      = modulePct(mod);
-      const doneSecs = getSections(mod).filter(sec => sectionPct(mod,sec) >= 100).length;
-      const gateRows = GATES.map(g => {
-        const gp      = Math.round(getSections(mod).reduce((s,sec) => s+gatePct(g.num,mod,sec), 0) / SECTIONS_PER_MODULE);
-        const doneSec = getSections(mod).filter(sec => gatePct(g.num,mod,sec) >= 100).length;
+      const doneSecs = getSections(mod).filter(function(sec){ return sectionPct(mod,sec) >= 100; }).length;
+      const gateRows = GATES.map(function(g) {
+        const gp      = Math.round(getSections(mod).reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / SECTIONS_PER_MODULE);
+        const doneSec = getSections(mod).filter(function(sec){ return gatePct(g.num,mod,sec) >= 100; }).length;
         const color   = GATE_COLORS[g.num];
-        return `<div class="ov-gate-row">
-          <div class="ov-gate-label"><span class="ov-gate-num">Gate ${g.num}</span>${g.name}</div>
-          <div class="ov-gate-track"><div class="ov-gate-fill" style="width:${gp}%;background:${color}"></div></div>
-          <div class="ov-gate-pct" style="color:${color}">${gp}%</div>
-          <div class="ov-gate-sections">${doneSec}/${SECTIONS_PER_MODULE} 節</div>
-        </div>`;
+        return '<div class="ov-gate-row">' +
+          '<div class="ov-gate-label"><span class="ov-gate-num">Gate '+g.num+'</span>'+g.name+'</div>' +
+          '<div class="ov-gate-track"><div class="ov-gate-fill" style="width:'+gp+'%;background:'+color+'"></div></div>' +
+          '<div class="ov-gate-pct" style="color:'+color+'">'+gp+'%</div>' +
+          '<div class="ov-gate-sections">'+doneSec+'/'+SECTIONS_PER_MODULE+' 節</div>' +
+        '</div>';
       }).join('');
-      return `<div class="ov-module-card">
-        <div class="ov-module-head">
-          <div class="ov-module-label">模組</div>
-          <div class="ov-module-name">${mod}</div>
-          <div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:${pct}%"></div></div>
-          <div class="ov-module-pct">${pct}%</div>
-          <div class="ov-module-sub">${doneSecs}/${SECTIONS_PER_MODULE} 小節</div>
-        </div>
-        <div class="ov-module-body">${gateRows}</div>
-      </div>`;
+      return '<div class="ov-module-card">' +
+        '<div class="ov-module-head">' +
+          '<div class="ov-module-label">模組</div>' +
+          '<div class="ov-module-name">'+mod+'</div>' +
+          '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
+          '<div class="ov-module-pct">'+pct+'%</div>' +
+          '<div class="ov-module-sub">'+doneSecs+'/'+SECTIONS_PER_MODULE+' 小節</div>' +
+        '</div>' +
+        '<div class="ov-module-body">'+gateRows+'</div>' +
+      '</div>';
     }).join('');
   }
-
   const tbody = document.getElementById('ov-section-tbody');
   if (tbody) {
-    let rows = '';
-    modsToDraw.forEach(mod => {
-      getSections(mod).forEach(sec => {
-        const gPcts  = GATES.map(g => gatePct(g.num, mod, sec));
+    var rows = '';
+    modsToDraw.forEach(function(mod) {
+      getSections(mod).forEach(function(sec) {
+        const gPcts  = GATES.map(function(g){ return gatePct(g.num,mod,sec); });
         const total  = sectionPct(mod, sec);
         const status = total>=100 ? 'done' : total>0 ? 'active' : 'blocked';
         const label  = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
-        const segs   = TASKS.map(t => `<div class="ov-mini-seg ${getScore(t.id,mod,sec)>0?'filled':''}"></div>`).join('');
-        rows += `<tr>
-          <td>${mod}</td><td style="font-weight:600">${sec}</td>
-          ${gPcts.map((p,i) => `<td style="color:${GATE_COLORS[i+1]};font-weight:600">${p}%</td>`).join('')}
-          <td><div style="display:flex;align-items:center;gap:8px"><div class="ov-mini-bar">${segs}</div><span style="font-size:12px;font-weight:700">${total}%</span></div></td>
-          <td><span class="ov-pill ${status}">${label}</span></td>
-        </tr>`;
+        const segs   = TASKS.map(function(t){
+          return '<div class="ov-mini-seg '+(getScore(t.id,mod,sec)>0?'filled':'')+'"></div>';
+        }).join('');
+        rows += '<tr>' +
+          '<td>'+mod+'</td><td style="font-weight:600">'+sec+'</td>' +
+          gPcts.map(function(p,i){ return '<td style="color:'+GATE_COLORS[i+1]+';font-weight:600">'+p+'%</td>'; }).join('') +
+          '<td><div style="display:flex;align-items:center;gap:8px"><div class="ov-mini-bar">'+segs+'</div><span style="font-size:12px;font-weight:700">'+total+'%</span></div></td>' +
+          '<td><span class="ov-pill '+status+'">'+label+'</span></td>' +
+        '</tr>';
       });
     });
     tbody.innerHTML = rows;
@@ -2160,31 +2149,30 @@ function renderOverview() {
 ═══════════════════════════════════════════════════════════ */
 function exportCSV() {
   const now     = new Date();
-  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
-  let csv = `BB6 課程製作進度備份,${dateStr}\n`;
-  MODULES.forEach(mod => {
-    getSections(mod).forEach(sec => {
-      csv += `\n模組,${mod},小節,${sec}\n任務ID,Gate,任務名稱,負責人,分數,完成%\n`;
-      TASKS.forEach(t => {
+  const dateStr = now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');
+  var csv = 'BB6 課程製作進度備份,' + dateStr + '\n';
+  MODULES.forEach(function(mod) {
+    getSections(mod).forEach(function(sec) {
+      csv += '\n模組,' + mod + ',小節,' + sec + '\n任務ID,Gate,任務名稱,負責人,分數,完成%\n';
+      TASKS.forEach(function(t) {
         const sc = getScore(t.id, mod, sec);
-        csv += `${t.id},Gate ${t.gate},"${t.name}","${t.owners.join('/')}",${sc},${sc*10}%\n`;
+        csv += t.id+',Gate '+t.gate+',"'+t.name+'","'+t.owners.join('/')+'",' + sc + ',' + (sc*10) + '%\n';
       });
     });
   });
   const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8;' });
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(blob);
-  a.download = `BB6_進度備份_${dateStr}.csv`;
+  a.download = 'BB6_進度備份_' + dateStr + '.csv';
   a.click();
   showToast('CSV 已匯出 ✓');
 }
-window.exportCSV = exportCSV;
 
 /* ═══════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════ */
 const savedMember = localStorage.getItem('bb6-member');
-if (savedMember && MEMBERS.includes(savedMember)) {
+if (savedMember && MEMBERS.indexOf(savedMember) >= 0) {
   selectMember(savedMember, MEMBER_COLORS[savedMember]);
 } else {
   showLogin();
@@ -2193,8 +2181,6 @@ if (savedMember && MEMBERS.includes(savedMember)) {
 populateSectionSelect();
 updateReporterHeader();
 setSyncStatus('syncing', '連線中...');
-
-// Subscribe to current module immediately
 subscribeModule(currentModule);
 renderGates();
 renderMembers();
