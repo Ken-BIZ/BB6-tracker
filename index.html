@@ -1828,14 +1828,12 @@ function updateScore(taskId, val) {
   if (el) el.textContent = score;
   refreshAll();
 
-  lockUI();
   setSyncStatus('syncing', '儲存中...');
   writeScore(currentModule, sec, taskId, score, currentMember)
     .then(function() {
-      unlockUI();
+      // onValue listener will confirm sync
     })
     .catch(function(e) {
-      unlockUI();
       setSyncStatus('error', '寫入失敗，請重試');
       showToast('⚠ 寫入失敗，請重新拖動');
     });
