@@ -1799,6 +1799,7 @@ function showLogin() {
 }
 function selectMember(name, color) {
   currentMember = name;
+  _lastRenderKey = ''; // reset so gates rebuild with correct owner state
   localStorage.setItem('bb6-member', name);
   document.getElementById('login-avatar').textContent        = name[0];
   document.getElementById('login-avatar').style.background   = color;
@@ -1868,19 +1869,13 @@ function switchRModule(mod) {
   document.getElementById('section-select').value = currentSection;
   updateReporterHeader();
   subscribeModule(mod);
-  // Force full rebuild when switching modules
-  const container = document.getElementById('gates-grid');
-  if (container) container.innerHTML = '';
-  renderGates();
+  renderGates();  // renderKey change triggers full rebuild automatically
   renderMembers();
 }
 function switchSection(sec) {
   currentSection = sec;
   updateReporterHeader();
-  // Force full rebuild when switching sections
-  const container = document.getElementById('gates-grid');
-  if (container) container.innerHTML = '';
-  renderGates();
+  renderGates();  // renderKey change triggers full rebuild automatically
   renderMembers();
 }
 function switchOvTab(tab) {
@@ -1918,15 +1913,19 @@ function toggleAcc(btn) {
 /* ═══════════════════════════════════════════════════════════
    RENDER GATES
 ═══════════════════════════════════════════════════════════ */
+// Track last rendered mod+sec to know when to rebuild
+let _lastRenderKey = '';
+
 function renderGates() {
   const container = document.getElementById('gates-grid');
   if (!container) return;
-  // If gate columns already exist for this module+section, just refresh values
-  const existingCols = container.querySelectorAll('.gate-col');
-  if (existingCols.length === GATES.length) {
+  const renderKey = currentModule + '|' + currentSection;
+  // Only rebuild DOM when module or section actually changes
+  if (_lastRenderKey === renderKey && container.querySelectorAll('.gate-col').length === GATES.length) {
     refreshAll();
     return;
   }
+  _lastRenderKey = renderKey;
   container.innerHTML = '';
   const mod = currentModule, sec = currentSection;
 
