@@ -1,0 +1,2286 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BB6 課程製作</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── SHARED RESET & VARS ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --yellow: #FFEA41; --black: #111214; --white: #FFFFFF;
+  --grey-light: #F2F2F3; --grey: #D4D8E3; --grey-dark: #9599A4;
+  --blue: #ADCFFF; --purple: #B9ADFF; --green: #C0EDE2;
+  --phase1: #2563EB; --phase2: #16A34A; --phase3: #7C3AED;
+  --phase4: #EA580C; --phase5: #0891B2;
+  --ken: #2563EB; --daniel: #16A34A; --ellen: #EA580C; --emily: #EC4899;
+  --surface: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.07);
+}
+html { scroll-behavior: smooth; }
+body { font-family: 'Noto Sans TC','Microsoft JhengHei',sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
+
+/* ── PAGE SWITCHING ──────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── UNIFIED HEADER ──────────────────────────────────────── */
+header {
+  background: var(--black); border-bottom: 2px solid var(--yellow);
+  padding: 20px 48px; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 200;
+}
+.logo-area { display: flex; align-items: center; gap: 14px; }
+.logo-mark { width: 32px; height: 32px; background: var(--yellow); clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%, 30% 50%); flex-shrink: 0; }
+.logo-text { font-size: 13px; font-weight: 600; color: var(--grey-dark); letter-spacing: 0.05em; text-transform: uppercase; }
+
+/* Page switcher tabs */
+.page-tabs { display: flex; gap: 2px; background: rgba(255,255,255,0.05); border-radius: 4px; padding: 3px; }
+.page-tab {
+  font-size: 13px; font-weight: 700; padding: 6px 18px; border-radius: 3px;
+  cursor: pointer; border: none; background: transparent; color: var(--grey-dark);
+  transition: all 0.18s; letter-spacing: 0.02em; font-family: inherit;
+  display: flex; align-items: center; gap: 7px;
+}
+.page-tab .tab-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.4; transition: opacity 0.18s; }
+.page-tab:hover { color: var(--white); }
+.page-tab.active { background: var(--yellow); color: var(--black); }
+.page-tab.active .tab-dot { opacity: 1; background: var(--black); }
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+.btn { font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 3px; border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; font-family: inherit; }
+.btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--grey-dark); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.35); color: var(--white); }
+.btn-yellow { background: var(--yellow); color: var(--black); }
+.btn-yellow:hover { background: #ffe100; }
+
+/* tracker-only header-actions hidden on flow page */
+.tracker-actions { display: flex; gap: 8px; }
+
+/* Nav inside pages */
+nav { display: flex; gap: 4px; }
+nav a { font-size: 13px; font-weight: 600; color: var(--grey-dark); text-decoration: none; padding: 5px 12px; border-radius: 2px; transition: all 0.2s; }
+nav a:hover { color: var(--yellow); background: rgba(255,234,65,0.08); }
+
+/* ── TOAST ───────────────────────────────────────────────── */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--yellow); color: var(--black); font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 3px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── FLOW PAGE STYLES (original) ────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --yellow: #FFEA41;
+    --black: #111214;
+    --white: #FFFFFF;
+    --grey-light: #F2F2F3;
+    --grey: #D4D8E3;
+    --grey-dark: #9599A4;
+    --blue: #ADCFFF;
+    --purple: #B9ADFF;
+    --green: #C0EDE2;
+    --phase1: #2563EB;
+    --phase2: #16A34A;
+    --phase3: #7C3AED;
+    --phase4: #EA580C;
+    --phase5: #0891B2;
+    --ken: #2563EB;
+    --daniel: #16A34A;
+    --ellen: #EA580C;
+    --emily: #EC4899;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
+
+  header { background: var(--black); border-bottom: 2px solid var(--yellow); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+  .logo-area { display: flex; align-items: center; gap: 16px; }
+  .logo-mark { width: 36px; height: 36px; background: var(--yellow); clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%, 30% 50%); }
+  .logo-text { font-size: 14px; font-weight: 600; color: var(--grey-dark); letter-spacing: 0.05em; text-transform: uppercase; }
+  .header-title { font-size: 15px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
+  nav { display: flex; gap: 8px; }
+  nav a { font-size: 14px; font-weight: 600; color: var(--grey-dark); text-decoration: none; padding: 6px 14px; border-radius: 2px; transition: all 0.2s; }
+  nav a:hover { color: var(--yellow); background: rgba(255,234,65,0.08); }
+
+  .hero { padding: 72px 48px 56px; border-bottom: 1px solid rgba(255,255,255,0.08); position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255,234,65,0.06) 0%, transparent 70%); pointer-events: none; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: var(--yellow); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-tag::before { content: ''; display: block; width: 20px; height: 2px; background: var(--yellow); }
+  .hero h1 { font-size: 48px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 16px; }
+  .hero h1 span { color: var(--yellow); }
+  .hero-sub { font-size: 15px; font-weight: 500; color: var(--grey-dark); max-width: 560px; }
+
+  section { padding: 64px 48px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .section-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 40px; }
+  .section-label { font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 8px; }
+  .section-title { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+
+  /* PHASE CARDS */
+  #phases { background: var(--black); }
+  .phases-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; }
+  .phase-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); padding: 28px; position: relative; transition: background 0.2s; }
+  .phase-card:hover { background: rgba(255,255,255,0.06); }
+  .phase-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .phase-card:nth-child(1)::before { background: var(--phase1); }
+  .phase-card:nth-child(2)::before { background: var(--phase2); }
+  .phase-card:nth-child(3)::before { background: var(--phase3); }
+  .phase-card:nth-child(4)::before { background: var(--phase4); }
+  .phase-num { font-size: 14px; font-weight: 700; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .phase-card:nth-child(1) .phase-num { color: var(--phase1); }
+  .phase-card:nth-child(2) .phase-num { color: var(--phase2); }
+  .phase-card:nth-child(3) .phase-num { color: var(--phase3); }
+  .phase-card:nth-child(4) .phase-num { color: var(--phase4); }
+  .phase-name { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+  .phase-goal { font-size: 14px; color: var(--grey-dark); font-weight: 500; margin-bottom: 20px; line-height: 1.4; }
+
+  /* TASK ITEMS */
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task-item { display: flex; align-items: center; gap: 10px; padding: 9px 12px; background: rgba(0,0,0,0.3); border-radius: 3px; border: 1px solid rgba(255,255,255,0.05); }
+  .task-num { min-width: 36px; height: 22px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; padding: 0 4px; }
+  .task-name { font-size: 14px; font-weight: 500; flex: 1; line-height: 1.3; }
+  .task-owner { font-size: 14px; font-weight: 700; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+  .owner-ken { color: var(--ken); }
+  .owner-daniel { color: var(--daniel); }
+  .owner-ellen { color: var(--ellen); }
+  .owner-emily { color: var(--emily); }
+
+  /* PARALLEL BLOCK inside phase card */
+  .parallel-block { border-left: 2px solid rgba(255,255,255,0.15); padding-left: 10px; display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; position: relative; }
+  .parallel-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px; }
+
+  /* GATES CHECKLIST */
+  #gates { background: var(--black); }
+  .gates-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+  .gate-card { background: rgba(192,237,226,0.04); border: 1px solid rgba(192,237,226,0.2); padding: 24px; border-radius: 3px; }
+  .gate-card-title { font-size: 14px; font-weight: 700; color: var(--green); margin-bottom: 4px; }
+  .gate-card-sub { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 16px; }
+  .check-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.75); margin-bottom: 8px; line-height: 1.4; }
+  .check-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 5px; }
+
+  /* TEAM */
+  #team { background: rgba(255,255,255,0.01); }
+  .team-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .member-card { padding: 24px; border-radius: 3px; border: 1px solid; }
+  .member-card.ken { background: rgba(37,99,235,0.05); border-color: rgba(37,99,235,0.25); }
+  .member-card.daniel { background: rgba(22,163,74,0.05); border-color: rgba(22,163,74,0.25); }
+  .member-card.ellen { background: rgba(234,88,12,0.05); border-color: rgba(234,88,12,0.25); }
+  .member-card.emily { background: rgba(236,72,153,0.05); border-color: rgba(236,72,153,0.25); }
+  .member-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; letter-spacing: -0.02em; }
+  .member-card.ken .member-name { color: var(--ken); }
+  .member-card.daniel .member-name { color: var(--daniel); }
+  .member-card.ellen .member-name { color: var(--ellen); }
+  .member-card.emily .member-name { color: var(--emily); }
+  .member-divider { height: 2px; margin: 12px 0; border-radius: 1px; }
+  .member-card.ken .member-divider { background: var(--ken); }
+  .member-card.daniel .member-divider { background: var(--daniel); }
+  .member-card.ellen .member-divider { background: var(--ellen); }
+  .member-card.emily .member-divider { background: var(--emily); }
+  .member-task { font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.7); line-height: 1.5; margin-bottom: 4px; display: flex; gap: 6px; align-items: flex-start; }
+  .member-task-num { font-size: 13px; font-weight: 700; opacity: 0.5; flex-shrink: 0; background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 2px; }
+
+  /* OUTPUTS */
+  #outputs { background: var(--black); }
+  .outputs-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .output-card { background: rgba(255,234,65,0.04); border: 1px solid rgba(255,234,65,0.2); padding: 20px; border-radius: 3px; text-align: center; }
+  .output-icon { font-size: 24px; margin-bottom: 10px; }
+  .output-name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.9); line-height: 1.3; }
+
+  /* COLLAB BAR */
+  .collab-bar { margin-top: 32px; padding: 20px 24px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 3px; display: flex; gap: 32px; flex-wrap: wrap; }
+  .collab-item { font-size: 14px; color: rgba(255,255,255,0.6); font-weight: 500; }
+  .collab-item strong { color: var(--yellow); font-weight: 700; }
+
+  /* FOOTER */
+  footer { padding: 32px 48px; border-top: 2px solid var(--yellow); display: flex; align-items: center; justify-content: space-between; }
+  .footer-brand { font-size: 14px; font-weight: 700; color: var(--yellow); }
+  .footer-note { font-size: 14px; color: var(--grey-dark); }
+
+  /* ACCORDION */
+  .accordion { display: flex; flex-direction: column; gap: 2px; }
+  .acc-item { border: 1px solid rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+  .acc-item.ken { border-color: rgba(37,99,235,0.25); }
+  .acc-item.daniel { border-color: rgba(22,163,74,0.25); }
+  .acc-item.ellen { border-color: rgba(234,88,12,0.25); }
+  .acc-item.emily { border-color: rgba(236,72,153,0.25); }
+  .acc-trigger {
+    width: 100%; background: rgba(255,255,255,0.03); border: none;
+    padding: 20px 28px; display: flex; align-items: center;
+    justify-content: space-between; cursor: pointer; transition: background 0.2s;
+    color: var(--white);
+  }
+  .acc-trigger:hover { background: rgba(255,255,255,0.06); }
+  .acc-item.open .acc-trigger { background: rgba(255,255,255,0.05); }
+  .acc-trigger-left { display: flex; align-items: center; gap: 16px; }
+  .acc-trigger-right { display: flex; align-items: center; gap: 16px; }
+  .acc-name { font-size: 20px; font-weight: 700; }
+  .ken-text { color: var(--ken); }
+  .daniel-text { color: var(--daniel); }
+  .ellen-text { color: var(--ellen); }
+  .emily-text { color: var(--emily); }
+  .acc-count { font-size: 13px; color: rgba(255,255,255,0.4); font-weight: 500; }
+  .acc-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .acc-tag { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 2px; }
+  .acc-chevron { font-size: 18px; color: rgba(255,255,255,0.4); transition: transform 0.25s; flex-shrink: 0; }
+  .acc-body { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+  .acc-body .personal-flow { padding: 8px 28px 24px; }
+
+  /* PERSONAL FLOW SECTION */
+  #personal { background: rgba(255,255,255,0.01); }
+  .personal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px; }
+  .personal-card { border-radius: 4px; border: 1px solid; overflow: hidden; }
+  .personal-card.ken { border-color: rgba(37,99,235,0.3); }
+  .personal-card.daniel { border-color: rgba(22,163,74,0.3); }
+  .personal-card.ellen { border-color: rgba(234,88,12,0.3); }
+  .personal-card.emily { border-color: rgba(236,72,153,0.3); }
+  .personal-card-header { padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .personal-card.ken .personal-card-header { background: rgba(37,99,235,0.12); }
+  .personal-card.daniel .personal-card-header { background: rgba(22,163,74,0.12); }
+  .personal-card.ellen .personal-card-header { background: rgba(234,88,12,0.12); }
+  .personal-card.emily .personal-card-header { background: rgba(236,72,153,0.12); }
+  .personal-name { font-size: 18px; font-weight: 700; }
+  .personal-card.ken .personal-name { color: var(--ken); }
+  .personal-card.daniel .personal-name { color: var(--daniel); }
+  .personal-card.ellen .personal-name { color: var(--ellen); }
+  .personal-card.emily .personal-name { color: var(--emily); }
+
+  .personal-flow { padding: 24px; display: flex; flex-direction: column; gap: 0; }
+  .pf-row { display: flex; align-items: stretch; gap: 0; }
+  .pf-spine { display: flex; flex-direction: column; align-items: center; width: 32px; flex-shrink: 0; }
+  .pf-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; flex-shrink: 0; margin-top: 14px; }
+  .pf-line { width: 2px; flex: 1; min-height: 12px; }
+  .ken-color { border-color: var(--ken); background: rgba(37,99,235,0.3); }
+  .ken-line { background: rgba(37,99,235,0.25); }
+  .daniel-color { border-color: var(--daniel); background: rgba(22,163,74,0.3); }
+  .daniel-line { background: rgba(22,163,74,0.25); }
+  .ellen-color { border-color: var(--ellen); background: rgba(234,88,12,0.3); }
+  .ellen-line { background: rgba(234,88,12,0.25); }
+  .emily-color { border-color: var(--emily); background: rgba(236,72,153,0.3); }
+  .emily-line { background: rgba(236,72,153,0.25); }
+  .pf-node { flex: 1; padding: 10px 0 10px 12px; }
+  .pf-node-inner { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 12px 14px; }
+  .pf-tag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .pf-gate-badge { font-size: 13px; font-weight: 700; padding: 2px 7px; border-radius: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .pf-task-id { font-size: 13px; font-weight: 700; padding: 2px 6px; border-radius: 2px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.5); }
+  .pf-task-name { font-size: 15px; font-weight: 600; color: var(--white); line-height: 1.3; margin-bottom: 8px; }
+  .pf-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+  .pf-meta-item { font-size: 13px; color: rgba(255,255,255,0.45); display: flex; align-items: center; gap: 5px; }
+  .pf-meta-label { font-weight: 700; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
+  .pf-meta-val { color: rgba(255,255,255,0.6); font-weight: 500; }
+  .pf-meta-val.highlight-ken { color: var(--ken); font-weight: 700; }
+  .pf-meta-val.highlight-daniel { color: var(--daniel); font-weight: 700; }
+  .pf-meta-val.highlight-ellen { color: var(--ellen); font-weight: 700; }
+  .pf-meta-val.highlight-emily { color: var(--emily); font-weight: 700; }
+  .gate-badge-1 { background: rgba(37,99,235,0.2); color: #7BAEFF; }
+  .gate-badge-2 { background: rgba(22,163,74,0.2); color: #6EE7A0; }
+  .gate-badge-3 { background: rgba(124,58,237,0.2); color: #C4B5FD; }
+  .gate-badge-4 { background: rgba(234,88,12,0.2); color: #FDBA74; }
+  .gate-badge-5 { background: rgba(8,145,178,0.2); color: #67E8F9; }
+
+  /* PARALLEL ROW in personal flow */
+  .pf-parallel-group { flex: 1; padding: 10px 0 10px 12px; }
+  .pf-parallel-row { display: flex; gap: 8px; }
+  .pf-parallel-label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; padding-left: 2px; }
+  .pf-parallel-brace { width: 4px; border: 1.5px solid rgba(255,255,255,0.15); border-right: none; border-radius: 3px 0 0 3px; margin-right: 8px; flex-shrink: 0; }
+  .pf-parallel-items { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .pf-node-inner.parallel { border-left: 2px solid rgba(255,255,255,0.12); }
+
+  @media (max-width: 900px) {
+    header { padding: 20px 24px; flex-wrap: wrap; gap: 12px; }
+    section { padding: 48px 24px; }
+    .hero { padding: 48px 24px 40px; }
+    .hero h1 { font-size: 32px; }
+    .phases-grid { grid-template-columns: 1fr 1fr; }
+    .team-grid { grid-template-columns: 1fr 1fr; }
+    .gates-grid { grid-template-columns: 1fr 1fr; }
+    .outputs-row { grid-template-columns: 1fr 1fr 1fr; }
+    .personal-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; }
+  }
+
+
+/* ── TRACKER PAGE STYLES ────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --yellow: #FFEA41;
+  --black: #111214;
+  --white: #FFFFFF;
+  --grey-light: #F2F2F3;
+  --grey: #D4D8E3;
+  --grey-dark: #9599A4;
+  --phase1: #2563EB;
+  --phase2: #16A34A;
+  --phase3: #7C3AED;
+  --phase4: #EA580C;
+  --phase5: #0891B2;
+  --ken: #2563EB;
+  --daniel: #16A34A;
+  --ellen: #EA580C;
+  --emily: #EC4899;
+  --surface: rgba(255,255,255,0.03);
+  --border: rgba(255,255,255,0.07);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
+
+/* HEADER */
+header { background: var(--black); border-bottom: 2px solid var(--yellow); padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
+.logo-area { display: flex; align-items: center; gap: 14px; }
+.logo-mark { width: 32px; height: 32px; background: var(--yellow); clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%, 30% 50%); flex-shrink: 0; }
+.logo-text { font-size: 13px; font-weight: 600; color: var(--grey-dark); letter-spacing: 0.05em; text-transform: uppercase; }
+.header-title { font-size: 14px; font-weight: 700; color: var(--white); }
+.header-actions { display: flex; align-items: center; gap: 10px; }
+.btn { font-size: 13px; font-weight: 600; padding: 7px 16px; border-radius: 3px; border: none; cursor: pointer; transition: all 0.15s; letter-spacing: 0.02em; font-family: inherit; }
+.btn-ghost { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: var(--grey-dark); }
+.btn-ghost:hover { border-color: rgba(255,255,255,0.35); color: var(--white); }
+.btn-yellow { background: var(--yellow); color: var(--black); }
+.btn-yellow:hover { background: #ffe100; }
+nav { display: flex; gap: 4px; }
+nav a { font-size: 13px; font-weight: 600; color: var(--grey-dark); text-decoration: none; padding: 5px 12px; border-radius: 2px; transition: all 0.2s; }
+nav a:hover { color: var(--yellow); }
+
+/* HERO */
+.hero { padding: 52px 48px 44px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
+.hero-left { flex: 1; }
+.hero-tag { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; color: var(--yellow); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 16px; }
+.hero-tag::before { content: ''; display: block; width: 18px; height: 2px; background: var(--yellow); }
+.hero h1 { font-size: 40px; font-weight: 700; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 10px; }
+.hero h1 span { color: var(--yellow); }
+.hero-sub { font-size: 14px; color: var(--grey-dark); font-weight: 500; }
+.hero-stats { display: flex; gap: 24px; flex-shrink: 0; }
+.hero-stat { text-align: right; }
+.hero-stat-val { font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+.hero-stat-label { font-size: 12px; font-weight: 600; color: var(--grey-dark); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
+
+/* OVERALL PROGRESS BAR */
+.progress-banner { padding: 20px 48px; background: rgba(255,234,65,0.04); border-bottom: 1px solid rgba(255,234,65,0.12); display: flex; align-items: center; gap: 24px; }
+.progress-label { font-size: 13px; font-weight: 700; color: var(--yellow); letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; }
+.progress-track { flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.4s ease; }
+.progress-pct { font-size: 20px; font-weight: 700; color: var(--yellow); min-width: 52px; text-align: right; }
+
+/* SECTION */
+section { padding: 56px 48px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.section-label { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 6px; }
+.section-title { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 32px; }
+
+/* GATE GRID */
+#tracker .gates-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; }
+.gate-col { background: var(--surface); border: 1px solid var(--border); padding: 0; overflow: hidden; }
+.gate-header { padding: 18px 20px 14px; border-bottom: 1px solid var(--border); }
+.gate-num { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
+.gate-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
+.gate-goal { font-size: 12px; color: var(--grey-dark); font-weight: 500; }
+.gate-col:nth-child(1) .gate-num { color: var(--phase1); }
+.gate-col:nth-child(2) .gate-num { color: var(--phase2); }
+.gate-col:nth-child(3) .gate-num { color: var(--phase3); }
+.gate-col:nth-child(4) .gate-num { color: var(--phase4); }
+.gate-col:nth-child(5) .gate-num { color: var(--phase5); }
+.gate-col:nth-child(1) { border-top: 3px solid var(--phase1); }
+.gate-col:nth-child(2) { border-top: 3px solid var(--phase2); }
+.gate-col:nth-child(3) { border-top: 3px solid var(--phase3); }
+.gate-col:nth-child(4) { border-top: 3px solid var(--phase4); }
+.gate-col:nth-child(5) { border-top: 3px solid var(--phase5); }
+
+/* GATE PROGRESS INDICATOR */
+.gate-progress-row { padding: 10px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.gate-progress-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+.gate-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.gate-col:nth-child(1) .gate-progress-fill { background: var(--phase1); }
+.gate-col:nth-child(2) .gate-progress-fill { background: var(--phase2); }
+.gate-col:nth-child(3) .gate-progress-fill { background: var(--phase3); }
+.gate-col:nth-child(4) .gate-progress-fill { background: var(--phase4); }
+.gate-col:nth-child(5) .gate-progress-fill { background: var(--phase5); }
+.gate-pct-text { font-size: 13px; font-weight: 700; min-width: 34px; text-align: right; }
+.gate-col:nth-child(1) .gate-pct-text { color: var(--phase1); }
+.gate-col:nth-child(2) .gate-pct-text { color: var(--phase2); }
+.gate-col:nth-child(3) .gate-pct-text { color: var(--phase3); }
+.gate-col:nth-child(4) .gate-pct-text { color: var(--phase4); }
+.gate-col:nth-child(5) .gate-pct-text { color: var(--phase5); }
+
+/* UNLOCK BADGE */
+.gate-unlock { padding: 8px 20px 12px; font-size: 12px; font-weight: 600; color: var(--grey-dark); display: flex; align-items: center; gap: 6px; }
+.unlock-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.15); flex-shrink: 0; transition: background 0.3s; }
+.unlock-dot.on { background: #4ade80; box-shadow: 0 0 6px rgba(74,222,128,0.4); }
+
+/* TASK ROW */
+.task-rows { display: flex; flex-direction: column; }
+.task-row { padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.15s; }
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: rgba(255,255,255,0.025); }
+.task-row.blocked { opacity: 0.45; }
+.task-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.task-id-badge { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 2px; flex-shrink: 0; }
+.task-row-name { font-size: 13px; font-weight: 600; flex: 1; line-height: 1.3; }
+.owner-chip { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+.chip-ken { background: rgba(37,99,235,0.2); color: #7BAEFF; }
+.chip-daniel { background: rgba(22,163,74,0.2); color: #6EE7A0; }
+.chip-ellen { background: rgba(234,88,12,0.2); color: #FDBA74; }
+.chip-emily { background: rgba(236,72,153,0.2); color: #F9A8D4; }
+
+/* SCORE SLIDER */
+.score-row { display: flex; align-items: center; gap: 10px; }
+.score-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.1); outline: none; cursor: pointer; }
+.score-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%; cursor: pointer; transition: transform 0.1s; }
+.score-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.score-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; }
+/* Per-gate slider thumb colors */
+.gate-col:nth-child(1) .score-slider::-webkit-slider-thumb { background: var(--phase1); }
+.gate-col:nth-child(2) .score-slider::-webkit-slider-thumb { background: var(--phase2); }
+.gate-col:nth-child(3) .score-slider::-webkit-slider-thumb { background: var(--phase3); }
+.gate-col:nth-child(4) .score-slider::-webkit-slider-thumb { background: var(--phase4); }
+.gate-col:nth-child(5) .score-slider::-webkit-slider-thumb { background: var(--phase5); }
+.score-val { font-size: 16px; font-weight: 700; min-width: 22px; text-align: right; }
+.score-denom { font-size: 12px; color: rgba(255,255,255,0.25); }
+.prereq-hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
+.prereq-hint.ok { color: rgba(74,222,128,0.6); }
+.prereq-hint.blocked { color: rgba(255,100,80,0.6); }
+
+/* MEMBER DASHBOARD */
+#members .members-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.member-card { border: 1px solid; border-radius: 3px; overflow: hidden; }
+.member-card.ken { border-color: rgba(37,99,235,0.3); }
+.member-card.daniel { border-color: rgba(22,163,74,0.3); }
+.member-card.ellen { border-color: rgba(234,88,12,0.3); }
+.member-card.emily { border-color: rgba(236,72,153,0.3); }
+.member-head { padding: 16px 20px 12px; }
+.member-card.ken .member-head { background: rgba(37,99,235,0.1); }
+.member-card.daniel .member-head { background: rgba(22,163,74,0.1); }
+.member-card.ellen .member-head { background: rgba(234,88,12,0.1); }
+.member-card.emily .member-head { background: rgba(236,72,153,0.1); }
+.member-name { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+.member-card.ken .member-name { color: var(--ken); }
+.member-card.daniel .member-name { color: var(--daniel); }
+.member-card.ellen .member-name { color: var(--ellen); }
+.member-card.emily .member-name { color: var(--emily); }
+.member-meta { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+.member-body { padding: 14px 20px 18px; }
+.member-stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.member-stat { flex: 1; background: rgba(255,255,255,0.04); border-radius: 3px; padding: 9px 12px; }
+.member-stat-label { font-size: 11px; color: rgba(255,255,255,0.35); font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px; }
+.member-stat-val { font-size: 22px; font-weight: 700; line-height: 1; }
+.stat-yellow { color: var(--yellow); }
+.stat-green { color: #4ade80; }
+.stat-red { color: #f87171; }
+/* Bottleneck indicator */
+.bottleneck-box { padding: 10px 12px; border-radius: 3px; font-size: 12px; font-weight: 600; line-height: 1.5; margin-bottom: 10px; }
+.bottleneck-box.waiting { background: rgba(234,88,12,0.1); border: 1px solid rgba(234,88,12,0.2); color: #FDBA74; }
+.bottleneck-box.clear { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.15); color: rgba(74,222,128,0.8); }
+.member-tasks-label { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.25); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+.member-task-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.member-task-row:last-child { border-bottom: none; }
+.mtask-id { font-size: 11px; font-weight: 700; background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.4); padding: 1px 5px; border-radius: 2px; flex-shrink: 0; }
+.mtask-name { font-size: 13px; font-weight: 500; flex: 1; line-height: 1.3; color: rgba(255,255,255,0.8); }
+.mtask-score { font-size: 13px; font-weight: 700; min-width: 28px; text-align: right; }
+.mtask-bar-wrap { width: 40px; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+.mtask-bar { height: 100%; border-radius: 2px; transition: width 0.4s; }
+.member-card.ken .mtask-bar { background: var(--ken); }
+.member-card.daniel .mtask-bar { background: var(--daniel); }
+.member-card.ellen .mtask-bar { background: var(--ellen); }
+.member-card.emily .mtask-bar { background: var(--emily); }
+
+/* WEEKLY CAPACITY */
+.capacity-box { margin-top: 12px; padding: 10px 12px; border-radius: 3px; background: rgba(255,234,65,0.05); border: 1px solid rgba(255,234,65,0.12); }
+.capacity-label { font-size: 11px; font-weight: 700; color: var(--yellow); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
+.capacity-text { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+/* FOOTER */
+footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex; align-items: center; justify-content: space-between; }
+.footer-brand { font-size: 13px; font-weight: 700; color: var(--yellow); }
+.footer-note { font-size: 13px; color: var(--grey-dark); }
+.last-saved { font-size: 12px; color: rgba(255,255,255,0.25); }
+
+/* SAVE TOAST */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--yellow); color: var(--black); font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 3px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 999; }
+.toast.show { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1100px) {
+  #tracker .gates-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+@media (max-width: 900px) {
+  header { padding: 16px 20px; flex-wrap: wrap; gap: 10px; }
+  section { padding: 40px 20px; }
+  .hero { padding: 36px 20px 28px; flex-direction: column; gap: 20px; }
+  .hero-stats { justify-content: flex-start; }
+  .progress-banner { padding: 14px 20px; }
+  #tracker .gates-grid { grid-template-columns: 1fr 1fr; }
+  #members .members-grid { grid-template-columns: 1fr 1fr; }
+  footer { padding: 20px; flex-direction: column; gap: 6px; align-items: flex-start; }
+}
+
+
+/* Override: tracker section uses same base as flow page */
+
+/* ── MODULE TABS ─────────────────────────────────────────── */
+.module-bar { display: flex; align-items: center; justify-content: space-between; padding: 0 48px; background: rgba(255,255,255,0.02); border-bottom: 1px solid rgba(255,255,255,0.07); }
+.module-bar-left { display: flex; gap: 0; }
+.module-tab { font-size: 14px; font-weight: 700; padding: 14px 28px; border: none; background: transparent; color: var(--grey-dark); cursor: pointer; letter-spacing: 0.04em; border-bottom: 3px solid transparent; transition: all 0.18s; font-family: inherit; display: flex; align-items: center; gap: 8px; }
+.module-tab:hover { color: var(--white); }
+.module-tab.active { color: var(--yellow); border-bottom-color: var(--yellow); }
+.module-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+.module-tab.active .module-dot { opacity: 1; }
+.module-bar-right { display: flex; align-items: center; gap: 12px; }
+.sync-status { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--grey-dark); }
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.2); flex-shrink: 0; transition: background 0.3s; }
+.sync-dot.syncing { background: var(--yellow); animation: pulse 1s ease-in-out infinite; }
+.sync-dot.ok { background: #4ade80; }
+.sync-dot.error { background: #f87171; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+@media (max-width: 900px) {
+  .module-bar { padding: 0 20px; }
+  .module-tab { padding: 12px 16px; font-size: 13px; }
+}
+
+#page-tracker section { padding: 56px 48px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+#page-tracker .section-label { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey-dark); margin-bottom: 6px; }
+#page-tracker .section-title { font-size: 24px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 32px; }
+#page-tracker footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex; align-items: center; justify-content: space-between; }
+#page-tracker .footer-brand { font-size: 13px; font-weight: 700; color: var(--yellow); }
+#page-tracker .footer-note { font-size: 13px; color: var(--grey-dark); }
+.last-saved { font-size: 12px; color: rgba(255,255,255,0.25); }
+
+@media (max-width: 1100px) {
+  #tracker .gates-grid { grid-template-columns: 1fr 1fr 1fr; }
+}
+@media (max-width: 900px) {
+  header { padding: 16px 20px; flex-wrap: wrap; gap: 10px; }
+  .page-tabs { order: 3; width: 100%; justify-content: center; }
+  #page-flow section, #page-tracker section { padding: 40px 20px; }
+  .hero { padding: 36px 20px 28px; flex-direction: column; gap: 20px; }
+  .hero-stats { justify-content: flex-start; }
+  .progress-banner { padding: 14px 20px; }
+  #tracker .gates-grid { grid-template-columns: 1fr 1fr; }
+  #members .members-grid { grid-template-columns: 1fr 1fr; }
+  footer { padding: 20px; flex-direction: column; gap: 6px; align-items: flex-start; }
+  .phases-grid { grid-template-columns: 1fr 1fr; }
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .gates-grid { grid-template-columns: 1fr 1fr; }
+  .outputs-row { grid-template-columns: 1fr 1fr 1fr; }
+  .personal-grid { grid-template-columns: 1fr; }
+}
+
+/* ── LOGIN CHIP ─────────────────────── */
+.login-chip { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 4px 12px 4px 6px; }
+.login-avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--black); flex-shrink: 0; }
+.login-name { font-size: 13px; font-weight: 600; color: var(--white); }
+.login-switch { font-size: 11px; font-weight: 600; color: var(--grey-dark); background: none; border: none; cursor: pointer; padding: 0; font-family: inherit; }
+.login-switch:hover { color: var(--white); }
+
+/* ── LOGIN OVERLAY ───────────────────── */
+.login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); z-index: 500; display: flex; align-items: center; justify-content: center; }
+.login-box { background: #16181b; border: 1px solid rgba(255,255,255,0.1); border-top: 3px solid var(--yellow); border-radius: 8px; padding: 48px; width: 460px; }
+.login-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.login-logo-mark { width: 28px; height: 28px; background: var(--yellow); clip-path: polygon(0 0,70% 0,100% 50%,70% 100%,0 100%,30% 50%); }
+.login-logo-text { font-size: 12px; font-weight: 700; color: var(--grey-dark); letter-spacing: 0.1em; text-transform: uppercase; }
+.login-box-title { font-size: 28px; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 6px; }
+.login-box-sub { font-size: 14px; color: var(--grey-dark); margin-bottom: 32px; }
+.member-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.member-select-btn { padding: 20px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); cursor: pointer; font-family: inherit; color: var(--white); transition: all 0.15s; text-align: left; display: flex; flex-direction: column; gap: 4px; }
+.member-select-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+.msb-initial { font-size: 28px; font-weight: 700; line-height: 1; margin-bottom: 4px; }
+.msb-name { font-size: 16px; font-weight: 700; }
+.msb-role { font-size: 12px; font-weight: 500; color: var(--grey-dark); }
+.member-select-btn.ken    { border-color: rgba(37,99,235,0.3); }
+.member-select-btn.daniel { border-color: rgba(22,163,74,0.3); }
+.member-select-btn.ellen  { border-color: rgba(234,88,12,0.3); }
+.member-select-btn.emily  { border-color: rgba(236,72,153,0.3); }
+.member-select-btn.ken:hover    { border-color:var(--ken);   background:rgba(37,99,235,0.12); }
+.member-select-btn.daniel:hover { border-color:var(--daniel);background:rgba(22,163,74,0.12); }
+.member-select-btn.ellen:hover  { border-color:var(--ellen); background:rgba(234,88,12,0.12); }
+.member-select-btn.emily:hover  { border-color:var(--emily); background:rgba(236,72,153,0.12); }
+.member-select-btn.ken    .msb-initial { color:#7BAEFF; }
+.member-select-btn.daniel .msb-initial { color:#6EE7A0; }
+.member-select-btn.ellen  .msb-initial { color:#FDBA74; }
+.member-select-btn.emily  .msb-initial { color:#F9A8D4; }
+
+/* ── MODULE / REPORTER TABS ──────────── */
+.module-bar { display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); }
+.module-bar-left { display:flex; }
+.module-tab { font-size:14px; font-weight:700; padding:14px 28px; border:none; background:transparent; color:var(--grey-dark); cursor:pointer; letter-spacing:0.04em; border-bottom:3px solid transparent; transition:all 0.18s; font-family:inherit; display:flex; align-items:center; gap:8px; }
+.module-tab:hover { color:var(--white); }
+.module-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
+.module-dot { width:7px; height:7px; border-radius:50%; background:currentColor; opacity:0.5; }
+.module-tab.active .module-dot { opacity:1; }
+.sync-status { display:flex; align-items:center; gap:7px; font-size:12px; font-weight:600; color:var(--grey-dark); }
+.sync-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); flex-shrink:0; transition:background 0.3s; }
+.sync-dot.syncing { background:var(--yellow); animation:pulse 1s ease-in-out infinite; }
+.sync-dot.ok { background:#4ade80; }
+.sync-dot.error { background:#f87171; }
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+/* ── OVERVIEW PAGE ───────────────────── */
+.overview-filter { padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); display:flex; gap:0; }
+.ov-tab { font-size:13px; font-weight:700; padding:14px 24px; border:none; background:transparent; color:var(--grey-dark); cursor:pointer; border-bottom:3px solid transparent; transition:all 0.18s; font-family:inherit; }
+.ov-tab:hover { color:var(--white); }
+.ov-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
+.ov-grid { display:flex; flex-direction:column; gap:24px; margin-bottom:40px; }
+.ov-module-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; overflow:hidden; }
+.ov-module-head { padding:24px 32px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:20px; }
+.ov-module-label { font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--grey-dark); text-transform:uppercase; min-width:44px; }
+.ov-module-name { font-size:22px; font-weight:700; letter-spacing:-0.02em; flex:0 0 60px; }
+.ov-module-total-track { flex:1; height:8px; background:rgba(255,255,255,0.07); border-radius:4px; overflow:hidden; }
+.ov-module-total-fill { height:100%; background:var(--yellow); border-radius:4px; transition:width 0.5s; }
+.ov-module-pct { font-size:26px; font-weight:700; letter-spacing:-0.04em; color:var(--yellow); line-height:1; min-width:64px; text-align:right; }
+.ov-module-sub { font-size:12px; color:var(--grey-dark); min-width:80px; text-align:right; white-space:nowrap; }
+.ov-module-body { padding:20px 32px 24px; }
+.ov-gate-row { display:flex; align-items:center; gap:16px; margin-bottom:12px; }
+.ov-gate-row:last-child { margin-bottom:0; }
+.ov-gate-label { font-size:13px; font-weight:600; color:rgba(255,255,255,0.6); min-width:170px; display:flex; align-items:center; gap:8px; }
+.ov-gate-num { font-size:11px; font-weight:700; padding:1px 6px; border-radius:2px; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); }
+.ov-gate-track { flex:1; height:10px; background:rgba(255,255,255,0.06); border-radius:5px; overflow:hidden; }
+.ov-gate-fill { height:100%; border-radius:5px; transition:width 0.6s ease; }
+.ov-gate-pct { font-size:14px; font-weight:700; min-width:44px; text-align:right; }
+.ov-gate-sections { font-size:11px; color:var(--grey-dark); min-width:56px; text-align:right; }
+.ov-section-table { width:100%; border-collapse:collapse; font-size:13px; }
+.ov-section-table th { text-align:left; font-size:11px; font-weight:700; color:var(--grey-dark); letter-spacing:0.06em; text-transform:uppercase; padding:8px 12px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.ov-section-table td { padding:9px 12px; border-bottom:1px solid rgba(255,255,255,0.04); color:rgba(255,255,255,0.8); }
+.ov-section-table tr:last-child td { border-bottom:none; }
+.ov-section-table tr:hover td { background:rgba(255,255,255,0.025); }
+.ov-pill { display:inline-block; font-size:11px; font-weight:700; padding:2px 8px; border-radius:10px; }
+.ov-pill.done   { background:rgba(74,222,128,0.15); color:#4ade80; }
+.ov-pill.active { background:rgba(255,234,65,0.12); color:var(--yellow); }
+.ov-pill.blocked{ background:rgba(255,255,255,0.06); color:var(--grey-dark); }
+.ov-mini-bar { display:flex; gap:3px; }
+.ov-mini-seg { flex:1; height:6px; border-radius:1px; background:rgba(255,255,255,0.06); }
+.ov-mini-seg.filled { background:var(--yellow); }
+
+/* ── REPORTER PAGE ───────────────────── */
+.reporter-module-bar { display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); }
+.reporter-tabs { display:flex; }
+.reporter-tab { font-size:14px; font-weight:700; padding:14px 28px; border:none; background:transparent; color:var(--grey-dark); cursor:pointer; border-bottom:3px solid transparent; font-family:inherit; transition:all 0.18s; display:flex; align-items:center; gap:8px; }
+.reporter-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
+.section-picker { display:flex; gap:10px; align-items:center; }
+.section-picker label { font-size:13px; font-weight:700; color:var(--grey-dark); letter-spacing:0.06em; text-transform:uppercase; }
+.section-select { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:4px; color:var(--white); font-size:15px; font-weight:700; padding:8px 14px; font-family:inherit; cursor:pointer; min-width:80px; }
+.section-select:focus { outline:none; border-color:var(--yellow); }
+.reporter-section-header { padding:28px 48px 0; display:flex; align-items:center; gap:16px; }
+.reporter-section-tag { font-size:13px; font-weight:700; color:var(--yellow); letter-spacing:0.08em; text-transform:uppercase; }
+.reporter-section-title { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
+.reporter-lock-badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:3px; }
+.reporter-lock-badge.mine { background:rgba(255,234,65,0.15); color:var(--yellow); }
+.reporter-lock-badge.locked { background:rgba(255,255,255,0.06); color:var(--grey-dark); }
+.reporter-gates { margin-top:24px; }
+.reporter-members { margin-top:0; }
+.task-row.mine { border-left:2px solid rgba(255,234,65,0.3); }
+
+/* ── OVERRIDE: tracker/reporter section spacing ── */
+#page-tracker section { padding:40px 48px; border-bottom:1px solid rgba(255,255,255,0.06); }
+#page-tracker .section-label { font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--grey-dark); margin-bottom:6px; }
+#page-tracker .section-title { font-size:24px; font-weight:700; letter-spacing:-0.03em; margin-bottom:32px; }
+#page-tracker footer { padding:28px 48px; border-top:2px solid var(--yellow); display:flex; align-items:center; justify-content:space-between; }
+#page-overview section { padding:40px 48px; border-bottom:1px solid rgba(255,255,255,0.06); }
+#page-overview .section-label { font-size:13px; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--grey-dark); margin-bottom:6px; }
+#page-overview .section-title { font-size:24px; font-weight:700; letter-spacing:-0.03em; margin-bottom:32px; }
+#page-overview footer { padding:28px 48px; border-top:2px solid var(--yellow); display:flex; align-items:center; justify-content:space-between; }
+.last-saved { font-size:12px; color:rgba(255,255,255,0.25); }
+
+@media (max-width:900px) {
+  .overview-filter, .reporter-module-bar { padding:0 20px; }
+  .reporter-section-header { padding:20px 20px 0; }
+  .reporter-tab { padding:12px 16px; font-size:13px; }
+  .ov-module-head { flex-wrap:wrap; gap:12px; }
+  .member-select-grid { grid-template-columns:1fr; }
+  .login-box { width:90vw; padding:32px 24px; }
+}
+
+
+/* ── SYNC LOCK OVERLAY ───────────────────────────────────── */
+.sync-lock-overlay {
+  position: fixed; inset: 0; z-index: 300;
+  pointer-events: all; cursor: wait;
+}
+.sync-lock-toast {
+  position: fixed; bottom: 72px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: #1a1c1f; border: 1px solid rgba(255,255,255,0.12);
+  border-left: 3px solid var(--yellow);
+  border-radius: 6px; padding: 12px 20px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; font-weight: 600; color: var(--white);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  opacity: 0; transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none; white-space: nowrap;
+  z-index: 301;
+}
+.sync-lock-toast.visible {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+.sync-lock-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(255,234,65,0.2);
+  border-top-color: var(--yellow);
+  animation: spin 0.7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+</style>
+
+<body>
+
+<!-- SYNC LOCK -->
+<div class="sync-lock-overlay" id="sync-lock-overlay" style="display:none"></div>
+<div class="sync-lock-toast" id="sync-lock-toast">
+  <div class="sync-lock-spinner"></div>
+  <span>資料同步中，請稍候...</span>
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div class="login-logo-row">
+      <div class="login-logo-mark"></div>
+      <div class="login-logo-text">BizCivilization · BB6</div>
+    </div>
+    <div class="login-box-title">歡迎回來</div>
+    <div class="login-box-sub">請選擇你的名字以繼續填報進度</div>
+    <div class="member-select-grid">
+      <button class="member-select-btn ken" onclick="selectMember('Ken','#2563EB')">
+        <div class="msb-initial">K</div>
+        <div class="msb-name">Ken</div>
+        <div class="msb-role">翻譯・剪輯・字幕</div>
+      </button>
+      <button class="member-select-btn daniel" onclick="selectMember('Daniel','#16A34A')">
+        <div class="msb-initial">D</div>
+        <div class="msb-name">Daniel</div>
+        <div class="msb-role">審稿・題目・QC</div>
+      </button>
+      <button class="member-select-btn ellen" onclick="selectMember('Ellen','#EA580C')">
+        <div class="msb-initial">E</div>
+        <div class="msb-name">Ellen</div>
+        <div class="msb-role">排版・設計・上架</div>
+      </button>
+      <button class="member-select-btn emily" onclick="selectMember('Emily','#EC4899')">
+        <div class="msb-initial">Em</div>
+        <div class="msb-name">Emily</div>
+        <div class="msb-role">錄製・逐字稿・摘要</div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFIED HEADER -->
+<header>
+  <div class="logo-area">
+    <div class="logo-mark"></div>
+    <div class="logo-text">BizCivilization</div>
+  </div>
+  <div class="page-tabs">
+    <button class="page-tab active" id="tab-flow" onclick="switchPage('flow')">
+      <span class="tab-dot"></span>流程分工
+    </button>
+    <button class="page-tab" id="tab-overview" onclick="switchPage('overview')">
+      <span class="tab-dot"></span>整體專案進度
+    </button>
+    <button class="page-tab" id="tab-tracker" onclick="switchPage('tracker')">
+      <span class="tab-dot"></span>進度填報
+    </button>
+  </div>
+  <div class="header-right">
+    <nav id="flow-nav">
+      <a href="#phases">製作階段</a>
+      <a href="#gates">關卡檢查</a>
+      <a href="#team">團隊分工</a>
+      <a href="#personal">個人流程</a>
+      <a href="#outputs">輸出成果</a>
+    </nav>
+    <div id="overview-nav" style="display:none"></div>
+    <div class="tracker-actions" id="tracker-nav" style="display:none">
+      <button class="btn btn-ghost" onclick="exportCSV()">匯出 CSV</button>
+    </div>
+    <div class="login-chip" id="login-chip">
+      <span class="login-avatar" id="login-avatar">?</span>
+      <span class="login-name" id="login-name">未登入</span>
+      <button class="login-switch" onclick="showLogin()">切換</button>
+    </div>
+  </div>
+</header>
+
+<div class="page active" id="page-flow">
+<div class="hero">
+  <div class="hero-tag">Business Booster 6</div>
+  <h1>課程製作<span>流程</span><br>與工作分配圖</h1>
+  <p class="hero-sub">從內容在地化到正式上架，五個製作關卡、四位負責人，確保每一個環節有序推進。</p>
+</div>
+
+<!-- SECTION 1: PHASES -->
+<section id="phases">
+  <div class="section-header">
+    <div>
+      <div class="section-label">五大製作關卡</div>
+      <div class="section-title">課程製作流程</div>
+    </div>
+  </div>
+
+  <div class="phases-grid">
+
+    <!-- Gate 1 -->
+    <div class="phase-card">
+      <div class="phase-num">Gate 1</div>
+      <div class="phase-name">翻譯基礎完成</div>
+      <div class="phase-goal">交付：80% 中文課程內容</div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-1</div>
+          <div class="task-name">簡報翻譯（含審稿）</div>
+          <div class="task-owner owner-ken">Ken</div>
+        </div>
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-2</div>
+          <div class="task-name">中文字幕製作</div>
+          <div class="task-owner owner-ken">Ken</div>
+        </div>
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-3</div>
+          <div class="task-name">題目翻譯或改寫</div>
+          <div style="display:flex;gap:4px">
+            <div class="task-owner owner-ken">Ken</div>
+            <div class="task-owner owner-daniel">Daniel</div>
+          </div>
+        </div>
+        <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px; margin-top:4px;">
+          <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">獨立平行</div>
+          <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
+            <div class="task-num" style="background:rgba(234,88,12,0.12);color:var(--ellen)">1-4</div>
+            <div class="task-name">教材封面、封底設計</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:rgba(255,234,65,0.05);border:1px solid rgba(255,234,65,0.12);border-radius:3px;font-size:13px;color:rgba(255,234,65,0.5);line-height:1.6;">
+        1-1 → 1-2 → 1-3 依序；1-4 獨立同時進行
+      </div>
+    </div>
+
+    <!-- Gate 2 -->
+    <div class="phase-card">
+      <div class="phase-num">Gate 2</div>
+      <div class="phase-name">文字內容凍結</div>
+      <div class="phase-goal">交付：95% 定稿中文內容</div>
+      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
+        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
+        <div class="task-list">
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--daniel)">2-1</div>
+            <div class="task-name">簡報排版＋動畫確認</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--daniel)">2-2</div>
+            <div class="task-name">中文內容審稿</div>
+            <div class="task-owner owner-daniel">Daniel</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:16px;padding:14px;background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
+        <div style="font-weight:700;color:var(--daniel);margin-bottom:6px;font-size:13px;">審稿範圍</div>
+        翻譯一致性 · 專有名詞 · 語氣統一<br>台灣中文在地化 · 題目用詞合理性
+      </div>
+    </div>
+
+    <!-- Gate 3 -->
+    <div class="phase-card">
+      <div class="phase-num">Gate 3</div>
+      <div class="phase-name">課程素材產出</div>
+      <div class="phase-goal">交付：完整影片與教材素材</div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-1</div>
+          <div class="task-name">課程影片簡報錄製</div>
+          <div class="task-owner owner-emily">Emily</div>
+        </div>
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-2</div>
+          <div class="task-name">課程影片剪輯</div>
+          <div class="task-owner owner-ken">Ken</div>
+        </div>
+        <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px; margin-top:4px;">
+          <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">同時進行</div>
+          <div class="task-list">
+            <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
+              <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-3</div>
+              <div class="task-name">紙本逐字稿排版</div>
+              <div class="task-owner owner-emily">Emily</div>
+            </div>
+            <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
+              <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-4</div>
+              <div class="task-name">閱讀與表格設計</div>
+              <div style="display:flex;gap:4px">
+                <div class="task-owner owner-daniel">Daniel</div>
+                <div class="task-owner owner-ellen">Ellen</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
+        3-1 → 3-2 依序；3-3 依賴 3-1；3-4 依賴 2-2
+      </div>
+    </div>
+
+    <!-- Gate 4 -->
+    <div class="phase-card">
+      <div class="phase-num">Gate 4</div>
+      <div class="phase-name">上架執行</div>
+      <div class="phase-goal">交付：課程正式上架</div>
+      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
+        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
+        <div class="task-list">
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-1</div>
+            <div class="task-name">學習目標、成果、時間碼摘要生成</div>
+            <div class="task-owner owner-emily">Emily</div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-2</div>
+            <div class="task-name">紙本講義組合</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-3</div>
+            <div class="task-name">英文字幕製作</div>
+            <div class="task-owner owner-ken">Ken</div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-4</div>
+            <div class="task-name">影片與字幕上架</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:rgba(234,88,12,0.06);border:1px solid rgba(234,88,12,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
+        4-1、4-3、4-4 依賴 3-2；4-2 依賴 3-3、3-4
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Gate 5 -->
+  <div style="margin-top:2px;">
+    <div class="phase-card" style="border-top: 3px solid var(--phase5);">
+      <div class="phase-num" style="color:var(--phase5)">Gate 5</div>
+      <div class="phase-name">開課前 QC</div>
+      <div class="phase-goal">交付：正式開課</div>
+      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
+        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
+        <div class="task-list">
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(8,145,178,0.15);color:#67E8F9">5-1</div>
+            <div class="task-name">字幕＋逐字稿 Final QC</div>
+            <div style="display:flex;gap:4px">
+              <div class="task-owner owner-ken">Ken</div>
+              <div class="task-owner owner-daniel">Daniel</div>
+            </div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(8,145,178,0.15);color:#67E8F9">5-2</div>
+            <div class="task-name">上架後平台適性測試</div>
+            <div class="task-owner owner-daniel">Daniel</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: GATES CHECKLIST -->
+<section id="gates">
+  <div class="section-header">
+    <div>
+      <div class="section-label">重要提醒</div>
+      <div class="section-title">關卡檢查清單</div>
+    </div>
+  </div>
+  <div class="gates-grid">
+    <div class="gate-card">
+      <div class="gate-card-title">Gate 1</div>
+      <div class="gate-card-sub">翻譯基礎完成</div>
+      <div class="check-item"><div class="check-dot"></div>簡報翻譯審稿完成（1-1）</div>
+      <div class="check-item"><div class="check-dot"></div>中文字幕製作完成（1-2）</div>
+      <div class="check-item"><div class="check-dot"></div>題目翻譯或改寫完成（1-3）</div>
+      <div class="check-item"><div class="check-dot"></div>封面封底可獨立推進（1-4）</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：2-1 排版、2-2 審稿</div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-card-title">Gate 2</div>
+      <div class="gate-card-sub">文字內容凍結</div>
+      <div class="check-item"><div class="check-dot"></div>簡報排版＋動畫確認完成（2-1）</div>
+      <div class="check-item"><div class="check-dot"></div>中文內容審稿完成（2-2）</div>
+      <div class="check-item"><div class="check-dot"></div>翻譯一致性、術語統一</div>
+      <div class="check-item"><div class="check-dot"></div>台灣中文在地化確認</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：所有中期製作</div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-card-title">Gate 3</div>
+      <div class="gate-card-sub">課程素材產出</div>
+      <div class="check-item"><div class="check-dot"></div>影片錄製與剪輯完成（3-1、3-2）</div>
+      <div class="check-item"><div class="check-dot"></div>逐字稿排版完成（3-3）</div>
+      <div class="check-item"><div class="check-dot"></div>閱讀與表格設計完成（3-4）</div>
+      <div class="check-item"><div class="check-dot"></div>所有素材檔案完整</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：上架執行</div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-card-title">Gate 4</div>
+      <div class="gate-card-sub">上架執行</div>
+      <div class="check-item"><div class="check-dot"></div>學習目標、時間碼摘要（4-1）</div>
+      <div class="check-item"><div class="check-dot"></div>紙本講義組合完成（4-2）</div>
+      <div class="check-item"><div class="check-dot"></div>英文字幕製作完成（4-3）</div>
+      <div class="check-item"><div class="check-dot"></div>影片與字幕上架完成（4-4）</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：開課前 QC</div>
+    </div>
+    <div class="gate-card">
+      <div class="gate-card-title">Gate 5</div>
+      <div class="gate-card-sub">開課前 QC</div>
+      <div class="check-item"><div class="check-dot"></div>字幕＋逐字稿 Final QC（5-1）</div>
+      <div class="check-item"><div class="check-dot"></div>平台適性測試通過（5-2）</div>
+      <div class="check-item"><div class="check-dot"></div>中英文字幕最終對齊</div>
+      <div class="check-item"><div class="check-dot"></div>全課程最終確認</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">輸出：正式開課</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: TEAM -->
+<section id="team">
+  <div class="section-header">
+    <div>
+      <div class="section-label">團隊分工總覽</div>
+      <div class="section-title">負責人與工作項目</div>
+    </div>
+  </div>
+  <div class="team-grid">
+    <div class="member-card ken">
+      <div class="member-name">Ken</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">1-1</span>簡報翻譯（含審稿）</div>
+      <div class="member-task"><span class="member-task-num">1-2</span>中文字幕製作</div>
+      <div class="member-task"><span class="member-task-num">1-3</span>題目翻譯或改寫</div>
+      <div class="member-task"><span class="member-task-num">3-2</span>課程影片剪輯</div>
+      <div class="member-task"><span class="member-task-num">4-3</span>英文字幕製作</div>
+      <div class="member-task"><span class="member-task-num">5-1</span>字幕＋逐字稿 Final QC</div>
+    </div>
+    <div class="member-card daniel">
+      <div class="member-name">Daniel</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">1-3</span>題目翻譯或改寫</div>
+      <div class="member-task"><span class="member-task-num">2-2</span>中文內容審稿</div>
+      <div class="member-task"><span class="member-task-num">3-4</span>閱讀與表格設計</div>
+      <div class="member-task"><span class="member-task-num">5-1</span>字幕＋逐字稿 Final QC</div>
+      <div class="member-task"><span class="member-task-num">5-2</span>上架後平台適性測試</div>
+    </div>
+    <div class="member-card ellen">
+      <div class="member-name">Ellen</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">1-4</span>教材封面、封底設計</div>
+      <div class="member-task"><span class="member-task-num">2-1</span>簡報排版＋動畫確認</div>
+      <div class="member-task"><span class="member-task-num">3-4</span>閱讀與表格設計</div>
+      <div class="member-task"><span class="member-task-num">4-2</span>紙本講義組合</div>
+      <div class="member-task"><span class="member-task-num">4-4</span>影片與字幕上架</div>
+    </div>
+    <div class="member-card emily">
+      <div class="member-name">Emily</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">3-1</span>課程影片簡報錄製</div>
+      <div class="member-task"><span class="member-task-num">3-3</span>紙本逐字稿排版</div>
+      <div class="member-task"><span class="member-task-num">4-1</span>學習目標、成果、時間碼摘要生成</div>
+    </div>
+  </div>
+  <div class="collab-bar" style="margin-top:24px;">
+    <div class="collab-item"><strong>跨人員合作：</strong></div>
+    <div class="collab-item">題目翻譯或改寫（Ken ↔ Daniel）</div>
+    <div class="collab-item">閱讀與表格設計（Daniel ↔ Ellen）</div>
+    <div class="collab-item">開課前 QC（Ken ↔ Daniel）</div>
+  </div>
+</section>
+
+<!-- SECTION 4: PERSONAL FLOW -->
+<section id="personal">
+  <div class="section-header">
+    <div>
+      <div class="section-label">個人視角</div>
+      <div class="section-title">我的工作節點與交接關係</div>
+    </div>
+  </div>
+
+  <div class="accordion">
+
+    <!-- KEN -->
+    <div class="acc-item ken">
+      <button class="acc-trigger" onclick="toggleAcc(this)">
+        <div class="acc-trigger-left">
+          <span class="acc-name ken-text">Ken</span>
+          <span class="acc-count">6 項工作</span>
+        </div>
+        <div class="acc-trigger-right">
+          <span class="acc-tags">
+            <span class="acc-tag gate-badge-1">Gate 1</span>
+            <span class="acc-tag gate-badge-3">Gate 3</span>
+            <span class="acc-tag gate-badge-4">Gate 4</span>
+            <span class="acc-tag gate-badge-5">Gate 5</span>
+          </span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <div class="personal-flow">
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-1</span></div>
+              <div class="pf-task-name">簡報翻譯（含審稿）</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">無，可直接開始</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 2-1</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-2</span></div>
+              <div class="pf-task-name">中文字幕製作</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">1-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-emily">Emily → 3-3</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-3</span></div>
+              <div class="pf-task-name">題目翻譯或改寫</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">1-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 2-2</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-2</span></div>
+              <div class="pf-task-name">課程影片剪輯</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-emily">Emily 3-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">Emily → 4-1；Ellen → 4-4；Ken → 4-3</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-3</span></div>
+              <div class="pf-task-name">英文字幕製作</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">3-2 剪輯完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ken-color"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-1</span></div>
+              <div class="pf-task-name">字幕＋逐字稿 Final QC</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DANIEL -->
+    <div class="acc-item daniel">
+      <button class="acc-trigger" onclick="toggleAcc(this)">
+        <div class="acc-trigger-left">
+          <span class="acc-name daniel-text">Daniel</span>
+          <span class="acc-count">5 項工作</span>
+        </div>
+        <div class="acc-trigger-right">
+          <span class="acc-tags">
+            <span class="acc-tag gate-badge-1">Gate 1</span>
+            <span class="acc-tag gate-badge-2">Gate 2</span>
+            <span class="acc-tag gate-badge-3">Gate 3</span>
+            <span class="acc-tag gate-badge-5">Gate 5</span>
+          </span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <div class="personal-flow">
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-3</span></div>
+              <div class="pf-task-name">題目翻譯或改寫</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 1-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">2-2</span></div>
+              <div class="pf-task-name">中文內容審稿</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 1 全部完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">Gate 3 解鎖</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-4</span></div>
+              <div class="pf-task-name">閱讀與表格設計</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">2-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ellen">Ellen</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 4-2</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-1</span></div>
+              <div class="pf-task-name">字幕＋逐字稿 Final QC</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-2</span></div>
+              <div class="pf-task-name">上架後平台適性測試</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELLEN -->
+    <div class="acc-item ellen">
+      <button class="acc-trigger" onclick="toggleAcc(this)">
+        <div class="acc-trigger-left">
+          <span class="acc-name ellen-text">Ellen</span>
+          <span class="acc-count">5 項工作</span>
+        </div>
+        <div class="acc-trigger-right">
+          <span class="acc-tags">
+            <span class="acc-tag gate-badge-1">Gate 1</span>
+            <span class="acc-tag gate-badge-2">Gate 2</span>
+            <span class="acc-tag gate-badge-3">Gate 3</span>
+            <span class="acc-tag gate-badge-4">Gate 4</span>
+          </span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <div class="personal-flow">
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-4</span></div>
+              <div class="pf-task-name">教材封面、封底設計</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">無，可直接開始</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">4-2 紙本講義</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">2-1</span></div>
+              <div class="pf-task-name">簡報排版＋動畫確認</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 1-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-emily">Emily → 3-1</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-4</span></div>
+              <div class="pf-task-name">閱讀與表格設計</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">Daniel 2-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">4-2 紙本講義</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-2</span></div>
+              <div class="pf-task-name">紙本講義組合</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">3-3、3-4 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-4</span></div>
+              <div class="pf-task-name">影片與字幕上架</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 3-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMILY -->
+    <div class="acc-item emily">
+      <button class="acc-trigger" onclick="toggleAcc(this)">
+        <div class="acc-trigger-left">
+          <span class="acc-name emily-text">Emily</span>
+          <span class="acc-count">3 項工作</span>
+        </div>
+        <div class="acc-trigger-right">
+          <span class="acc-tags">
+            <span class="acc-tag gate-badge-3">Gate 3</span>
+            <span class="acc-tag gate-badge-4">Gate 4</span>
+          </span>
+          <span class="acc-chevron">▾</span>
+        </div>
+      </button>
+      <div class="acc-body">
+        <div class="personal-flow">
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot emily-color"></div><div class="pf-line emily-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-1</span></div>
+              <div class="pf-task-name">課程影片簡報錄製</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ellen">Ellen 2-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ken">Ken → 3-2 剪輯</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot emily-color"></div><div class="pf-line emily-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-3</span></div>
+              <div class="pf-task-name">紙本逐字稿排版</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-emily">3-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 4-2</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot emily-color"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-1</span></div>
+              <div class="pf-task-name">學習目標、成果、時間碼摘要生成</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 3-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+function toggleAcc(btn) {
+  const item = btn.closest('.acc-item');
+  const body = item.querySelector('.acc-body');
+  const chevron = btn.querySelector('.acc-chevron');
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+</script>
+
+<!-- SECTION 5: OUTPUTS -->
+<section id="outputs">
+  <div class="section-header">
+    <div>
+      <div class="section-label">輸出成果</div>
+      <div class="section-title">最終交付項目</div>
+    </div>
+  </div>
+  <div class="outputs-row">
+    <div class="output-card"><div class="output-icon">🎬</div><div class="output-name">完整課程影片</div></div>
+    <div class="output-card"><div class="output-icon">💬</div><div class="output-name">中文字幕</div></div>
+    <div class="output-card"><div class="output-icon">🌏</div><div class="output-name">英文字幕</div></div>
+    <div class="output-card"><div class="output-icon">📄</div><div class="output-name">閱讀與表格附件</div></div>
+    <div class="output-card"><div class="output-icon">📖</div><div class="output-name">紙本講義</div></div>
+    <div class="output-card"><div class="output-icon">🌐</div><div class="output-name">LMS 上架完成</div></div>
+  </div>
+</section>
+
+
+  <footer>
+    <div class="footer-brand">商明國際 BizCivilization</div>
+    <div class="footer-note">BB6 課程製作流程與工作分配 · Your Navigator for Structured Growth</div>
+  </footer>
+</div>
+
+
+
+<!-- ── PAGE: 整體專案進度 ──────────────────────────── -->
+<div class="page" id="page-overview">
+  <div class="overview-filter">
+    <button class="ov-tab active" id="ovtab-all" onclick="switchOvTab('all')">全部模組</button>
+    <button class="ov-tab" id="ovtab-C2" onclick="switchOvTab('C2')">C2</button>
+    <button class="ov-tab" id="ovtab-C3" onclick="switchOvTab('C3')">C3</button>
+    <button class="ov-tab" id="ovtab-C4" onclick="switchOvTab('C4')">C4</button>
+  </div>
+
+  <section>
+    <div class="section-label">整體專案進度</div>
+    <div class="section-title">各模組完成狀況</div>
+
+    <!-- Module summary cards -->
+    <div class="ov-grid" id="ov-module-cards"></div>
+
+    <!-- Section detail table -->
+    <div style="margin-top:8px">
+      <div class="section-label" style="margin-bottom:16px">小節細項</div>
+      <table class="ov-section-table" id="ov-section-table">
+        <thead>
+          <tr>
+            <th>模組</th>
+            <th>小節</th>
+            <th>Gate 1</th>
+            <th>Gate 2</th>
+            <th>Gate 3</th>
+            <th>Gate 4</th>
+            <th>Gate 5</th>
+            <th>完成度</th>
+            <th>狀態</th>
+          </tr>
+        </thead>
+        <tbody id="ov-section-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">商明國際 BizCivilization</div>
+    <div class="footer-note">BB6 整體專案進度 · 唯讀視圖</div>
+    <div class="last-saved" id="ov-last-synced">載入中...</div>
+  </footer>
+</div>
+
+<!-- ── PAGE: 進度填報 ──────────────────────────────── -->
+<div class="page" id="page-tracker">
+
+  <!-- Module + section selector bar -->
+  <div class="reporter-module-bar">
+    <div class="reporter-tabs">
+      <button class="reporter-tab active" id="rtab-C2" onclick="switchRModule('C2')">
+        <span class="module-dot"></span>C2
+      </button>
+      <button class="reporter-tab" id="rtab-C3" onclick="switchRModule('C3')">
+        <span class="module-dot"></span>C3
+      </button>
+      <button class="reporter-tab" id="rtab-C4" onclick="switchRModule('C4')">
+        <span class="module-dot"></span>C4
+      </button>
+    </div>
+    <div class="section-picker">
+      <label>小節</label>
+      <select class="section-select" id="section-select" onchange="switchSection(this.value)"></select>
+    </div>
+    <div class="sync-status" id="sync-status">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-text">連線中...</span>
+    </div>
+  </div>
+
+  <!-- Section header -->
+  <div class="reporter-section-header">
+    <div class="reporter-section-tag" id="reporter-section-tag">C2 · 2.1</div>
+    <div class="reporter-lock-badge mine" id="reporter-my-badge">你的任務</div>
+  </div>
+
+  <!-- Gates grid -->
+  <section style="padding-top:20px">
+    <div class="section-label">五大製作關卡</div>
+    <div class="section-title" id="reporter-section-title">2.1 任務進度填報</div>
+    <div class="gates-grid reporter-gates" id="gates-grid"></div>
+  </section>
+
+  <!-- Members overview for this section -->
+  <section id="members" class="reporter-members">
+    <div class="section-label">個人視角</div>
+    <div class="section-title">本小節組員狀態</div>
+    <div class="members-grid" id="members-grid"></div>
+  </section>
+
+  <footer>
+    <div class="footer-brand">商明國際 BizCivilization</div>
+    <div class="footer-note">BB6 進度填報 · Your Navigator for Structured Growth</div>
+    <div class="last-saved" id="last-saved">尚未同步</div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const SHEET_ID        = '1vVcyNStGct_UrJpCwvzuUws1nStIXsxd91Z87lWVwgE';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3GBc6M8nYf7A2uNPT9kweMD7gAphvqo1wI0gahLmgQTBikIz06_dYy35HBZVTJa0A/exec';
+const MODULES   = ['C2','C3','C4'];
+const POLL_MS   = 6000;
+const SECTIONS_PER_MODULE = 20;
+
+const TASKS = [
+  { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],            prereqs:[],                        moduleLevel:false },
+  { id:'1-2', gate:1, name:'中文字幕製作',                 owners:['Ken'],            prereqs:['1-1'],                   moduleLevel:false },
+  { id:'1-3', gate:1, name:'題目翻譯或改寫',               owners:['Ken','Daniel'],   prereqs:['1-2'],                   moduleLevel:false },
+  { id:'1-4', gate:1, name:'教材封面、封底設計',            owners:['Ellen'],          prereqs:[],                        moduleLevel:true  },
+  { id:'2-1', gate:2, name:'簡報排版＋動畫確認',            owners:['Ellen'],          prereqs:['1-1'],                   moduleLevel:false },
+  { id:'2-2', gate:2, name:'中文內容審稿',                 owners:['Daniel'],         prereqs:['1-2'],                   moduleLevel:false },
+  { id:'3-1', gate:3, name:'課程影片簡報錄製',              owners:['Emily'],          prereqs:['2-1','2-2'],             moduleLevel:false },
+  { id:'3-2', gate:3, name:'課程影片剪輯',                 owners:['Ken'],            prereqs:['3-1'],                   moduleLevel:false },
+  { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],          prereqs:['2-2'],                   moduleLevel:false },
+  { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],                   moduleLevel:false },
+  { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],          prereqs:['2-2'],                   moduleLevel:false },
+  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],          prereqs:['3-3','3-4'],             moduleLevel:false },
+  { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],            prereqs:['1-3'],                   moduleLevel:false },
+  { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],          prereqs:['2-2','3-2'],             moduleLevel:false },
+  { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken','Daniel'],   prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false },
+  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],         prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false },
+];
+const GATES = [
+  { num:1, name:'翻譯基礎完成',  goal:'交付：80% 中文課程內容',   unlock:'解鎖：排版與審稿' },
+  { num:2, name:'文字內容凍結',  goal:'交付：95% 定稿中文內容',   unlock:'解鎖：所有中期製作' },
+  { num:3, name:'課程素材產出',  goal:'交付：完整影片與教材素材',  unlock:'解鎖：上架執行' },
+  { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
+  { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
+];
+const MEMBERS     = ['Ken','Daniel','Ellen','Emily'];
+const OWNER_CLASS = { Ken:'ken',Daniel:'daniel',Ellen:'ellen',Emily:'emily' };
+const CHIP_CLASS  = { Ken:'chip-ken',Daniel:'chip-daniel',Ellen:'chip-ellen',Emily:'chip-emily' };
+const MEMBER_COLORS = { Ken:'#2563EB',Daniel:'#16A34A',Ellen:'#EA580C',Emily:'#EC4899' };
+const GATE_COLORS = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
+
+/* ═══════════════════════════════════════════════════════════
+   STATE
+   allScores[module][section][taskId] = 0-10
+   e.g. allScores['C2']['2.1']['1-1'] = 7
+═══════════════════════════════════════════════════════════ */
+let currentMember  = null;
+let currentModule  = 'C2';
+let currentSection = '2.1';
+let currentOvTab   = 'all';
+let pollTimer      = null;
+let pendingWrite   = null;
+let isSyncing      = false;
+
+// Build empty state for all modules × sections × tasks
+let allScores = {};
+function initScores() {
+  MODULES.forEach(mod => {
+    allScores[mod] = {};
+    allScores[mod]['__module__'] = {};
+    TASKS.filter(t => t.moduleLevel).forEach(t => allScores[mod]['__module__'][t.id] = 0);
+    const prefix = mod.replace('C','');
+    for (let i = 1; i <= SECTIONS_PER_MODULE; i++) {
+      const sec = `${prefix}.${i}`;
+      allScores[mod][sec] = {};
+      TASKS.filter(t => !t.moduleLevel).forEach(t => allScores[mod][sec][t.id] = 0);
+    }
+  });
+}
+initScores();
+
+function getSections(mod) {
+  const prefix = mod.replace('C','');
+  return Array.from({length: SECTIONS_PER_MODULE}, (_,i) => `${prefix}.${i+1}`);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════════════════════ */
+function showLogin() {
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+function selectMember(name, color) {
+  currentMember = name;
+  sessionStorage.setItem('bb6-member', name);
+  const avatar = document.getElementById('login-avatar');
+  const nameEl = document.getElementById('login-name');
+  const chip   = document.getElementById('login-chip');
+  avatar.textContent = name[0];
+  avatar.style.background = color;
+  nameEl.textContent = name;
+  chip.style.display = 'flex';
+  document.getElementById('login-overlay').style.display = 'none';
+  renderGates();
+  renderMembers();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE / MODULE / SECTION SWITCHING
+═══════════════════════════════════════════════════════════ */
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('tab-' + page).classList.add('active');
+  document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
+  document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
+  document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
+  window.scrollTo({ top:0, behavior:'smooth' });
+  if (page === 'overview') renderOverview();
+}
+
+function switchRModule(mod) {
+  currentModule = mod;
+  MODULES.forEach(m => document.getElementById('rtab-'+m)?.classList.toggle('active', m===mod));
+  populateSectionSelect();
+  const sections = getSections(mod);
+  currentSection = sections[0];
+  document.getElementById('section-select').value = currentSection;
+  updateReporterHeader();
+  renderGates();
+  renderMembers();
+  startPolling();
+}
+
+function populateSectionSelect() {
+  const sel = document.getElementById('section-select');
+  const sections = getSections(currentModule);
+  sel.innerHTML = sections.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+function switchSection(sec) {
+  currentSection = sec;
+  updateReporterHeader();
+  renderGates();
+  renderMembers();
+}
+
+function updateReporterHeader() {
+  const tag = document.getElementById('reporter-section-tag');
+  const title = document.getElementById('reporter-section-title');
+  if (tag)   tag.textContent = `${currentModule} · ${currentSection}`;
+  if (title) title.textContent = `${currentSection} 任務進度填報`;
+}
+
+function switchOvTab(tab) {
+  currentOvTab = tab;
+  document.querySelectorAll('.ov-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ovtab-'+tab)?.classList.add('active');
+  renderOverview();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLOW PAGE ACCORDION
+═══════════════════════════════════════════════════════════ */
+function toggleAcc(btn) {
+  const item = btn.closest('.acc-item');
+  const body = item.querySelector('.acc-body');
+  const chevron = btn.querySelector('.acc-chevron');
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
+  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCORE HELPERS  (operate on currentModule + currentSection)
+═══════════════════════════════════════════════════════════ */
+function getScore(taskId, mod, sec) {
+  mod = mod || currentModule; sec = sec || currentSection;
+  const task = TASKS.find(t => t.id === taskId);
+  if (task && task.moduleLevel) return getModuleScore(taskId, mod);
+  return allScores[mod]?.[sec]?.[taskId] ?? 0;
+}
+function getModuleScore(taskId, mod) {
+  mod = mod || currentModule;
+  return allScores[mod]?.['__module__']?.[taskId] ?? 0;
+}
+function isPrereqMet(taskId, mod, sec) {
+  const task = TASKS.find(t => t.id === taskId);
+  mod = mod || currentModule; sec = sec || currentSection;
+  return task.prereqs.every(p => {
+    const pt = TASKS.find(t => t.id === p);
+    if (pt && pt.moduleLevel) return getModuleScore(p, mod) >= 1;
+    return getScore(p, mod, sec) >= 1;
+  });
+}
+function prereqPct(taskId, mod, sec) {
+  const task = TASKS.find(t => t.id === taskId);
+  if (!task.prereqs.length) return 100;
+  return Math.round(task.prereqs.reduce((s,p)=>s+getScore(p,mod,sec),0)/task.prereqs.length*10);
+}
+function getGateTasks(n)  { return TASKS.filter(t => t.gate === n); }
+function gatePct(n, mod, sec) {
+  const ts = getGateTasks(n);
+  return Math.round(ts.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(ts.length*10)*100);
+}
+function sectionPct(mod, sec) {
+  return Math.round(TASKS.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(TASKS.length*10)*100);
+}
+function modulePct(mod) {
+  const secs = getSections(mod);
+  const total = secs.reduce((s,sec)=>s+sectionPct(mod,sec),0);
+  return Math.round(total/secs.length);
+}
+function isGateDone(n, mod, sec) { return getGateTasks(n).every(t => getScore(t.id,mod,sec)>=10); }
+
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE SHEETS  — read via public gviz CSV
+   Sheet columns: A=section, B..Q = task scores (1-1..5-2), R=updated_by, S=last_updated
+   TASK_COL_INDEX maps taskId → column letter
+═══════════════════════════════════════════════════════════ */
+const TASK_COL = {};
+const COLS = 'BCDEFGHIJKLMNOPQ'.split('');
+TASKS.forEach((t,i) => { TASK_COL[t.id] = COLS[i]; });
+
+async function fetchModuleFromSheet(mod) {
+  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${mod}&range=A2:Q22`;
+  const res  = await fetch(url);
+  if (!res.ok) throw new Error('fetch failed ' + res.status);
+  const csv  = await res.text();
+  const rows = csv.trim().split('\n');
+  const result = {};
+  const sectionTasks = TASKS.filter(t => !t.moduleLevel);
+  const moduleTasks  = TASKS.filter(t => t.moduleLevel);
+  rows.forEach(row => {
+    const cells = row.split(',').map(c => c.replace(/"/g,'').trim());
+    const sec   = cells[0];
+    if (!sec) return;
+    if (sec === '__module__') {
+      result['__module__'] = {};
+      moduleTasks.forEach((t,i) => {
+        const val = parseInt(cells[i+1]);
+        result['__module__'][t.id] = isNaN(val) ? 0 : Math.min(10,Math.max(0,val));
+      });
+    } else {
+      result[sec] = {};
+      sectionTasks.forEach((t,i) => {
+        const val = parseInt(cells[i+1]);
+        result[sec][t.id] = isNaN(val) ? 0 : Math.min(10,Math.max(0,val));
+      });
+    }
+  });
+  return result;
+}
+
+/* ── WRITE QUEUE ────────────────────────────────────────────
+   Accumulate all changes, flush as a single batch request.
+   Debounce: wait 1.2s after last change before sending.
+   Retry: up to 3 times with 2s backoff on failure.
+══════════════════════════════════════════════════════════ */
+/* ── UI LOCK ──────────────────────────────────────────────── */
+function lockUI() {
+  document.getElementById('sync-lock-overlay').style.display = 'block';
+  const toast = document.getElementById('sync-lock-toast');
+  toast.classList.add('visible');
+}
+function unlockUI() {
+  document.getElementById('sync-lock-overlay').style.display = 'none';
+  const toast = document.getElementById('sync-lock-toast');
+  toast.classList.remove('visible');
+}
+
+let writeQueue   = {};   // key: "mod|sec|taskId" → {mod,sec,taskId,score,member,row,col}
+let flushTimer   = null;
+let retryCount   = 0;
+const MAX_RETRY  = 3;
+
+function taskToRowCol(mod, sec, taskId) {
+  const taskObj      = TASKS.find(t => t.id === taskId);
+  const sectionTasks = TASKS.filter(t => !t.moduleLevel);
+  const moduleTasks  = TASKS.filter(t => t.moduleLevel);
+  let row, col;
+  if (taskObj && taskObj.moduleLevel) {
+    row = 22;
+    col = moduleTasks.findIndex(t => t.id === taskId) + 2;
+  } else {
+    const sections = getSections(mod);
+    const rowIdx   = sections.indexOf(sec);
+    row = rowIdx + 2;
+    col = sectionTasks.findIndex(t => t.id === taskId) + 2;
+  }
+  return { row, col };
+}
+
+function queueWrite(mod, sec, taskId, score, memberName) {
+  const key       = `${mod}|${sec}|${taskId}`;
+  const { row, col } = taskToRowCol(mod, sec, taskId);
+  writeQueue[key] = { mod, sec, taskId, score, member: memberName, row, col };
+  retryCount = 0;
+
+  if (flushTimer) clearTimeout(flushTimer);
+  setSyncStatus('syncing', '儲存中...');
+  flushTimer = setTimeout(flushQueue, 1200);
+}
+
+async function flushQueue() {
+  const items = Object.values(writeQueue);
+  if (items.length === 0) return;
+
+  // Group by module (each module = one request)
+  const byModule = {};
+  items.forEach(item => {
+    if (!byModule[item.mod]) byModule[item.mod] = [];
+    byModule[item.mod].push(item);
+  });
+
+  lockUI();
+  try {
+    await Promise.all(Object.entries(byModule).map(([mod, modItems]) =>
+      sendBatch(mod, modItems)
+    ));
+    writeQueue = {};   // clear only on success
+    retryCount = 0;
+    unlockUI();
+    setSyncStatus('ok', '即時同步中');
+    updateLastSynced('last-saved');
+  } catch(e) {
+    retryCount++;
+    if (retryCount <= MAX_RETRY) {
+      const wait = retryCount * 2000;
+      unlockUI(); // unlock so user sees status, re-lock on next attempt
+      setSyncStatus('syncing', `重試中（${retryCount}/${MAX_RETRY}）...`);
+      flushTimer = setTimeout(flushQueue, wait);
+    } else {
+      unlockUI();
+      setSyncStatus('error', '寫入失敗，請重新整理');
+      retryCount = 0;
+    }
+  }
+}
+
+async function sendBatch(mod, items) {
+  const response = await fetch(APPS_SCRIPT_URL, {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body:    JSON.stringify({
+      module:  mod,
+      batch:   items.map(i => ({ row: i.row, col: i.col, score: i.score })),
+      member:  items[0].member,
+      updated: new Date().toISOString()
+    })
+  });
+  if (!response.ok) throw new Error('HTTP ' + response.status);
+  const result = await response.json();
+  if (!result.ok) throw new Error(result.error || 'batch write failed');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SYNC UI
+═══════════════════════════════════════════════════════════ */
+function setSyncStatus(state, text) {
+  const dot   = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-text');
+  if (!dot) return;
+  dot.className = 'sync-dot ' + state;
+  if (label) label.textContent = text;
+}
+function updateLastSynced(elId) {
+  const now = new Date();
+  const str = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} 同步`;
+  const el  = document.getElementById(elId || 'last-saved');
+  if (el) el.textContent = str;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POLL LOOP
+═══════════════════════════════════════════════════════════ */
+async function pollSheets() {
+  if (isSyncing) return;
+  try {
+    // Poll current module (reporter page) and all modules (overview)
+    const modsToFetch = [...new Set([currentModule, ...MODULES])];
+    await Promise.all(modsToFetch.map(async mod => {
+      const fresh = await fetchModuleFromSheet(mod);
+      let changed = false;
+      Object.entries(fresh).forEach(([sec, tasks]) => {
+        if (!allScores[mod][sec]) allScores[mod][sec] = {};
+        Object.entries(tasks).forEach(([tid, val]) => {
+          if (val !== allScores[mod][sec][tid]) {
+            allScores[mod][sec][tid] = val;
+            changed = true;
+          }
+        });
+      });
+      if (changed && mod === currentModule) {
+        renderGates();
+        renderMembers();
+      }
+    }));
+    setSyncStatus('ok', '即時同步中');
+    updateLastSynced('last-saved');
+    updateLastSynced('ov-last-synced');
+    // Refresh overview if visible
+    if (document.getElementById('page-overview')?.classList.contains('active')) renderOverview();
+  } catch(e) {
+    setSyncStatus('error', '同步失敗，重試中');
+  }
+}
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollSheets();
+  pollTimer = setInterval(pollSheets, POLL_MS);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UPDATE SCORE
+═══════════════════════════════════════════════════════════ */
+function updateScore(taskId, val) {
+  if (!currentMember) { showLogin(); return; }
+  const task = TASKS.find(t => t.id === taskId);
+  const isOwner = task.owners.includes(currentMember);
+  if (!isOwner) { showToast('這個任務不屬於你'); return; }
+
+  const score  = parseInt(val);
+  if (task.moduleLevel) {
+    allScores[currentModule]['__module__'][taskId] = score;
+  } else {
+    allScores[currentModule][currentSection][taskId] = score;
+  }
+  const safeId = taskId.replace('-','_');
+  const el     = document.getElementById('sval-' + safeId);
+  if (el) el.textContent = score;
+  refreshAll();
+
+  // Queue this change for batched write
+  queueWrite(currentModule, currentSection, taskId, score, currentMember);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER GATES  (reporter page)
+═══════════════════════════════════════════════════════════ */
+function renderGates() {
+  const container = document.getElementById('gates-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  const mod = currentModule, sec = currentSection;
+
+  GATES.forEach(gate => {
+    const tasks = getGateTasks(gate.num);
+    const pct   = gatePct(gate.num, mod, sec);
+    const done  = isGateDone(gate.num, mod, sec);
+    const col   = document.createElement('div');
+    col.className = 'gate-col';
+
+    col.innerHTML = `
+      <div class="gate-header">
+        <div class="gate-num">Gate ${gate.num}</div>
+        <div class="gate-name">${gate.name}</div>
+        <div class="gate-goal">${gate.goal}</div>
+      </div>
+      <div class="gate-progress-row">
+        <div class="gate-progress-track"><div class="gate-progress-fill" id="gfill-${gate.num}" style="width:${pct}%"></div></div>
+        <div class="gate-pct-text" id="gpct-${gate.num}">${pct}%</div>
+      </div>
+      <div class="gate-unlock">
+        <div class="unlock-dot ${done?'on':''}" id="udot-${gate.num}"></div>
+        <span id="utext-${gate.num}">${done?'已解鎖下一關':gate.unlock}</span>
+      </div>`;
+
+    const taskWrap = document.createElement('div');
+    taskWrap.className = 'task-rows';
+
+    tasks.forEach(task => {
+      const score    = getScore(task.id, mod, sec);
+      const prereqOk = isPrereqMet(task.id, mod, sec);
+      const ppct     = prereqPct(task.id, mod, sec);
+      const hasP     = task.prereqs.length > 0;
+      const isOwner  = currentMember && task.owners.includes(currentMember);
+
+      const prereqText = !hasP ? '' : prereqOk
+        ? `<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>`
+        : `<div class="prereq-hint blocked">⬡ 等待前置：${task.prereqs.join('、')}（目前 ${ppct}%）</div>`;
+
+      const chips = task.owners.map(o =>
+        `<span class="owner-chip ${CHIP_CLASS[o]}">${o}</span>`).join('');
+
+      const isBlocked = hasP && !prereqOk;
+      const canEdit   = isOwner && !isBlocked;
+      const row       = document.createElement('div');
+      row.className   = 'task-row' + (isBlocked ? ' blocked' : '') + (isOwner ? ' mine' : '');
+      row.id          = 'task-row-' + task.id.replace('-','_');
+
+      row.innerHTML = `
+        <div class="task-row-top">
+          <div class="task-id-badge chip-${OWNER_CLASS[task.owners[0]]}">${task.id}</div>
+          <div class="task-row-name">${task.name}</div>
+          ${chips}
+        </div>
+        <div class="score-row">
+          <input type="range" class="score-slider" min="0" max="10" step="1"
+            value="${score}" data-task="${task.id}"
+            ${canEdit ? `oninput="updateScore('${task.id}', this.value)"` : 'disabled style="opacity:.35;cursor:not-allowed"'}>
+          <span class="score-val" id="sval-${task.id.replace('-','_')}">${score}</span>
+          <span class="score-denom">/10</span>
+        </div>
+        ${prereqText}`;
+      taskWrap.appendChild(row);
+    });
+
+    col.appendChild(taskWrap);
+    container.appendChild(col);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER MEMBERS  (reporter page — this section)
+═══════════════════════════════════════════════════════════ */
+function renderMembers() {
+  const container = document.getElementById('members-grid');
+  if (!container) return;
+  container.innerHTML = '';
+  const mod = currentModule, sec = currentSection;
+
+  MEMBERS.forEach(member => {
+    const myTasks = TASKS.filter(t => t.owners.includes(member));
+    const myPct   = Math.round(myTasks.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(myTasks.length*10)*100);
+    const done    = myTasks.filter(t => getScore(t.id,mod,sec)>=10).length;
+    const blocked = myTasks.filter(t => !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec)<10);
+    const ready   = myTasks.filter(t => isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec)<10);
+
+    const capacityText = ready.length===0 && done===myTasks.length ? '本小節全部完成 🎉'
+      : ready.length===0 ? `等待前置（${blocked.map(t=>t.id).join('、')}）`
+      : `可進行 ${ready.length} 項：${ready.map(t=>t.id).join('、')}`;
+
+    const bClass = (ready.length>0||done===myTasks.length) ? 'clear':'waiting';
+    const bText  = ready.length>0 ? `✓ ${ready.length} 項可開始`
+      : done===myTasks.length ? '✓ 全部完成'
+      : `⏸ 等待上游：${blocked[0]?.prereqs.join('、')||'-'}`;
+
+    const taskRows = myTasks.map(t => {
+      const sc = getScore(t.id,mod,sec);
+      const iB = !isPrereqMet(t.id,mod,sec) && sc<10;
+      return `<div class="member-task-row">
+        <span class="mtask-id">${t.id}</span>
+        <span class="mtask-name" style="opacity:${iB?.4:1}">${t.name}</span>
+        <div class="mtask-bar-wrap"><div class="mtask-bar" style="width:${sc*10}%"></div></div>
+        <span class="mtask-score" style="opacity:${iB?.35:1}">${sc}</span>
+      </div>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = `member-card ${OWNER_CLASS[member]}`;
+    card.innerHTML = `
+      <div class="member-head">
+        <div class="member-name">${member}</div>
+        <div class="member-meta">${myTasks.length} 項 · ${done} 完成</div>
+      </div>
+      <div class="member-body">
+        <div class="member-stat-row">
+          <div class="member-stat"><div class="member-stat-label">完成度</div><div class="member-stat-val stat-yellow">${myPct}%</div></div>
+          <div class="member-stat"><div class="member-stat-label">可開始</div><div class="member-stat-val ${ready.length>0?'stat-green':'stat-red'}">${ready.length}</div></div>
+          <div class="member-stat"><div class="member-stat-label">待解鎖</div><div class="member-stat-val" style="color:rgba(255,255,255,.4)">${blocked.length}</div></div>
+        </div>
+        <div class="bottleneck-box ${bClass}">${bText}</div>
+        <div class="member-tasks-label">任務詳情</div>
+        ${taskRows}
+        <div class="capacity-box">
+          <div class="capacity-label">本週排程建議</div>
+          <div class="capacity-text">${capacityText}</div>
+        </div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REFRESH ALL  (gate bars + task states in reporter)
+═══════════════════════════════════════════════════════════ */
+function refreshAll() {
+  const mod = currentModule, sec = currentSection;
+  GATES.forEach(gate => {
+    const pct  = gatePct(gate.num, mod, sec);
+    const done = isGateDone(gate.num, mod, sec);
+    const fill = document.getElementById('gfill-'+gate.num);
+    const pEl  = document.getElementById('gpct-'+gate.num);
+    const dot  = document.getElementById('udot-'+gate.num);
+    const utxt = document.getElementById('utext-'+gate.num);
+    if (fill) fill.style.width = pct+'%';
+    if (pEl)  pEl.textContent  = pct+'%';
+    if (dot)  dot.classList.toggle('on', done);
+    if (utxt) utxt.textContent = done?'已解鎖下一關':GATES[gate.num-1].unlock;
+  });
+  TASKS.forEach(task => {
+    const row = document.getElementById('task-row-'+task.id.replace('-','_'));
+    if (!row) return;
+    const prereqOk = isPrereqMet(task.id, mod, sec);
+    const hasP = task.prereqs.length > 0;
+    const isOwner = currentMember && task.owners.includes(currentMember);
+    row.classList.toggle('blocked', hasP && !prereqOk);
+    const hint = row.querySelector('.prereq-hint');
+    if (hint) {
+      if (prereqOk) { hint.className='prereq-hint ok'; hint.textContent='✓ 前置任務有產出，可進行'; }
+      else { hint.className='prereq-hint blocked'; hint.textContent=`⬡ 等待前置：${task.prereqs.join('、')}（${prereqPct(task.id,mod,sec)}%）`; }
+    }
+    const slider = row.querySelector('.score-slider');
+    const valEl  = document.getElementById('sval-'+task.id.replace('-','_'));
+    const sc = getScore(task.id, mod, sec);
+    if (slider) {
+      slider.value = sc;
+      // Re-evaluate disabled state based on prereq + ownership
+      const canEdit = isOwner && !(hasP && !prereqOk);
+      slider.disabled = !canEdit;
+      slider.style.opacity = canEdit ? '' : '0.35';
+      slider.style.cursor  = canEdit ? '' : 'not-allowed';
+    }
+    if (valEl) valEl.textContent = sc;
+  });
+  renderMembers();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER OVERVIEW PAGE
+═══════════════════════════════════════════════════════════ */
+function renderOverview() {
+  const modsToDraw = currentOvTab === 'all' ? MODULES : [currentOvTab];
+
+  // Module summary cards
+  const cardsEl = document.getElementById('ov-module-cards');
+  if (cardsEl) {
+    cardsEl.innerHTML = modsToDraw.map(mod => {
+      const pct = modulePct(mod);
+      const doneSecs = getSections(mod).filter(sec => sectionPct(mod,sec)>=100).length;
+      const gateRows = GATES.map(g => {
+        const gp = Math.round(getSections(mod).reduce((s,sec)=>s+gatePct(g.num,mod,sec),0)/SECTIONS_PER_MODULE);
+        const doneSec = getSections(mod).filter(sec => gatePct(g.num,mod,sec)>=100).length;
+        const color = GATE_COLORS[g.num];
+        return `<div class="ov-gate-row">
+          <div class="ov-gate-label">
+            <span class="ov-gate-num">Gate ${g.num}</span>${g.name}
+          </div>
+          <div class="ov-gate-track"><div class="ov-gate-fill" style="width:${gp}%;background:${color}"></div></div>
+          <div class="ov-gate-pct" style="color:${color}">${gp}%</div>
+          <div class="ov-gate-sections">${doneSec}/${SECTIONS_PER_MODULE} 節</div>
+        </div>`;
+      }).join('');
+      return `<div class="ov-module-card">
+        <div class="ov-module-head">
+          <div class="ov-module-label">模組</div>
+          <div class="ov-module-name">${mod}</div>
+          <div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:${pct}%"></div></div>
+          <div class="ov-module-pct">${pct}%</div>
+          <div class="ov-module-sub">${doneSecs}/${SECTIONS_PER_MODULE} 小節</div>
+        </div>
+        <div class="ov-module-body">${gateRows}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Section detail table
+  const tbody = document.getElementById('ov-section-tbody');
+  if (tbody) {
+    let rows = '';
+    modsToDraw.forEach(mod => {
+      getSections(mod).forEach(sec => {
+        const gPcts = GATES.map(g => gatePct(g.num, mod, sec));
+        const total = sectionPct(mod, sec);
+        const status = total>=100 ? 'done' : total>0 ? 'active' : 'blocked';
+        const statusText = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
+        const miniSegs = TASKS.map(t => {
+          const sc = getScore(t.id, mod, sec);
+          return `<div class="ov-mini-seg ${sc>0?'filled':''}"></div>`;
+        }).join('');
+        rows += `<tr>
+          <td>${mod}</td>
+          <td style="font-weight:600">${sec}</td>
+          ${gPcts.map((p,i)=>`<td style="color:${GATE_COLORS[i+1]};font-weight:600">${p}%</td>`).join('')}
+          <td>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="ov-mini-bar">${miniSegs}</div>
+              <span style="font-size:12px;font-weight:700">${total}%</span>
+            </div>
+          </td>
+          <td><span class="ov-pill ${status}">${statusText}</span></td>
+        </tr>`;
+      });
+    });
+    tbody.innerHTML = rows;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CSV EXPORT
+═══════════════════════════════════════════════════════════ */
+function exportCSV() {
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
+  let csv = `BB6 課程製作進度備份,${dateStr}\n`;
+  MODULES.forEach(mod => {
+    getSections(mod).forEach(sec => {
+      csv += `\n模組,${mod},小節,${sec}\n`;
+      csv += `任務ID,Gate,任務名稱,負責人,分數,完成%\n`;
+      TASKS.forEach(t => {
+        const sc = getScore(t.id, mod, sec);
+        csv += `${t.id},Gate ${t.gate},"${t.name}","${t.owners.join('/')}",${sc},${sc*10}%\n`;
+      });
+    });
+  });
+  const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `BB6_進度備份_${dateStr}.csv`;
+  a.click();
+  showToast('CSV 已匯出 ✓');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+// Restore session member if returning
+const savedMember = sessionStorage.getItem('bb6-member');
+if (savedMember && MEMBERS.includes(savedMember)) {
+  selectMember(savedMember, MEMBER_COLORS[savedMember]);
+} else {
+  showLogin();
+}
+
+populateSectionSelect();
+updateReporterHeader();
+renderGates();
+renderMembers();
+setSyncStatus('syncing', '連線中...');
+startPolling();
+</script>
+</body>
+</html>
