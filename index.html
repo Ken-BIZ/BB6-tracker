@@ -652,8 +652,9 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .reporter-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
 .section-picker { display:flex; gap:10px; align-items:center; }
 .section-picker label { font-size:13px; font-weight:700; color:var(--grey-dark); letter-spacing:0.06em; text-transform:uppercase; }
-.section-select { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.15); border-radius:4px; color:var(--white); font-size:15px; font-weight:700; padding:8px 14px; font-family:inherit; cursor:pointer; min-width:80px; }
+.section-select { background:#1e2023; border:1px solid rgba(255,255,255,0.15); border-radius:4px; color:var(--white); font-size:15px; font-weight:700; padding:8px 32px 8px 14px; font-family:inherit; cursor:pointer; min-width:80px; -webkit-appearance:none; appearance:none; }
 .section-select:focus { outline:none; border-color:var(--yellow); }
+.section-select option { background:#1e2023; color:var(--white); }
 .reporter-section-header { padding:28px 48px 0; display:flex; align-items:center; gap:16px; }
 .reporter-section-tag { font-size:13px; font-weight:700; color:var(--yellow); letter-spacing:0.08em; text-transform:uppercase; }
 .reporter-section-title { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
@@ -1549,15 +1550,67 @@ function toggleAcc(btn) {
 
 <div class="toast" id="toast"></div>
 
-<script>
+<script type="module">
 /* ═══════════════════════════════════════════════════════════
-   CONFIG
+   FIREBASE CONFIG
+═══════════════════════════════════════════════════════════ */
+import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, update, onValue, serverTimestamp }
+                                                  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyAhlqYFjRfRR-9jvQ1-jRRhPCHQNoRVBYs",
+  authDomain:        "bb6-tracker.firebaseapp.com",
+  databaseURL:       "https://bb6-tracker-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "bb6-tracker",
+  storageBucket:     "bb6-tracker.firebasestorage.app",
+  messagingSenderId: "735970532764",
+  appId:             "1:735970532764:web:df073527110c572c183c59"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getDatabase(app);
+
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE SHEETS BACKUP (silent, non-blocking)
 ═══════════════════════════════════════════════════════════ */
 const SHEET_ID        = '1vVcyNStGct_UrJpCwvzuUws1nStIXsxd91Z87lWVwgE';
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3GBc6M8nYf7A2uNPT9kweMD7gAphvqo1wI0gahLmgQTBikIz06_dYy35HBZVTJa0A/exec';
-const MODULES   = ['C2','C3','C4'];
-const POLL_MS   = 6000;
-const SECTIONS_PER_MODULE = 20;
+
+async function backupToSheet(mod, sec, taskId, score, memberName) {
+  try {
+    const taskObj      = TASKS.find(t => t.id === taskId);
+    const sectionTasks = TASKS.filter(t => !t.moduleLevel);
+    const moduleTasks  = TASKS.filter(t =>  t.moduleLevel);
+    let row, col;
+    if (taskObj?.moduleLevel) {
+      row = 22;
+      col = moduleTasks.findIndex(t => t.id === taskId) + 2;
+    } else {
+      const sections = getSections(mod);
+      row = sections.indexOf(sec) + 2;
+      col = sectionTasks.findIndex(t => t.id === taskId) + 2;
+    }
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const ts = `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        module: mod, batch: [{ row, col, score }],
+        member: memberName, updated: ts
+      })
+    }); // fire-and-forget, no await
+  } catch(e) { /* silent */ }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════════════ */
+const MODULES              = ['C2','C3','C4'];
+const SECTIONS_PER_MODULE  = 20;
+const POLL_MS              = 10000;
 
 const TASKS = [
   { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],            prereqs:[],                        moduleLevel:false },
@@ -1584,31 +1637,25 @@ const GATES = [
   { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
   { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
 ];
-const MEMBERS     = ['Ken','Daniel','Ellen','Emily'];
-const OWNER_CLASS = { Ken:'ken',Daniel:'daniel',Ellen:'ellen',Emily:'emily' };
-const CHIP_CLASS  = { Ken:'chip-ken',Daniel:'chip-daniel',Ellen:'chip-ellen',Emily:'chip-emily' };
-const MEMBER_COLORS = { Ken:'#2563EB',Daniel:'#16A34A',Ellen:'#EA580C',Emily:'#EC4899' };
-const GATE_COLORS = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
+const MEMBERS      = ['Ken','Daniel','Ellen','Emily'];
+const OWNER_CLASS  = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
+const CHIP_CLASS   = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
+const MEMBER_COLORS= { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
+const GATE_COLORS  = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
 
 /* ═══════════════════════════════════════════════════════════
    STATE
-   allScores[module][section][taskId] = 0-10
-   e.g. allScores['C2']['2.1']['1-1'] = 7
 ═══════════════════════════════════════════════════════════ */
 let currentMember  = null;
 let currentModule  = 'C2';
 let currentSection = '2.1';
 let currentOvTab   = 'all';
-let pollTimer      = null;
-let pendingWrite   = null;
-let isSyncing      = false;
+let allScores      = {};
+let fbListeners    = {};   // active Firebase listeners
 
-// Build empty state for all modules × sections × tasks
-let allScores = {};
 function initScores() {
   MODULES.forEach(mod => {
-    allScores[mod] = {};
-    allScores[mod]['__module__'] = {};
+    allScores[mod] = { '__module__': {} };
     TASKS.filter(t => t.moduleLevel).forEach(t => allScores[mod]['__module__'][t.id] = 0);
     const prefix = mod.replace('C','');
     for (let i = 1; i <= SECTIONS_PER_MODULE; i++) {
@@ -1622,301 +1669,61 @@ initScores();
 
 function getSections(mod) {
   const prefix = mod.replace('C','');
-  return Array.from({length: SECTIONS_PER_MODULE}, (_,i) => `${prefix}.${i+1}`);
+  return Array.from({ length: SECTIONS_PER_MODULE }, (_,i) => `${prefix}.${i+1}`);
 }
 
 /* ═══════════════════════════════════════════════════════════
-   LOGIN
+   FIREBASE READ/WRITE
 ═══════════════════════════════════════════════════════════ */
-function showLogin() {
-  document.getElementById('login-overlay').style.display = 'flex';
-}
-function selectMember(name, color) {
-  currentMember = name;
-  localStorage.setItem('bb6-member', name);
-  const avatar = document.getElementById('login-avatar');
-  const nameEl = document.getElementById('login-name');
-  const chip   = document.getElementById('login-chip');
-  avatar.textContent = name[0];
-  avatar.style.background = color;
-  nameEl.textContent = name;
-  chip.style.display = 'flex';
-  document.getElementById('login-overlay').style.display = 'none';
-  renderGates();
-  renderMembers();
+// Firebase path: scores/{mod}/{sec}/{taskId}
+// Module-level:  scores/{mod}/__module__/{taskId}
+
+function fbPath(mod, sec, taskId) {
+  return `scores/${mod}/${sec}/${taskId}`;
 }
 
-/* ═══════════════════════════════════════════════════════════
-   PAGE / MODULE / SECTION SWITCHING
-═══════════════════════════════════════════════════════════ */
-function switchPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('tab-' + page).classList.add('active');
-  document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
-  document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
-  document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
-  window.scrollTo({ top:0, behavior:'smooth' });
-  if (page === 'overview') renderOverview();
-}
-
-function switchRModule(mod) {
-  currentModule = mod;
-  MODULES.forEach(m => document.getElementById('rtab-'+m)?.classList.toggle('active', m===mod));
-  populateSectionSelect();
-  const sections = getSections(mod);
-  currentSection = sections[0];
-  document.getElementById('section-select').value = currentSection;
-  updateReporterHeader();
-  renderGates();
-  renderMembers();
-  startPolling();
-}
-
-function populateSectionSelect() {
-  const sel = document.getElementById('section-select');
-  const sections = getSections(currentModule);
-  sel.innerHTML = sections.map(s => `<option value="${s}">${s}</option>`).join('');
-}
-
-function switchSection(sec) {
-  currentSection = sec;
-  updateReporterHeader();
-  renderGates();
-  renderMembers();
-}
-
-function updateReporterHeader() {
-  const tag = document.getElementById('reporter-section-tag');
-  const title = document.getElementById('reporter-section-title');
-  if (tag)   tag.textContent = `${currentModule} · ${currentSection}`;
-  if (title) title.textContent = `${currentSection} 任務進度填報`;
-}
-
-function switchOvTab(tab) {
-  currentOvTab = tab;
-  document.querySelectorAll('.ov-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('ovtab-'+tab)?.classList.add('active');
-  renderOverview();
-}
-
-/* ═══════════════════════════════════════════════════════════
-   FLOW PAGE ACCORDION
-═══════════════════════════════════════════════════════════ */
-function toggleAcc(btn) {
-  const item = btn.closest('.acc-item');
-  const body = item.querySelector('.acc-body');
-  const chevron = btn.querySelector('.acc-chevron');
-  const isOpen = item.classList.contains('open');
-  item.classList.toggle('open', !isOpen);
-  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
-  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-}
-
-/* ═══════════════════════════════════════════════════════════
-   SCORE HELPERS  (operate on currentModule + currentSection)
-═══════════════════════════════════════════════════════════ */
-function getScore(taskId, mod, sec) {
-  mod = mod || currentModule; sec = sec || currentSection;
-  const task = TASKS.find(t => t.id === taskId);
-  if (task && task.moduleLevel) return getModuleScore(taskId, mod);
-  return allScores[mod]?.[sec]?.[taskId] ?? 0;
-}
-function getModuleScore(taskId, mod) {
-  mod = mod || currentModule;
-  return allScores[mod]?.['__module__']?.[taskId] ?? 0;
-}
-function isPrereqMet(taskId, mod, sec) {
-  const task = TASKS.find(t => t.id === taskId);
-  mod = mod || currentModule; sec = sec || currentSection;
-  return task.prereqs.every(p => {
-    const pt = TASKS.find(t => t.id === p);
-    if (pt && pt.moduleLevel) return getModuleScore(p, mod) >= 1;
-    return getScore(p, mod, sec) >= 1;
-  });
-}
-function prereqPct(taskId, mod, sec) {
-  const task = TASKS.find(t => t.id === taskId);
-  if (!task.prereqs.length) return 100;
-  return Math.round(task.prereqs.reduce((s,p)=>s+getScore(p,mod,sec),0)/task.prereqs.length*10);
-}
-function getGateTasks(n)  { return TASKS.filter(t => t.gate === n); }
-function gatePct(n, mod, sec) {
-  const ts = getGateTasks(n);
-  return Math.round(ts.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(ts.length*10)*100);
-}
-function sectionPct(mod, sec) {
-  return Math.round(TASKS.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(TASKS.length*10)*100);
-}
-function modulePct(mod) {
-  const secs = getSections(mod);
-  const total = secs.reduce((s,sec)=>s+sectionPct(mod,sec),0);
-  return Math.round(total/secs.length);
-}
-function isGateDone(n, mod, sec) { return getGateTasks(n).every(t => getScore(t.id,mod,sec)>=10); }
-
-/* ═══════════════════════════════════════════════════════════
-   GOOGLE SHEETS  — read via public gviz CSV
-   Sheet columns: A=section, B..Q = task scores (1-1..5-2), R=updated_by, S=last_updated
-   TASK_COL_INDEX maps taskId → column letter
-═══════════════════════════════════════════════════════════ */
-const TASK_COL = {};
-const COLS = 'BCDEFGHIJKLMNOPQ'.split('');
-TASKS.forEach((t,i) => { TASK_COL[t.id] = COLS[i]; });
-
-async function fetchModuleFromSheet(mod) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${mod}&range=A2:Q22`;
-  const res  = await fetch(url);
-  if (!res.ok) throw new Error('fetch failed ' + res.status);
-  const csv  = await res.text();
-  const rows = csv.trim().split('\n');
-  const result = {};
-  const sectionTasks = TASKS.filter(t => !t.moduleLevel);
-  const moduleTasks  = TASKS.filter(t => t.moduleLevel);
-  rows.forEach(row => {
-    const cells = row.split(',').map(c => c.replace(/"/g,'').trim());
-    const sec   = cells[0];
-    if (!sec) return;
-    if (sec === '__module__') {
-      result['__module__'] = {};
-      moduleTasks.forEach((t,i) => {
-        const val = parseInt(cells[i+1]);
-        result['__module__'][t.id] = isNaN(val) ? 0 : Math.min(10,Math.max(0,val));
+// Subscribe to a module — real-time updates
+function subscribeModule(mod) {
+  if (fbListeners[mod]) return; // already subscribed
+  const modRef = ref(db, `scores/${mod}`);
+  fbListeners[mod] = onValue(modRef, snapshot => {
+    const data = snapshot.val();
+    if (!data) return;
+    let changed = false;
+    Object.entries(data).forEach(([sec, tasks]) => {
+      if (!allScores[mod][sec]) allScores[mod][sec] = {};
+      Object.entries(tasks).forEach(([tid, val]) => {
+        const score = parseInt(val) || 0;
+        if (allScores[mod][sec][tid] !== score) {
+          allScores[mod][sec][tid] = score;
+          changed = true;
+        }
       });
-    } else {
-      result[sec] = {};
-      sectionTasks.forEach((t,i) => {
-        const val = parseInt(cells[i+1]);
-        result[sec][t.id] = isNaN(val) ? 0 : Math.min(10,Math.max(0,val));
-      });
+    });
+    if (changed) {
+      if (mod === currentModule) { renderGates(); refreshAll(); }
+      if (document.getElementById('page-overview')?.classList.contains('active')) renderOverview();
     }
-  });
-  return result;
-}
-
-/* ── WRITE QUEUE ────────────────────────────────────────────
-   Accumulate all changes, flush as a single batch request.
-   Debounce: wait 1.2s after last change before sending.
-   Retry: up to 3 times with 2s backoff on failure.
-══════════════════════════════════════════════════════════ */
-/* ── UI LOCK ──────────────────────────────────────────────── */
-function lockUI() {
-  document.getElementById('sync-lock-overlay').style.display = 'block';
-  const toast = document.getElementById('sync-lock-toast');
-  toast.classList.add('visible');
-}
-function unlockUI() {
-  document.getElementById('sync-lock-overlay').style.display = 'none';
-  const toast = document.getElementById('sync-lock-toast');
-  toast.classList.remove('visible');
-}
-
-let writeQueue   = {};   // key: "mod|sec|taskId" → {mod,sec,taskId,score,member,row,col}
-let flushTimer   = null;
-let retryCount   = 0;
-const MAX_RETRY  = 3;
-
-function taskToRowCol(mod, sec, taskId) {
-  const taskObj      = TASKS.find(t => t.id === taskId);
-  const sectionTasks = TASKS.filter(t => !t.moduleLevel);
-  const moduleTasks  = TASKS.filter(t => t.moduleLevel);
-  let row, col;
-  if (taskObj && taskObj.moduleLevel) {
-    row = 22;
-    col = moduleTasks.findIndex(t => t.id === taskId) + 2;
-  } else {
-    const sections = getSections(mod);
-    const rowIdx   = sections.indexOf(sec);
-    row = rowIdx + 2;
-    col = sectionTasks.findIndex(t => t.id === taskId) + 2;
-  }
-  return { row, col };
-}
-
-function queueWrite(mod, sec, taskId, score, memberName) {
-  const key          = `${mod}|${sec}|${taskId}`;
-  const { row, col } = taskToRowCol(mod, sec, taskId);
-  writeQueue[key]    = { mod, sec, taskId, score, member: memberName, row, col };
-
-  // Only reschedule if not already in flight (lockUI active)
-  const overlay = document.getElementById('sync-lock-overlay');
-  const locked  = overlay && overlay.style.display !== 'none';
-  if (!locked) {
-    if (flushTimer) clearTimeout(flushTimer);
-    setSyncStatus('syncing', '待儲存...');
-    flushTimer = setTimeout(flushQueue, 1200);
-  }
-  // If locked, the new item is in the queue and will be picked up
-  // when the current flush detects writeQueue.length > 0
-}
-
-async function flushQueue() {
-  const items = Object.values(writeQueue);
-  if (items.length === 0) { unlockUI(); return; }
-
-  // Snapshot current queue and clear it immediately
-  // so new changes during this request go into a fresh queue
-  const snapshot = { ...writeQueue };
-  writeQueue = {};
-
-  const byModule = {};
-  Object.values(snapshot).forEach(item => {
-    if (!byModule[item.mod]) byModule[item.mod] = [];
-    byModule[item.mod].push(item);
-  });
-
-  lockUI();
-  try {
-    // Send each module sequentially to avoid rate limits
-    for (const [mod, modItems] of Object.entries(byModule)) {
-      await sendBatch(mod, modItems);
-    }
-    retryCount = 0;
-    unlockUI();
     setSyncStatus('ok', '即時同步中');
     updateLastSynced('last-saved');
-    // If new items arrived during this send, flush again
-    if (Object.keys(writeQueue).length > 0) {
-      flushTimer = setTimeout(flushQueue, 400);
-    }
-  } catch(e) {
-    // Put snapshot back into queue so nothing is lost
-    Object.assign(writeQueue, snapshot);
-    retryCount++;
-    unlockUI();
-    if (retryCount <= MAX_RETRY) {
-      const wait = retryCount * 2500;
-      setSyncStatus('syncing', `重試中（${retryCount}/${MAX_RETRY}）...`);
-      flushTimer = setTimeout(flushQueue, wait);
-    } else {
-      // Give up — clear queue, let user try again manually
-      writeQueue = {};
-      retryCount = 0;
-      setSyncStatus('error', '同步失敗，請重試');
-      showToast('⚠ 同步失敗，請重新拖動滑桿');
-    }
-  }
+    updateLastSynced('ov-last-synced');
+  }, err => {
+    setSyncStatus('error', '連線失敗');
+  });
 }
 
-async function sendBatch(mod, items) {
-  const response = await fetch(APPS_SCRIPT_URL, {
-    method:  'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body:    JSON.stringify({
-      module:  mod,
-      batch:   items.map(i => ({ row: i.row, col: i.col, score: i.score })),
-      member:  items[0].member,
-      updated: (() => {
-      const d = new Date();
-      const pad = n => String(n).padStart(2,'0');
-      return `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-    })()
-    })
-  });
-  if (!response.ok) throw new Error('HTTP ' + response.status);
-  const result = await response.json();
-  if (!result.ok) throw new Error(result.error || 'batch write failed');
+// Write a single score to Firebase
+async function writeScore(mod, sec, taskId, score, memberName) {
+  const path = fbPath(mod, sec, taskId);
+  await set(ref(db, path), score);
+  // Also write log entry
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const ts = `${d.getFullYear()}/${pad(d.getMonth()+1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  const logRef = ref(db, `log/${Date.now()}`);
+  await set(logRef, { mod, sec, taskId, score, member: memberName, ts });
+  // Silent backup to sheet
+  backupToSheet(mod, sec, taskId, score, memberName);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1935,74 +1742,191 @@ function updateLastSynced(elId) {
   const el  = document.getElementById(elId || 'last-saved');
   if (el) el.textContent = str;
 }
-
-/* ═══════════════════════════════════════════════════════════
-   POLL LOOP
-═══════════════════════════════════════════════════════════ */
-async function pollSheets() {
-  if (isSyncing) return;
-  try {
-    // Poll current module (reporter page) and all modules (overview)
-    const modsToFetch = [...new Set([currentModule, ...MODULES])];
-    await Promise.all(modsToFetch.map(async mod => {
-      const fresh = await fetchModuleFromSheet(mod);
-      let changed = false;
-      Object.entries(fresh).forEach(([sec, tasks]) => {
-        if (!allScores[mod][sec]) allScores[mod][sec] = {};
-        Object.entries(tasks).forEach(([tid, val]) => {
-          if (val !== allScores[mod][sec][tid]) {
-            allScores[mod][sec][tid] = val;
-            changed = true;
-          }
-        });
-      });
-      if (changed && mod === currentModule) {
-        renderGates();
-        renderMembers();
-      }
-    }));
-    setSyncStatus('ok', '即時同步中');
-    updateLastSynced('last-saved');
-    updateLastSynced('ov-last-synced');
-    // Refresh overview if visible
-    if (document.getElementById('page-overview')?.classList.contains('active')) renderOverview();
-  } catch(e) {
-    setSyncStatus('error', '同步失敗，重試中');
-  }
+function lockUI() {
+  document.getElementById('sync-lock-overlay').style.display = 'block';
+  document.getElementById('sync-lock-toast').classList.add('visible');
+}
+function unlockUI() {
+  document.getElementById('sync-lock-overlay').style.display = 'none';
+  document.getElementById('sync-lock-toast').classList.remove('visible');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
 }
 
-function startPolling() {
-  if (pollTimer) clearInterval(pollTimer);
-  pollSheets();
-  pollTimer = setInterval(pollSheets, POLL_MS);
+/* ═══════════════════════════════════════════════════════════
+   SCORE HELPERS
+═══════════════════════════════════════════════════════════ */
+function getScore(taskId, mod, sec) {
+  mod = mod || currentModule; sec = sec || currentSection;
+  const task = TASKS.find(t => t.id === taskId);
+  if (task?.moduleLevel) return allScores[mod]?.['__module__']?.[taskId] ?? 0;
+  return allScores[mod]?.[sec]?.[taskId] ?? 0;
+}
+function isPrereqMet(taskId, mod, sec) {
+  const task = TASKS.find(t => t.id === taskId);
+  mod = mod || currentModule; sec = sec || currentSection;
+  return task.prereqs.every(p => {
+    const pt = TASKS.find(t => t.id === p);
+    if (pt?.moduleLevel) return (allScores[mod]?.['__module__']?.[p] ?? 0) >= 1;
+    return getScore(p, mod, sec) >= 1;
+  });
+}
+function prereqPct(taskId, mod, sec) {
+  const task = TASKS.find(t => t.id === taskId);
+  if (!task.prereqs.length) return 100;
+  return Math.round(task.prereqs.reduce((s,p) => s + getScore(p,mod,sec), 0) / task.prereqs.length * 10);
+}
+function getGateTasks(n)      { return TASKS.filter(t => t.gate === n); }
+function gatePct(n, mod, sec) {
+  const ts = getGateTasks(n);
+  return Math.round(ts.reduce((s,t) => s + getScore(t.id,mod,sec), 0) / (ts.length*10) * 100);
+}
+function sectionPct(mod, sec) {
+  return Math.round(TASKS.reduce((s,t) => s + getScore(t.id,mod,sec), 0) / (TASKS.length*10) * 100);
+}
+function modulePct(mod) {
+  const secs = getSections(mod);
+  return Math.round(secs.reduce((s,sec) => s + sectionPct(mod,sec), 0) / secs.length);
+}
+function isGateDone(n, mod, sec) { return getGateTasks(n).every(t => getScore(t.id,mod,sec) >= 10); }
+
+/* ═══════════════════════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════════════════════ */
+function showLogin() {
+  document.getElementById('login-overlay').style.display = 'flex';
+}
+function selectMember(name, color) {
+  currentMember = name;
+  localStorage.setItem('bb6-member', name);
+  document.getElementById('login-avatar').textContent  = name[0];
+  document.getElementById('login-avatar').style.background = color;
+  document.getElementById('login-name').textContent    = name;
+  document.getElementById('login-chip').style.display  = 'flex';
+  document.getElementById('login-overlay').style.display = 'none';
+  renderGates();
+  renderMembers();
 }
 
 /* ═══════════════════════════════════════════════════════════
    UPDATE SCORE
 ═══════════════════════════════════════════════════════════ */
-function updateScore(taskId, val) {
+async function updateScore(taskId, val) {
   if (!currentMember) { showLogin(); return; }
-  const task = TASKS.find(t => t.id === taskId);
+  const task    = TASKS.find(t => t.id === taskId);
   const isOwner = task.owners.includes(currentMember);
   if (!isOwner) { showToast('這個任務不屬於你'); return; }
 
   const score  = parseInt(val);
-  if (task.moduleLevel) {
-    allScores[currentModule]['__module__'][taskId] = score;
-  } else {
-    allScores[currentModule][currentSection][taskId] = score;
-  }
+  const sec    = task.moduleLevel ? '__module__' : currentSection;
+  // Update local state immediately for snappy UI
+  if (!allScores[currentModule][sec]) allScores[currentModule][sec] = {};
+  allScores[currentModule][sec][taskId] = score;
   const safeId = taskId.replace('-','_');
-  const el     = document.getElementById('sval-' + safeId);
+  const el = document.getElementById('sval-' + safeId);
   if (el) el.textContent = score;
   refreshAll();
 
-  // Queue this change for batched write
-  queueWrite(currentModule, currentSection, taskId, score, currentMember);
+  // Write to Firebase (fast, no lock needed — onValue listener will sync others)
+  lockUI();
+  setSyncStatus('syncing', '儲存中...');
+  try {
+    await writeScore(currentModule, sec, taskId, score, currentMember);
+    // onValue will handle UI update for other clients
+  } catch(e) {
+    setSyncStatus('error', '寫入失敗，請重試');
+    showToast('⚠ 寫入失敗，請重新拖動');
+  } finally {
+    unlockUI();
+  }
+}
+// Expose to global scope for inline oninput handlers
+window.updateScore  = updateScore;
+window.selectMember = selectMember;
+window.showLogin    = showLogin;
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE / MODULE / SECTION SWITCHING
+═══════════════════════════════════════════════════════════ */
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('tab-' + page).classList.add('active');
+  document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
+  document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
+  document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
+  window.scrollTo({ top:0, behavior:'smooth' });
+  if (page === 'overview') {
+    // Subscribe to all modules for overview
+    MODULES.forEach(m => subscribeModule(m));
+    renderOverview();
+  }
+}
+window.switchPage = switchPage;
+
+function switchRModule(mod) {
+  currentModule = mod;
+  MODULES.forEach(m => document.getElementById('rtab-'+m)?.classList.toggle('active', m===mod));
+  populateSectionSelect();
+  currentSection = getSections(mod)[0];
+  document.getElementById('section-select').value = currentSection;
+  updateReporterHeader();
+  subscribeModule(mod);
+  renderGates();
+  renderMembers();
+}
+window.switchRModule = switchRModule;
+
+function switchSection(sec) {
+  currentSection = sec;
+  updateReporterHeader();
+  renderGates();
+  renderMembers();
+}
+window.switchSection = switchSection;
+
+function switchOvTab(tab) {
+  currentOvTab = tab;
+  document.querySelectorAll('.ov-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ovtab-'+tab)?.classList.add('active');
+  renderOverview();
+}
+window.switchOvTab = switchOvTab;
+
+function populateSectionSelect() {
+  const sel = document.getElementById('section-select');
+  const sections = getSections(currentModule);
+  sel.innerHTML = sections.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+function updateReporterHeader() {
+  const tag   = document.getElementById('reporter-section-tag');
+  const title = document.getElementById('reporter-section-title');
+  if (tag)   tag.textContent   = `${currentModule} · ${currentSection}`;
+  if (title) title.textContent = `${currentSection} 任務進度填報`;
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER GATES  (reporter page)
+   FLOW PAGE ACCORDION
+═══════════════════════════════════════════════════════════ */
+function toggleAcc(btn) {
+  const item    = btn.closest('.acc-item');
+  const body    = item.querySelector('.acc-body');
+  const chevron = btn.querySelector('.acc-chevron');
+  const isOpen  = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  body.style.maxHeight      = isOpen ? '0' : body.scrollHeight + 'px';
+  chevron.style.transform   = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+}
+window.toggleAcc = toggleAcc;
+
+/* ═══════════════════════════════════════════════════════════
+   RENDER GATES
 ═══════════════════════════════════════════════════════════ */
 function renderGates() {
   const container = document.getElementById('gates-grid');
@@ -2016,7 +1940,6 @@ function renderGates() {
     const done  = isGateDone(gate.num, mod, sec);
     const col   = document.createElement('div');
     col.className = 'gate-col';
-
     col.innerHTML = `
       <div class="gate-header">
         <div class="gate-num">Gate ${gate.num}</div>
@@ -2034,13 +1957,14 @@ function renderGates() {
 
     const taskWrap = document.createElement('div');
     taskWrap.className = 'task-rows';
-
     tasks.forEach(task => {
       const score    = getScore(task.id, mod, sec);
       const prereqOk = isPrereqMet(task.id, mod, sec);
       const ppct     = prereqPct(task.id, mod, sec);
       const hasP     = task.prereqs.length > 0;
       const isOwner  = currentMember && task.owners.includes(currentMember);
+      const isBlocked = hasP && !prereqOk;
+      const canEdit   = isOwner && !isBlocked;
 
       const prereqText = !hasP ? '' : prereqOk
         ? `<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>`
@@ -2049,36 +1973,29 @@ function renderGates() {
       const chips = task.owners.map(o =>
         `<span class="owner-chip ${CHIP_CLASS[o]}">${o}</span>`).join('');
 
-      const isBlocked = hasP && !prereqOk;
-      const canEdit   = isOwner && !isBlocked;
-      const row       = document.createElement('div');
-      row.className   = 'task-row' + (isBlocked ? ' blocked' : '') + (isOwner ? ' mine' : '');
-      row.id          = 'task-row-' + task.id.replace('-','_');
-
+      const row = document.createElement('div');
+      row.className = 'task-row' + (isBlocked?' blocked':'') + (isOwner?' mine':'');
+      row.id = 'task-row-' + task.id.replace('-','_');
       row.innerHTML = `
         <div class="task-row-top">
           <div class="task-id-badge chip-${OWNER_CLASS[task.owners[0]]}">${task.id}</div>
-          <div class="task-row-name">${task.name}</div>
-          ${chips}
+          <div class="task-row-name">${task.name}</div>${chips}
         </div>
         <div class="score-row">
-          <input type="range" class="score-slider" min="0" max="10" step="1"
-            value="${score}" data-task="${task.id}"
+          <input type="range" class="score-slider" min="0" max="10" step="1" value="${score}"
             ${canEdit ? `oninput="updateScore('${task.id}', this.value)"` : 'disabled style="opacity:.35;cursor:not-allowed"'}>
           <span class="score-val" id="sval-${task.id.replace('-','_')}">${score}</span>
           <span class="score-denom">/10</span>
-        </div>
-        ${prereqText}`;
+        </div>${prereqText}`;
       taskWrap.appendChild(row);
     });
-
     col.appendChild(taskWrap);
     container.appendChild(col);
   });
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER MEMBERS  (reporter page — this section)
+   RENDER MEMBERS
 ═══════════════════════════════════════════════════════════ */
 function renderMembers() {
   const container = document.getElementById('members-grid');
@@ -2088,10 +2005,10 @@ function renderMembers() {
 
   MEMBERS.forEach(member => {
     const myTasks = TASKS.filter(t => t.owners.includes(member));
-    const myPct   = Math.round(myTasks.reduce((s,t)=>s+getScore(t.id,mod,sec),0)/(myTasks.length*10)*100);
-    const done    = myTasks.filter(t => getScore(t.id,mod,sec)>=10).length;
-    const blocked = myTasks.filter(t => !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec)<10);
-    const ready   = myTasks.filter(t => isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec)<10);
+    const myPct   = Math.round(myTasks.reduce((s,t) => s+getScore(t.id,mod,sec),0) / (myTasks.length*10) * 100);
+    const done    = myTasks.filter(t => getScore(t.id,mod,sec) >= 10).length;
+    const blocked = myTasks.filter(t => !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10);
+    const ready   = myTasks.filter(t =>  isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10);
 
     const capacityText = ready.length===0 && done===myTasks.length ? '本小節全部完成 🎉'
       : ready.length===0 ? `等待前置（${blocked.map(t=>t.id).join('、')}）`
@@ -2104,7 +2021,7 @@ function renderMembers() {
 
     const taskRows = myTasks.map(t => {
       const sc = getScore(t.id,mod,sec);
-      const iB = !isPrereqMet(t.id,mod,sec) && sc<10;
+      const iB = !isPrereqMet(t.id,mod,sec) && sc < 10;
       return `<div class="member-task-row">
         <span class="mtask-id">${t.id}</span>
         <span class="mtask-name" style="opacity:${iB?.4:1}">${t.name}</span>
@@ -2139,7 +2056,7 @@ function renderMembers() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   REFRESH ALL  (gate bars + task states in reporter)
+   REFRESH ALL
 ═══════════════════════════════════════════════════════════ */
 function refreshAll() {
   const mod = currentModule, sec = currentSection;
@@ -2150,17 +2067,17 @@ function refreshAll() {
     const pEl  = document.getElementById('gpct-'+gate.num);
     const dot  = document.getElementById('udot-'+gate.num);
     const utxt = document.getElementById('utext-'+gate.num);
-    if (fill) fill.style.width = pct+'%';
-    if (pEl)  pEl.textContent  = pct+'%';
+    if (fill) fill.style.width  = pct+'%';
+    if (pEl)  pEl.textContent   = pct+'%';
     if (dot)  dot.classList.toggle('on', done);
-    if (utxt) utxt.textContent = done?'已解鎖下一關':GATES[gate.num-1].unlock;
+    if (utxt) utxt.textContent  = done?'已解鎖下一關':GATES[gate.num-1].unlock;
   });
   TASKS.forEach(task => {
     const row = document.getElementById('task-row-'+task.id.replace('-','_'));
     if (!row) return;
     const prereqOk = isPrereqMet(task.id, mod, sec);
-    const hasP = task.prereqs.length > 0;
-    const isOwner = currentMember && task.owners.includes(currentMember);
+    const hasP     = task.prereqs.length > 0;
+    const isOwner  = currentMember && task.owners.includes(currentMember);
     row.classList.toggle('blocked', hasP && !prereqOk);
     const hint = row.querySelector('.prereq-hint');
     if (hint) {
@@ -2171,10 +2088,9 @@ function refreshAll() {
     const valEl  = document.getElementById('sval-'+task.id.replace('-','_'));
     const sc = getScore(task.id, mod, sec);
     if (slider) {
-      slider.value = sc;
-      // Re-evaluate disabled state based on prereq + ownership
+      if (parseInt(slider.value) !== sc) slider.value = sc;
       const canEdit = isOwner && !(hasP && !prereqOk);
-      slider.disabled = !canEdit;
+      slider.disabled      = !canEdit;
       slider.style.opacity = canEdit ? '' : '0.35';
       slider.style.cursor  = canEdit ? '' : 'not-allowed';
     }
@@ -2184,25 +2100,21 @@ function refreshAll() {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   RENDER OVERVIEW PAGE
+   RENDER OVERVIEW
 ═══════════════════════════════════════════════════════════ */
 function renderOverview() {
   const modsToDraw = currentOvTab === 'all' ? MODULES : [currentOvTab];
-
-  // Module summary cards
-  const cardsEl = document.getElementById('ov-module-cards');
+  const cardsEl    = document.getElementById('ov-module-cards');
   if (cardsEl) {
     cardsEl.innerHTML = modsToDraw.map(mod => {
-      const pct = modulePct(mod);
-      const doneSecs = getSections(mod).filter(sec => sectionPct(mod,sec)>=100).length;
+      const pct      = modulePct(mod);
+      const doneSecs = getSections(mod).filter(sec => sectionPct(mod,sec) >= 100).length;
       const gateRows = GATES.map(g => {
-        const gp = Math.round(getSections(mod).reduce((s,sec)=>s+gatePct(g.num,mod,sec),0)/SECTIONS_PER_MODULE);
-        const doneSec = getSections(mod).filter(sec => gatePct(g.num,mod,sec)>=100).length;
-        const color = GATE_COLORS[g.num];
+        const gp      = Math.round(getSections(mod).reduce((s,sec) => s+gatePct(g.num,mod,sec), 0) / SECTIONS_PER_MODULE);
+        const doneSec = getSections(mod).filter(sec => gatePct(g.num,mod,sec) >= 100).length;
+        const color   = GATE_COLORS[g.num];
         return `<div class="ov-gate-row">
-          <div class="ov-gate-label">
-            <span class="ov-gate-num">Gate ${g.num}</span>${g.name}
-          </div>
+          <div class="ov-gate-label"><span class="ov-gate-num">Gate ${g.num}</span>${g.name}</div>
           <div class="ov-gate-track"><div class="ov-gate-fill" style="width:${gp}%;background:${color}"></div></div>
           <div class="ov-gate-pct" style="color:${color}">${gp}%</div>
           <div class="ov-gate-sections">${doneSec}/${SECTIONS_PER_MODULE} 節</div>
@@ -2221,31 +2133,21 @@ function renderOverview() {
     }).join('');
   }
 
-  // Section detail table
   const tbody = document.getElementById('ov-section-tbody');
   if (tbody) {
     let rows = '';
     modsToDraw.forEach(mod => {
       getSections(mod).forEach(sec => {
-        const gPcts = GATES.map(g => gatePct(g.num, mod, sec));
-        const total = sectionPct(mod, sec);
+        const gPcts  = GATES.map(g => gatePct(g.num, mod, sec));
+        const total  = sectionPct(mod, sec);
         const status = total>=100 ? 'done' : total>0 ? 'active' : 'blocked';
-        const statusText = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
-        const miniSegs = TASKS.map(t => {
-          const sc = getScore(t.id, mod, sec);
-          return `<div class="ov-mini-seg ${sc>0?'filled':''}"></div>`;
-        }).join('');
+        const label  = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
+        const segs   = TASKS.map(t => `<div class="ov-mini-seg ${getScore(t.id,mod,sec)>0?'filled':''}"></div>`).join('');
         rows += `<tr>
-          <td>${mod}</td>
-          <td style="font-weight:600">${sec}</td>
-          ${gPcts.map((p,i)=>`<td style="color:${GATE_COLORS[i+1]};font-weight:600">${p}%</td>`).join('')}
-          <td>
-            <div style="display:flex;align-items:center;gap:8px">
-              <div class="ov-mini-bar">${miniSegs}</div>
-              <span style="font-size:12px;font-weight:700">${total}%</span>
-            </div>
-          </td>
-          <td><span class="ov-pill ${status}">${statusText}</span></td>
+          <td>${mod}</td><td style="font-weight:600">${sec}</td>
+          ${gPcts.map((p,i) => `<td style="color:${GATE_COLORS[i+1]};font-weight:600">${p}%</td>`).join('')}
+          <td><div style="display:flex;align-items:center;gap:8px"><div class="ov-mini-bar">${segs}</div><span style="font-size:12px;font-weight:700">${total}%</span></div></td>
+          <td><span class="ov-pill ${status}">${label}</span></td>
         </tr>`;
       });
     });
@@ -2257,13 +2159,12 @@ function renderOverview() {
    CSV EXPORT
 ═══════════════════════════════════════════════════════════ */
 function exportCSV() {
-  const now = new Date();
+  const now     = new Date();
   const dateStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
   let csv = `BB6 課程製作進度備份,${dateStr}\n`;
   MODULES.forEach(mod => {
     getSections(mod).forEach(sec => {
-      csv += `\n模組,${mod},小節,${sec}\n`;
-      csv += `任務ID,Gate,任務名稱,負責人,分數,完成%\n`;
+      csv += `\n模組,${mod},小節,${sec}\n任務ID,Gate,任務名稱,負責人,分數,完成%\n`;
       TASKS.forEach(t => {
         const sc = getScore(t.id, mod, sec);
         csv += `${t.id},Gate ${t.gate},"${t.name}","${t.owners.join('/')}",${sc},${sc*10}%\n`;
@@ -2271,25 +2172,17 @@ function exportCSV() {
     });
   });
   const blob = new Blob(['\ufeff'+csv], { type:'text/csv;charset=utf-8;' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
   a.download = `BB6_進度備份_${dateStr}.csv`;
   a.click();
   showToast('CSV 已匯出 ✓');
 }
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
-}
+window.exportCSV = exportCSV;
 
 /* ═══════════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════════ */
-// Restore login from localStorage (persists across sessions/browser restarts)
 const savedMember = localStorage.getItem('bb6-member');
 if (savedMember && MEMBERS.includes(savedMember)) {
   selectMember(savedMember, MEMBER_COLORS[savedMember]);
@@ -2299,10 +2192,12 @@ if (savedMember && MEMBERS.includes(savedMember)) {
 
 populateSectionSelect();
 updateReporterHeader();
+setSyncStatus('syncing', '連線中...');
+
+// Subscribe to current module immediately
+subscribeModule(currentModule);
 renderGates();
 renderMembers();
-setSyncStatus('syncing', '連線中...');
-startPolling();
 </script>
 </body>
 </html>
