@@ -1665,6 +1665,9 @@ function getSections(mod) {
   const prefix = mod.replace('C','');
   return Array.from({ length: SECTIONS_PER_MODULE }, function(_,i){ return prefix+'.'+(i+1); });
 }
+// Firebase paths can't contain '.' — convert e.g. '2.1' → '2_1'
+function toFbKey(sec) { return sec.replace(/\./g, '_'); }
+function fromFbKey(key) { return key.replace(/_/g, '.'); }
 
 /* ═══════════════════════════════════════════════════════════
    FIREBASE READ / WRITE
@@ -1676,9 +1679,10 @@ function subscribeModule(mod) {
     const data = snapshot.val();
     if (!data) { setSyncStatus('ok','即時同步中'); return; }
     let changed = false;
-    Object.keys(data).forEach(function(sec) {
+    Object.keys(data).forEach(function(fbSec) {
+      const sec = fromFbKey(fbSec);
       if (!allScores[mod][sec]) allScores[mod][sec] = {};
-      const tasks = data[sec];
+      const tasks = data[fbSec];
       Object.keys(tasks).forEach(function(tid) {
         const score = parseInt(tasks[tid]) || 0;
         if (allScores[mod][sec][tid] !== score) {
@@ -1701,12 +1705,12 @@ function subscribeModule(mod) {
 }
 
 function writeScore(mod, sec, taskId, score, memberName) {
-  const path = 'scores/' + mod + '/' + sec + '/' + taskId;
+  const path = 'scores/' + mod + '/' + toFbKey(sec) + '/' + taskId;
   const d = new Date();
   const pad = function(n){ return String(n).padStart(2,'0'); };
   const ts  = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
   return db.ref(path).set(score).then(function() {
-    return db.ref('log/' + Date.now()).set({ mod, sec, taskId, score, member: memberName, ts });
+    return db.ref('log/' + Date.now()).set({ mod: mod, sec: sec, taskId: taskId, score: score, member: memberName, ts: ts });
   }).then(function() {
     backupToSheet(mod, sec, taskId, score, memberName);
   });
