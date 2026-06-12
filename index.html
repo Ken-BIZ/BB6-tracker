@@ -732,6 +732,42 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .node-status-badge.s0 { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
 .node-status-badge.s5 { background: rgba(255,234,65,0.12); color: var(--yellow); }
 .node-status-badge.s10 { background: rgba(74,222,128,0.12); color: #4ade80; }
+
+/* ── TING / OBSERVER ────────────────────────────────────── */
+.chip-ting { background: rgba(139,92,246,0.2); color: #C4B5FD; }
+.member-select-btn.ting { border-color: rgba(139,92,246,0.4); }
+.member-select-btn.ting:hover { border-color: #8B5CF6; background: rgba(139,92,246,0.12); }
+.member-select-btn.ting .msb-initial { color: #C4B5FD; }
+.observer-banner { background: rgba(139,92,246,0.08); border-bottom: 1px solid rgba(139,92,246,0.2); padding: 8px 48px; display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 700; color: #C4B5FD; letter-spacing: 0.06em; text-transform: uppercase; }
+.observer-banner-dot { width: 7px; height: 7px; border-radius: 50%; background: #8B5CF6; }
+
+/* ── WEEKLY OVERVIEW PAGE ────────────────────────────────── */
+.weekly-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; margin-bottom: 40px; }
+.chart-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 24px 28px; }
+.chart-card-title { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.5); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+.chart-card-sub { font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 20px; }
+.forecast-cards { display: flex; flex-direction: column; gap: 12px; }
+.forecast-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 18px 22px; }
+.forecast-mod { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; }
+.forecast-val { font-size: 28px; font-weight: 700; letter-spacing: -0.03em; color: var(--yellow); line-height: 1; }
+.forecast-unit { font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.4); margin-left: 4px; }
+.forecast-detail { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+.forecast-bar-wrap { margin-top: 10px; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+.forecast-bar { height: 100%; background: var(--yellow); border-radius: 2px; transition: width 0.5s; }
+.chart-empty { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 13px; color: rgba(255,255,255,0.25); }
+/* SVG chart */
+.line-chart { width: 100%; overflow: visible; }
+.chart-axis { stroke: rgba(255,255,255,0.08); stroke-width: 1; }
+.chart-grid { stroke: rgba(255,255,255,0.04); stroke-width: 1; stroke-dasharray: 4 4; }
+.chart-line { fill: none; stroke: var(--yellow); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.chart-area { fill: url(#chartGrad); opacity: 0.3; }
+.chart-dot { fill: var(--yellow); stroke: var(--black); stroke-width: 2; }
+.chart-label { font-size: 10px; fill: rgba(255,255,255,0.4); font-family: inherit; }
+.chart-value { font-size: 11px; fill: var(--yellow); font-family: inherit; font-weight: 700; }
+@media (max-width: 900px) {
+  .weekly-grid { grid-template-columns: 1fr; }
+  .observer-banner { padding: 8px 20px; }
+}
 </style>
 
 <body>
@@ -752,6 +788,16 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     </div>
     <div class="login-box-title">歡迎回來</div>
     <div class="login-box-sub">請選擇你的名字以繼續填報進度</div>
+    <div class="member-select-grid" style="grid-template-columns:1fr;margin-bottom:12px">
+      <button class="member-select-btn ting" onclick="selectMember('Ting','#8B5CF6')" style="flex-direction:row;align-items:center;gap:14px;padding:16px 20px">
+        <div class="msb-initial" style="font-size:20px;margin-bottom:0;width:36px;text-align:center">T</div>
+        <div>
+          <div class="msb-name">Ting</div>
+          <div class="msb-role">部門主管・觀察者</div>
+        </div>
+      </button>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px">製作組員</div>
     <div class="member-select-grid">
       <button class="member-select-btn ken" onclick="selectMember('Ken','#2563EB')">
         <div class="msb-initial">K</div>
@@ -792,6 +838,9 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     </button>
     <button class="page-tab" id="tab-tracker" onclick="switchPage('tracker')">
       <span class="tab-dot"></span>進度填報
+    </button>
+    <button class="page-tab" id="tab-weekly" onclick="switchPage('weekly')" style="display:none">
+      <span class="tab-dot"></span>本週專案概況
     </button>
   </div>
   <div class="header-right">
@@ -1566,6 +1615,40 @@ function toggleAcc(btn) {
   </footer>
 </div>
 
+<!-- OBSERVER BANNER (shown when Ting is logged in) -->
+<div class="observer-banner" id="observer-banner" style="display:none">
+  <div class="observer-banner-dot"></div>
+  觀察者模式・Ting・僅供檢視，無法填報
+</div>
+
+<!-- ── PAGE: 本週專案概況 ──────────────────────────── -->
+<div class="page" id="page-weekly">
+  <section>
+    <div class="section-label">Ting 主管視角</div>
+    <div class="section-title">本週專案概況</div>
+    <div class="weekly-grid">
+      <!-- Line chart -->
+      <div class="chart-card">
+        <div class="chart-card-title">整體進度趨勢</div>
+        <div class="chart-card-sub">每週三 18:30 結算・週四為每週起始日</div>
+        <div id="weekly-chart-container"></div>
+      </div>
+      <!-- Forecast cards -->
+      <div>
+        <div class="chart-card-title" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px">模組完工預測</div>
+        <div class="forecast-cards" id="forecast-cards">
+          <div class="chart-empty">載入中...</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <footer>
+    <div class="footer-brand">商明國際 BizCivilization</div>
+    <div class="footer-note">BB6 本週專案概況 · 主管視角</div>
+    <div class="last-saved" id="weekly-last-synced">載入中...</div>
+  </footer>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Firebase CDN (compat — no ES module import needed) -->
@@ -1649,10 +1732,10 @@ const GATES = [
   { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
   { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
 ];
-const MEMBERS       = ['Ken','Daniel','Ellen','Emily'];
-const OWNER_CLASS   = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
-const CHIP_CLASS    = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
-const MEMBER_COLORS = { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
+const MEMBERS       = ['Ting','Ken','Daniel','Ellen','Emily'];
+const OWNER_CLASS   = { Ting:'ting', Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
+const CHIP_CLASS    = { Ting:'chip-ting', Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
+const MEMBER_COLORS = { Ting:'#8B5CF6', Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
 const GATE_COLORS   = ['','var(--gate1)','var(--gate2)','var(--gate3)','var(--gate4)','var(--gate5)'];
 
 /* ═══════════════════════════════════════════════════════════
@@ -1678,6 +1761,8 @@ function initScores() {
   });
 }
 initScores();
+
+function isObserver() { return currentMember === 'Ting'; }
 
 function getSections(mod) {
   const prefix = mod.replace('C','');
@@ -1830,13 +1915,23 @@ function showLogin() {
 }
 function selectMember(name, color) {
   currentMember = name;
-  _lastRenderKey = ''; // reset so gates rebuild with correct owner state
+  _lastRenderKey = '';
   localStorage.setItem('bb6-member', name);
-  document.getElementById('login-avatar').textContent        = name[0];
-  document.getElementById('login-avatar').style.background   = color;
-  document.getElementById('login-name').textContent          = name;
-  document.getElementById('login-chip').style.display        = 'flex';
-  document.getElementById('login-overlay').style.display     = 'none';
+  document.getElementById('login-avatar').textContent      = name[0];
+  document.getElementById('login-avatar').style.background = color;
+  document.getElementById('login-name').textContent        = name;
+  document.getElementById('login-chip').style.display      = 'flex';
+  document.getElementById('login-overlay').style.display   = 'none';
+  // Show/hide Ting-specific UI
+  var obs = document.getElementById('observer-banner');
+  var weeklyTab = document.getElementById('tab-weekly');
+  if (isObserver()) {
+    if (obs) obs.style.display = 'flex';
+    if (weeklyTab) weeklyTab.style.display = 'flex';
+  } else {
+    if (obs) obs.style.display = 'none';
+    if (weeklyTab) weeklyTab.style.display = 'none';
+  }
   renderGates();
   renderMembers();
 }
@@ -1846,6 +1941,7 @@ function selectMember(name, color) {
 ═══════════════════════════════════════════════════════════ */
 function updateScore(taskId, val) {
   if (!currentMember) { showLogin(); return; }
+  if (isObserver()) { showToast('觀察者模式，無法填報'); return; }
   const task    = TASKS.find(function(t){ return t.id === taskId; });
   const isOwner = task.owners.indexOf(currentMember) >= 0;
   if (!isOwner) { showToast('這個任務不屬於你'); return; }
@@ -1864,7 +1960,8 @@ function updateScore(taskId, val) {
   setSyncStatus('syncing', '儲存中...');
   writeScore(currentModule, sec, taskId, score, currentMember)
     .then(function() {
-      // onValue listener will confirm sync
+      // Force full prereq re-evaluation after write
+      refreshAll();
     })
     .catch(function(e) {
       setSyncStatus('error', '寫入失敗，請重試');
@@ -1887,6 +1984,10 @@ function switchPage(page) {
   if (page === 'overview') {
     MODULES.forEach(function(m){ subscribeModule(m); });
     renderOverview();
+  }
+  if (page === 'weekly') {
+    MODULES.forEach(function(m){ subscribeModule(m); });
+    renderWeekly();
   }
 }
 function switchRModule(mod) {
@@ -2010,33 +2111,28 @@ function renderGates() {
             const gateColor = GATE_COLORS[task.gate];
       const statusKey = score===0?'s0':score===5?'s5':'s10';
       const statusTxt = score===0?'未開始':score===5?'進行中':'完成';
-      const trackStyle = canEdit ? '' : 'opacity:.4;pointer-events:none';
+
+      // Three explicit buttons — no range slider ambiguity
+      var nodeVals   = [0, 5, 10];
+      var nodeLabels = ['未開始', '進行中', '完成'];
+      var nodeBtns   = nodeVals.map(function(v, i) {
+        var isActive = score === v;
+        var isPassed = score > v;
+        var bg = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
+        var border = isActive || isPassed ? gateColor : 'rgba(255,255,255,0.15)';
+        var btnStyle = 'flex:1;padding:8px 4px;border-radius:4px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:11px;font-weight:700;color:'+(isActive?'var(--black)':isPassed?gateColor:'rgba(255,255,255,0.4)')+';font-family:inherit;transition:all 0.15s;';
+        return '<button style="'+btnStyle+'"' +
+          (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
+          '>'+nodeLabels[i]+'</button>';
+      }).join('');
 
       row.innerHTML =
         '<div class="task-row-top" style="margin-bottom:10px">' +
           '<div class="task-id-badge" style="background:'+gateColor+'22;color:'+gateColor+'">'+task.id+'</div>' +
           '<div class="task-row-name">'+task.name+'</div>' + chips +
         '</div>' +
-        '<div class="score-row" style="align-items:center;gap:12px">' +
-          '<div class="node-track" style="'+trackStyle+'">' +
-            '<div class="node-line"></div>' +
-            '<div class="node-fill" id="nfill-'+task.id.replace('-','_')+'" style="width:'+(score===0?0:score===5?50:100)+'%;background:'+gateColor+'"></div>' +
-            '<div class="node-dots">' +
-              [0,5,10].map(function(v){
-                return '<div class="node-dot'+(score>=v?' active':'')+'"' +
-                  ' style="border-color:'+gateColor+';'+(score>=v?'background:'+gateColor:'')+'" title="'+(v===0?'未開始':v===5?'進行中':'完成')+'"></div>';
-              }).join('') +
-            '</div>' +
-            '<input type="range" class="node-slider" data-task="'+task.id+'" min="0" max="10" step="5" value="'+score+'"' +
-            (canEdit ? ' oninput="updateScore(\''+task.id+'\',this.value)"' : ' disabled') +
-            ' style="position:absolute;left:0;right:0;width:100%;opacity:0;height:24px;cursor:'+(canEdit?'pointer':'default')+';margin:0">' +
-          '</div>' +
-          '<span class="node-status-badge '+statusKey+'" id="sval-'+task.id.replace('-','_')+'">'+statusTxt+'</span>' +
-        '</div>' +
-        '<div class="node-labels" style="color:'+gateColor+'55">' +
-          '<span class="node-label'+(score===0?' active':'')+'" style="'+(score===0?'color:'+gateColor+';opacity:1':'')+'">未開始</span>' +
-          '<span class="node-label'+(score===5?' active':'')+'" style="'+(score===5?'color:'+gateColor+';opacity:1':'')+'">進行中</span>' +
-          '<span class="node-label'+(score===10?' active':'')+'" style="'+(score===10?'color:'+gateColor+';opacity:1':'')+'">完成</span>' +
+        '<div class="score-row" style="align-items:stretch;gap:6px" id="nodebtn-'+task.id.replace('-','_')+'">' +
+          nodeBtns +
         '</div>' +
         prereqText;
 
@@ -2140,40 +2236,21 @@ function refreshAll() {
     const sc        = getScore(task.id, mod, sec);
     const canEdit   = isOwner && !(hasP && !prereqOk);
     const gateColor = GATE_COLORS[task.gate];
-    // Status badge
-    var valEl = document.getElementById('sval-'+task.id.replace('-','_'));
-    if (valEl) {
-      valEl.textContent = sc===0?'未開始':sc===5?'進行中':'完成';
-      valEl.className   = 'node-status-badge '+(sc===0?'s0':sc===5?'s5':'s10');
-    }
-    // Fill bar
-    var fill = document.getElementById('nfill-'+task.id.replace('-','_'));
-    if (fill) fill.style.width = (sc===0?0:sc===5?50:100)+'%';
-    // Dots
-    var dots = row.querySelectorAll('.node-dot');
-    [0,5,10].forEach(function(v,i){
-      if (!dots[i]) return;
-      dots[i].classList.toggle('active', sc>=v);
-      dots[i].style.background = sc>=v ? gateColor : 'var(--black)';
-    });
-    // Labels
-    var labels = row.querySelectorAll('.node-label');
-    [0,5,10].forEach(function(v,i){
-      if (!labels[i]) return;
-      labels[i].style.color   = sc===v ? gateColor : '';
-      labels[i].style.opacity = sc===v ? '1' : '';
-    });
-    // Slider
-    var nodeSlider = row.querySelector('.node-slider');
-    if (nodeSlider) {
-      if (parseInt(nodeSlider.value) !== sc) nodeSlider.value = sc;
-      nodeSlider.disabled = !canEdit;
-    }
-    // Track interactivity
-    var track = row.querySelector('.node-track');
-    if (track) {
-      track.style.opacity       = canEdit ? '' : '0.4';
-      track.style.pointerEvents = canEdit ? 'auto' : 'none';
+    // Rebuild node buttons in place (fast — just 3 buttons)
+    var btnRow = document.getElementById('nodebtn-'+task.id.replace('-','_'));
+    if (btnRow) {
+      var nodeVals   = [0,5,10];
+      var nodeLabels = ['未開始','進行中','完成'];
+      btnRow.innerHTML = nodeVals.map(function(v,i) {
+        var isActive = sc === v;
+        var isPassed = sc > v;
+        var bg     = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
+        var border = isActive||isPassed ? gateColor : 'rgba(255,255,255,0.15)';
+        var col    = isActive ? 'var(--black)' : isPassed ? gateColor : 'rgba(255,255,255,0.4)';
+        return '<button style="flex:1;padding:8px 4px;border-radius:4px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:11px;font-weight:700;color:'+col+';font-family:inherit;transition:all 0.15s;"' +
+          (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
+          '>'+nodeLabels[i]+'</button>';
+      }).join('');
     }
   });
   renderMembers();
@@ -2261,6 +2338,208 @@ function exportCSV() {
   a.download = 'BB6_進度備份_' + dateStr + '.csv';
   a.click();
   showToast('CSV 已匯出 ✓');
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   WEEKLY OVERVIEW (Ting only)
+   週期：週四 00:00 → 週三 18:30
+   快照：每週三 18:30 的整體完成百分比
+═══════════════════════════════════════════════════════════ */
+function getWeekCutoff(date) {
+  // Returns the most recent Wednesday 18:30 cutoff before or equal to date
+  var d = new Date(date);
+  // day: 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+  var day = d.getDay();
+  // Days since last Wednesday
+  var daysBack = day >= 3 ? day - 3 : day + 4;
+  d.setDate(d.getDate() - daysBack);
+  d.setHours(18, 30, 0, 0);
+  if (d > date) d.setDate(d.getDate() - 7);
+  return d;
+}
+
+function getWeekLabel(cutoff) {
+  var m = cutoff.getMonth()+1;
+  var d = cutoff.getDate();
+  return m+'/'+d;
+}
+
+function computeWeeklySnapshots(logData) {
+  // logData: { timestamp: { mod, sec, taskId, score, member, ts } }
+  if (!logData) return [];
+
+  // Build list of entries sorted by time
+  var entries = Object.values(logData).sort(function(a,b){
+    return new Date(a.ts) - new Date(b.ts);
+  });
+
+  if (!entries.length) return [];
+
+  // Replay log to build state snapshots at each Wednesday 18:30
+  var state = {}; // state[mod][sec][taskId] = score
+  MODULES.forEach(function(mod) {
+    state[mod] = {};
+    getSections(mod).forEach(function(sec) {
+      state[mod][sec] = {};
+      getActiveTasks(sec).forEach(function(t){ state[mod][sec][t.id] = 0; });
+    });
+  });
+
+  var snapshots = [];
+  var now = new Date();
+  var firstEntry = new Date(entries[0].ts);
+  // Start from the week of first entry
+  var cutoff = getWeekCutoff(firstEntry);
+  var maxCutoff = getWeekCutoff(now);
+
+  var entryIdx = 0;
+
+  while (cutoff <= maxCutoff) {
+    // Apply all entries up to this cutoff
+    while (entryIdx < entries.length) {
+      var entryTime = new Date(entries[entryIdx].ts);
+      if (entryTime > cutoff) break;
+      var e = entries[entryIdx];
+      if (state[e.mod] && state[e.mod][e.sec] !== undefined) {
+        state[e.mod][e.sec][e.taskId] = parseInt(e.score) || 0;
+      }
+      entryIdx++;
+    }
+    // Compute overall pct at this cutoff
+    var total = 0, count = 0;
+    MODULES.forEach(function(mod) {
+      getSections(mod).forEach(function(sec) {
+        var active = getActiveTasks(sec);
+        active.forEach(function(t) {
+          total += (state[mod][sec][t.id] || 0);
+          count += 10;
+        });
+      });
+    });
+    var pct = count > 0 ? Math.round(total/count*100) : 0;
+    snapshots.push({ label: getWeekLabel(cutoff), pct: pct, date: new Date(cutoff) });
+    // Next cutoff = +7 days
+    cutoff = new Date(cutoff.getTime() + 7*24*60*60*1000);
+  }
+  return snapshots;
+}
+
+function computeForecast(snapshots) {
+  // Per-module forecast based on last 2 weeks velocity
+  var forecasts = {};
+  MODULES.forEach(function(mod) {
+    var total = 0, count = 0;
+    getSections(mod).forEach(function(sec) {
+      var active = getActiveTasks(sec);
+      active.forEach(function(t) {
+        total += getScore(t.id, mod, sec);
+        count += 10;
+      });
+    });
+    var currentPct = count > 0 ? Math.round(total/count*100) : 0;
+    forecasts[mod] = { currentPct: currentPct, weeksLeft: null, velocity: 0 };
+
+    if (snapshots.length >= 2) {
+      // Use last 2 snapshots to compute weekly velocity
+      var last  = snapshots[snapshots.length-1].pct;
+      var prev  = snapshots[snapshots.length-2].pct;
+      var velocity = last - prev; // % per week
+      // Module-specific: approximate by scaling overall velocity
+      if (velocity > 0 && currentPct < 100) {
+        var weeksLeft = Math.ceil((100 - currentPct) / velocity);
+        forecasts[mod].weeksLeft = weeksLeft;
+        forecasts[mod].velocity  = velocity;
+      } else if (currentPct >= 100) {
+        forecasts[mod].weeksLeft = 0;
+      }
+    }
+  });
+  return forecasts;
+}
+
+function renderWeeklyChart(snapshots) {
+  var container = document.getElementById('weekly-chart-container');
+  if (!container) return;
+
+  if (snapshots.length < 2) {
+    container.innerHTML = '<div class="chart-empty">資料累積中，至少需要兩週紀錄才能顯示趨勢</div>';
+    return;
+  }
+
+  var W = 520, H = 200, PAD = { top:20, right:20, bottom:30, left:36 };
+  var chartW = W - PAD.left - PAD.right;
+  var chartH = H - PAD.top  - PAD.bottom;
+  var n = snapshots.length;
+  var maxPct = Math.max(100, Math.max.apply(null, snapshots.map(function(s){return s.pct;})));
+
+  function x(i)   { return PAD.left + (i/(n-1)) * chartW; }
+  function y(pct) { return PAD.top  + chartH - (pct/maxPct) * chartH; }
+
+  // Path points
+  var pts = snapshots.map(function(s,i){ return x(i)+','+y(s.pct); });
+  var linePath   = 'M'+pts.join(' L');
+  var areaPath   = 'M'+x(0)+','+y(0)+' L'+pts.join(' L')+' L'+x(n-1)+','+(PAD.top+chartH)+' L'+x(0)+','+(PAD.top+chartH)+' Z';
+
+  // Grid lines at 0, 25, 50, 75, 100%
+  var gridLines = [0,25,50,75,100].map(function(v) {
+    var yy = y(v*maxPct/100);
+    return '<line class="chart-grid" x1="'+PAD.left+'" y1="'+yy+'" x2="'+(PAD.left+chartW)+'" y2="'+yy+'"/>' +
+           '<text class="chart-label" x="'+(PAD.left-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'%</text>';
+  }).join('');
+
+  // Dots + labels
+  var dots = snapshots.map(function(s,i) {
+    return '<circle class="chart-dot" cx="'+x(i)+'" cy="'+y(s.pct)+'" r="4"/>' +
+           '<text class="chart-value" x="'+x(i)+'" y="'+(y(s.pct)-10)+'" text-anchor="middle">'+s.pct+'%</text>' +
+           '<text class="chart-label" x="'+x(i)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+s.label+'</text>';
+  }).join('');
+
+  container.innerHTML =
+    '<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">' +
+      '<defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="var(--yellow)" stop-opacity="0.6"/>' +
+        '<stop offset="100%" stop-color="var(--yellow)" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      gridLines +
+      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>' +
+      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>' +
+      '<path class="chart-area" d="'+areaPath+'"/>' +
+      '<path class="chart-line" d="'+linePath+'"/>' +
+      dots +
+    '</svg>';
+}
+
+function renderWeeklyForecast(forecasts) {
+  var container = document.getElementById('forecast-cards');
+  if (!container) return;
+  container.innerHTML = MODULES.map(function(mod) {
+    var f = forecasts[mod];
+    var weeksText = f.weeksLeft === null ? '資料不足' :
+                    f.weeksLeft === 0    ? '已完成 🎉' :
+                    f.weeksLeft + ' 週';
+    var detail = f.velocity > 0 ? '本週速率 +'+f.velocity+'%' : '尚無速率資料';
+    return '<div class="forecast-card">' +
+      '<div class="forecast-mod">模組 '+mod+'</div>' +
+      '<div><span class="forecast-val">'+weeksText+'</span>' +
+      (f.weeksLeft > 0 ? '<span class="forecast-unit">完工</span>' : '') + '</div>' +
+      '<div class="forecast-detail">目前 '+f.currentPct+'%・'+detail+'</div>' +
+      '<div class="forecast-bar-wrap"><div class="forecast-bar" style="width:'+f.currentPct+'%"></div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderWeekly() {
+  db.ref('log').once('value', function(snap) {
+    var logData   = snap.val();
+    var snapshots = computeWeeklySnapshots(logData);
+    var forecasts = computeForecast(snapshots);
+    renderWeeklyChart(snapshots);
+    renderWeeklyForecast(forecasts);
+    var el = document.getElementById('weekly-last-synced');
+    var now = new Date();
+    if (el) el.textContent = '資料截至 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════
