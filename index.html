@@ -14,6 +14,7 @@
   --blue: #ADCFFF; --purple: #B9ADFF; --green: #C0EDE2;
   --phase1: #2563EB; --phase2: #16A34A; --phase3: #7C3AED;
   --phase4: #EA580C; --phase5: #0891B2;
+  --gate1: #D4A017; --gate2: #4F86C6; --gate3: #7C3AED; --gate4: #0E9F8A; --gate5: #BE185D;
   --ken: #2563EB; --daniel: #16A34A; --ellen: #EA580C; --emily: #EC4899;
   --surface: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.07);
 }
@@ -372,32 +373,32 @@ section { padding: 56px 48px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .gate-num { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; margin-bottom: 4px; }
 .gate-name { font-size: 15px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 2px; }
 .gate-goal { font-size: 12px; color: var(--grey-dark); font-weight: 500; }
-.gate-col:nth-child(1) .gate-num { color: var(--phase1); }
-.gate-col:nth-child(2) .gate-num { color: var(--phase2); }
-.gate-col:nth-child(3) .gate-num { color: var(--phase3); }
-.gate-col:nth-child(4) .gate-num { color: var(--phase4); }
-.gate-col:nth-child(5) .gate-num { color: var(--phase5); }
-.gate-col:nth-child(1) { border-top: 3px solid var(--phase1); }
-.gate-col:nth-child(2) { border-top: 3px solid var(--phase2); }
-.gate-col:nth-child(3) { border-top: 3px solid var(--phase3); }
-.gate-col:nth-child(4) { border-top: 3px solid var(--phase4); }
-.gate-col:nth-child(5) { border-top: 3px solid var(--phase5); }
+.gate-col:nth-child(1) .gate-num { color: var(--gate1); }
+.gate-col:nth-child(2) .gate-num { color: var(--gate2); }
+.gate-col:nth-child(3) .gate-num { color: var(--gate3); }
+.gate-col:nth-child(4) .gate-num { color: var(--gate4); }
+.gate-col:nth-child(5) .gate-num { color: var(--gate5); }
+.gate-col:nth-child(1) { border-top: 3px solid var(--gate1); }
+.gate-col:nth-child(2) { border-top: 3px solid var(--gate2); }
+.gate-col:nth-child(3) { border-top: 3px solid var(--gate3); }
+.gate-col:nth-child(4) { border-top: 3px solid var(--gate4); }
+.gate-col:nth-child(5) { border-top: 3px solid var(--gate5); }
 
 /* GATE PROGRESS INDICATOR */
 .gate-progress-row { padding: 10px 20px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
 .gate-progress-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
 .gate-progress-fill { height: 100%; border-radius: 2px; transition: width 0.4s; }
-.gate-col:nth-child(1) .gate-progress-fill { background: var(--phase1); }
-.gate-col:nth-child(2) .gate-progress-fill { background: var(--phase2); }
-.gate-col:nth-child(3) .gate-progress-fill { background: var(--phase3); }
-.gate-col:nth-child(4) .gate-progress-fill { background: var(--phase4); }
-.gate-col:nth-child(5) .gate-progress-fill { background: var(--phase5); }
+.gate-col:nth-child(1) .gate-progress-fill { background: var(--gate1); }
+.gate-col:nth-child(2) .gate-progress-fill { background: var(--gate2); }
+.gate-col:nth-child(3) .gate-progress-fill { background: var(--gate3); }
+.gate-col:nth-child(4) .gate-progress-fill { background: var(--gate4); }
+.gate-col:nth-child(5) .gate-progress-fill { background: var(--gate5); }
 .gate-pct-text { font-size: 13px; font-weight: 700; min-width: 34px; text-align: right; }
-.gate-col:nth-child(1) .gate-pct-text { color: var(--phase1); }
-.gate-col:nth-child(2) .gate-pct-text { color: var(--phase2); }
-.gate-col:nth-child(3) .gate-pct-text { color: var(--phase3); }
-.gate-col:nth-child(4) .gate-pct-text { color: var(--phase4); }
-.gate-col:nth-child(5) .gate-pct-text { color: var(--phase5); }
+.gate-col:nth-child(1) .gate-pct-text { color: var(--gate1); }
+.gate-col:nth-child(2) .gate-pct-text { color: var(--gate2); }
+.gate-col:nth-child(3) .gate-pct-text { color: var(--gate3); }
+.gate-col:nth-child(4) .gate-pct-text { color: var(--gate4); }
+.gate-col:nth-child(5) .gate-pct-text { color: var(--gate5); }
 
 /* UNLOCK BADGE */
 .gate-unlock { padding: 8px 20px 12px; font-size: 12px; font-weight: 600; color: var(--grey-dark); display: flex; align-items: center; gap: 6px; }
@@ -426,11 +427,11 @@ section { padding: 56px 48px; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .score-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
 .score-slider::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; border: none; cursor: pointer; }
 /* Per-gate slider thumb colors */
-.gate-col:nth-child(1) .score-slider::-webkit-slider-thumb { background: var(--phase1); }
-.gate-col:nth-child(2) .score-slider::-webkit-slider-thumb { background: var(--phase2); }
-.gate-col:nth-child(3) .score-slider::-webkit-slider-thumb { background: var(--phase3); }
-.gate-col:nth-child(4) .score-slider::-webkit-slider-thumb { background: var(--phase4); }
-.gate-col:nth-child(5) .score-slider::-webkit-slider-thumb { background: var(--phase5); }
+.gate-col:nth-child(1) .score-slider::-webkit-slider-thumb { background: var(--gate1); }
+.gate-col:nth-child(2) .score-slider::-webkit-slider-thumb { background: var(--gate2); }
+.gate-col:nth-child(3) .score-slider::-webkit-slider-thumb { background: var(--gate3); }
+.gate-col:nth-child(4) .score-slider::-webkit-slider-thumb { background: var(--gate4); }
+.gate-col:nth-child(5) .score-slider::-webkit-slider-thumb { background: var(--gate5); }
 .score-val { font-size: 16px; font-weight: 700; min-width: 22px; text-align: right; }
 .score-denom { font-size: 12px; color: rgba(255,255,255,0.25); }
 .prereq-hint { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 6px; display: flex; align-items: center; gap: 5px; }
@@ -714,6 +715,23 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+
+/* ── THREE-NODE SLIDER ───────────────────────────────────── */
+.score-row { position: relative; }
+.node-track { position: relative; flex: 1; height: 24px; display: flex; align-items: center; }
+.node-line { position: absolute; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+.node-fill { position: absolute; left: 0; height: 3px; border-radius: 2px; transition: width 0.25s; }
+.node-dots { position: absolute; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; }
+.node-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; background: var(--black); cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
+.node-dot:hover { transform: scale(1.3); }
+.node-dot.active { background: currentColor; transform: scale(1.2); }
+.node-labels { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 4px; opacity: 0.5; }
+.node-label { flex: 0 0 auto; }
+.node-label.active { opacity: 1; }
+.node-status-badge { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
+.node-status-badge.s0 { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.35); }
+.node-status-badge.s5 { background: rgba(255,234,65,0.12); color: var(--yellow); }
+.node-status-badge.s10 { background: rgba(74,222,128,0.12); color: #4ade80; }
 </style>
 
 <body>
@@ -1607,22 +1625,22 @@ const MODULES             = ['C2','C3','C4'];
 const SECTIONS_PER_MODULE = 20;
 
 const TASKS = [
-  { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],            prereqs:[],                        moduleLevel:false },
-  { id:'1-2', gate:1, name:'中文字幕製作',                 owners:['Ken'],            prereqs:['1-1'],                   moduleLevel:false },
-  { id:'1-3', gate:1, name:'題目翻譯或改寫',               owners:['Ken','Daniel'],   prereqs:['1-2'],                   moduleLevel:false },
-  { id:'1-4', gate:1, name:'教材封面、封底設計',            owners:['Ellen'],          prereqs:[],                        moduleLevel:true  },
-  { id:'2-1', gate:2, name:'簡報排版＋動畫確認',            owners:['Ellen'],          prereqs:['1-1'],                   moduleLevel:false },
-  { id:'2-2', gate:2, name:'中文內容審稿',                 owners:['Daniel'],         prereqs:['1-2'],                   moduleLevel:false },
-  { id:'3-1', gate:3, name:'課程影片簡報錄製',              owners:['Emily'],          prereqs:['2-1','2-2'],             moduleLevel:false },
-  { id:'3-2', gate:3, name:'課程影片剪輯',                 owners:['Ken'],            prereqs:['3-1'],                   moduleLevel:false },
-  { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],          prereqs:['2-2'],                   moduleLevel:false },
-  { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],                   moduleLevel:false },
-  { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],          prereqs:['2-2'],                   moduleLevel:false },
-  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],          prereqs:['3-3','3-4'],             moduleLevel:false },
-  { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],            prereqs:['1-3'],                   moduleLevel:false },
-  { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],          prereqs:['2-2','3-2'],             moduleLevel:false },
-  { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken','Daniel'],   prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false },
-  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],         prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false },
+  { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],     prereqs:[],                        moduleLevel:false, firstSectionOnly:false },
+  { id:'1-2', gate:1, name:'中文字幕製作',                 owners:['Ken'],     prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'1-3', gate:1, name:'題目翻譯或改寫',               owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'1-4', gate:1, name:'教材封面、封底設計',            owners:['Ellen'],   prereqs:[],                        moduleLevel:false, firstSectionOnly:true  },
+  { id:'2-1', gate:2, name:'簡報排版＋動畫確認',            owners:['Ellen'],   prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'2-2', gate:2, name:'中文內容審稿',                 owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'3-1', gate:3, name:'課程影片簡報錄製',              owners:['Emily'],   prereqs:['2-1','2-2'],             moduleLevel:false, firstSectionOnly:false },
+  { id:'3-2', gate:3, name:'課程影片剪輯',                 owners:['Ken'],     prereqs:['3-1'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],            moduleLevel:false, firstSectionOnly:false },
+  { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],   prereqs:['3-3','3-4'],             moduleLevel:false, firstSectionOnly:false },
+  { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],     prereqs:['1-3'],                   moduleLevel:false, firstSectionOnly:false },
+  { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],   prereqs:['2-2','3-2'],             moduleLevel:false, firstSectionOnly:false },
+  { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken'],     prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false },
+  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],  prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false },
 ];
 const GATES = [
   { num:1, name:'翻譯基礎完成',  goal:'交付：80% 中文課程內容',   unlock:'解鎖：排版與審稿' },
@@ -1635,7 +1653,7 @@ const MEMBERS       = ['Ken','Daniel','Ellen','Emily'];
 const OWNER_CLASS   = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
 const CHIP_CLASS    = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
 const MEMBER_COLORS = { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
-const GATE_COLORS   = ['','var(--phase1)','var(--phase2)','var(--phase3)','var(--phase4)','var(--phase5)'];
+const GATE_COLORS   = ['','var(--gate1)','var(--gate2)','var(--gate3)','var(--gate4)','var(--gate5)'];
 
 /* ═══════════════════════════════════════════════════════════
    STATE
@@ -1668,6 +1686,13 @@ function getSections(mod) {
 // Firebase paths can't contain '.' — convert e.g. '2.1' → '2_1'
 function toFbKey(sec) { return sec.replace(/\./g, '_'); }
 function fromFbKey(key) { return key.replace(/_/g, '.'); }
+// Returns tasks visible for a given section (filters firstSectionOnly)
+function getActiveTasks(sec) {
+  const isFirst = sec && sec.endsWith('.1');
+  return TASKS.filter(function(t) {
+    return !t.firstSectionOnly || isFirst;
+  });
+}
 
 /* ═══════════════════════════════════════════════════════════
    FIREBASE READ / WRITE
@@ -1777,18 +1802,24 @@ function prereqPct(taskId, mod, sec) {
 }
 function getGateTasks(n) { return TASKS.filter(function(t){ return t.gate === n; }); }
 function gatePct(n, mod, sec) {
-  const ts = getGateTasks(n);
+  const ts = getGateTasks(n).filter(function(t){
+    return !t.firstSectionOnly || (sec && sec.endsWith('.1'));
+  });
+  if (!ts.length) return 0;
   return Math.round(ts.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (ts.length*10) * 100);
 }
 function sectionPct(mod, sec) {
-  return Math.round(TASKS.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (TASKS.length*10) * 100);
+  const active = getActiveTasks(sec);
+  return Math.round(active.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (active.length*10) * 100);
 }
 function modulePct(mod) {
   const secs = getSections(mod);
   return Math.round(secs.reduce(function(s,sec){ return s+sectionPct(mod,sec); },0) / secs.length);
 }
 function isGateDone(n, mod, sec) {
-  return getGateTasks(n).every(function(t){ return getScore(t.id,mod,sec) >= 10; });
+  return getGateTasks(n).filter(function(t){
+    return !t.firstSectionOnly || (sec && sec.endsWith('.1'));
+  }).every(function(t){ return getScore(t.id,mod,sec) >= 10; });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1813,6 +1844,16 @@ function selectMember(name, color) {
 /* ═══════════════════════════════════════════════════════════
    UPDATE SCORE
 ═══════════════════════════════════════════════════════════ */
+function cycleScore(taskId) {
+  // Cycle through 0 → 5 → 10 → 0
+  const current = getScore(taskId);
+  const next = current === 0 ? 5 : current === 5 ? 10 : 0;
+  updateScore(taskId, next);
+  // Update the hidden range input so it stays in sync
+  var slider = document.querySelector('[data-task="' + taskId + '"]');
+  if (slider) slider.value = next;
+}
+
 function updateScore(taskId, val) {
   if (!currentMember) { showLogin(); return; }
   const task    = TASKS.find(function(t){ return t.id === taskId; });
@@ -1953,7 +1994,9 @@ function renderGates() {
     const taskWrap = document.createElement('div');
     taskWrap.className = 'task-rows';
 
-    tasks.forEach(function(task) {
+    tasks.filter(function(task){
+      return !task.firstSectionOnly || sec.endsWith('.1');
+    }).forEach(function(task) {
       const score    = getScore(task.id, mod, sec);
       const prereqOk = isPrereqMet(task.id, mod, sec);
       const ppct     = prereqPct(task.id, mod, sec);
@@ -1974,20 +2017,43 @@ function renderGates() {
       row.className = 'task-row' + (isBlocked?' blocked':'') + (isOwner?' mine':'');
       row.id = 'task-row-' + task.id.replace('-','_');
 
-      // Always attach oninput — use pointer-events for locking so DOM stays intact.
-      const sliderStyle = canEdit ? '' : 'opacity:.35;cursor:not-allowed;pointer-events:none';
+            // Gate color for this task
+      const gateColor = GATE_COLORS[task.gate];
+      const fillPct   = score === 0 ? 0 : score === 5 ? 50 : 100;
+      const statusKey = score === 0 ? 's0' : score === 5 ? 's5' : 's10';
+      const statusTxt = score === 0 ? '未開始' : score === 5 ? '進行中' : '完成';
+      const canStyle  = canEdit ? '' : 'opacity:.4;pointer-events:none';
+
+      // Node dots
+      const dots = [0,5,10].map(function(v) {
+        const isActive = score >= v && !(v > 0 && score < v);
+        const dotActive = score === v || (v === 0 && score === 0) || (v === 10 && score === 10) || (v === 5 && score === 5);
+        return '<div class="node-dot'+(dotActive?' active':'')+'"' +
+          ' style="color:'+gateColor+';border-color:'+gateColor+(score>=v?';background:'+gateColor:'')+'"' +
+          (canEdit ? ' onclick="cycleScore(\''+task.id+'\','+v+')"' : '') +
+          ' title="'+(v===0?'未開始':v===5?'進行中':'完成')+'"></div>';
+      }).join('');
+
       row.innerHTML =
-        '<div class="task-row-top">' +
-          '<div class="task-id-badge chip-'+OWNER_CLASS[task.owners[0]]+'">'+task.id+'</div>' +
+        '<div class="task-row-top" style="margin-bottom:10px">' +
+          '<div class="task-id-badge" style="background:'+gateColor+'22;color:'+gateColor+'">'+task.id+'</div>' +
           '<div class="task-row-name">'+task.name+'</div>' + chips +
         '</div>' +
-        '<div class="score-row">' +
-          '<input type="range" class="score-slider" min="0" max="10" step="1" value="'+score+'"' +
-          ' oninput="updateScore(\''+task.id+'\', this.value)"' +
-          (sliderStyle ? ' style="'+sliderStyle+'"' : '') + '>' +
-          '<span class="score-val" id="sval-'+task.id.replace('-','_')+'">'+score+'</span>' +
-          '<span class="score-denom">/10</span>' +
-        '</div>' + prereqText;
+        '<div class="score-row" style="align-items:center;gap:12px;'+(canEdit?'':'opacity:.4;pointer-events:none')+'">' +
+          '<div class="node-track" onclick="'+(canEdit?'cycleScore(\''+task.id+'\')':'')+'" style="cursor:'+(canEdit?'pointer':'default')+';flex:1">' +
+            '<div class="node-line"></div>' +
+            '<div class="node-fill" style="width:'+fillPct+'%;background:'+gateColor+'"></div>' +
+            '<div class="node-dots">'+dots+'</div>' +
+          '</div>' +
+          '<span class="node-status-badge '+statusKey+'" id="sval-'+task.id.replace('-','_')+'">'+statusTxt+'</span>' +
+          '<input type="range" data-task="'+task.id+'" min="0" max="10" step="5" value="'+score+'" style="display:none">' +
+        '</div>' +
+        '<div class="node-labels" style="color:'+gateColor+'">' +
+          '<span class="node-label'+(score===0?' active':'')+'">未開始</span>' +
+          '<span class="node-label'+(score===5?' active':'')+'">進行中</span>' +
+          '<span class="node-label'+(score===10?' active':'')+'">完成</span>' +
+        '</div>' +
+        prereqText;
 
       taskWrap.appendChild(row);
     });
@@ -2006,7 +2072,7 @@ function renderMembers() {
   const mod = currentModule, sec = currentSection;
 
   MEMBERS.forEach(function(member) {
-    const myTasks = TASKS.filter(function(t){ return t.owners.indexOf(member) >= 0; });
+    const myTasks = getActiveTasks(sec).filter(function(t){ return t.owners.indexOf(member) >= 0; });
     const myPct   = Math.round(myTasks.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (myTasks.length*10) * 100);
     const done    = myTasks.filter(function(t){ return getScore(t.id,mod,sec) >= 10; }).length;
     const blocked = myTasks.filter(function(t){ return !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
@@ -2086,17 +2152,39 @@ function refreshAll() {
       if (prereqOk) { hint.className='prereq-hint ok'; hint.textContent='✓ 前置任務有產出，可進行'; }
       else { hint.className='prereq-hint blocked'; hint.textContent='⬡ 等待前置：'+task.prereqs.join('、')+'（'+prereqPct(task.id,mod,sec)+'%）'; }
     }
-    var slider = row.querySelector('.score-slider');
-    var valEl  = document.getElementById('sval-'+task.id.replace('-','_'));
-    const sc = getScore(task.id, mod, sec);
-    if (slider) {
-      if (parseInt(slider.value) !== sc) slider.value = sc;
-      const canEdit = isOwner && !(hasP && !prereqOk);
-      slider.style.opacity       = canEdit ? '' : '0.35';
-      slider.style.cursor        = canEdit ? '' : 'not-allowed';
-      slider.style.pointerEvents = canEdit ? 'auto' : 'none';
+    const sc      = getScore(task.id, mod, sec);
+    const canEdit = isOwner && !(hasP && !prereqOk);
+    const gateColor = GATE_COLORS[task.gate];
+    // Update hidden range
+    var hiddenRange = row.querySelector('[data-task="'+task.id+'"]');
+    if (hiddenRange && parseInt(hiddenRange.value) !== sc) hiddenRange.value = sc;
+    // Update status badge
+    var valEl = document.getElementById('sval-'+task.id.replace('-','_'));
+    if (valEl) {
+      valEl.textContent  = sc===0?'未開始':sc===5?'進行中':'完成';
+      valEl.className    = 'node-status-badge '+(sc===0?'s0':sc===5?'s5':'s10');
     }
-    if (valEl) valEl.textContent = sc;
+    // Update node dots
+    var dots = row.querySelectorAll('.node-dot');
+    var vals = [0,5,10];
+    dots.forEach(function(dot,i) {
+      var v = vals[i];
+      dot.classList.toggle('active', sc===v);
+      dot.style.background = sc>=v ? gateColor : 'var(--black)';
+    });
+    // Update fill bar
+    var fill = row.querySelector('.node-fill');
+    if (fill) fill.style.width = (sc===0?0:sc===5?50:100)+'%';
+    // Update node labels
+    var labels = row.querySelectorAll('.node-label');
+    labels.forEach(function(lbl,i){ lbl.classList.toggle('active', sc===vals[i]); });
+    // Update interactivity
+    var track = row.querySelector('.node-track');
+    if (track) {
+      track.style.opacity       = canEdit ? '' : '0.4';
+      track.style.pointerEvents = canEdit ? 'auto' : 'none';
+      track.onclick = canEdit ? function(){ cycleScore(task.id); } : null;
+    }
   });
   renderMembers();
 }
