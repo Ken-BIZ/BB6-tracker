@@ -718,7 +718,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 /* ── THREE-NODE SLIDER ───────────────────────────────────── */
 .score-row { position: relative; }
-.node-track { position: relative; flex: 1; height: 24px; display: flex; align-items: center; }
+.node-track { position: relative; flex: 1; height: 24px; display: flex; align-items: center; user-select: none; }
 .node-line { position: absolute; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; }
 .node-fill { position: absolute; left: 0; height: 3px; border-radius: 2px; transition: width 0.25s; }
 .node-dots { position: absolute; left: 0; right: 0; display: flex; justify-content: space-between; align-items: center; }
@@ -1844,16 +1844,6 @@ function selectMember(name, color) {
 /* ═══════════════════════════════════════════════════════════
    UPDATE SCORE
 ═══════════════════════════════════════════════════════════ */
-function cycleScore(taskId) {
-  // Cycle through 0 → 5 → 10 → 0
-  const current = getScore(taskId);
-  const next = current === 0 ? 5 : current === 5 ? 10 : 0;
-  updateScore(taskId, next);
-  // Update the hidden range input so it stays in sync
-  var slider = document.querySelector('[data-task="' + taskId + '"]');
-  if (slider) slider.value = next;
-}
-
 function updateScore(taskId, val) {
   if (!currentMember) { showLogin(); return; }
   const task    = TASKS.find(function(t){ return t.id === taskId; });
@@ -2017,41 +2007,36 @@ function renderGates() {
       row.className = 'task-row' + (isBlocked?' blocked':'') + (isOwner?' mine':'');
       row.id = 'task-row-' + task.id.replace('-','_');
 
-            // Gate color for this task
-      const gateColor = GATE_COLORS[task.gate];
-      const fillPct   = score === 0 ? 0 : score === 5 ? 50 : 100;
-      const statusKey = score === 0 ? 's0' : score === 5 ? 's5' : 's10';
-      const statusTxt = score === 0 ? '未開始' : score === 5 ? '進行中' : '完成';
-      const canStyle  = canEdit ? '' : 'opacity:.4;pointer-events:none';
-
-      // Node dots
-      const dots = [0,5,10].map(function(v) {
-        const isActive = score >= v && !(v > 0 && score < v);
-        const dotActive = score === v || (v === 0 && score === 0) || (v === 10 && score === 10) || (v === 5 && score === 5);
-        return '<div class="node-dot'+(dotActive?' active':'')+'"' +
-          ' style="color:'+gateColor+';border-color:'+gateColor+(score>=v?';background:'+gateColor:'')+'"' +
-          (canEdit ? ' onclick="cycleScore(\''+task.id+'\','+v+')"' : '') +
-          ' title="'+(v===0?'未開始':v===5?'進行中':'完成')+'"></div>';
-      }).join('');
+            const gateColor = GATE_COLORS[task.gate];
+      const statusKey = score===0?'s0':score===5?'s5':'s10';
+      const statusTxt = score===0?'未開始':score===5?'進行中':'完成';
+      const trackStyle = canEdit ? '' : 'opacity:.4;pointer-events:none';
 
       row.innerHTML =
         '<div class="task-row-top" style="margin-bottom:10px">' +
           '<div class="task-id-badge" style="background:'+gateColor+'22;color:'+gateColor+'">'+task.id+'</div>' +
           '<div class="task-row-name">'+task.name+'</div>' + chips +
         '</div>' +
-        '<div class="score-row" style="align-items:center;gap:12px;'+(canEdit?'':'opacity:.4;pointer-events:none')+'">' +
-          '<div class="node-track" onclick="'+(canEdit?'cycleScore(\''+task.id+'\')':'')+'" style="cursor:'+(canEdit?'pointer':'default')+';flex:1">' +
+        '<div class="score-row" style="align-items:center;gap:12px">' +
+          '<div class="node-track" style="'+trackStyle+'">' +
             '<div class="node-line"></div>' +
-            '<div class="node-fill" style="width:'+fillPct+'%;background:'+gateColor+'"></div>' +
-            '<div class="node-dots">'+dots+'</div>' +
+            '<div class="node-fill" id="nfill-'+task.id.replace('-','_')+'" style="width:'+(score===0?0:score===5?50:100)+'%;background:'+gateColor+'"></div>' +
+            '<div class="node-dots">' +
+              [0,5,10].map(function(v){
+                return '<div class="node-dot'+(score>=v?' active':'')+'"' +
+                  ' style="border-color:'+gateColor+';'+(score>=v?'background:'+gateColor:'')+'" title="'+(v===0?'未開始':v===5?'進行中':'完成')+'"></div>';
+              }).join('') +
+            '</div>' +
+            '<input type="range" class="node-slider" data-task="'+task.id+'" min="0" max="10" step="5" value="'+score+'"' +
+            (canEdit ? ' oninput="updateScore(\''+task.id+'\',this.value)"' : ' disabled') +
+            ' style="position:absolute;left:0;right:0;width:100%;opacity:0;height:24px;cursor:'+(canEdit?'pointer':'default')+';margin:0">' +
           '</div>' +
           '<span class="node-status-badge '+statusKey+'" id="sval-'+task.id.replace('-','_')+'">'+statusTxt+'</span>' +
-          '<input type="range" data-task="'+task.id+'" min="0" max="10" step="5" value="'+score+'" style="display:none">' +
         '</div>' +
-        '<div class="node-labels" style="color:'+gateColor+'">' +
-          '<span class="node-label'+(score===0?' active':'')+'">未開始</span>' +
-          '<span class="node-label'+(score===5?' active':'')+'">進行中</span>' +
-          '<span class="node-label'+(score===10?' active':'')+'">完成</span>' +
+        '<div class="node-labels" style="color:'+gateColor+'55">' +
+          '<span class="node-label'+(score===0?' active':'')+'" style="'+(score===0?'color:'+gateColor+';opacity:1':'')+'">未開始</span>' +
+          '<span class="node-label'+(score===5?' active':'')+'" style="'+(score===5?'color:'+gateColor+';opacity:1':'')+'">進行中</span>' +
+          '<span class="node-label'+(score===10?' active':'')+'" style="'+(score===10?'color:'+gateColor+';opacity:1':'')+'">完成</span>' +
         '</div>' +
         prereqText;
 
@@ -2152,38 +2137,43 @@ function refreshAll() {
       if (prereqOk) { hint.className='prereq-hint ok'; hint.textContent='✓ 前置任務有產出，可進行'; }
       else { hint.className='prereq-hint blocked'; hint.textContent='⬡ 等待前置：'+task.prereqs.join('、')+'（'+prereqPct(task.id,mod,sec)+'%）'; }
     }
-    const sc      = getScore(task.id, mod, sec);
-    const canEdit = isOwner && !(hasP && !prereqOk);
+    const sc        = getScore(task.id, mod, sec);
+    const canEdit   = isOwner && !(hasP && !prereqOk);
     const gateColor = GATE_COLORS[task.gate];
-    // Update hidden range
-    var hiddenRange = row.querySelector('[data-task="'+task.id+'"]');
-    if (hiddenRange && parseInt(hiddenRange.value) !== sc) hiddenRange.value = sc;
-    // Update status badge
+    // Status badge
     var valEl = document.getElementById('sval-'+task.id.replace('-','_'));
     if (valEl) {
-      valEl.textContent  = sc===0?'未開始':sc===5?'進行中':'完成';
-      valEl.className    = 'node-status-badge '+(sc===0?'s0':sc===5?'s5':'s10');
+      valEl.textContent = sc===0?'未開始':sc===5?'進行中':'完成';
+      valEl.className   = 'node-status-badge '+(sc===0?'s0':sc===5?'s5':'s10');
     }
-    // Update node dots
-    var dots = row.querySelectorAll('.node-dot');
-    var vals = [0,5,10];
-    dots.forEach(function(dot,i) {
-      var v = vals[i];
-      dot.classList.toggle('active', sc===v);
-      dot.style.background = sc>=v ? gateColor : 'var(--black)';
-    });
-    // Update fill bar
-    var fill = row.querySelector('.node-fill');
+    // Fill bar
+    var fill = document.getElementById('nfill-'+task.id.replace('-','_'));
     if (fill) fill.style.width = (sc===0?0:sc===5?50:100)+'%';
-    // Update node labels
+    // Dots
+    var dots = row.querySelectorAll('.node-dot');
+    [0,5,10].forEach(function(v,i){
+      if (!dots[i]) return;
+      dots[i].classList.toggle('active', sc>=v);
+      dots[i].style.background = sc>=v ? gateColor : 'var(--black)';
+    });
+    // Labels
     var labels = row.querySelectorAll('.node-label');
-    labels.forEach(function(lbl,i){ lbl.classList.toggle('active', sc===vals[i]); });
-    // Update interactivity
+    [0,5,10].forEach(function(v,i){
+      if (!labels[i]) return;
+      labels[i].style.color   = sc===v ? gateColor : '';
+      labels[i].style.opacity = sc===v ? '1' : '';
+    });
+    // Slider
+    var nodeSlider = row.querySelector('.node-slider');
+    if (nodeSlider) {
+      if (parseInt(nodeSlider.value) !== sc) nodeSlider.value = sc;
+      nodeSlider.disabled = !canEdit;
+    }
+    // Track interactivity
     var track = row.querySelector('.node-track');
     if (track) {
       track.style.opacity       = canEdit ? '' : '0.4';
       track.style.pointerEvents = canEdit ? 'auto' : 'none';
-      track.onclick = canEdit ? function(){ cycleScore(task.id); } : null;
     }
   });
   renderMembers();
