@@ -1895,8 +1895,8 @@ function isPrereqMet(taskId, mod, sec) {
   const task = TASKS.find(function(t){ return t.id === taskId; });
   return task.prereqs.every(function(p) {
     const pt = TASKS.find(function(t){ return t.id === p; });
-    if (pt && pt.moduleLevel) return ((allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][p]) || 0) >= 1;
-    return getScore(p, mod, sec) >= 1;
+    if (pt && pt.moduleLevel) return ((allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][p]) || 0) >= 10;
+    return getScore(p, mod, sec) >= 10;
   });
 }
 function prereqPct(taskId, mod, sec) {
