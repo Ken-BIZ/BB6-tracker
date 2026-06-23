@@ -2844,5 +2844,35 @@ function renderWeekly() {
     if (el) el.textContent = '資料截至 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
   });
 }
+
+/* ── 全域函數掛載（HTML inline handlers 需要） ── */
+window.selectMember      = selectMember;
+window.showLogin         = showLogin;
+window.switchPage        = switchPage;
+window.switchRModule     = switchRModule;
+window.switchSection     = switchSection;
+window.switchOvTab       = switchOvTab;
+window.toggleOvAccordion = toggleOvAccordion;
+window.updateScore       = updateScore;
+window.toggleAcc         = toggleAcc;
+window.exportCSV         = exportCSV;
+window.toggleBaseline    = toggleBaseline;
+window.saveBaseline      = saveBaseline;
+window.resetBaseline     = resetBaseline;
+
+/* ── INIT ── */
+var _savedMember = localStorage.getItem('bb6-member');
+if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
+  selectMember(_savedMember, MEMBER_COLORS[_savedMember]);
+} else {
+  showLogin();
+}
+populateSectionSelect();
+updateReporterHeader();
+setSyncStatus('syncing', '連線中...');
+subscribeModule(currentModule);
+renderGates();
+renderMembers();
+</script>
 </body>
 </html>
