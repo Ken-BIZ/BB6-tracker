@@ -1786,7 +1786,7 @@ function backupToSheet(mod, sec, taskId, score, memberName) {
 /* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
-const MODULES             = ['C2','C3','C4'];
+const MODULES             = ['C2','C3','C4','C5','C6','C7','C8','C9','C10'];
 const SECTIONS_PER_MODULE = 20;
 
 const TASKS = [
@@ -1846,18 +1846,39 @@ initScores();
 
 function isObserver() { return currentMember === 'Ting'; }
 
+function getModuleSectionCount(mod) {
+  var v = parseInt(baseline.videoSections[mod])    || 0;
+  var n = parseInt(baseline.nonVideoSections[mod]) || 0;
+  var total = v + n;
+  return total > 0 ? total : SECTIONS_PER_MODULE; // default 20
+}
+
 function getSections(mod) {
-  const prefix = mod.replace('C','');
-  return Array.from({ length: SECTIONS_PER_MODULE }, function(_,i){ return prefix+'.'+(i+1); });
+  var prefix = mod.replace('C','');
+  var count  = getModuleSectionCount(mod);
+  var result = [];
+  for (var i = 1; i <= count; i++) result.push(prefix + '.' + i);
+  return result;
+}
+
+function isVideoSection(mod, sec) {
+  // First N sections are video sections, rest are non-video
+  var v = parseInt(baseline.videoSections[mod]) || getModuleSectionCount(mod);
+  var num = parseInt(sec.split('.')[1]);
+  return num <= v;
 }
 // Firebase paths can't contain '.' — convert e.g. '2.1' → '2_1'
 function toFbKey(sec) { return sec.replace(/\./g, '_'); }
 function fromFbKey(key) { return key.replace(/_/g, '.'); }
 // Returns tasks visible for a given section (filters firstSectionOnly)
-function getActiveTasks(sec) {
-  const isFirst = sec && sec.endsWith('.1');
+function getActiveTasks(sec, mod) {
+  var isFirst  = sec && sec.endsWith('.1');
+  var isVideo  = !mod || isVideoSection(mod, sec); // default true if no mod given
   return TASKS.filter(function(t) {
-    return !t.firstSectionOnly || isFirst;
+    if (t.firstSectionOnly && !isFirst) return false;
+    // Non-video sections only get NON_VIDEO_TASK_IDS (+ firstSectionOnly excluded above)
+    if (!isVideo && VIDEO_ONLY_TASK_IDS.indexOf(t.id) >= 0) return false;
+    return true;
   });
 }
 
@@ -1969,14 +1990,13 @@ function prereqPct(taskId, mod, sec) {
 }
 function getGateTasks(n) { return TASKS.filter(function(t){ return t.gate === n; }); }
 function gatePct(n, mod, sec) {
-  const ts = getGateTasks(n).filter(function(t){
-    return !t.firstSectionOnly || (sec && sec.endsWith('.1'));
-  });
+  var ts = getActiveTasks(sec, mod).filter(function(t){ return t.gate === n; });
   if (!ts.length) return 0;
   return Math.round(ts.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (ts.length*10) * 100);
 }
 function sectionPct(mod, sec) {
-  const active = getActiveTasks(sec);
+  var active = getActiveTasks(sec, mod);
+  if (!active.length) return 0;
   return Math.round(active.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (active.length*10) * 100);
 }
 function modulePct(mod) {
@@ -1984,9 +2004,8 @@ function modulePct(mod) {
   return Math.round(secs.reduce(function(s,sec){ return s+sectionPct(mod,sec); },0) / secs.length);
 }
 function isGateDone(n, mod, sec) {
-  return getGateTasks(n).filter(function(t){
-    return !t.firstSectionOnly || (sec && sec.endsWith('.1'));
-  }).every(function(t){ return getScore(t.id,mod,sec) >= 10; });
+  var ts = getActiveTasks(sec, mod).filter(function(t){ return t.gate === n; });
+  return ts.length > 0 && ts.every(function(t){ return getScore(t.id,mod,sec) >= 10; });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2113,9 +2132,16 @@ function switchOvTab(tab) {
   renderOverview();
 }
 function populateSectionSelect() {
-  const sel      = document.getElementById('section-select');
-  const sections = getSections(currentModule);
-  sel.innerHTML  = sections.map(function(s){ return '<option value="'+s+'">'+s+'</option>'; }).join('');
+  var sel      = document.getElementById('section-select');
+  var sections = getSections(currentModule);
+  if (!sections.length) {
+    sel.innerHTML = '<option value="">尚未設定小節數</option>';
+    return;
+  }
+  sel.innerHTML = sections.map(function(s){
+    var label = isVideoSection(currentModule, s) ? s : s + ' ✦';
+    return '<option value="'+s+'">'+label+'</option>';
+  }).join('');
 }
 function updateReporterHeader() {
   var tag   = document.getElementById('reporter-section-tag');
@@ -2180,9 +2206,7 @@ function renderGates() {
     const taskWrap = document.createElement('div');
     taskWrap.className = 'task-rows';
 
-    tasks.filter(function(task){
-      return !task.firstSectionOnly || sec.endsWith('.1');
-    }).forEach(function(task) {
+    getActiveTasks(sec, mod).filter(function(task){ return task.gate === gate.num; }).forEach(function(task) {
       const score    = getScore(task.id, mod, sec);
       const prereqOk = isPrereqMet(task.id, mod, sec);
       const ppct     = prereqPct(task.id, mod, sec);
@@ -2248,7 +2272,7 @@ function renderMembers() {
   const mod = currentModule, sec = currentSection;
 
   MEMBERS.filter(function(m){ return m !== 'Ting'; }).forEach(function(member) {
-    const myTasks = getActiveTasks(sec).filter(function(t){ return t.owners.indexOf(member) >= 0; });
+    const myTasks = getActiveTasks(sec, mod).filter(function(t){ return t.owners.indexOf(member) >= 0; });
     const myPct   = Math.round(myTasks.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (myTasks.length*10) * 100);
     const done    = myTasks.filter(function(t){ return getScore(t.id,mod,sec) >= 10; }).length;
     const blocked = myTasks.filter(function(t){ return !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
@@ -2482,21 +2506,31 @@ function getWeekLabel(cutoff) {
 ═══════════════════════════════════════════════════════════ */
 
 var baseline = {
-  taskHours:   {},   // taskId → hours per section
-  moduleStart: {},   // mod → 'YYYY-MM-DD'
+  taskHours:        {},   // taskId → hours per section
+  moduleStart:      {},   // mod → 'YYYY-MM-DD'
+  videoSections:    {},   // mod → number of sections with video (default 20)
+  nonVideoSections: {},   // mod → number of sections without video (default 0)
   hoursPerWeek: 30
 };
 
 // Tasks eligible for time estimation (exclude 1-4 firstSectionOnly)
 var FORECAST_TASKS = TASKS.filter(function(t){ return !t.firstSectionOnly; });
+// Tasks that apply to ALL sections (including no-video sections)
+var NON_VIDEO_TASK_IDS = ['1-3','2-2','3-4','4-2','5-1','5-2'];
+// Tasks that only apply to sections WITH video
+var VIDEO_ONLY_TASK_IDS = FORECAST_TASKS
+  .map(function(t){ return t.id; })
+  .filter(function(id){ return NON_VIDEO_TASK_IDS.indexOf(id) < 0; });
 
 function loadBaseline() {
   db.ref('settings/baseline').once('value', function(snap) {
     var data = snap.val();
     if (data) {
-      baseline.taskHours   = data.taskHours   || {};
-      baseline.moduleStart = data.moduleStart || {};
-      baseline.hoursPerWeek = data.hoursPerWeek || 30;
+      baseline.taskHours        = data.taskHours        || {};
+      baseline.moduleStart      = data.moduleStart      || {};
+      baseline.videoSections    = data.videoSections    || {};
+      baseline.nonVideoSections = data.nonVideoSections || {};
+      baseline.hoursPerWeek     = data.hoursPerWeek     || 30;
     }
     renderBaselineForm();
     renderForecastCards();
@@ -2510,8 +2544,12 @@ function saveBaseline() {
     if (el) baseline.taskHours[t.id] = parseFloat(el.value) || 0;
   });
   MODULES.forEach(function(mod) {
-    var el = document.getElementById('bs-'+mod);
-    if (el) baseline.moduleStart[mod] = el.value;
+    var dateEl = document.getElementById('bs-'+mod);
+    var vEl    = document.getElementById('bv-'+mod);
+    var nEl    = document.getElementById('bn-'+mod);
+    if (dateEl) baseline.moduleStart[mod]      = dateEl.value;
+    if (vEl)    baseline.videoSections[mod]    = parseInt(vEl.value) || 0;
+    if (nEl)    baseline.nonVideoSections[mod] = parseInt(nEl.value) || 0;
   });
   db.ref('settings/baseline').set(baseline, function(err) {
     if (err) { showToast('儲存失敗'); }
@@ -2545,14 +2583,29 @@ function toggleBaseline() {
 }
 
 function renderBaselineForm() {
-  // Module start dates
+  // Module start dates + section counts
   var modRows = document.getElementById('baseline-module-rows');
   if (modRows) {
     modRows.innerHTML = MODULES.map(function(mod) {
-      var val = baseline.moduleStart[mod] || '';
-      return '<div class="baseline-row">' +
-        '<span class="baseline-row-label">'+mod+' 起算日期</span>' +
-        '<input class="baseline-input baseline-input-date" type="date" id="bs-'+mod+'" value="'+val+'">' +
+      var dateVal  = baseline.moduleStart[mod]      || '';
+      var vVal     = baseline.videoSections[mod]    !== undefined ? baseline.videoSections[mod]    : '';
+      var nVal     = baseline.nonVideoSections[mod] !== undefined ? baseline.nonVideoSections[mod] : '';
+      return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
+        '<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;letter-spacing:0.06em">模組 '+mod+'</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">起算日期</span>' +
+          '<input class="baseline-input baseline-input-date" type="date" id="bs-'+mod+'" value="'+dateVal+'">' +
+        '</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">有影片小節數</span>' +
+          '<input class="baseline-input" type="number" min="0" step="1" id="bv-'+mod+'" value="'+vVal+'" placeholder="0">' +
+          '<span class="baseline-unit">小節</span>' +
+        '</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">無影片小節數</span>' +
+          '<input class="baseline-input" type="number" min="0" step="1" id="bn-'+mod+'" value="'+nVal+'" placeholder="0">' +
+          '<span class="baseline-unit">小節</span>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
@@ -2604,10 +2657,19 @@ function formatDate(d) {
 }
 
 function computeModuleForecast(mod) {
+  var vCount = parseInt(baseline.videoSections[mod])    || 0;
+  var nCount = parseInt(baseline.nonVideoSections[mod]) || 0;
+  var total  = vCount + nCount > 0 ? vCount + nCount : SECTIONS_PER_MODULE;
+  if (vCount + nCount === 0) vCount = total; // treat all as video if not set
+
   var totalHours = 0;
   FORECAST_TASKS.forEach(function(t) {
     var h = parseFloat(baseline.taskHours[t.id]) || 0;
-    totalHours += h * SECTIONS_PER_MODULE;
+    if (VIDEO_ONLY_TASK_IDS.indexOf(t.id) >= 0) {
+      totalHours += h * vCount;          // video-only tasks × video sections
+    } else {
+      totalHours += h * total;           // non-video tasks × all sections
+    }
   });
 
   var currentPct = modulePct(mod);
@@ -2626,6 +2688,8 @@ function computeModuleForecast(mod) {
     completionDate: endDate,
     weeksTotal: Math.round(weeksTotal * 10) / 10,
     totalHours: Math.round(totalHours),
+    vCount: vCount,
+    nCount: nCount,
     reason: null
   };
 }
@@ -2657,6 +2721,7 @@ function renderForecastCards() {
       '<div class="forecast-date '+dateClass+'">'+dateStr+'</div>' +
       '<div class="forecast-weeks">'+weeksStr+'</div>' +
       '<div class="forecast-detail-row"><span>目前完成度</span><span>'+f.currentPct+'%</span></div>' +
+      (f.vCount !== undefined ? '<div class="forecast-detail-row"><span>有影片 / 無影片</span><span>'+f.vCount+' / '+f.nCount+' 小節</span></div>' : '') +
       (f.completionDate && baseline.moduleStart[mod] ?
         '<div class="forecast-detail-row"><span>起算日期</span><span>'+baseline.moduleStart[mod]+'</span></div>' : '') +
       '<div class="forecast-bar-wrap"><div class="forecast-bar" style="width:'+f.currentPct+'%"></div></div>' +
@@ -2741,7 +2806,7 @@ function renderWeeklyChart(logData) {
   }).join('');
 
   // Module colors
-  var modColors = { C2: GATE_COLORS[1], C3: GATE_COLORS[3], C4: GATE_COLORS[5] };
+  var modColors = { C2:GATE_COLORS[1], C3:GATE_COLORS[2], C4:GATE_COLORS[3], C5:GATE_COLORS[4], C6:GATE_COLORS[5], C7:'#F59E0B', C8:'#06B6D4', C9:'#84CC16', C10:'#F43F5E' };
 
   // Lines + dots per module
   var lines = MODULES.map(function(mod) {
