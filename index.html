@@ -795,6 +795,45 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .ov-section-pill.done   { background: rgba(74,222,128,0.15); color: #4ade80; }
 .ov-section-pill.active { background: rgba(255,234,65,0.12); color: var(--yellow); }
 .ov-section-pill.blocked{ background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); }
+
+/* ── BASELINE SETTINGS BAR ──────────────────────────────── */
+.baseline-bar { background: rgba(139,92,246,0.06); border-bottom: 1px solid rgba(139,92,246,0.18); padding: 0 48px; }
+.baseline-bar-top { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
+.baseline-title { font-size: 14px; font-weight: 700; color: #C4B5FD; }
+.baseline-sub { font-size: 13px; color: rgba(255,255,255,0.35); flex: 1; }
+.baseline-toggle { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #C4B5FD; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.baseline-toggle:hover { background: rgba(139,92,246,0.25); }
+.baseline-body { padding: 20px 0 24px; border-top: 1px solid rgba(139,92,246,0.12); }
+.baseline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+.baseline-section-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.35); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+.baseline-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.baseline-row-label { font-size: 14px; color: rgba(255,255,255,0.7); flex: 1; }
+.baseline-row-sub { font-size: 12px; color: rgba(255,255,255,0.3); }
+.baseline-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; color: var(--white); font-size: 14px; font-weight: 600; padding: 6px 10px; font-family: inherit; width: 80px; text-align: right; }
+.baseline-input:focus { outline: none; border-color: #8B5CF6; }
+.baseline-input-date { width: 140px; text-align: left; }
+.baseline-unit { font-size: 13px; color: rgba(255,255,255,0.3); white-space: nowrap; }
+
+/* ── FORECAST ROW ────────────────────────────────────────── */
+.forecast-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
+.forecast-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 8px; padding: 20px 24px; }
+.forecast-mod { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.4); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+.forecast-date { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; color: var(--yellow); line-height: 1.1; margin-bottom: 4px; }
+.forecast-date.done { color: #4ade80; font-size: 22px; }
+.forecast-date.unknown { color: rgba(255,255,255,0.2); font-size: 18px; }
+.forecast-weeks { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 12px; }
+.forecast-detail-row { display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+.forecast-bar-wrap { margin-top: 10px; height: 5px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+.forecast-bar { height: 100%; background: var(--yellow); border-radius: 3px; transition: width 0.5s; }
+
+/* ── CHARTS STACK ────────────────────────────────────────── */
+.charts-stack { display: flex; flex-direction: column; gap: 20px; }
+
+@media (max-width: 900px) {
+  .baseline-bar { padding: 0 20px; }
+  .baseline-grid { grid-template-columns: 1fr; gap: 20px; }
+  .forecast-row { grid-template-columns: 1fr; }
+}
 </style>
 
 <body>
@@ -1635,35 +1674,59 @@ function toggleAcc(btn) {
 
 <!-- ── PAGE: 本週專案概況 ──────────────────────────── -->
 <div class="page" id="page-weekly">
+
+  <!-- ── 基準設定 ── -->
+  <div class="baseline-bar" id="baseline-bar">
+    <div class="baseline-bar-top">
+      <span class="baseline-title">完工預測設定</span>
+      <span class="baseline-sub">填入每小節各任務所需時數，系統自動計算預計完工日期</span>
+      <button class="baseline-toggle" onclick="toggleBaseline()">展開設定 ▾</button>
+    </div>
+    <div class="baseline-body" id="baseline-body" style="display:none">
+      <div class="baseline-grid">
+        <!-- Module start dates + avg video length -->
+        <div class="baseline-section">
+          <div class="baseline-section-title">模組設定</div>
+          <div class="baseline-module-rows" id="baseline-module-rows"></div>
+        </div>
+        <!-- Task hours per section -->
+        <div class="baseline-section">
+          <div class="baseline-section-title">每小節任務時數（小時）</div>
+          <div class="baseline-task-rows" id="baseline-task-rows"></div>
+        </div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
+        <button class="btn btn-ghost" onclick="resetBaseline()">重設</button>
+        <button class="btn btn-yellow" onclick="saveBaseline()">儲存設定</button>
+      </div>
+    </div>
+  </div>
+
   <section>
     <div class="section-label">Ting 主管視角</div>
     <div class="section-title">專案概況</div>
-    <div class="weekly-grid">
-      <!-- Charts stacked -->
-      <div style="display:flex;flex-direction:column;gap:20px">
-        <div class="chart-card">
-          <div class="chart-card-title">每週完成度趨勢</div>
-          <div class="chart-card-sub">每週三 18:30 結算・週四為每週起始日</div>
-          <div id="weekly-chart-container"></div>
-        </div>
-        <div class="chart-card">
-          <div class="chart-card-title">單日完成度變化</div>
-          <div class="chart-card-sub">每天最後一次填報時的整體完成百分比</div>
-          <div id="daily-chart-container"></div>
-        </div>
+
+    <!-- ── 完工預測卡片 ── -->
+    <div class="forecast-row" id="forecast-cards"></div>
+
+    <!-- ── 圖表區 ── -->
+    <div class="charts-stack">
+      <div class="chart-card">
+        <div class="chart-card-title">各模組週完成度趨勢</div>
+        <div class="chart-card-sub">每週三 18:30 結算・週四為每週起始日</div>
+        <div id="weekly-chart-container"></div>
       </div>
-      <!-- Forecast cards -->
-      <div>
-        <div class="chart-card-title" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:16px">模組完工預測</div>
-        <div class="forecast-cards" id="forecast-cards">
-          <div class="chart-empty">載入中...</div>
-        </div>
+      <div class="chart-card">
+        <div class="chart-card-title">單日完成度增量</div>
+        <div class="chart-card-sub">每天新增的整體完成百分比</div>
+        <div id="daily-chart-container"></div>
       </div>
     </div>
   </section>
+
   <footer>
     <div class="footer-brand">商明國際 BizCivilization</div>
-    <div class="footer-note">BB6 本週專案概況 · 主管視角</div>
+    <div class="footer-note">BB6 專案概況 · 主管視角</div>
     <div class="last-saved" id="weekly-last-synced">載入中...</div>
   </footer>
 </div>
@@ -2013,6 +2076,7 @@ function switchPage(page) {
   }
   if (page === 'weekly') {
     MODULES.forEach(function(m){ subscribeModule(m); });
+    loadBaseline();
     renderWeekly();
   }
 }
@@ -2407,302 +2471,378 @@ function getWeekLabel(cutoff) {
   return m+'/'+d;
 }
 
-function computeWeeklySnapshots(logData) {
-  // logData: { timestamp: { mod, sec, taskId, score, member, ts } }
-  if (!logData) return [];
+/* ═══════════════════════════════════════════════════════════
+   BASELINE SETTINGS
+   Stored in Firebase: settings/baseline
+   {
+     taskHours: { '1-1': 3, '1-2': 2, ... },
+     moduleStart: { C2: '2026-06-01', C3: '...', C4: '...' },
+     hoursPerWeek: 30
+   }
+═══════════════════════════════════════════════════════════ */
 
-  // Build list of entries sorted by time
-  var entries = Object.values(logData).sort(function(a,b){
-    return new Date(a.ts) - new Date(b.ts);
-  });
+var baseline = {
+  taskHours:   {},   // taskId → hours per section
+  moduleStart: {},   // mod → 'YYYY-MM-DD'
+  hoursPerWeek: 30
+};
 
-  if (!entries.length) return [];
+// Tasks eligible for time estimation (exclude 1-4 firstSectionOnly)
+var FORECAST_TASKS = TASKS.filter(function(t){ return !t.firstSectionOnly; });
 
-  // Replay log to build state snapshots at each Wednesday 18:30
-  var state = {}; // state[mod][sec][taskId] = score
-  MODULES.forEach(function(mod) {
-    state[mod] = {};
-    getSections(mod).forEach(function(sec) {
-      state[mod][sec] = {};
-      getActiveTasks(sec).forEach(function(t){ state[mod][sec][t.id] = 0; });
-    });
-  });
-
-  var snapshots = [];
-  var now = new Date();
-  var firstEntry = new Date(entries[0].ts);
-  // Start from the week of first entry
-  var cutoff = getWeekCutoff(firstEntry);
-  var maxCutoff = getWeekCutoff(now);
-
-  var entryIdx = 0;
-
-  while (cutoff <= maxCutoff) {
-    // Apply all entries up to this cutoff
-    while (entryIdx < entries.length) {
-      var entryTime = new Date(entries[entryIdx].ts);
-      if (entryTime > cutoff) break;
-      var e = entries[entryIdx];
-      if (state[e.mod] && state[e.mod][e.sec] !== undefined) {
-        state[e.mod][e.sec][e.taskId] = parseInt(e.score) || 0;
-      }
-      entryIdx++;
+function loadBaseline() {
+  db.ref('settings/baseline').once('value', function(snap) {
+    var data = snap.val();
+    if (data) {
+      baseline.taskHours   = data.taskHours   || {};
+      baseline.moduleStart = data.moduleStart || {};
+      baseline.hoursPerWeek = data.hoursPerWeek || 30;
     }
-    // Compute overall pct at this cutoff
-    var total = 0, count = 0;
-    MODULES.forEach(function(mod) {
-      getSections(mod).forEach(function(sec) {
-        var active = getActiveTasks(sec);
-        active.forEach(function(t) {
-          total += (state[mod][sec][t.id] || 0);
-          count += 10;
-        });
-      });
-    });
-    var pct = count > 0 ? Math.round(total/count*100) : 0;
-    snapshots.push({ label: getWeekLabel(cutoff), pct: pct, date: new Date(cutoff) });
-    // Next cutoff = +7 days
-    cutoff = new Date(cutoff.getTime() + 7*24*60*60*1000);
-  }
-  return snapshots;
+    renderBaselineForm();
+    renderForecastCards();
+  });
 }
 
-function computeForecast(snapshots) {
-  // Per-module forecast based on last 2 weeks velocity
-  var forecasts = {};
-  MODULES.forEach(function(mod) {
-    var total = 0, count = 0;
-    getSections(mod).forEach(function(sec) {
-      var active = getActiveTasks(sec);
-      active.forEach(function(t) {
-        total += getScore(t.id, mod, sec);
-        count += 10;
-      });
-    });
-    var currentPct = count > 0 ? Math.round(total/count*100) : 0;
-    forecasts[mod] = { currentPct: currentPct, weeksLeft: null, velocity: 0 };
-
-    if (snapshots.length >= 2) {
-      // Use last 2 snapshots to compute weekly velocity
-      var last  = snapshots[snapshots.length-1].pct;
-      var prev  = snapshots[snapshots.length-2].pct;
-      var velocity = last - prev; // % per week
-      // Module-specific: approximate by scaling overall velocity
-      if (velocity > 0 && currentPct < 100) {
-        var weeksLeft = Math.ceil((100 - currentPct) / velocity);
-        forecasts[mod].weeksLeft = weeksLeft;
-        forecasts[mod].velocity  = velocity;
-      } else if (currentPct >= 100) {
-        forecasts[mod].weeksLeft = 0;
-      }
-    }
+function saveBaseline() {
+  // Read values from form
+  FORECAST_TASKS.forEach(function(t) {
+    var el = document.getElementById('bh-'+t.id.replace('-','_'));
+    if (el) baseline.taskHours[t.id] = parseFloat(el.value) || 0;
   });
-  return forecasts;
+  MODULES.forEach(function(mod) {
+    var el = document.getElementById('bs-'+mod);
+    if (el) baseline.moduleStart[mod] = el.value;
+  });
+  db.ref('settings/baseline').set(baseline, function(err) {
+    if (err) { showToast('儲存失敗'); }
+    else { showToast('設定已儲存 ✓'); renderForecastCards(); }
+  });
 }
 
-function renderWeeklyChart(snapshots) {
-  var container = document.getElementById('weekly-chart-container');
-  if (!container) return;
+function resetBaseline() {
+  FORECAST_TASKS.forEach(function(t) {
+    var el = document.getElementById('bh-'+t.id.replace('-','_'));
+    if (el) el.value = '';
+    baseline.taskHours[t.id] = 0;
+  });
+  MODULES.forEach(function(mod) {
+    var el = document.getElementById('bs-'+mod);
+    if (el) el.value = '';
+    baseline.moduleStart[mod] = '';
+  });
+  db.ref('settings/baseline').remove();
+  showToast('設定已重設');
+  renderForecastCards();
+}
 
-  if (snapshots.length < 2) {
-    container.innerHTML = '<div class="chart-empty">資料累積中，至少需要兩週紀錄才能顯示趨勢</div>';
-    return;
+function toggleBaseline() {
+  var body = document.getElementById('baseline-body');
+  var btn  = document.querySelector('.baseline-toggle');
+  if (!body) return;
+  var isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  if (btn) btn.textContent = isOpen ? '展開設定 ▾' : '收合設定 ▴';
+}
+
+function renderBaselineForm() {
+  // Module start dates
+  var modRows = document.getElementById('baseline-module-rows');
+  if (modRows) {
+    modRows.innerHTML = MODULES.map(function(mod) {
+      var val = baseline.moduleStart[mod] || '';
+      return '<div class="baseline-row">' +
+        '<span class="baseline-row-label">'+mod+' 起算日期</span>' +
+        '<input class="baseline-input baseline-input-date" type="date" id="bs-'+mod+'" value="'+val+'">' +
+      '</div>';
+    }).join('');
   }
 
-  var W = 520, H = 200, PAD = { top:20, right:20, bottom:30, left:36 };
-  var chartW = W - PAD.left - PAD.right;
-  var chartH = H - PAD.top  - PAD.bottom;
-  var n = snapshots.length;
-  var maxPct = Math.max(100, Math.max.apply(null, snapshots.map(function(s){return s.pct;})));
-
-  function x(i)   { return PAD.left + (i/(n-1)) * chartW; }
-  function y(pct) { return PAD.top  + chartH - (pct/maxPct) * chartH; }
-
-  // Path points
-  var pts = snapshots.map(function(s,i){ return x(i)+','+y(s.pct); });
-  var linePath   = 'M'+pts.join(' L');
-  var areaPath   = 'M'+x(0)+','+y(0)+' L'+pts.join(' L')+' L'+x(n-1)+','+(PAD.top+chartH)+' L'+x(0)+','+(PAD.top+chartH)+' Z';
-
-  // Grid lines at 0, 25, 50, 75, 100%
-  var gridLines = [0,25,50,75,100].map(function(v) {
-    var yy = y(v*maxPct/100);
-    return '<line class="chart-grid" x1="'+PAD.left+'" y1="'+yy+'" x2="'+(PAD.left+chartW)+'" y2="'+yy+'"/>' +
-           '<text class="chart-label" x="'+(PAD.left-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'%</text>';
-  }).join('');
-
-  // Dots + labels
-  var dots = snapshots.map(function(s,i) {
-    return '<circle class="chart-dot" cx="'+x(i)+'" cy="'+y(s.pct)+'" r="4"/>' +
-           '<text class="chart-value" x="'+x(i)+'" y="'+(y(s.pct)-10)+'" text-anchor="middle">'+s.pct+'%</text>' +
-           '<text class="chart-label" x="'+x(i)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+s.label+'</text>';
-  }).join('');
-
-  container.innerHTML =
-    '<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">' +
-      '<defs><linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0%" stop-color="var(--yellow)" stop-opacity="0.6"/>' +
-        '<stop offset="100%" stop-color="var(--yellow)" stop-opacity="0"/>' +
-      '</linearGradient></defs>' +
-      gridLines +
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>' +
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>' +
-      '<path class="chart-area" d="'+areaPath+'"/>' +
-      '<path class="chart-line" d="'+linePath+'"/>' +
-      dots +
-    '</svg>';
+  // Task hours — grouped by gate
+  var taskRows = document.getElementById('baseline-task-rows');
+  if (taskRows) {
+    var html = '';
+    GATES.forEach(function(gate) {
+      var gateTasks = FORECAST_TASKS.filter(function(t){ return t.gate === gate.num; });
+      if (!gateTasks.length) return;
+      html += '<div style="font-size:12px;font-weight:700;color:'+GATE_COLORS[gate.num]+';margin:10px 0 6px;letter-spacing:0.06em;text-transform:uppercase">Gate '+gate.num+' · '+gate.name+'</div>';
+      gateTasks.forEach(function(t) {
+        var val = baseline.taskHours[t.id] || '';
+        html += '<div class="baseline-row">' +
+          '<span class="baseline-row-label">'+t.id+' '+t.name+'</span>' +
+          '<input class="baseline-input" type="number" min="0" step="0.5" id="bh-'+t.id.replace('-','_')+'" value="'+val+'" placeholder="0">' +
+          '<span class="baseline-unit">小時 / 小節</span>' +
+        '</div>';
+      });
+    });
+    taskRows.innerHTML = html;
+  }
 }
 
-function renderWeeklyForecast(forecasts) {
+/* ═══════════════════════════════════════════════════════════
+   FORECAST CALCULATION
+   totalHours(mod) = Σ( taskHours[t] × SECTIONS_PER_MODULE )
+   weeksNeeded = totalHours / hoursPerWeek
+   completionDate = moduleStart + weeksNeeded weeks (skip weekends)
+═══════════════════════════════════════════════════════════ */
+
+function addWorkingWeeks(startDate, weeks) {
+  // Add N working weeks (Mon–Fri), starting from a Thursday
+  var d = new Date(startDate);
+  var daysToAdd = Math.ceil(weeks * 5); // 5 working days per week
+  var added = 0;
+  while (added < daysToAdd) {
+    d.setDate(d.getDate() + 1);
+    var day = d.getDay();
+    if (day !== 0 && day !== 6) added++; // skip Sun(0) Sat(6)
+  }
+  return d;
+}
+
+function formatDate(d) {
+  return (d.getMonth()+1) + '/' + d.getDate() + ' (' +
+    ['日','一','二','三','四','五','六'][d.getDay()] + ')';
+}
+
+function computeModuleForecast(mod) {
+  var totalHours = 0;
+  FORECAST_TASKS.forEach(function(t) {
+    var h = parseFloat(baseline.taskHours[t.id]) || 0;
+    totalHours += h * SECTIONS_PER_MODULE;
+  });
+
+  var currentPct = modulePct(mod);
+  var startStr   = baseline.moduleStart[mod];
+
+  if (!startStr || totalHours === 0) {
+    return { currentPct: currentPct, completionDate: null, weeksTotal: null, totalHours: totalHours, reason: '請填寫設定' };
+  }
+
+  var startDate  = new Date(startStr);
+  var weeksTotal = totalHours / baseline.hoursPerWeek;
+  var endDate    = addWorkingWeeks(startDate, weeksTotal);
+
+  return {
+    currentPct: currentPct,
+    completionDate: endDate,
+    weeksTotal: Math.round(weeksTotal * 10) / 10,
+    totalHours: Math.round(totalHours),
+    reason: null
+  };
+}
+
+function renderForecastCards() {
   var container = document.getElementById('forecast-cards');
   if (!container) return;
+
   container.innerHTML = MODULES.map(function(mod) {
-    var f = forecasts[mod];
-    var weeksText = f.weeksLeft === null ? '資料不足' :
-                    f.weeksLeft === 0    ? '已完成 🎉' :
-                    f.weeksLeft + ' 週';
-    var detail = f.velocity > 0 ? '本週速率 +'+f.velocity+'%' : '尚無速率資料';
+    var f = computeModuleForecast(mod);
+    var dateStr, weeksStr, dateClass;
+
+    if (f.currentPct >= 100) {
+      dateStr  = '已完成 🎉';
+      weeksStr = '';
+      dateClass = 'done';
+    } else if (!f.completionDate) {
+      dateStr  = f.reason || '資料不足';
+      weeksStr = '';
+      dateClass = 'unknown';
+    } else {
+      dateStr  = formatDate(f.completionDate);
+      weeksStr = '共 '+f.weeksTotal+' 週・'+f.totalHours+' 小時';
+      dateClass = '';
+    }
+
     return '<div class="forecast-card">' +
       '<div class="forecast-mod">模組 '+mod+'</div>' +
-      '<div><span class="forecast-val">'+weeksText+'</span>' +
-      (f.weeksLeft > 0 ? '<span class="forecast-unit">完工</span>' : '') + '</div>' +
-      '<div class="forecast-detail">目前 '+f.currentPct+'%・'+detail+'</div>' +
+      '<div class="forecast-date '+dateClass+'">'+dateStr+'</div>' +
+      '<div class="forecast-weeks">'+weeksStr+'</div>' +
+      '<div class="forecast-detail-row"><span>目前完成度</span><span>'+f.currentPct+'%</span></div>' +
+      (f.completionDate && baseline.moduleStart[mod] ?
+        '<div class="forecast-detail-row"><span>起算日期</span><span>'+baseline.moduleStart[mod]+'</span></div>' : '') +
       '<div class="forecast-bar-wrap"><div class="forecast-bar" style="width:'+f.currentPct+'%"></div></div>' +
     '</div>';
   }).join('');
 }
 
-function renderWeekly() {
-  db.ref('log').once('value', function(snap) {
-    var logData   = snap.val();
-    var snapshots = computeWeeklySnapshots(logData);
-    var daily     = computeDailySnapshots(logData);
-    var forecasts = computeForecast(snapshots);
-    renderWeeklyChart(snapshots);
-    renderDailyChart(daily);
-    renderWeeklyForecast(forecasts);
-    var el = document.getElementById('weekly-last-synced');
-    var now = new Date();
-    if (el) el.textContent = '資料截至 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
-  });
-}
+/* ═══════════════════════════════════════════════════════════
+   WEEKLY TREND CHART — 3 lines (one per module)
+═══════════════════════════════════════════════════════════ */
 
-function computeDailySnapshots(logData) {
+function computeModuleWeeklySnapshots(logData, mod) {
   if (!logData) return [];
-  var entries = Object.values(logData).sort(function(a,b){
-    return new Date(a.ts) - new Date(b.ts);
-  });
+  var entries = Object.values(logData)
+    .filter(function(e){ return e.mod === mod; })
+    .sort(function(a,b){ return new Date(a.ts) - new Date(b.ts); });
   if (!entries.length) return [];
 
-  // Build running state, emit a snapshot per calendar day
+  var state = {};
+  getSections(mod).forEach(function(sec) {
+    state[sec] = {};
+    getActiveTasks(sec).forEach(function(t){ state[sec][t.id] = 0; });
+  });
+
+  var snapshots = [];
+  var now = new Date();
+  var cutoff = getWeekCutoff(new Date(entries[0].ts));
+  var maxCutoff = getWeekCutoff(now);
+  var entryIdx = 0;
+
+  while (cutoff <= maxCutoff) {
+    while (entryIdx < entries.length && new Date(entries[entryIdx].ts) <= cutoff) {
+      var e = entries[entryIdx];
+      if (state[e.sec] !== undefined) state[e.sec][e.taskId] = parseInt(e.score)||0;
+      entryIdx++;
+    }
+    var total = 0, count = 0;
+    getSections(mod).forEach(function(sec) {
+      getActiveTasks(sec).forEach(function(t) {
+        total += state[sec][t.id]||0; count += 10;
+      });
+    });
+    snapshots.push({ label: getWeekLabel(cutoff), pct: count>0?Math.round(total/count*100):0 });
+    cutoff = new Date(cutoff.getTime() + 7*24*60*60*1000);
+  }
+  return snapshots;
+}
+
+function renderWeeklyChart(logData) {
+  var container = document.getElementById('weekly-chart-container');
+  if (!container) return;
+
+  var modSnaps = {};
+  var allLabels = [];
+  MODULES.forEach(function(mod) {
+    modSnaps[mod] = computeModuleWeeklySnapshots(logData, mod);
+    modSnaps[mod].forEach(function(s){ if (allLabels.indexOf(s.label)<0) allLabels.push(s.label); });
+  });
+  allLabels.sort();
+
+  if (allLabels.length < 2) {
+    container.innerHTML = '<div class="chart-empty">資料累積中，至少需要兩週紀錄</div>';
+    return;
+  }
+
+  var W=520, H=200, PAD={top:24,right:60,bottom:30,left:36};
+  var chartW=W-PAD.left-PAD.right, chartH=H-PAD.top-PAD.bottom;
+  var n=allLabels.length;
+  function x(i){ return PAD.left+(i/(n-1))*chartW; }
+  function y(pct){ return PAD.top+chartH-(pct/100)*chartH; }
+
+  // Grid
+  var grid = [0,25,50,75,100].map(function(v){
+    var yy=y(v);
+    return '<line class="chart-grid" x1="'+PAD.left+'" y1="'+yy+'" x2="'+(PAD.left+chartW)+'" y2="'+yy+'"/>'+
+           '<text class="chart-label" x="'+(PAD.left-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'%</text>';
+  }).join('');
+
+  // X labels
+  var xLabels = allLabels.map(function(lbl,i){
+    return '<text class="chart-label" x="'+x(i)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+lbl+'</text>';
+  }).join('');
+
+  // Module colors
+  var modColors = { C2: GATE_COLORS[1], C3: GATE_COLORS[3], C4: GATE_COLORS[5] };
+
+  // Lines + dots per module
+  var lines = MODULES.map(function(mod) {
+    var snaps = modSnaps[mod];
+    if (!snaps.length) return '';
+    var color = modColors[mod];
+    // Build points aligned to allLabels
+    var pts = allLabels.map(function(lbl) {
+      var s = snaps.find(function(x){ return x.label===lbl; });
+      return s ? s.pct : null;
+    });
+    // Connect non-null points
+    var pathParts = [];
+    var dots = '';
+    pts.forEach(function(pct,i) {
+      if (pct===null) return;
+      if (pathParts.length===0) pathParts.push('M'+x(i)+','+y(pct));
+      else pathParts.push('L'+x(i)+','+y(pct));
+      dots += '<circle cx="'+x(i)+'" cy="'+y(pct)+'" r="4" fill="'+color+'" stroke="var(--black)" stroke-width="2"/>';
+      // Last point label
+      if (i===pts.length-1 || pts[i+1]===null) {
+        dots += '<text style="font-size:11px;fill:'+color+';font-weight:700;font-family:inherit" x="'+(x(i)+8)+'" y="'+(y(pct)+4)+'" text-anchor="start">'+mod+' '+pct+'%</text>';
+      }
+    });
+    return '<path fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="'+pathParts.join(' ')+'"/>'+dots;
+  }).join('');
+
+  container.innerHTML =
+    '<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
+      grid+
+      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>'+
+      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>'+
+      xLabels+lines+
+    '</svg>';
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DAILY INCREMENT BAR CHART
+═══════════════════════════════════════════════════════════ */
+
+}
+
+function renderDailyChart(logData) {
+  var container = document.getElementById('daily-chart-container');
+  if (!container) return;
+  if (!logData) { container.innerHTML = '<div class="chart-empty">尚無填報紀錄</div>'; return; }
+  var entries = Object.values(logData).sort(function(a,b){ return new Date(a.ts)-new Date(b.ts); });
+  if (!entries.length) { container.innerHTML = '<div class="chart-empty">尚無填報紀錄</div>'; return; }
   var state = {};
   MODULES.forEach(function(mod) {
     state[mod] = {};
     getSections(mod).forEach(function(sec) {
       state[mod][sec] = {};
-      getActiveTasks(sec).forEach(function(t){ state[mod][sec][t.id] = 0; });
+      getActiveTasks(sec).forEach(function(t){ state[mod][sec][t.id]=0; });
     });
   });
-
-  var snapshots = [];
-  var lastDayKey = '';
-
-  function pctNow() {
-    var total = 0, count = 0;
-    MODULES.forEach(function(mod) {
-      getSections(mod).forEach(function(sec) {
-        getActiveTasks(sec).forEach(function(t) {
-          total += (state[mod][sec][t.id] || 0);
-          count += 10;
-        });
-      });
-    });
-    return count > 0 ? Math.round(total/count*100) : 0;
+  var dailyPct = [], lastDay = '';
+  function overall() {
+    var total=0,count=0;
+    MODULES.forEach(function(mod){ getSections(mod).forEach(function(sec){ getActiveTasks(sec).forEach(function(t){ total+=state[mod][sec][t.id]||0; count+=10; }); }); });
+    return count>0?Math.round(total/count*100):0;
   }
-
   entries.forEach(function(e) {
-    if (state[e.mod] && state[e.mod][e.sec] !== undefined) {
-      state[e.mod][e.sec][e.taskId] = parseInt(e.score) || 0;
-    }
-    var d = new Date(e.ts);
-    var dayKey = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-    var label  = (d.getMonth()+1)+'/'+d.getDate();
-    if (dayKey !== lastDayKey) {
-      snapshots.push({ label: label, pct: pctNow(), dayKey: dayKey });
-      lastDayKey = dayKey;
-    } else {
-      // Update last snapshot for same day
-      snapshots[snapshots.length-1].pct = pctNow();
-    }
+    if (state[e.mod]&&state[e.mod][e.sec]!==undefined) state[e.mod][e.sec][e.taskId]=parseInt(e.score)||0;
+    var d=new Date(e.ts), key=(d.getMonth()+1)+'/'+d.getDate();
+    if (key!==lastDay) { dailyPct.push({label:key,pct:overall()}); lastDay=key; }
+    else { dailyPct[dailyPct.length-1].pct=overall(); }
   });
-  return snapshots;
-}
-
-function renderDailyChart(snapshots) {
-  var container = document.getElementById('daily-chart-container');
-  if (!container) return;
-  if (snapshots.length < 2) {
-    container.innerHTML = '<div class="chart-empty">資料累積中，至少需要兩天紀錄才能顯示</div>';
-    return;
-  }
-  // Reuse same SVG chart logic as weekly but with yellow line on daily data
-  var W = 520, H = 180, PAD = { top:20, right:20, bottom:30, left:36 };
-  var chartW = W - PAD.left - PAD.right;
-  var chartH = H - PAD.top  - PAD.bottom;
-  var n = snapshots.length;
-
-  function x(i)   { return PAD.left + (i/(Math.max(n-1,1))) * chartW; }
-  function y(pct) { return PAD.top  + chartH - (pct/100) * chartH; }
-
-  var pts = snapshots.map(function(s,i){ return x(i)+','+y(s.pct); });
-  var linePath = 'M'+pts.join(' L');
-  var areaPath = 'M'+x(0)+','+y(0)+' L'+pts.join(' L')+' L'+x(n-1)+','+(PAD.top+chartH)+' L'+x(0)+','+(PAD.top+chartH)+' Z';
-
-  var gridLines = [0,25,50,75,100].map(function(v) {
-    var yy = y(v);
-    return '<line class="chart-grid" x1="'+PAD.left+'" y1="'+yy+'" x2="'+(PAD.left+chartW)+'" y2="'+yy+'"/>' +
-           '<text class="chart-label" x="'+(PAD.left-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'%</text>';
+  var increments = dailyPct.map(function(d,i){
+    return { label:d.label, delta: i===0?d.pct:Math.max(0,d.pct-dailyPct[i-1].pct) };
+  });
+  if (increments.length<2) { container.innerHTML='<div class="chart-empty">資料累積中，至少需要兩天紀錄</div>'; return; }
+  var W=520,H=160,PAD={top:16,right:20,bottom:28,left:36};
+  var chartW=W-PAD.left-PAD.right, chartH=H-PAD.top-PAD.bottom;
+  var n=increments.length, maxDelta=Math.max.apply(null,increments.map(function(d){return d.delta;}));
+  if (maxDelta===0) maxDelta=5;
+  var barW=Math.max(4,chartW/n*0.6), gap=chartW/n;
+  var bars = increments.map(function(d,i){
+    var bh=d.delta>0?(d.delta/maxDelta)*chartH:2;
+    var bx=PAD.left+i*gap+(gap-barW)/2, by=PAD.top+chartH-bh;
+    var showLabel=(n<=14)||(i%Math.ceil(n/14)===0)||(i===n-1);
+    return '<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+bh+'" rx="2" fill="'+GATE_COLORS[2]+'" opacity="0.85"/>'+
+      (d.delta>0?'<text style="font-size:10px;fill:'+GATE_COLORS[2]+';font-weight:700;font-family:inherit" x="'+(bx+barW/2)+'" y="'+(by-5)+'" text-anchor="middle">+'+d.delta+'%</text>':'')+
+      (showLabel?'<text class="chart-label" x="'+(bx+barW/2)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+d.label+'</text>':'');
   }).join('');
-
-  // Show max 14 day labels to avoid crowding
-  var step = Math.ceil(n/14);
-  var dots = snapshots.map(function(s,i) {
-    var showLabel = (i % step === 0) || i === n-1;
-    return '<circle class="chart-dot" cx="'+x(i)+'" cy="'+y(s.pct)+'" r="3"/>' +
-      (showLabel ? '<text class="chart-label" x="'+x(i)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+s.label+'</text>' : '') +
-      (i === n-1 ? '<text class="chart-value" x="'+x(i)+'" y="'+(y(s.pct)-10)+'" text-anchor="middle">'+s.pct+'%</text>' : '');
-  }).join('');
-
-  container.innerHTML =
-    '<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">' +
-      '<defs><linearGradient id="dailyGrad" x1="0" y1="0" x2="0" y2="1">' +
-        '<stop offset="0%" stop-color="#4ade80" stop-opacity="0.5"/>' +
-        '<stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>' +
-      '</linearGradient></defs>' +
-      gridLines +
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>' +
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>' +
-      '<path d="'+areaPath+'" fill="url(#dailyGrad)" opacity="0.3"/>' +
-      '<path class="chart-line" d="'+linePath+'" stroke="#4ade80"/>' +
-      dots +
-    '</svg>';
+  container.innerHTML='<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
+    '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>'+
+    '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>'+
+    bars+'</svg>';
 }
-
-/* ═══════════════════════════════════════════════════════════
-   INIT
-═══════════════════════════════════════════════════════════ */
-const savedMember = localStorage.getItem('bb6-member');
-if (savedMember && MEMBERS.indexOf(savedMember) >= 0) {
-  selectMember(savedMember, MEMBER_COLORS[savedMember]);
-} else {
-  showLogin();
+function renderWeekly() {
+  renderBaselineForm();
+  renderForecastCards();
+  db.ref('log').once('value', function(snap) {
+    var logData = snap.val();
+    renderWeeklyChart(logData);
+    renderDailyChart(logData);
+    var el = document.getElementById('weekly-last-synced');
+    var now = new Date();
+    if (el) el.textContent = '資料截至 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
+  });
 }
-
-populateSectionSelect();
-updateReporterHeader();
-setSyncStatus('syncing', '連線中...');
-subscribeModule(currentModule);
-renderGates();
-renderMembers();
-</script>
 </body>
 </html>
