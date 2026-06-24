@@ -1585,11 +1585,9 @@ function toggleAcc(btn) {
 
 <!-- ── PAGE: 整體專案進度 ──────────────────────────── -->
 <div class="page" id="page-overview">
-  <div class="overview-filter">
+  <div class="overview-filter" id="overview-filter">
     <button class="ov-tab active" id="ovtab-all" onclick="switchOvTab('all')">全部模組</button>
-    <button class="ov-tab" id="ovtab-C2" onclick="switchOvTab('C2')">C2</button>
-    <button class="ov-tab" id="ovtab-C3" onclick="switchOvTab('C3')">C3</button>
-    <button class="ov-tab" id="ovtab-C4" onclick="switchOvTab('C4')">C4</button>
+    <!-- Module tabs dynamically populated -->
   </div>
 
   <section>
@@ -1618,16 +1616,8 @@ function toggleAcc(btn) {
 
   <!-- Module + section selector bar -->
   <div class="reporter-module-bar">
-    <div class="reporter-tabs">
-      <button class="reporter-tab active" id="rtab-C2" onclick="switchRModule('C2')">
-        <span class="module-dot"></span>C2
-      </button>
-      <button class="reporter-tab" id="rtab-C3" onclick="switchRModule('C3')">
-        <span class="module-dot"></span>C3
-      </button>
-      <button class="reporter-tab" id="rtab-C4" onclick="switchRModule('C4')">
-        <span class="module-dot"></span>C4
-      </button>
+    <div class="reporter-tabs" id="reporter-tabs">
+      <!-- Dynamically populated by renderReporterTabs() -->
     </div>
     <div class="section-picker">
       <label>小節</label>
@@ -1801,11 +1791,11 @@ const TASKS = [
   { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
   { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],            moduleLevel:false, firstSectionOnly:false },
   { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],   prereqs:['3-3','3-4'],             moduleLevel:false, firstSectionOnly:false },
+  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],   prereqs:['3-3','3-4'],             moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
   { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],     prereqs:['1-3'],                   moduleLevel:false, firstSectionOnly:false },
   { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],   prereqs:['2-2','3-2'],             moduleLevel:false, firstSectionOnly:false },
   { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken'],     prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false },
-  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],  prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false },
+  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],  prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
 ];
 const GATES = [
   { num:1, name:'翻譯基礎完成',  goal:'交付：80% 中文課程內容',   unlock:'解鎖：排版與審稿' },
@@ -1862,10 +1852,15 @@ function getSections(mod) {
 }
 
 function isVideoSection(mod, sec) {
-  // First N sections are video sections, rest are non-video
-  var v = parseInt(baseline.videoSections[mod]) || getModuleSectionCount(mod);
+  var v   = parseInt(baseline.videoSections[mod]) || getModuleSectionCount(mod);
   var num = parseInt(sec.split('.')[1]);
   return num <= v;
+}
+
+function isLastSection(mod, sec) {
+  var total = getModuleSectionCount(mod);
+  var num   = parseInt(sec.split('.')[1]);
+  return num === total;
 }
 // Firebase paths can't contain '.' — convert e.g. '2.1' → '2_1'
 function toFbKey(sec) { return sec.replace(/\./g, '_'); }
@@ -1873,11 +1868,10 @@ function fromFbKey(key) { return key.replace(/_/g, '.'); }
 // Returns tasks visible for a given section (filters firstSectionOnly)
 function getActiveTasks(sec, mod) {
   var isFirst  = sec && sec.endsWith('.1');
-  var isVideo  = !mod || isVideoSection(mod, sec); // default true if no mod given
+  var isLast   = mod ? isLastSection(mod, sec) : false;
   return TASKS.filter(function(t) {
-    if (t.firstSectionOnly && !isFirst) return false;
-    // Non-video sections only get NON_VIDEO_TASK_IDS (+ firstSectionOnly excluded above)
-    if (!isVideo && VIDEO_ONLY_TASK_IDS.indexOf(t.id) >= 0) return false;
+    if (t.firstSectionOnly  && !isFirst) return false;
+    if (t.lastSectionOnly   && !isLast)  return false;
     return true;
   });
 }
@@ -1976,10 +1970,24 @@ function getScore(taskId, mod, sec) {
 }
 function isPrereqMet(taskId, mod, sec) {
   mod = mod || currentModule; sec = sec || currentSection;
-  const task = TASKS.find(function(t){ return t.id === taskId; });
+  var task = TASKS.find(function(t){ return t.id === taskId; });
+  // lastSectionOnly tasks require ALL sections' prereqs to be complete
+  var checkAllSections = task.lastSectionOnly || false;
   return task.prereqs.every(function(p) {
-    const pt = TASKS.find(function(t){ return t.id === p; });
-    if (pt && pt.moduleLevel) return ((allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][p]) || 0) >= 10;
+    var pt = TASKS.find(function(t){ return t.id === p; });
+    if (pt && pt.moduleLevel) {
+      return ((allScores[mod] && allScores[mod]['__module__'] && allScores[mod]['__module__'][p]) || 0) >= 10;
+    }
+    if (checkAllSections) {
+      // All sections must have this prereq completed
+      return getSections(mod).every(function(s) {
+        // Skip sections where this prereq task doesn't apply
+        var activeTasks = getActiveTasks(s, mod);
+        var taskExists  = activeTasks.some(function(t){ return t.id === p; });
+        if (!taskExists) return true; // not applicable — skip
+        return getScore(p, mod, s) >= 10;
+      });
+    }
     return getScore(p, mod, sec) >= 10;
   });
 }
@@ -2099,6 +2107,17 @@ function switchPage(page) {
     renderWeekly();
   }
 }
+function renderReporterTabs() {
+  var container = document.getElementById('reporter-tabs');
+  if (!container) return;
+  container.innerHTML = MODULES.map(function(mod, i) {
+    var isActive = (mod === currentModule);
+    return '<button class="reporter-tab'+(isActive?' active':'')+'" id="rtab-'+mod+'" onclick="switchRModule(&quot;'+mod+'&quot;)">'+
+      '<span class="module-dot"></span>'+mod+
+    '</button>';
+  }).join('');
+}
+
 function switchRModule(mod) {
   currentModule = mod;
   MODULES.forEach(function(m){
@@ -2124,6 +2143,16 @@ function toggleOvAccordion(mod) {
   if (item) item.classList.toggle('open');
 }
 
+function renderOverviewTabs() {
+  var container = document.getElementById('overview-filter');
+  if (!container) return;
+  var existing = '<button class="ov-tab active" id="ovtab-all" onclick="switchOvTab(&quot;all&quot;)">全部模組</button>';
+  var modTabs  = MODULES.map(function(mod) {
+    return '<button class="ov-tab" id="ovtab-'+mod+'" onclick="switchOvTab(&quot;'+mod+'&quot;)">'+mod+'</button>';
+  }).join('');
+  container.innerHTML = existing + modTabs;
+}
+
 function switchOvTab(tab) {
   currentOvTab = tab;
   document.querySelectorAll('.ov-tab').forEach(function(t){ t.classList.remove('active'); });
@@ -2139,8 +2168,7 @@ function populateSectionSelect() {
     return;
   }
   sel.innerHTML = sections.map(function(s){
-    var label = isVideoSection(currentModule, s) ? s : s + ' ✦';
-    return '<option value="'+s+'">'+label+'</option>';
+    return '<option value="'+s+'">'+s+'</option>';
   }).join('');
 }
 function updateReporterHeader() {
@@ -2920,6 +2948,8 @@ window.updateScore       = updateScore;
 window.toggleAcc         = toggleAcc;
 window.exportCSV         = exportCSV;
 window.toggleBaseline    = toggleBaseline;
+window.renderReporterTabs = renderReporterTabs;
+window.renderOverviewTabs = renderOverviewTabs;
 window.saveBaseline      = saveBaseline;
 window.resetBaseline     = resetBaseline;
 
@@ -2930,12 +2960,25 @@ if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
 } else {
   showLogin();
 }
-populateSectionSelect();
-updateReporterHeader();
-setSyncStatus('syncing', '連線中...');
-subscribeModule(currentModule);
-renderGates();
-renderMembers();
+// Load baseline first so section counts are correct for all users
+db.ref('settings/baseline').once('value', function(snap) {
+  var data = snap.val();
+  if (data) {
+    baseline.taskHours        = data.taskHours        || {};
+    baseline.moduleStart      = data.moduleStart      || {};
+    baseline.videoSections    = data.videoSections    || {};
+    baseline.nonVideoSections = data.nonVideoSections || {};
+    baseline.hoursPerWeek     = data.hoursPerWeek     || 30;
+  }
+  renderReporterTabs();
+  renderOverviewTabs();
+  populateSectionSelect();
+  updateReporterHeader();
+  setSyncStatus('syncing', '連線中...');
+  subscribeModule(currentModule);
+  renderGates();
+  renderMembers();
+});
 </script>
 </body>
 </html>
