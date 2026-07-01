@@ -1723,25 +1723,23 @@ function toggleAcc(btn) {
 
 <div class="toast" id="toast"></div>
 
-<!-- Firebase CDN (compat — no ES module import needed) -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
-   FIREBASE INIT
+   SUPABASE INIT
+   Credentials are never hardcoded here — /api/config.js reads them
+   from environment variables (.env locally, Vercel dashboard in prod).
 ═══════════════════════════════════════════════════════════ */
-const firebaseConfig = {
-  apiKey:            "AIzaSyAhlqYFjRfRR-9jvQ1-jRRhPCHQNoRVBYs",
-  authDomain:        "bb6-tracker.firebaseapp.com",
-  databaseURL:       "https://bb6-tracker-96eed-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:         "bb6-tracker",
-  storageBucket:     "bb6-tracker.firebasestorage.app",
-  messagingSenderId: "735970532764",
-  appId:             "1:735970532764:web:df073527110c572c183c59"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+let db;
+function initSupabase() {
+  return fetch('/api/config')
+    .then(function(res) { return res.json(); })
+    .then(function(cfg) {
+      db = window.supabase.createClient(cfg.url, cfg.anonKey);
+    });
+}
 
 /* ═══════════════════════════════════════════════════════════
    GOOGLE SHEETS SILENT BACKUP
@@ -1818,7 +1816,7 @@ let currentModule  = 'C2';
 let currentSection = '2.1';
 let currentOvTab   = 'all';
 let allScores      = {};
-let fbListeners    = {};
+let moduleListeners = {};
 
 function initScores() {
   MODULES.forEach(mod => {
@@ -1862,9 +1860,6 @@ function isLastSection(mod, sec) {
   var num   = parseInt(sec.split('.')[1]);
   return num === total;
 }
-// Firebase paths can't contain '.' — convert e.g. '2.1' → '2_1'
-function toFbKey(sec) { return sec.replace(/\./g, '_'); }
-function fromFbKey(key) { return key.replace(/_/g, '.'); }
 // Returns tasks visible for a given section (filters firstSectionOnly)
 function getActiveTasks(sec, mod) {
   var isFirst  = sec && sec.endsWith('.1');
@@ -1877,50 +1872,64 @@ function getActiveTasks(sec, mod) {
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FIREBASE READ / WRITE
+   SUPABASE READ / WRITE
 ═══════════════════════════════════════════════════════════ */
-function subscribeModule(mod) {
-  if (fbListeners[mod]) return;
-  fbListeners[mod] = true;
-  db.ref('scores/' + mod).on('value', function(snapshot) {
-    const data = snapshot.val();
-    if (!data) { setSyncStatus('ok','即時同步中'); return; }
-    let changed = false;
-    Object.keys(data).forEach(function(fbSec) {
-      const sec = fromFbKey(fbSec);
-      if (!allScores[mod][sec]) allScores[mod][sec] = {};
-      const tasks = data[fbSec];
-      Object.keys(tasks).forEach(function(tid) {
-        const score = parseInt(tasks[tid]) || 0;
-        if (allScores[mod][sec][tid] !== score) {
-          allScores[mod][sec][tid] = score;
-          changed = true;
-        }
-      });
-    });
-    if (changed) {
-      if (mod === currentModule) { refreshAll(); }
-      const ovPage = document.getElementById('page-overview');
-      if (ovPage && ovPage.classList.contains('active')) renderOverview();
+function applyScoreRows(mod, rows) {
+  let changed = false;
+  rows.forEach(function(row) {
+    const sec = row.section;
+    if (!allScores[mod][sec]) allScores[mod][sec] = {};
+    const score = parseInt(row.score) || 0;
+    if (allScores[mod][sec][row.task_id] !== score) {
+      allScores[mod][sec][row.task_id] = score;
+      changed = true;
     }
-    setSyncStatus('ok', '即時同步中');
-    updateLastSynced('last-saved');
-    updateLastSynced('ov-last-synced');
-  }, function(err) {
-    setSyncStatus('error', '連線失敗：' + err.message);
   });
+  if (changed) {
+    if (mod === currentModule) { refreshAll(); }
+    const ovPage = document.getElementById('page-overview');
+    if (ovPage && ovPage.classList.contains('active')) renderOverview();
+  }
+}
+
+function subscribeModule(mod) {
+  if (moduleListeners[mod]) return;
+  moduleListeners[mod] = true;
+  db.from('scores').select('section, task_id, score').eq('module', mod)
+    .then(function(res) {
+      if (res.error) { setSyncStatus('error', '連線失敗：' + res.error.message); return; }
+      applyScoreRows(mod, res.data);
+      setSyncStatus('ok', '即時同步中');
+      updateLastSynced('last-saved');
+      updateLastSynced('ov-last-synced');
+    });
+  db.channel('scores-' + mod)
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'scores', filter: 'module=eq.' + mod }, function(payload) {
+      if (!payload.new) return;
+      applyScoreRows(mod, [payload.new]);
+      setSyncStatus('ok', '即時同步中');
+      updateLastSynced('last-saved');
+      updateLastSynced('ov-last-synced');
+    })
+    .subscribe(function(status, err) {
+      if (err) setSyncStatus('error', '連線失敗：' + err.message);
+    });
 }
 
 function writeScore(mod, sec, taskId, score, memberName) {
-  const path = 'scores/' + mod + '/' + toFbKey(sec) + '/' + taskId;
   const d = new Date();
   const pad = function(n){ return String(n).padStart(2,'0'); };
   const ts  = d.getFullYear()+'/'+pad(d.getMonth()+1)+'/'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
-  return db.ref(path).set(score).then(function() {
-    return db.ref('log/' + Date.now()).set({ mod: mod, sec: sec, taskId: taskId, score: score, member: memberName, ts: ts });
-  }).then(function() {
-    backupToSheet(mod, sec, taskId, score, memberName);
-  });
+  return db.from('scores')
+    .upsert({ module: mod, section: sec, task_id: taskId, score: score, updated_at: new Date().toISOString() }, { onConflict: 'module,section,task_id' })
+    .then(function(res) {
+      if (res.error) throw res.error;
+      return db.from('log').insert({ module: mod, section: sec, task_id: taskId, score: score, member: memberName, ts: ts });
+    })
+    .then(function(res) {
+      if (res.error) throw res.error;
+      backupToSheet(mod, sec, taskId, score, memberName);
+    });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2525,7 +2534,7 @@ function getWeekLabel(cutoff) {
 
 /* ═══════════════════════════════════════════════════════════
    BASELINE SETTINGS
-   Stored in Firebase: settings/baseline
+   Stored in Supabase: settings_baseline (singleton row, id=1)
    {
      taskHours: { '1-1': 3, '1-2': 2, ... },
      moduleStart: { C2: '2026-06-01', C3: '...', C4: '...' },
@@ -2551,14 +2560,14 @@ var VIDEO_ONLY_TASK_IDS = FORECAST_TASKS
   .filter(function(id){ return NON_VIDEO_TASK_IDS.indexOf(id) < 0; });
 
 function loadBaseline() {
-  db.ref('settings/baseline').once('value', function(snap) {
-    var data = snap.val();
+  db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
+    var data = res.data;
     if (data) {
-      baseline.taskHours        = data.taskHours        || {};
-      baseline.moduleStart      = data.moduleStart      || {};
-      baseline.videoSections    = data.videoSections    || {};
-      baseline.nonVideoSections = data.nonVideoSections || {};
-      baseline.hoursPerWeek     = data.hoursPerWeek     || 30;
+      baseline.taskHours        = data.task_hours         || {};
+      baseline.moduleStart      = data.module_start        || {};
+      baseline.videoSections    = data.video_sections      || {};
+      baseline.nonVideoSections = data.non_video_sections  || {};
+      baseline.hoursPerWeek     = data.hours_per_week      || 30;
     }
     renderBaselineForm();
     renderForecastCards();
@@ -2579,8 +2588,15 @@ function saveBaseline() {
     if (vEl)    baseline.videoSections[mod]    = parseInt(vEl.value) || 0;
     if (nEl)    baseline.nonVideoSections[mod] = parseInt(nEl.value) || 0;
   });
-  db.ref('settings/baseline').set(baseline, function(err) {
-    if (err) { showToast('儲存失敗'); }
+  db.from('settings_baseline').upsert({
+    id:                 1,
+    task_hours:         baseline.taskHours,
+    module_start:       baseline.moduleStart,
+    video_sections:     baseline.videoSections,
+    non_video_sections: baseline.nonVideoSections,
+    hours_per_week:     baseline.hoursPerWeek
+  }).then(function(res) {
+    if (res.error) { showToast('儲存失敗'); }
     else { showToast('設定已儲存 ✓'); renderForecastCards(); }
   });
 }
@@ -2596,7 +2612,7 @@ function resetBaseline() {
     if (el) el.value = '';
     baseline.moduleStart[mod] = '';
   });
-  db.ref('settings/baseline').remove();
+  db.from('settings_baseline').delete().eq('id', 1);
   showToast('設定已重設');
   renderForecastCards();
 }
@@ -2926,8 +2942,10 @@ function renderDailyChart(logData) {
 function renderWeekly() {
   renderBaselineForm();
   renderForecastCards();
-  db.ref('log').once('value', function(snap) {
-    var logData = snap.val();
+  db.from('log').select('module, section, task_id, score, member, ts').order('created_at').then(function(res) {
+    var logData = (res.data || []).map(function(r) {
+      return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
+    });
     renderWeeklyChart(logData);
     renderDailyChart(logData);
     var el = document.getElementById('weekly-last-synced');
@@ -2954,30 +2972,34 @@ window.saveBaseline      = saveBaseline;
 window.resetBaseline     = resetBaseline;
 
 /* ── INIT ── */
-var _savedMember = localStorage.getItem('bb6-member');
-if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
-  selectMember(_savedMember, MEMBER_COLORS[_savedMember]);
-} else {
-  showLogin();
-}
-// Load baseline first so section counts are correct for all users
-db.ref('settings/baseline').once('value', function(snap) {
-  var data = snap.val();
-  if (data) {
-    baseline.taskHours        = data.taskHours        || {};
-    baseline.moduleStart      = data.moduleStart      || {};
-    baseline.videoSections    = data.videoSections    || {};
-    baseline.nonVideoSections = data.nonVideoSections || {};
-    baseline.hoursPerWeek     = data.hoursPerWeek     || 30;
+initSupabase().then(function() {
+  var _savedMember = localStorage.getItem('bb6-member');
+  if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
+    selectMember(_savedMember, MEMBER_COLORS[_savedMember]);
+  } else {
+    showLogin();
   }
-  renderReporterTabs();
-  renderOverviewTabs();
-  populateSectionSelect();
-  updateReporterHeader();
-  setSyncStatus('syncing', '連線中...');
-  subscribeModule(currentModule);
-  renderGates();
-  renderMembers();
+  // Load baseline first so section counts are correct for all users
+  db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
+    var data = res.data;
+    if (data) {
+      baseline.taskHours        = data.task_hours         || {};
+      baseline.moduleStart      = data.module_start        || {};
+      baseline.videoSections    = data.video_sections      || {};
+      baseline.nonVideoSections = data.non_video_sections  || {};
+      baseline.hoursPerWeek     = data.hours_per_week      || 30;
+    }
+    renderReporterTabs();
+    renderOverviewTabs();
+    populateSectionSelect();
+    updateReporterHeader();
+    setSyncStatus('syncing', '連線中...');
+    subscribeModule(currentModule);
+    renderGates();
+    renderMembers();
+  });
+}).catch(function(err) {
+  setSyncStatus('error', '無法載入設定：' + err.message);
 });
 </script>
 </body>
