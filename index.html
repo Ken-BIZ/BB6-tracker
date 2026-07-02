@@ -824,6 +824,27 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 /* ── CHARTS STACK ────────────────────────────────────────── */
 .charts-stack { display: flex; flex-direction: column; gap: 20px; }
+.recharts-bar-rectangle { cursor: pointer; }
+
+/* ── TREND DRILLDOWN MODAL ──────────────────────────────── */
+.trend-drilldown-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); z-index: 600; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.trend-drilldown-box { background: #16181b; border: 1px solid rgba(255,255,255,0.1); border-top: 3px solid var(--yellow); border-radius: 8px; width: 480px; max-width: 100%; max-height: 80vh; display: flex; flex-direction: column; }
+.trend-drilldown-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 20px 24px 16px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+.trend-drilldown-title { font-size: 16px; font-weight: 700; }
+.trend-drilldown-sub { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+.trend-drilldown-close { background: none; border: none; color: rgba(255,255,255,0.4); font-size: 18px; cursor: pointer; line-height: 1; padding: 4px; font-family: inherit; }
+.trend-drilldown-close:hover { color: var(--white); }
+.trend-drilldown-list { overflow-y: auto; padding: 8px 12px; }
+.trend-drilldown-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 6px; }
+.trend-drilldown-row:hover { background: rgba(255,255,255,0.03); }
+.trend-drilldown-sec { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); min-width: 32px; }
+.trend-drilldown-main { flex: 1; min-width: 0; }
+.trend-drilldown-name { font-size: 13px; color: var(--white); }
+.trend-drilldown-owner { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+.trend-drilldown-score { font-size: 12px; color: rgba(255,255,255,0.4); white-space: nowrap; }
+.trend-drilldown-delta { font-size: 13px; font-weight: 700; color: #4ade80; min-width: 46px; text-align: right; }
+.trend-drilldown-delta.neg { color: #f87171; }
+.trend-drilldown-empty { padding: 40px 24px; text-align: center; font-size: 13px; color: rgba(255,255,255,0.3); }
 
 @media (max-width: 900px) {
   .baseline-bar { padding: 0 20px; }
@@ -1701,7 +1722,7 @@ function toggleAcc(btn) {
         <div class="trend-select-row">
           <div>
             <div class="chart-card-title">模組完成度趨勢</div>
-            <div class="chart-card-sub">選擇模組查看即時總進度與週完成度增量</div>
+            <div class="chart-card-sub">選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成</div>
           </div>
           <select class="section-select" id="module-trend-select" onchange="onModuleTrendChange(this.value)"></select>
         </div>
@@ -1710,7 +1731,7 @@ function toggleAcc(btn) {
       </div>
       <div class="chart-card">
         <div class="chart-card-title">單日完成度增量</div>
-        <div class="chart-card-sub">選定模組每天新增的完成百分比</div>
+        <div class="chart-card-sub">選定模組每天新增的完成百分比，點擊長條可細看組成</div>
         <div id="daily-chart-container"></div>
       </div>
     </div>
@@ -1724,6 +1745,8 @@ function toggleAcc(btn) {
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="trend-drilldown-overlay" id="trend-drilldown-overlay" style="display:none" onclick="closeTrendDrilldown()"></div>
 
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -2537,10 +2560,13 @@ function getWeekCutoff(date) {
   return d;
 }
 
+var WEEKDAY_ZH = ['日','一','二','三','四','五','六'];
+function formatDateLabel(date) {
+  return (date.getMonth()+1)+'/'+date.getDate()+' ('+WEEKDAY_ZH[date.getDay()]+')';
+}
+
 function getWeekLabel(cutoff) {
-  var m = cutoff.getMonth()+1;
-  var d = cutoff.getDate();
-  return m+'/'+d;
+  return formatDateLabel(cutoff);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2819,7 +2845,7 @@ function computeModuleWeeklySnapshots(logData, mod) {
         total += state[sec][t.id]||0; count += 10;
       });
     });
-    snapshots.push({ label: getWeekLabel(cutoff), pct: count>0?Math.round(total/count*100):0 });
+    snapshots.push({ label: getWeekLabel(cutoff), pct: count>0?Math.round(total/count*100):0, cutoff: cutoff });
     cutoff = new Date(cutoff.getTime() + 7*24*60*60*1000);
   }
   return snapshots;
@@ -2876,8 +2902,15 @@ function computeModuleWeeklyDeltas(logData, mod) {
   var snaps = computeModuleWeeklySnapshots(logData, mod);
   return snaps.map(function(s, i) {
     var prevPct = i === 0 ? 0 : snaps[i - 1].pct;
-    return { label: s.label, delta: Math.max(0, s.pct - prevPct) };
+    return { label: s.label, delta: Math.max(0, s.pct - prevPct), cutoff: s.cutoff, prevCutoff: i === 0 ? null : snaps[i - 1].cutoff };
   });
+}
+
+function handleWeeklyBarClick(barData) {
+  var d = barData && barData.payload;
+  if (!d) return;
+  var items = computeCompositionForRange(lastLogData, trendModule, d.prevCutoff, d.cutoff);
+  openTrendDrilldown(trendModule + ' · ' + d.label + ' 週完成度組成', '該週新增 ' + d.delta + '%', items);
 }
 
 function renderWeeklyChart(logData) {
@@ -2895,7 +2928,7 @@ function renderWeeklyChart(logData) {
         h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
         h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%' }),
         h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v){ return [v + '%', '週增量']; } }),
-        h(Recharts.Bar, { dataKey: 'delta', fill: 'var(--yellow)', radius: [4, 4, 0, 0] })
+        h(Recharts.Bar, { dataKey: 'delta', fill: 'var(--yellow)', radius: [4, 4, 0, 0], onClick: handleWeeklyBarClick })
       )
     )
   );
@@ -2926,12 +2959,22 @@ function computeModuleDailyDeltas(logData, mod) {
   entries.forEach(function(e) {
     if (state[e.sec] !== undefined) state[e.sec][e.taskId] = parseInt(e.score) || 0;
     var d = new Date(e.ts), key = (d.getMonth()+1)+'/'+d.getDate();
-    if (key !== lastDay) { dailyPct.push({ label: key, pct: overall() }); lastDay = key; }
-    else { dailyPct[dailyPct.length-1].pct = overall(); }
+    if (key !== lastDay) { dailyPct.push({ label: formatDateLabel(d), pct: overall(), date: d }); lastDay = key; }
+    else { dailyPct[dailyPct.length-1].pct = overall(); dailyPct[dailyPct.length-1].date = d; }
   });
   return dailyPct.map(function(d, i) {
-    return { label: d.label, delta: i === 0 ? d.pct : Math.max(0, d.pct - dailyPct[i-1].pct) };
+    return { label: d.label, delta: i === 0 ? d.pct : Math.max(0, d.pct - dailyPct[i-1].pct), date: d.date };
   });
+}
+
+function handleDailyBarClick(barData) {
+  var d = barData && barData.payload;
+  if (!d || !d.date) return;
+  var dayStart = new Date(d.date.getFullYear(), d.date.getMonth(), d.date.getDate(), 0, 0, 0, 0);
+  var dayEnd   = new Date(dayStart.getTime() + 24*60*60*1000 - 1);
+  var rangeStart = new Date(dayStart.getTime() - 1);
+  var items = computeCompositionForRange(lastLogData, trendModule, rangeStart, dayEnd);
+  openTrendDrilldown(trendModule + ' · ' + d.label + ' 完成度組成', '當日新增 ' + d.delta + '%', items);
 }
 
 function renderDailyChart(logData) {
@@ -2949,10 +2992,97 @@ function renderDailyChart(logData) {
         h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
         h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%' }),
         h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v){ return [v + '%', '當日增量']; } }),
-        h(Recharts.Bar, { dataKey: 'delta', fill: '#F59E0B', radius: [4, 4, 0, 0] })
+        h(Recharts.Bar, { dataKey: 'delta', fill: '#F59E0B', radius: [4, 4, 0, 0], onClick: handleDailyBarClick })
       )
     )
   );
+}
+
+var lastLogData = null;
+
+function computeModuleMaxTotal(mod) {
+  var total = 0;
+  getSections(mod).forEach(function(sec) {
+    total += getActiveTasks(sec).length * 10;
+  });
+  return total;
+}
+
+/* ── 特定期間內各工作項目的分數變化（用於長條圖點擊細看） ── */
+function computeCompositionForRange(logData, mod, rangeStart, rangeEnd) {
+  if (!logData) return [];
+  var entries = Object.values(logData)
+    .filter(function(e){ return e.mod === mod; })
+    .sort(function(a,b){ return new Date(a.ts) - new Date(b.ts); });
+
+  var baseline = {}, current = {};
+  getSections(mod).forEach(function(sec) {
+    baseline[sec] = {}; current[sec] = {};
+    getActiveTasks(sec).forEach(function(t){ baseline[sec][t.id] = 0; current[sec][t.id] = 0; });
+  });
+
+  entries.forEach(function(e) {
+    if (baseline[e.sec] === undefined) return;
+    var t = new Date(e.ts);
+    var score = parseInt(e.score) || 0;
+    if (rangeStart && t <= rangeStart) baseline[e.sec][e.taskId] = score;
+    if (t <= rangeEnd) current[e.sec][e.taskId] = score;
+  });
+
+  var maxTotal = computeModuleMaxTotal(mod);
+  var items = [];
+  getSections(mod).forEach(function(sec) {
+    getActiveTasks(sec).forEach(function(t) {
+      var b = baseline[sec][t.id] || 0, c = current[sec][t.id] || 0;
+      if (c !== b) {
+        items.push({
+          sec: sec, name: t.name, owners: t.owners, from: b, to: c,
+          delta: c - b,
+          contribution: maxTotal > 0 ? Math.round((c - b) * 1000 / maxTotal) / 10 : 0
+        });
+      }
+    });
+  });
+  items.sort(function(a, b){ return b.delta - a.delta; });
+  return items;
+}
+
+function openTrendDrilldown(title, sub, items) {
+  var overlay = document.getElementById('trend-drilldown-overlay');
+  if (!overlay) return;
+  var rowsHtml = items.length
+    ? items.map(function(it) {
+        var deltaClass  = it.delta < 0 ? ' neg' : '';
+        var contribText = (it.contribution > 0 ? '+' : '') + it.contribution + '%';
+        return '<div class="trend-drilldown-row">' +
+          '<div class="trend-drilldown-sec">'+it.sec+'</div>' +
+          '<div class="trend-drilldown-main">' +
+            '<div class="trend-drilldown-name">'+it.name+'</div>' +
+            '<div class="trend-drilldown-owner">'+it.owners.join('、')+'</div>' +
+          '</div>' +
+          '<div class="trend-drilldown-score">'+it.from+' → '+it.to+' 分</div>' +
+          '<div class="trend-drilldown-delta'+deltaClass+'">'+contribText+'</div>' +
+        '</div>';
+      }).join('')
+    : '<div class="trend-drilldown-empty">此區間沒有工作項目異動紀錄</div>';
+
+  overlay.innerHTML =
+    '<div class="trend-drilldown-box" onclick="event.stopPropagation()">' +
+      '<div class="trend-drilldown-head">' +
+        '<div>' +
+          '<div class="trend-drilldown-title">'+title+'</div>' +
+          (sub ? '<div class="trend-drilldown-sub">'+sub+'</div>' : '') +
+        '</div>' +
+        '<button class="trend-drilldown-close" onclick="closeTrendDrilldown()">✕</button>' +
+      '</div>' +
+      '<div class="trend-drilldown-list">'+rowsHtml+'</div>' +
+    '</div>';
+  overlay.style.display = 'flex';
+}
+
+function closeTrendDrilldown() {
+  var overlay = document.getElementById('trend-drilldown-overlay');
+  if (overlay) overlay.style.display = 'none';
 }
 
 function refreshTrendCharts() {
@@ -2960,6 +3090,7 @@ function refreshTrendCharts() {
     var logData = (res.data || []).map(function(r) {
       return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
     });
+    lastLogData = logData;
     renderWeeklyChart(logData);
     renderDailyChart(logData);
     var el = document.getElementById('weekly-last-synced');
@@ -2970,6 +3101,7 @@ function refreshTrendCharts() {
 
 function onModuleTrendChange(mod) {
   trendModule = mod;
+  closeTrendDrilldown();
   renderModuleProgress();
   refreshTrendCharts();
 }
@@ -2999,6 +3131,7 @@ window.renderOverviewTabs = renderOverviewTabs;
 window.saveBaseline      = saveBaseline;
 window.resetBaseline     = resetBaseline;
 window.onModuleTrendChange = onModuleTrendChange;
+window.closeTrendDrilldown = closeTrendDrilldown;
 
 /* ── INIT ── */
 initSupabase().then(function() {
