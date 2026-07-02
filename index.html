@@ -755,15 +755,11 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .forecast-bar-wrap { margin-top: 10px; height: 4px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
 .forecast-bar { height: 100%; background: var(--yellow); border-radius: 2px; transition: width 0.5s; }
 .chart-empty { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 13px; color: rgba(255,255,255,0.25); }
-/* SVG chart */
-.line-chart { width: 100%; overflow: visible; }
-.chart-axis { stroke: rgba(255,255,255,0.08); stroke-width: 1; }
-.chart-grid { stroke: rgba(255,255,255,0.04); stroke-width: 1; stroke-dasharray: 4 4; }
-.chart-line { fill: none; stroke: var(--yellow); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-.chart-area { fill: url(#chartGrad); opacity: 0.3; }
-.chart-dot { fill: var(--yellow); stroke: var(--black); stroke-width: 2; }
-.chart-label { font-size: 10px; fill: rgba(255,255,255,0.4); font-family: inherit; }
-.chart-value { font-size: 11px; fill: var(--yellow); font-family: inherit; font-weight: 700; }
+.trend-select-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+.module-progress-ring { display: flex; align-items: center; justify-content: center; position: relative; height: 180px; margin-bottom: 8px; }
+.module-progress-ring-label { position: absolute; text-align: center; pointer-events: none; }
+.module-progress-ring-pct { font-size: 32px; font-weight: 800; color: var(--white); line-height: 1; }
+.module-progress-ring-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; }
 @media (max-width: 900px) {
   .weekly-grid { grid-template-columns: 1fr; }
   .observer-banner { padding: 8px 20px; }
@@ -1702,13 +1698,19 @@ function toggleAcc(btn) {
     <!-- ── 圖表區 ── -->
     <div class="charts-stack">
       <div class="chart-card">
-        <div class="chart-card-title">各模組週完成度趨勢</div>
-        <div class="chart-card-sub">每週三 18:30 結算・週四為每週起始日</div>
+        <div class="trend-select-row">
+          <div>
+            <div class="chart-card-title">模組完成度趨勢</div>
+            <div class="chart-card-sub">選擇模組查看即時總進度與週完成度增量</div>
+          </div>
+          <select class="section-select" id="module-trend-select" onchange="onModuleTrendChange(this.value)"></select>
+        </div>
+        <div id="module-progress-ring"></div>
         <div id="weekly-chart-container"></div>
       </div>
       <div class="chart-card">
         <div class="chart-card-title">單日完成度增量</div>
-        <div class="chart-card-sub">每天新增的整體完成百分比</div>
+        <div class="chart-card-sub">選定模組每天新增的完成百分比</div>
         <div id="daily-chart-container"></div>
       </div>
     </div>
@@ -1725,6 +1727,12 @@ function toggleAcc(btn) {
 
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<!-- React + Recharts CDN (used for the Ting 主管視角 trend charts) -->
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
+<script src="https://unpkg.com/recharts@2/umd/Recharts.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
@@ -1817,6 +1825,7 @@ let currentSection = '2.1';
 let currentOvTab   = 'all';
 let allScores      = {};
 let moduleListeners = {};
+let trendModule    = 'C2';
 
 function initScores() {
   MODULES.forEach(mod => {
@@ -1889,6 +1898,8 @@ function applyScoreRows(mod, rows) {
     if (mod === currentModule) { refreshAll(); }
     const ovPage = document.getElementById('page-overview');
     if (ovPage && ovPage.classList.contains('active')) renderOverview();
+    const wkPage = document.getElementById('page-weekly');
+    if (wkPage && wkPage.classList.contains('active') && mod === trendModule) renderModuleProgress();
   }
 }
 
@@ -2814,134 +2825,137 @@ function computeModuleWeeklySnapshots(logData, mod) {
   return snapshots;
 }
 
-function renderWeeklyChart(logData) {
-  var container = document.getElementById('weekly-chart-container');
-  if (!container) return;
+/* ═══════════════════════════════════════════════════════════
+   REACT / RECHARTS HELPERS (module trend charts, Ting only)
+═══════════════════════════════════════════════════════════ */
+var h = React.createElement;
+var reactRoots = {};
+function getReactRoot(containerId) {
+  var el = document.getElementById(containerId);
+  if (!el) return null;
+  if (!reactRoots[containerId]) reactRoots[containerId] = ReactDOM.createRoot(el);
+  return reactRoots[containerId];
+}
+var CHART_TOOLTIP_STYLE = { background:'#1e2023', border:'1px solid rgba(255,255,255,0.15)', borderRadius:8, fontSize:12, color:'#fff' };
+var CHART_AXIS_TICK      = { fill:'rgba(255,255,255,0.4)', fontSize:11 };
 
-  var modSnaps = {};
-  var allLabels = [];
-  MODULES.forEach(function(mod) {
-    modSnaps[mod] = computeModuleWeeklySnapshots(logData, mod);
-    modSnaps[mod].forEach(function(s){ if (allLabels.indexOf(s.label)<0) allLabels.push(s.label); });
+function renderModuleTrendSelect() {
+  var sel = document.getElementById('module-trend-select');
+  if (!sel) return;
+  sel.innerHTML = MODULES.map(function(m){
+    return '<option value="'+m+'"'+(m===trendModule?' selected':'')+'>'+m+'</option>';
+  }).join('');
+}
+
+function renderModuleProgress() {
+  var root = getReactRoot('module-progress-ring');
+  if (!root) return;
+  var pct  = modulePct(trendModule);
+  var data = [{ name: trendModule, value: pct, fill: 'var(--yellow)' }];
+  root.render(
+    h('div', { className: 'module-progress-ring' },
+      h(Recharts.ResponsiveContainer, { width: 180, height: 180 },
+        h(Recharts.RadialBarChart, {
+          cx: '50%', cy: '50%', innerRadius: '72%', outerRadius: '100%',
+          barSize: 14, data: data, startAngle: 90, endAngle: -270
+        },
+          h(Recharts.PolarAngleAxis, { type: 'number', domain: [0, 100], tick: false }),
+          h(Recharts.RadialBar, { dataKey: 'value', cornerRadius: 8, background: { fill: 'rgba(255,255,255,0.06)' }, isAnimationActive: true })
+        )
+      ),
+      h('div', { className: 'module-progress-ring-label' },
+        h('div', { className: 'module-progress-ring-pct' }, pct + '%'),
+        h('div', { className: 'module-progress-ring-sub' }, trendModule + ' 即時總進度')
+      )
+    )
+  );
+}
+
+/* ── 週完成度增量（單一模組） ── */
+function computeModuleWeeklyDeltas(logData, mod) {
+  var snaps = computeModuleWeeklySnapshots(logData, mod);
+  return snaps.map(function(s, i) {
+    var prevPct = i === 0 ? 0 : snaps[i - 1].pct;
+    return { label: s.label, delta: Math.max(0, s.pct - prevPct) };
   });
-  allLabels.sort();
+}
 
-  if (allLabels.length < 2) {
-    container.innerHTML = '<div class="chart-empty">資料累積中，至少需要兩週紀錄</div>';
+function renderWeeklyChart(logData) {
+  var root = getReactRoot('weekly-chart-container');
+  if (!root) return;
+  var data = computeModuleWeeklyDeltas(logData, trendModule);
+  if (data.length < 1) {
+    root.render(h('div', { className: 'chart-empty' }, '資料累積中，尚無完整一週紀錄'));
     return;
   }
-
-  var W=520, H=200, PAD={top:24,right:60,bottom:30,left:36};
-  var chartW=W-PAD.left-PAD.right, chartH=H-PAD.top-PAD.bottom;
-  var n=allLabels.length;
-  function x(i){ return PAD.left+(i/(n-1))*chartW; }
-  function y(pct){ return PAD.top+chartH-(pct/100)*chartH; }
-
-  // Grid
-  var grid = [0,25,50,75,100].map(function(v){
-    var yy=y(v);
-    return '<line class="chart-grid" x1="'+PAD.left+'" y1="'+yy+'" x2="'+(PAD.left+chartW)+'" y2="'+yy+'"/>'+
-           '<text class="chart-label" x="'+(PAD.left-6)+'" y="'+(yy+4)+'" text-anchor="end">'+v+'%</text>';
-  }).join('');
-
-  // X labels
-  var xLabels = allLabels.map(function(lbl,i){
-    return '<text class="chart-label" x="'+x(i)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+lbl+'</text>';
-  }).join('');
-
-  // Module colors
-  var modColors = { C2:GATE_COLORS[1], C3:GATE_COLORS[2], C4:GATE_COLORS[3], C5:GATE_COLORS[4], C6:GATE_COLORS[5], C7:'#F59E0B', C8:'#06B6D4', C9:'#84CC16', C10:'#F43F5E' };
-
-  // Lines + dots per module
-  var lines = MODULES.map(function(mod) {
-    var snaps = modSnaps[mod];
-    if (!snaps.length) return '';
-    var color = modColors[mod];
-    // Build points aligned to allLabels
-    var pts = allLabels.map(function(lbl) {
-      var s = snaps.find(function(x){ return x.label===lbl; });
-      return s ? s.pct : null;
-    });
-    // Connect non-null points
-    var pathParts = [];
-    var dots = '';
-    pts.forEach(function(pct,i) {
-      if (pct===null) return;
-      if (pathParts.length===0) pathParts.push('M'+x(i)+','+y(pct));
-      else pathParts.push('L'+x(i)+','+y(pct));
-      dots += '<circle cx="'+x(i)+'" cy="'+y(pct)+'" r="4" fill="'+color+'" stroke="var(--black)" stroke-width="2"/>';
-      // Last point label
-      if (i===pts.length-1 || pts[i+1]===null) {
-        dots += '<text style="font-size:11px;fill:'+color+';font-weight:700;font-family:inherit" x="'+(x(i)+8)+'" y="'+(y(pct)+4)+'" text-anchor="start">'+mod+' '+pct+'%</text>';
-      }
-    });
-    return '<path fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="'+pathParts.join(' ')+'"/>'+dots;
-  }).join('');
-
-  container.innerHTML =
-    '<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
-      grid+
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>'+
-      '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>'+
-      xLabels+lines+
-    '</svg>';
+  root.render(
+    h(Recharts.ResponsiveContainer, { width: '100%', height: 220 },
+      h(Recharts.BarChart, { data: data, margin: { top: 20, right: 10, left: 0, bottom: 0 } },
+        h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
+        h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
+        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%' }),
+        h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v){ return [v + '%', '週增量']; } }),
+        h(Recharts.Bar, { dataKey: 'delta', fill: 'var(--yellow)', radius: [4, 4, 0, 0] })
+      )
+    )
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════
-   DAILY INCREMENT BAR CHART
+   DAILY INCREMENT BAR CHART（單一模組）
 ═══════════════════════════════════════════════════════════ */
+function computeModuleDailyDeltas(logData, mod) {
+  if (!logData) return [];
+  var entries = Object.values(logData)
+    .filter(function(e){ return e.mod === mod; })
+    .sort(function(a,b){ return new Date(a.ts) - new Date(b.ts); });
+  if (!entries.length) return [];
+  var state = {};
+  getSections(mod).forEach(function(sec) {
+    state[sec] = {};
+    getActiveTasks(sec).forEach(function(t){ state[sec][t.id] = 0; });
+  });
+  function overall() {
+    var total = 0, count = 0;
+    getSections(mod).forEach(function(sec) {
+      getActiveTasks(sec).forEach(function(t){ total += state[sec][t.id] || 0; count += 10; });
+    });
+    return count > 0 ? Math.round(total / count * 100) : 0;
+  }
+  var dailyPct = [], lastDay = '';
+  entries.forEach(function(e) {
+    if (state[e.sec] !== undefined) state[e.sec][e.taskId] = parseInt(e.score) || 0;
+    var d = new Date(e.ts), key = (d.getMonth()+1)+'/'+d.getDate();
+    if (key !== lastDay) { dailyPct.push({ label: key, pct: overall() }); lastDay = key; }
+    else { dailyPct[dailyPct.length-1].pct = overall(); }
+  });
+  return dailyPct.map(function(d, i) {
+    return { label: d.label, delta: i === 0 ? d.pct : Math.max(0, d.pct - dailyPct[i-1].pct) };
+  });
+}
 
 function renderDailyChart(logData) {
-  var container = document.getElementById('daily-chart-container');
-  if (!container) return;
-  if (!logData) { container.innerHTML = '<div class="chart-empty">尚無填報紀錄</div>'; return; }
-  var entries = Object.values(logData).sort(function(a,b){ return new Date(a.ts)-new Date(b.ts); });
-  if (!entries.length) { container.innerHTML = '<div class="chart-empty">尚無填報紀錄</div>'; return; }
-  var state = {};
-  MODULES.forEach(function(mod) {
-    state[mod] = {};
-    getSections(mod).forEach(function(sec) {
-      state[mod][sec] = {};
-      getActiveTasks(sec).forEach(function(t){ state[mod][sec][t.id]=0; });
-    });
-  });
-  var dailyPct = [], lastDay = '';
-  function overall() {
-    var total=0,count=0;
-    MODULES.forEach(function(mod){ getSections(mod).forEach(function(sec){ getActiveTasks(sec).forEach(function(t){ total+=state[mod][sec][t.id]||0; count+=10; }); }); });
-    return count>0?Math.round(total/count*100):0;
+  var root = getReactRoot('daily-chart-container');
+  if (!root) return;
+  var data = computeModuleDailyDeltas(logData, trendModule);
+  if (data.length < 2) {
+    root.render(h('div', { className: 'chart-empty' }, '資料累積中，至少需要兩天紀錄'));
+    return;
   }
-  entries.forEach(function(e) {
-    if (state[e.mod]&&state[e.mod][e.sec]!==undefined) state[e.mod][e.sec][e.taskId]=parseInt(e.score)||0;
-    var d=new Date(e.ts), key=(d.getMonth()+1)+'/'+d.getDate();
-    if (key!==lastDay) { dailyPct.push({label:key,pct:overall()}); lastDay=key; }
-    else { dailyPct[dailyPct.length-1].pct=overall(); }
-  });
-  var increments = dailyPct.map(function(d,i){
-    return { label:d.label, delta: i===0?d.pct:Math.max(0,d.pct-dailyPct[i-1].pct) };
-  });
-  if (increments.length<2) { container.innerHTML='<div class="chart-empty">資料累積中，至少需要兩天紀錄</div>'; return; }
-  var W=520,H=160,PAD={top:16,right:20,bottom:28,left:36};
-  var chartW=W-PAD.left-PAD.right, chartH=H-PAD.top-PAD.bottom;
-  var n=increments.length, maxDelta=Math.max.apply(null,increments.map(function(d){return d.delta;}));
-  if (maxDelta===0) maxDelta=5;
-  var barW=Math.max(4,chartW/n*0.6), gap=chartW/n;
-  var bars = increments.map(function(d,i){
-    var bh=d.delta>0?(d.delta/maxDelta)*chartH:2;
-    var bx=PAD.left+i*gap+(gap-barW)/2, by=PAD.top+chartH-bh;
-    var showLabel=(n<=14)||(i%Math.ceil(n/14)===0)||(i===n-1);
-    return '<rect x="'+bx+'" y="'+by+'" width="'+barW+'" height="'+bh+'" rx="2" fill="'+GATE_COLORS[2]+'" opacity="0.85"/>'+
-      (d.delta>0?'<text style="font-size:10px;fill:'+GATE_COLORS[2]+';font-weight:700;font-family:inherit" x="'+(bx+barW/2)+'" y="'+(by-5)+'" text-anchor="middle">+'+d.delta+'%</text>':'')+
-      (showLabel?'<text class="chart-label" x="'+(bx+barW/2)+'" y="'+(PAD.top+chartH+16)+'" text-anchor="middle">'+d.label+'</text>':'');
-  }).join('');
-  container.innerHTML='<svg class="line-chart" viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">'+
-    '<line class="chart-axis" x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+chartH)+'"/>'+
-    '<line class="chart-axis" x1="'+PAD.left+'" y1="'+(PAD.top+chartH)+'" x2="'+(PAD.left+chartW)+'" y2="'+(PAD.top+chartH)+'"/>'+
-    bars+'</svg>';
+  root.render(
+    h(Recharts.ResponsiveContainer, { width: '100%', height: 200 },
+      h(Recharts.BarChart, { data: data, margin: { top: 20, right: 10, left: 0, bottom: 0 } },
+        h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
+        h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
+        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%' }),
+        h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v){ return [v + '%', '當日增量']; } }),
+        h(Recharts.Bar, { dataKey: 'delta', fill: '#F59E0B', radius: [4, 4, 0, 0] })
+      )
+    )
+  );
 }
-function renderWeekly() {
-  renderBaselineForm();
-  renderForecastCards();
+
+function refreshTrendCharts() {
   db.from('log').select('module, section, task_id, score, member, ts').order('created_at').then(function(res) {
     var logData = (res.data || []).map(function(r) {
       return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
@@ -2952,6 +2966,20 @@ function renderWeekly() {
     var now = new Date();
     if (el) el.textContent = '資料截至 '+now.getHours()+':'+String(now.getMinutes()).padStart(2,'0');
   });
+}
+
+function onModuleTrendChange(mod) {
+  trendModule = mod;
+  renderModuleProgress();
+  refreshTrendCharts();
+}
+
+function renderWeekly() {
+  renderBaselineForm();
+  renderForecastCards();
+  renderModuleTrendSelect();
+  renderModuleProgress();
+  refreshTrendCharts();
 }
 
 /* ── 全域函數掛載（HTML inline handlers 需要） ── */
@@ -2970,6 +2998,7 @@ window.renderReporterTabs = renderReporterTabs;
 window.renderOverviewTabs = renderOverviewTabs;
 window.saveBaseline      = saveBaseline;
 window.resetBaseline     = resetBaseline;
+window.onModuleTrendChange = onModuleTrendChange;
 
 /* ── INIT ── */
 initSupabase().then(function() {
