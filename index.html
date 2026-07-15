@@ -6,6 +6,7 @@
 <title>BB6 課程製作</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/geist-sans@5/index.css" rel="stylesheet">
 <style>
 /* ── SHARED RESET & VARS ─────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -20,7 +21,7 @@
   --surface: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.07);
 }
 html { scroll-behavior: smooth; }
-body { font-family: 'Noto Sans TC','Microsoft JhengHei',sans-serif; background: var(--black); color: var(--white); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
+body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
 
 /* ── PAGE SWITCHING ──────────────────────────────────────── */
 .page { display: none; }
@@ -93,7 +94,7 @@ nav a:hover { color: var(--yellow); background: rgba(255,234,65,0.08); }
   }
 
   html { scroll-behavior: smooth; }
-  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
+  body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
 
   header { background: var(--black); border-bottom: 2px solid var(--yellow); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .logo-area { display: flex; align-items: center; gap: 16px; }
@@ -324,7 +325,7 @@ nav a:hover { color: var(--yellow); background: rgba(255,234,65,0.08); }
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
+body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--black); color: var(--white); line-height: 1.5; letter-spacing: -0.01em; }
 
 /* HEADER */
 header { background: var(--black); border-bottom: 2px solid var(--yellow); padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
@@ -923,7 +924,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     <button class="page-tab" id="tab-tracker" onclick="switchPage('tracker')">
       <span class="tab-dot"></span>進度填報
     </button>
-    <button class="page-tab" id="tab-weekly" onclick="switchPage('weekly')" style="display:none">
+    <button class="page-tab" id="tab-weekly" onclick="switchPage('weekly')">
       <span class="tab-dot"></span>專案概況
     </button>
   </div>
@@ -1711,7 +1712,7 @@ function toggleAcc(btn) {
   </div>
 
   <section>
-    <div class="section-label">Ting 主管視角</div>
+    <div class="section-label">全體視角</div>
     <div class="section-title">專案概況</div>
 
     <!-- ── 完工預測卡片 ── -->
@@ -1740,7 +1741,7 @@ function toggleAcc(btn) {
 
   <footer>
     <div class="footer-brand">商明國際 BizCivilization</div>
-    <div class="footer-note">BB6 專案概況 · 主管視角</div>
+    <div class="footer-note">BB6 專案概況</div>
     <div class="last-saved" id="weekly-last-synced">載入中...</div>
   </footer>
 </div>
@@ -2077,11 +2078,9 @@ function selectMember(name, color) {
   document.getElementById('login-overlay').style.display   = 'none';
   // Show/hide Ting-specific UI
   var obs = document.getElementById('observer-banner');
-  var weeklyTab = document.getElementById('tab-weekly');
   var trackerTab = document.getElementById('tab-tracker');
   if (isObserver()) {
     if (obs) obs.style.display = 'flex';
-    if (weeklyTab) weeklyTab.style.display = 'flex';
     if (trackerTab) trackerTab.style.display = 'none';
     // Switch away from tracker if currently on it
     if (document.getElementById('page-tracker').classList.contains('active')) {
@@ -2089,7 +2088,6 @@ function selectMember(name, color) {
     }
   } else {
     if (obs) obs.style.display = 'none';
-    if (weeklyTab) weeklyTab.style.display = 'none';
     if (trackerTab) trackerTab.style.display = 'flex';
   }
   renderGates();
