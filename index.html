@@ -2453,17 +2453,18 @@ function renderOverview() {
   const cardsEl    = document.getElementById('ov-module-cards');
   if (cardsEl) {
     cardsEl.innerHTML = modsToDraw.map(function(mod) {
+      const secCount = getSections(mod).length;
       const pct      = modulePct(mod);
       const doneSecs = getSections(mod).filter(function(sec){ return sectionPct(mod,sec) >= 100; }).length;
       const gateRows = GATES.map(function(g) {
-        const gp      = Math.round(getSections(mod).reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / SECTIONS_PER_MODULE);
+        const gp      = Math.round(getSections(mod).reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / secCount);
         const doneSec = getSections(mod).filter(function(sec){ return gatePct(g.num,mod,sec) >= 100; }).length;
         const color   = GATE_COLORS[g.num];
         return '<div class="ov-gate-row">' +
           '<div class="ov-gate-label"><span class="ov-gate-num">Gate '+g.num+'</span>'+g.name+'</div>' +
           '<div class="ov-gate-track"><div class="ov-gate-fill" style="width:'+gp+'%;background:'+color+'"></div></div>' +
           '<div class="ov-gate-pct" style="color:'+color+'">'+gp+'%</div>' +
-          '<div class="ov-gate-sections">'+doneSec+'/'+SECTIONS_PER_MODULE+' 節</div>' +
+          '<div class="ov-gate-sections">'+doneSec+'/'+secCount+' 節</div>' +
         '</div>';
       }).join('');
       return '<div class="ov-module-card">' +
@@ -2472,7 +2473,7 @@ function renderOverview() {
           '<div class="ov-module-name">'+mod+'</div>' +
           '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
           '<div class="ov-module-pct">'+pct+'%</div>' +
-          '<div class="ov-module-sub">'+doneSecs+'/'+SECTIONS_PER_MODULE+' 小節</div>' +
+          '<div class="ov-module-sub">'+doneSecs+'/'+secCount+' 小節</div>' +
         '</div>' +
         '<div class="ov-module-body">'+gateRows+'</div>' +
       '</div>';
@@ -2504,7 +2505,7 @@ function renderOverview() {
           '<span class="ov-accordion-mod">'+mod+'</span>' +
           '<div class="ov-accordion-bar-wrap"><div class="ov-accordion-bar" style="width:'+modPct+'%"></div></div>' +
           '<span class="ov-accordion-pct">'+modPct+'%</span>' +
-          '<span class="ov-accordion-sub">'+doneSecs+'/'+SECTIONS_PER_MODULE+' 小節</span>' +
+          '<span class="ov-accordion-sub">'+doneSecs+'/'+getSections(mod).length+' 小節</span>' +
           '<span class="ov-accordion-chevron">▼</span>' +
         '</div>' +
         '<div class="ov-accordion-body">'+sectionRows+'</div>' +
