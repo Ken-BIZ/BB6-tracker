@@ -1869,9 +1869,7 @@ initScores();
 function isObserver() { return currentMember === 'Ting'; }
 
 function getModuleSectionCount(mod) {
-  var v = parseInt(baseline.videoSections[mod])    || 0;
-  var n = parseInt(baseline.nonVideoSections[mod]) || 0;
-  var total = v + n;
+  var total = parseInt(baseline.videoSections[mod]) || 0;
   return total > 0 ? total : SECTIONS_PER_MODULE; // default 20
 }
 
@@ -1881,12 +1879,6 @@ function getSections(mod) {
   var result = [];
   for (var i = 1; i <= count; i++) result.push(prefix + '.' + i);
   return result;
-}
-
-function isVideoSection(mod, sec) {
-  var v   = parseInt(baseline.videoSections[mod]) || getModuleSectionCount(mod);
-  var num = parseInt(sec.split('.')[1]);
-  return num <= v;
 }
 
 function isLastSection(mod, sec) {
@@ -2580,31 +2572,23 @@ function getWeekLabel(cutoff) {
 ═══════════════════════════════════════════════════════════ */
 
 var baseline = {
-  taskHours:        {},   // taskId → hours per section
-  moduleStart:      {},   // mod → 'YYYY-MM-DD'
-  videoSections:    {},   // mod → number of sections with video (default 20)
-  nonVideoSections: {},   // mod → number of sections without video (default 0)
+  taskHours:     {},   // taskId → hours per section
+  moduleStart:   {},   // mod → 'YYYY-MM-DD'
+  videoSections: {},   // mod → number of sections (default 20)
   hoursPerWeek: 30
 };
 
 // Tasks eligible for time estimation (exclude 1-4 firstSectionOnly)
 var FORECAST_TASKS = TASKS.filter(function(t){ return !t.firstSectionOnly; });
-// Tasks that apply to ALL sections (including no-video sections)
-var NON_VIDEO_TASK_IDS = ['1-3','2-2','3-4','4-2','5-1','5-2'];
-// Tasks that only apply to sections WITH video
-var VIDEO_ONLY_TASK_IDS = FORECAST_TASKS
-  .map(function(t){ return t.id; })
-  .filter(function(id){ return NON_VIDEO_TASK_IDS.indexOf(id) < 0; });
 
 function loadBaseline() {
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
     var data = res.data;
     if (data) {
-      baseline.taskHours        = data.task_hours         || {};
-      baseline.moduleStart      = data.module_start        || {};
-      baseline.videoSections    = data.video_sections      || {};
-      baseline.nonVideoSections = data.non_video_sections  || {};
-      baseline.hoursPerWeek     = data.hours_per_week      || 30;
+      baseline.taskHours     = data.task_hours    || {};
+      baseline.moduleStart   = data.module_start  || {};
+      baseline.videoSections = data.video_sections || {};
+      baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderBaselineForm();
     renderForecastCards();
@@ -2620,17 +2604,14 @@ function saveBaseline() {
   MODULES.forEach(function(mod) {
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
-    var nEl    = document.getElementById('bn-'+mod);
-    if (dateEl) baseline.moduleStart[mod]      = dateEl.value;
-    if (vEl)    baseline.videoSections[mod]    = parseInt(vEl.value) || 0;
-    if (nEl)    baseline.nonVideoSections[mod] = parseInt(nEl.value) || 0;
+    if (dateEl) baseline.moduleStart[mod]   = dateEl.value;
+    if (vEl)    baseline.videoSections[mod] = parseInt(vEl.value) || 0;
   });
   db.from('settings_baseline').upsert({
     id:                 1,
     task_hours:         baseline.taskHours,
     module_start:       baseline.moduleStart,
     video_sections:     baseline.videoSections,
-    non_video_sections: baseline.nonVideoSections,
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
@@ -2668,9 +2649,8 @@ function renderBaselineForm() {
   var modRows = document.getElementById('baseline-module-rows');
   if (modRows) {
     modRows.innerHTML = MODULES.map(function(mod) {
-      var dateVal  = baseline.moduleStart[mod]      || '';
-      var vVal     = baseline.videoSections[mod]    !== undefined ? baseline.videoSections[mod]    : '';
-      var nVal     = baseline.nonVideoSections[mod] !== undefined ? baseline.nonVideoSections[mod] : '';
+      var dateVal  = baseline.moduleStart[mod]   || '';
+      var vVal     = baseline.videoSections[mod] !== undefined ? baseline.videoSections[mod] : '';
       return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
         '<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;letter-spacing:0.06em">模組 '+mod+'</div>' +
         '<div class="baseline-row">' +
@@ -2678,13 +2658,8 @@ function renderBaselineForm() {
           '<input class="baseline-input baseline-input-date" type="date" id="bs-'+mod+'" value="'+dateVal+'">' +
         '</div>' +
         '<div class="baseline-row">' +
-          '<span class="baseline-row-label">有影片小節數</span>' +
+          '<span class="baseline-row-label">小節數</span>' +
           '<input class="baseline-input" type="number" min="0" step="1" id="bv-'+mod+'" value="'+vVal+'" placeholder="0">' +
-          '<span class="baseline-unit">小節</span>' +
-        '</div>' +
-        '<div class="baseline-row">' +
-          '<span class="baseline-row-label">無影片小節數</span>' +
-          '<input class="baseline-input" type="number" min="0" step="1" id="bn-'+mod+'" value="'+nVal+'" placeholder="0">' +
           '<span class="baseline-unit">小節</span>' +
         '</div>' +
       '</div>';
@@ -2738,26 +2713,19 @@ function formatDate(d) {
 }
 
 function computeModuleForecast(mod) {
-  var vCount = parseInt(baseline.videoSections[mod])    || 0;
-  var nCount = parseInt(baseline.nonVideoSections[mod]) || 0;
-  var total  = vCount + nCount > 0 ? vCount + nCount : SECTIONS_PER_MODULE;
-  if (vCount + nCount === 0) vCount = total; // treat all as video if not set
+  var total = getModuleSectionCount(mod);
 
   var totalHours = 0;
   FORECAST_TASKS.forEach(function(t) {
     var h = parseFloat(baseline.taskHours[t.id]) || 0;
-    if (VIDEO_ONLY_TASK_IDS.indexOf(t.id) >= 0) {
-      totalHours += h * vCount;          // video-only tasks × video sections
-    } else {
-      totalHours += h * total;           // non-video tasks × all sections
-    }
+    totalHours += h * total;
   });
 
   var currentPct = modulePct(mod);
   var startStr   = baseline.moduleStart[mod];
 
   if (!startStr || totalHours === 0) {
-    return { currentPct: currentPct, completionDate: null, weeksTotal: null, totalHours: totalHours, reason: '請填寫設定' };
+    return { currentPct: currentPct, completionDate: null, weeksTotal: null, totalHours: totalHours, sectionCount: total, reason: '請填寫設定' };
   }
 
   var startDate  = new Date(startStr);
@@ -2769,8 +2737,7 @@ function computeModuleForecast(mod) {
     completionDate: endDate,
     weeksTotal: Math.round(weeksTotal * 10) / 10,
     totalHours: Math.round(totalHours),
-    vCount: vCount,
-    nCount: nCount,
+    sectionCount: total,
     reason: null
   };
 }
@@ -2802,7 +2769,7 @@ function renderForecastCards() {
       '<div class="forecast-date '+dateClass+'">'+dateStr+'</div>' +
       '<div class="forecast-weeks">'+weeksStr+'</div>' +
       '<div class="forecast-detail-row"><span>目前完成度</span><span>'+f.currentPct+'%</span></div>' +
-      (f.vCount !== undefined ? '<div class="forecast-detail-row"><span>有影片 / 無影片</span><span>'+f.vCount+' / '+f.nCount+' 小節</span></div>' : '') +
+      (f.sectionCount !== undefined ? '<div class="forecast-detail-row"><span>小節數</span><span>'+f.sectionCount+' 小節</span></div>' : '') +
       (f.completionDate && baseline.moduleStart[mod] ?
         '<div class="forecast-detail-row"><span>起算日期</span><span>'+baseline.moduleStart[mod]+'</span></div>' : '') +
       '<div class="forecast-bar-wrap"><div class="forecast-bar" style="width:'+f.currentPct+'%"></div></div>' +
@@ -3145,11 +3112,10 @@ initSupabase().then(function() {
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
     var data = res.data;
     if (data) {
-      baseline.taskHours        = data.task_hours         || {};
-      baseline.moduleStart      = data.module_start        || {};
-      baseline.videoSections    = data.video_sections      || {};
-      baseline.nonVideoSections = data.non_video_sections  || {};
-      baseline.hoursPerWeek     = data.hours_per_week      || 30;
+      baseline.taskHours     = data.task_hours    || {};
+      baseline.moduleStart   = data.module_start  || {};
+      baseline.videoSections = data.video_sections || {};
+      baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderReporterTabs();
     renderOverviewTabs();
