@@ -758,14 +758,48 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .forecast-bar { height: 100%; background: var(--yellow); border-radius: 2px; transition: width 0.5s; }
 .chart-empty { display: flex; align-items: center; justify-content: center; height: 200px; font-size: 13px; color: rgba(255,255,255,0.25); }
 .trend-select-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 4px; }
+.trend-controls { display: flex; align-items: center; gap: 10px; }
+.trend-tabs { display: flex; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 3px; gap: 2px; }
+.trend-tab { background: none; border: none; color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; white-space: nowrap; }
+.trend-tab:hover { color: rgba(255,255,255,0.75); }
+.trend-tab.active { background: var(--yellow); color: #16181b; }
 .module-progress-ring { display: flex; align-items: center; justify-content: center; position: relative; height: 180px; margin-bottom: 8px; }
 .module-progress-ring-label { position: absolute; text-align: center; pointer-events: none; }
 .module-progress-ring-pct { font-size: 32px; font-weight: 800; color: var(--white); line-height: 1; }
 .module-progress-ring-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 6px; }
+.all-modules-tooltip { background: #1e2023; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #fff; min-width: 170px; }
+.all-modules-tooltip-title { font-weight: 700; margin-bottom: 6px; font-size: 13px; }
+.all-modules-tooltip-row { display: flex; justify-content: space-between; gap: 16px; color: rgba(255,255,255,0.65); margin-top: 3px; }
+.all-modules-tooltip-row b { font-weight: 700; }
 @media (max-width: 900px) {
   .weekly-grid { grid-template-columns: 1fr; }
   .observer-banner { padding: 8px 20px; }
 }
+
+/* ── WEEKLY OVERVIEW: ENLARGED TEXT ─────────────────────── */
+#page-weekly .section-label { font-size: 15px; }
+#page-weekly .section-title { font-size: 30px; }
+#page-weekly .baseline-title { font-size: 16px; }
+#page-weekly .baseline-sub { font-size: 15px; }
+#page-weekly .baseline-toggle { font-size: 14px; }
+#page-weekly .baseline-section-title { font-size: 13px; }
+#page-weekly .baseline-row-label { font-size: 15px; }
+#page-weekly .baseline-row-sub { font-size: 13px; }
+#page-weekly .chart-card-title { font-size: 16px; }
+#page-weekly .chart-card-sub { font-size: 14px; }
+#page-weekly .forecast-mod { font-size: 14px; }
+#page-weekly .forecast-date { font-size: 30px; }
+#page-weekly .forecast-date.done { font-size: 25px; }
+#page-weekly .forecast-date.unknown { font-size: 19px; }
+#page-weekly .forecast-weeks { font-size: 14px; }
+#page-weekly .forecast-detail-row { font-size: 13px; }
+#page-weekly .module-progress-ring-pct { font-size: 36px; }
+#page-weekly .module-progress-ring-sub { font-size: 13px; }
+#page-weekly .section-select { font-size: 16px; }
+#page-weekly .trend-tab { font-size: 14px; }
+#page-weekly .footer-brand { font-size: 15px; }
+#page-weekly .footer-note { font-size: 15px; }
+#page-weekly .last-saved { font-size: 13px; }
 
 /* ── SECTION ACCORDION ──────────────────────────────────── */
 .ov-accordion-item { border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; overflow: hidden; margin-bottom: 8px; }
@@ -1724,12 +1758,23 @@ function toggleAcc(btn) {
         <div class="trend-select-row">
           <div>
             <div class="chart-card-title">模組完成度趨勢</div>
-            <div class="chart-card-sub">選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成</div>
+            <div class="chart-card-sub" id="module-trend-sub">選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成</div>
           </div>
-          <select class="section-select" id="module-trend-select" onchange="onModuleTrendChange(this.value)"></select>
+          <div class="trend-controls">
+            <div class="trend-tabs" id="trend-tabs">
+              <button type="button" class="trend-tab active" data-tab="single" onclick="switchTrendTab('single')">單一模組</button>
+              <button type="button" class="trend-tab" data-tab="all" onclick="switchTrendTab('all')">各模組總覽</button>
+            </div>
+            <select class="section-select" id="module-trend-select" onchange="onModuleTrendChange(this.value)"></select>
+          </div>
         </div>
-        <div id="module-progress-ring"></div>
-        <div id="weekly-chart-container"></div>
+        <div id="module-trend-single">
+          <div id="module-progress-ring"></div>
+          <div id="weekly-chart-container"></div>
+        </div>
+        <div id="module-trend-all" style="display:none">
+          <div id="all-modules-chart-container"></div>
+        </div>
       </div>
       <div class="chart-card">
         <div class="chart-card-title">單日完成度增量</div>
@@ -1851,6 +1896,7 @@ let currentOvTab   = 'all';
 let allScores      = {};
 let moduleListeners = {};
 let trendModule    = 'C2';
+let trendTab       = 'single';
 
 function initScores() {
   MODULES.forEach(mod => {
@@ -1916,7 +1962,10 @@ function applyScoreRows(mod, rows) {
     const ovPage = document.getElementById('page-overview');
     if (ovPage && ovPage.classList.contains('active')) renderOverview();
     const wkPage = document.getElementById('page-weekly');
-    if (wkPage && wkPage.classList.contains('active') && mod === trendModule) renderModuleProgress();
+    if (wkPage && wkPage.classList.contains('active')) {
+      if (mod === trendModule) renderModuleProgress();
+      if (trendTab === 'all') renderAllModulesChart();
+    }
   }
 }
 
@@ -2047,6 +2096,11 @@ function sectionPct(mod, sec) {
 function modulePct(mod) {
   const secs = getSections(mod);
   return Math.round(secs.reduce(function(s,sec){ return s+sectionPct(mod,sec); },0) / secs.length);
+}
+function moduleGatePct(mod, gateNum) {
+  const secs = getSections(mod);
+  if (!secs.length) return 0;
+  return Math.round(secs.reduce(function(s,sec){ return s+gatePct(gateNum,mod,sec); },0) / secs.length);
 }
 function isGateDone(n, mod, sec) {
   var ts = getActiveTasks(sec, mod).filter(function(t){ return t.gate === n; });
@@ -2864,6 +2918,70 @@ function renderModuleProgress() {
   );
 }
 
+/* ── 各模組完成度總覽（長條圖＋Gate 明細 tooltip） ── */
+function computeAllModulesData() {
+  return MODULES.map(function(mod) {
+    var gates = GATES.map(function(g) {
+      return { num: g.num, name: g.name, pct: moduleGatePct(mod, g.num) };
+    });
+    return { mod: mod, pct: modulePct(mod), gates: gates };
+  });
+}
+
+function AllModulesTooltip(props) {
+  if (!props.active || !props.payload || !props.payload.length) return null;
+  var d = props.payload[0].payload;
+  return h('div', { className: 'all-modules-tooltip' },
+    h('div', { className: 'all-modules-tooltip-title' }, d.mod + ' · 總完成度 ' + d.pct + '%'),
+    d.gates.map(function(g) {
+      return h('div', { key: g.num, className: 'all-modules-tooltip-row' },
+        h('span', null, 'Gate ' + g.num + ' · ' + g.name),
+        h('b', { style: { color: GATE_COLORS[g.num] } }, g.pct + '%')
+      );
+    })
+  );
+}
+
+function renderAllModulesChart() {
+  var root = getReactRoot('all-modules-chart-container');
+  if (!root) return;
+  var data = computeAllModulesData();
+  root.render(
+    h(Recharts.ResponsiveContainer, { width: '100%', height: 260 },
+      h(Recharts.BarChart, { data: data, margin: { top: 20, right: 10, left: 0, bottom: 0 } },
+        h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
+        h(Recharts.XAxis, { dataKey: 'mod', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
+        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%', domain: [0, 100] }),
+        h(Recharts.Tooltip, { content: AllModulesTooltip, cursor: { fill: 'rgba(255,255,255,0.04)' } }),
+        h(Recharts.Bar, { dataKey: 'pct', fill: 'var(--yellow)', radius: [4, 4, 0, 0] })
+      )
+    )
+  );
+}
+
+function switchTrendTab(tab) {
+  trendTab = tab;
+  document.querySelectorAll('#trend-tabs .trend-tab').forEach(function(btn) {
+    btn.classList.toggle('active', btn.getAttribute('data-tab') === tab);
+  });
+  var singleEl = document.getElementById('module-trend-single');
+  var allEl    = document.getElementById('module-trend-all');
+  var select   = document.getElementById('module-trend-select');
+  var sub      = document.getElementById('module-trend-sub');
+  if (tab === 'all') {
+    if (singleEl) singleEl.style.display = 'none';
+    if (allEl) allEl.style.display = '';
+    if (select) select.style.display = 'none';
+    if (sub) sub.textContent = '各模組目前總完成度，滑鼠移至長條上可查看各 Gate 的完成百分比';
+    renderAllModulesChart();
+  } else {
+    if (singleEl) singleEl.style.display = '';
+    if (allEl) allEl.style.display = 'none';
+    if (select) select.style.display = '';
+    if (sub) sub.textContent = '選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成';
+  }
+}
+
 /* ── 週完成度增量（單一模組） ── */
 function computeModuleWeeklyDeltas(logData, mod) {
   var snaps = computeModuleWeeklySnapshots(logData, mod);
@@ -3099,6 +3217,7 @@ window.saveBaseline      = saveBaseline;
 window.resetBaseline     = resetBaseline;
 window.onModuleTrendChange = onModuleTrendChange;
 window.closeTrendDrilldown = closeTrendDrilldown;
+window.switchTrendTab      = switchTrendTab;
 
 /* ── INIT ── */
 initSupabase().then(function() {
