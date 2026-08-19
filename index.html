@@ -1913,6 +1913,7 @@ function initScores() {
 initScores();
 
 function isObserver() { return currentMember === 'Ting'; }
+function hasFullEditAccess(member) { return member === 'Ken'; }
 
 function getModuleSectionCount(mod) {
   var total = parseInt(baseline.videoSections[mod]) || 0;
@@ -2148,7 +2149,7 @@ function updateScore(taskId, val) {
   if (isObserver()) { showToast('觀察者模式，無法填報'); return; }
   const task    = TASKS.find(function(t){ return t.id === taskId; });
   const isOwner = task.owners.indexOf(currentMember) >= 0;
-  if (!isOwner) { showToast('這個任務不屬於你'); return; }
+  if (!isOwner && !hasFullEditAccess(currentMember)) { showToast('這個任務不屬於你'); return; }
 
   const score = parseInt(val);
   const sec   = task.moduleLevel ? '__module__' : currentSection;
@@ -2329,7 +2330,7 @@ function renderGates() {
       const hasP     = task.prereqs.length > 0;
       const isOwner  = currentMember && task.owners.indexOf(currentMember) >= 0;
       const isBlocked= hasP && !prereqOk;
-      const canEdit  = isOwner && !isBlocked;
+      const canEdit  = (isOwner || hasFullEditAccess(currentMember)) && !isBlocked;
 
       const prereqText = !hasP ? '' : prereqOk
         ? '<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>'
@@ -2469,7 +2470,7 @@ function refreshAll() {
       else { hint.className='prereq-hint blocked'; hint.textContent='⬡ 等待前置：'+task.prereqs.join('、')+'（'+prereqPct(task.id,mod,sec)+'%）'; }
     }
     const sc        = getScore(task.id, mod, sec);
-    const canEdit   = isOwner && !(hasP && !prereqOk);
+    const canEdit   = (isOwner || hasFullEditAccess(currentMember)) && !(hasP && !prereqOk);
     const gateColor = GATE_COLORS[task.gate];
     // Rebuild node buttons in place (fast — just 3 buttons)
     var btnRow = document.getElementById('nodebtn-'+task.id.replace('-','_'));
