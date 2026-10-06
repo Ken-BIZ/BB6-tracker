@@ -1965,6 +1965,7 @@ function applyScoreRows(mod, rows) {
     if (ovPage && ovPage.classList.contains('active')) renderOverview();
     const wkPage = document.getElementById('page-weekly');
     if (wkPage && wkPage.classList.contains('active')) {
+      renderForecastCards();
       if (mod === trendModule) renderModuleProgress();
       if (trendTab === 'all') renderAllModulesChart();
     }
