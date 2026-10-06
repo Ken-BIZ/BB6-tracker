@@ -845,6 +845,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .baseline-input:focus { outline: none; border-color: #8B5CF6; }
 .baseline-input-date { width: 140px; text-align: left; }
 .baseline-input-text { width: 220px; text-align: left; }
+.baseline-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.baseline-readonly-note { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.4); text-align: right; }
 .baseline-unit { font-size: 13px; color: rgba(255,255,255,0.3); white-space: nowrap; }
 
 /* ── FORECAST ROW ────────────────────────────────────────── */
@@ -1739,7 +1741,8 @@ function toggleAcc(btn) {
           <div class="baseline-task-rows" id="baseline-task-rows"></div>
         </div>
       </div>
-      <div style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
+      <div class="baseline-readonly-note" id="baseline-readonly-note" style="display:none">僅 Ken、Ting、Daniel 可以修改設定</div>
+      <div id="baseline-actions" style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="resetBaseline()">重設</button>
         <button class="btn btn-yellow" onclick="saveBaseline()">儲存設定</button>
       </div>
@@ -1915,6 +1918,7 @@ initScores();
 
 function isObserver() { return currentMember === 'Ting'; }
 function hasFullEditAccess(member) { return member === 'Ken'; }
+function canEditBaseline(member) { return ['Ken','Ting','Daniel'].indexOf(member) >= 0; }
 
 function getModuleSectionCount(mod) {
   var total = parseInt(baseline.videoSections[mod]) || 0;
@@ -2139,6 +2143,7 @@ function selectMember(name, color) {
     if (obs) obs.style.display = 'none';
     if (trackerTab) trackerTab.style.display = 'flex';
   }
+  applyBaselineAccess();
   renderGates();
   renderMembers();
 }
@@ -2656,7 +2661,58 @@ function loadBaseline() {
   });
 }
 
+// Only Ken / Ting / Daniel may change the settings; everyone else sees them read-only
+function applyBaselineAccess() {
+  var body = document.getElementById('baseline-body');
+  if (!body) return;
+  var canEdit = canEditBaseline(currentMember);
+  body.querySelectorAll('input').forEach(function(el){ el.disabled = !canEdit; });
+  var actions = document.getElementById('baseline-actions');
+  var note    = document.getElementById('baseline-readonly-note');
+  if (actions) actions.style.display = canEdit ? 'flex' : 'none';
+  if (note)    note.style.display    = canEdit ? 'none' : 'block';
+}
+
+// Lowering a module's 小節數 makes the database permanently delete the scores
+// and log of the sections beyond it (trigger in supabase/auto-trim-sections.sql)
+function confirmSectionShrink() {
+  var lines = [];
+  MODULES.forEach(function(mod) {
+    var vEl = document.getElementById('bv-'+mod);
+    if (!vEl) return;
+    var oldCount = getModuleSectionCount(mod);
+    var newCount = parseInt(vEl.value) || 0;
+    if (newCount <= 0) newCount = SECTIONS_PER_MODULE;
+    if (newCount < oldCount) {
+      var prefix = mod.replace('C','');
+      lines.push(mod + '：' + oldCount + ' → ' + newCount + ' 小節（刪除 ' + prefix + '.' + (newCount+1) + '–' + prefix + '.' + oldCount + '）');
+    }
+  });
+  if (!lines.length) return true;
+  return confirm('以下模組的小節數變少，超出小節的填報資料與歷史紀錄會永久刪除，無法復原：\n\n' + lines.join('\n') + '\n\n確定儲存？');
+}
+
+// Drop in-memory scores of sections the database just trimmed
+function dropTrimmedSections() {
+  MODULES.forEach(function(mod) {
+    var count = getModuleSectionCount(mod);
+    Object.keys(allScores[mod] || {}).forEach(function(sec) {
+      if (sec !== '__module__' && parseInt(sec.split('.')[1]) > count) delete allScores[mod][sec];
+    });
+  });
+  // Keep the 進度填報 section picker in step with the new section counts
+  var sections = getSections(currentModule);
+  if (sections.indexOf(currentSection) < 0) currentSection = sections[0];
+  populateSectionSelect();
+  document.getElementById('section-select').value = currentSection;
+  updateReporterHeader();
+  renderGates();
+  renderMembers();
+}
+
 function saveBaseline() {
+  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Ting、Daniel 可以修改設定'); return; }
+  if (!confirmSectionShrink()) return;
   // Read values from form
   FORECAST_TASKS.forEach(function(t) {
     var el = document.getElementById('bh-'+t.id.replace('-','_'));
@@ -2679,11 +2735,14 @@ function saveBaseline() {
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
-    else { showToast('設定已儲存 ✓'); renderForecastCards(); updateReporterHeader(); }
+    else { showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); }
   });
 }
 
 function resetBaseline() {
+  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Ting、Daniel 可以修改設定'); return; }
+  var over = MODULES.filter(function(mod){ return getModuleSectionCount(mod) > SECTIONS_PER_MODULE; });
+  if (over.length && !confirm('重設後小節數會回到預設 ' + SECTIONS_PER_MODULE + ' 節，' + over.join('、') + ' 超出的小節資料會永久刪除，無法復原。確定重設？')) return;
   FORECAST_TASKS.forEach(function(t) {
     var el = document.getElementById('bh-'+t.id.replace('-','_'));
     if (el) el.value = '';
@@ -2754,6 +2813,7 @@ function renderBaselineForm() {
     });
     taskRows.innerHTML = html;
   }
+  applyBaselineAccess();
 }
 
 /* ═══════════════════════════════════════════════════════════
