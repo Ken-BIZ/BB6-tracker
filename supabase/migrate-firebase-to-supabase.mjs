@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 /*
+ DO NOT RE-RUN: modules were renumbered C2..C10 → C1..C9 on 2026-10-06
+ (see renumber-modules-minus-one.sql). Firebase still holds the old numbering,
+ so running this again would write old-numbered data over the new modules.
+
  One-off migration: copy existing data from the Firebase Realtime Database
  into the new Supabase tables (see schema.sql).
 
