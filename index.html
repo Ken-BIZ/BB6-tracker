@@ -844,6 +844,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .baseline-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; color: var(--white); font-size: 14px; font-weight: 600; padding: 6px 10px; font-family: inherit; width: 80px; text-align: right; }
 .baseline-input:focus { outline: none; border-color: #8B5CF6; }
 .baseline-input-date { width: 140px; text-align: left; }
+.baseline-input-text { width: 220px; text-align: left; }
 .baseline-unit { font-size: 13px; color: rgba(255,255,255,0.3); white-space: nowrap; }
 
 /* ── FORECAST ROW ────────────────────────────────────────── */
@@ -2264,7 +2265,8 @@ function updateReporterHeader() {
   var tag   = document.getElementById('reporter-section-tag');
   var title = document.getElementById('reporter-section-title');
   if (tag)   tag.textContent   = currentModule + ' · ' + currentSection;
-  if (title) title.textContent = currentSection + ' 任務進度填報';
+  var name  = (baseline.moduleNames[currentModule] || '').trim();
+  if (title) title.textContent = (name ? name + '｜' : '') + currentSection + ' 任務進度填報';
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2622,6 +2624,7 @@ function getWeekLabel(cutoff) {
    {
      taskHours: { '1-1': 3, '1-2': 2, ... },
      moduleStart: { C1: '2026-06-01', C2: '...', C3: '...' },
+     moduleNames: { C1: '模組名稱', C2: '...' },
      hoursPerWeek: 30
    }
 ═══════════════════════════════════════════════════════════ */
@@ -2630,6 +2633,7 @@ var baseline = {
   taskHours:     {},   // taskId → hours per section
   moduleStart:   {},   // mod → 'YYYY-MM-DD'
   videoSections: {},   // mod → number of sections (default 20)
+  moduleNames:   {},   // mod → display name shown on 進度填報
   hoursPerWeek: 30
 };
 
@@ -2643,6 +2647,7 @@ function loadBaseline() {
       baseline.taskHours     = data.task_hours    || {};
       baseline.moduleStart   = data.module_start  || {};
       baseline.videoSections = data.video_sections || {};
+      baseline.moduleNames   = data.module_names   || {};
       baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderBaselineForm();
@@ -2659,6 +2664,8 @@ function saveBaseline() {
   MODULES.forEach(function(mod) {
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
+    var nEl    = document.getElementById('bn-'+mod);
+    if (nEl)    baseline.moduleNames[mod]   = nEl.value.trim();
     if (dateEl) baseline.moduleStart[mod]   = dateEl.value;
     if (vEl)    baseline.videoSections[mod] = parseInt(vEl.value) || 0;
   });
@@ -2667,10 +2674,11 @@ function saveBaseline() {
     task_hours:         baseline.taskHours,
     module_start:       baseline.moduleStart,
     video_sections:     baseline.videoSections,
+    module_names:       baseline.moduleNames,
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
-    else { showToast('設定已儲存 ✓'); renderForecastCards(); }
+    else { showToast('設定已儲存 ✓'); renderForecastCards(); updateReporterHeader(); }
   });
 }
 
@@ -2706,8 +2714,13 @@ function renderBaselineForm() {
     modRows.innerHTML = MODULES.map(function(mod) {
       var dateVal  = baseline.moduleStart[mod]   || '';
       var vVal     = baseline.videoSections[mod] !== undefined ? baseline.videoSections[mod] : '';
+      var nVal     = (baseline.moduleNames[mod] || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
       return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
         '<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;letter-spacing:0.06em">模組 '+mod+'</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">模組名稱</span>' +
+          '<input class="baseline-input baseline-input-text" type="text" maxlength="40" id="bn-'+mod+'" value="'+nVal+'" placeholder="顯示在進度填報標題">' +
+        '</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">起算日期</span>' +
           '<input class="baseline-input baseline-input-date" type="date" id="bs-'+mod+'" value="'+dateVal+'">' +
@@ -3235,6 +3248,7 @@ initSupabase().then(function() {
       baseline.taskHours     = data.task_hours    || {};
       baseline.moduleStart   = data.module_start  || {};
       baseline.videoSections = data.video_sections || {};
+      baseline.moduleNames   = data.module_names   || {};
       baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderReporterTabs();
