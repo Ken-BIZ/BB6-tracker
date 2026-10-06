@@ -3185,9 +3185,23 @@ function closeTrendDrilldown() {
   if (overlay) overlay.style.display = 'none';
 }
 
+// Supabase returns at most 1000 rows per request, so page through the whole log
+var LOG_PAGE_SIZE = 1000;
+function fetchAllLog(from, acc) {
+  from = from || 0; acc = acc || [];
+  return db.from('log').select('module, section, task_id, score, member, ts')
+    .order('created_at').order('id').range(from, from + LOG_PAGE_SIZE - 1)
+    .then(function(res) {
+      var rows = res.data || [];
+      acc = acc.concat(rows);
+      if (rows.length === LOG_PAGE_SIZE) return fetchAllLog(from + LOG_PAGE_SIZE, acc);
+      return acc;
+    });
+}
+
 function refreshTrendCharts() {
-  db.from('log').select('module, section, task_id, score, member, ts').order('created_at').then(function(res) {
-    var logData = (res.data || []).map(function(r) {
+  fetchAllLog().then(function(rows) {
+    var logData = rows.map(function(r) {
       return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
     });
     lastLogData = logData;
