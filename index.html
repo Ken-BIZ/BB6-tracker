@@ -605,7 +605,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .module-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
 .module-dot { width:7px; height:7px; border-radius:50%; background:currentColor; opacity:0.5; }
 .module-tab.active .module-dot { opacity:1; }
-.sync-status { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--grey-dark); }
+.sync-status { display:flex; align-items:center; gap:7px; font-size:13px; font-weight:600; color:var(--grey-dark); flex-shrink:0; white-space:nowrap; }
 .sync-dot { width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,0.2); flex-shrink:0; transition:background 0.3s; }
 .sync-dot.syncing { background:var(--yellow); animation:pulse 1s ease-in-out infinite; }
 .sync-dot.ok { background:#4ade80; }
@@ -613,7 +613,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
 
 /* ── OVERVIEW PAGE ───────────────────── */
-.overview-filter { padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); display:flex; gap:0; }
+.overview-filter { padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); display:flex; flex-wrap:wrap; gap:0; }
 .ov-tab { font-size:14px; font-weight:700; padding:14px 24px; border:none; background:transparent; color:var(--grey-dark); cursor:pointer; border-bottom:3px solid transparent; transition:all 0.18s; font-family:inherit; }
 .ov-tab:hover { color:var(--white); }
 .ov-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
@@ -650,10 +650,10 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 /* ── REPORTER PAGE ───────────────────── */
 .reporter-module-bar { display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:rgba(255,255,255,0.02); border-bottom:1px solid rgba(255,255,255,0.07); }
-.reporter-tabs { display:flex; }
+.reporter-tabs { display:flex; flex-wrap:wrap; flex:1; min-width:0; }
 .reporter-tab { font-size:15px; font-weight:700; padding:14px 28px; border:none; background:transparent; color:var(--grey-dark); cursor:pointer; border-bottom:3px solid transparent; font-family:inherit; transition:all 0.18s; display:flex; align-items:center; gap:8px; }
 .reporter-tab.active { color:var(--yellow); border-bottom-color:var(--yellow); }
-.section-picker { display:flex; gap:10px; align-items:center; }
+.section-picker { display:flex; gap:10px; align-items:center; flex-shrink:0; margin:0 24px; }
 .section-picker label { font-size:14px; font-weight:700; color:var(--grey-dark); letter-spacing:0.06em; text-transform:uppercase; }
 .section-select { background:#1e2023; border:1px solid rgba(255,255,255,0.15); border-radius:4px; color:var(--white); font-size:15px; font-weight:700; padding:8px 32px 8px 14px; font-family:inherit; cursor:pointer; min-width:80px; -webkit-appearance:none; appearance:none; }
 .section-select:focus { outline:none; border-color:var(--yellow); }
@@ -1856,7 +1856,7 @@ function backupToSheet(mod, sec, taskId, score, memberName) {
 /* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
-const MODULES             = ['C1','C2','C3','C4','C5','C6','C7','C8','C9'];
+const MODULES             = ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19'];
 const SECTIONS_PER_MODULE = 20;
 
 const TASKS = [
