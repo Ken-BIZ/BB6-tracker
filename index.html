@@ -811,12 +811,12 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 #page-weekly .baseline-row-sub { font-size: 13px; }
 #page-weekly .chart-card-title { font-size: 16px; }
 #page-weekly .chart-card-sub { font-size: 14px; }
-#page-weekly .forecast-mod { font-size: 14px; }
-#page-weekly .forecast-date { font-size: 30px; }
-#page-weekly .forecast-date.done { font-size: 25px; }
-#page-weekly .forecast-date.unknown { font-size: 19px; }
-#page-weekly .forecast-weeks { font-size: 14px; }
-#page-weekly .forecast-detail-row { font-size: 13px; }
+#page-weekly .forecast-mod { font-size: 12px; margin-bottom: 6px; }
+#page-weekly .forecast-date { font-size: 22px; white-space: nowrap; }
+#page-weekly .forecast-date.done { font-size: 20px; }
+#page-weekly .forecast-date.unknown { font-size: 16px; }
+#page-weekly .forecast-weeks { font-size: 12px; margin-bottom: 10px; }
+#page-weekly .forecast-detail-row { font-size: 12px; }
 #page-weekly .module-progress-ring-pct { font-size: 36px; }
 #page-weekly .module-progress-ring-sub { font-size: 13px; }
 #page-weekly .section-select { font-size: 16px; }
@@ -3056,7 +3056,7 @@ function renderForecastCards() {
       weeksStr = '';
       dateClass = 'unknown';
     } else {
-      dateStr  = formatDate(f.completionDate);
+      dateStr  = f.completionDate.getFullYear() + '/' + formatDate(f.completionDate);
       weeksStr = '共 '+f.weeksTotal+' 週・'+f.totalHours+' 小時' + (f.missingCalendar ? '・部分日期未扣國定假日' : '');
       dateClass = '';
     }
