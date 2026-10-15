@@ -869,6 +869,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .baseline-input:focus { outline: none; border-color: #8B5CF6; }
 .baseline-input-date { width: 140px; text-align: left; }
 .baseline-input-text { width: 220px; text-align: left; }
+.baseline-check { width: 18px; height: 18px; accent-color: var(--yellow); cursor: pointer; }
+.baseline-check:disabled { opacity: 0.5; cursor: not-allowed; }
 .baseline-input:disabled { opacity: 0.5; cursor: not-allowed; }
 .baseline-forecast { font-size: 14px; font-weight: 700; color: var(--yellow); text-align: right; }
 .baseline-forecast.empty { color: rgba(255,255,255,0.3); font-weight: 600; }
@@ -2548,13 +2550,9 @@ function renderOverview() {
         if (sectionPct(mod, sec) >= 100) doneSecsAll++;
       });
     });
-    // Year-end target: modules whose forecast completion date falls on or before 12/31
+    // Year-end target: modules ticked 列入年底目標 in 完工預測設定
     var year       = new Date().getFullYear();
-    var yearEnd    = new Date(year, 11, 31, 23, 59, 59);
-    var targetMods = MODULES.filter(function(mod) {
-      var f = computeModuleForecast(mod);
-      return f.completionDate && f.completionDate <= yearEnd;
-    });
+    var targetMods = MODULES.filter(function(mod){ return baseline.yearEndTargets.indexOf(mod) >= 0; });
     var targetPcts = targetMods.map(modulePct);
     var targetPct  = targetMods.length ? Math.round(targetPcts.reduce(function(a,b){ return a+b; },0) / targetMods.length) : 0;
     var targetDone = targetPcts.filter(function(p){ return p >= 100; }).length;
@@ -2575,8 +2573,8 @@ function renderOverview() {
         '</div>' +
         '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+targetPct+'%"></div></div>' +
         '<div class="ov-project-sub">' + (targetMods.length
-          ? '預計 12/31 前完工：'+targetMods.join('、')+'・已完成 '+targetDone+' / '+targetMods.length+' 個模組'
-          : '尚無預計 12/31 前完工的模組（請在專案概況的完工預測設定填寫起算日期與時數）') +
+          ? '目標模組：'+targetMods.join('、')+'・已完成 '+targetDone+' / '+targetMods.length+' 個模組'
+          : '尚未選擇目標模組（請在專案概況的完工預測設定勾選「列入年底目標」）') +
         '</div>' +
       '</div>';
   }
@@ -2714,6 +2712,7 @@ function getWeekLabel(cutoff) {
      taskHours: { '1-1': 3, '1-2': 2, ... },
      moduleStart: { C1: '2026-06-01', C2: '...', C3: '...' },
      moduleNames: { C1: '模組名稱', C2: '...' },
+     yearEndTargets: ['C1', 'C2', ...],
      hoursPerWeek: 30
    }
 ═══════════════════════════════════════════════════════════ */
@@ -2723,6 +2722,7 @@ var baseline = {
   moduleStart:   {},   // mod → 'YYYY-MM-DD'
   videoSections: {},   // mod → number of sections (default 20)
   moduleNames:   {},   // mod → display name shown on 進度填報
+  yearEndTargets: [],  // modules counted in 年底目標完成度
   hoursPerWeek: 30
 };
 
@@ -2737,6 +2737,7 @@ function loadBaseline() {
       baseline.moduleStart   = data.module_start  || {};
       baseline.videoSections = data.video_sections || {};
       baseline.moduleNames   = data.module_names   || {};
+      baseline.yearEndTargets = data.year_end_targets || [];
       baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderBaselineForm();
@@ -2801,6 +2802,10 @@ function saveBaseline() {
     var el = document.getElementById('bh-'+t.id.replace('-','_'));
     if (el) baseline.taskHours[t.id] = parseFloat(el.value) || 0;
   });
+  baseline.yearEndTargets = MODULES.filter(function(mod) {
+    var el = document.getElementById('by-'+mod);
+    return el ? el.checked : baseline.yearEndTargets.indexOf(mod) >= 0;
+  });
   MODULES.forEach(function(mod) {
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
@@ -2815,6 +2820,7 @@ function saveBaseline() {
     module_start:       baseline.moduleStart,
     video_sections:     baseline.videoSections,
     module_names:       baseline.moduleNames,
+    year_end_targets:   baseline.yearEndTargets,
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
@@ -2872,6 +2878,10 @@ function renderBaselineForm() {
           '<span class="baseline-row-label">小節數</span>' +
           '<input class="baseline-input" type="number" min="0" step="1" id="bv-'+mod+'" value="'+vVal+'" placeholder="0">' +
           '<span class="baseline-unit">小節</span>' +
+        '</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">列入年底目標</span>' +
+          '<input class="baseline-check" type="checkbox" id="by-'+mod+'"'+(baseline.yearEndTargets.indexOf(mod) >= 0 ? ' checked' : '')+'>' +
         '</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">預計完工</span>' +
@@ -3483,6 +3493,7 @@ initSupabase().then(function() {
       baseline.moduleStart   = data.module_start  || {};
       baseline.videoSections = data.video_sections || {};
       baseline.moduleNames   = data.module_names   || {};
+      baseline.yearEndTargets = data.year_end_targets || [];
       baseline.hoursPerWeek  = data.hours_per_week || 30;
     }
     renderReporterTabs();

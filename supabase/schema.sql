@@ -28,6 +28,7 @@ create table if not exists settings_baseline (
   video_sections      jsonb not null default '{}',
   non_video_sections  jsonb not null default '{}',
   module_names        jsonb not null default '{}',
+  year_end_targets    jsonb not null default '[]',
   hours_per_week      integer not null default 30,
   constraint settings_baseline_singleton check (id = 1)
 );
