@@ -849,6 +849,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .baseline-input-date { width: 140px; text-align: left; }
 .baseline-input-text { width: 220px; text-align: left; }
 .baseline-input:disabled { opacity: 0.5; cursor: not-allowed; }
+.baseline-forecast { font-size: 14px; font-weight: 700; color: var(--yellow); text-align: right; }
+.baseline-forecast.empty { color: rgba(255,255,255,0.3); font-weight: 600; }
 .baseline-readonly-note { margin-top: 16px; font-size: 13px; color: rgba(255,255,255,0.4); text-align: right; }
 .baseline-unit { font-size: 13px; color: rgba(255,255,255,0.3); white-space: nowrap; }
 
@@ -2793,6 +2795,10 @@ function renderBaselineForm() {
           '<input class="baseline-input" type="number" min="0" step="1" id="bv-'+mod+'" value="'+vVal+'" placeholder="0">' +
           '<span class="baseline-unit">小節</span>' +
         '</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">預計完工</span>' +
+          '<span class="baseline-forecast" id="bf-'+mod+'"></span>' +
+        '</div>' +
       '</div>';
     }).join('');
   }
@@ -2817,6 +2823,38 @@ function renderBaselineForm() {
     taskRows.innerHTML = html;
   }
   applyBaselineAccess();
+  renderFormForecasts();
+  var body = document.getElementById('baseline-body');
+  if (body && !body.dataset.previewBound) {
+    body.dataset.previewBound = '1';
+    body.addEventListener('input', renderFormForecasts);
+  }
+}
+
+// Live 預計完工 preview in the settings form, computed from the unsaved inputs
+function renderFormForecasts() {
+  var taskHours = {};
+  FORECAST_TASKS.forEach(function(t) {
+    var el = document.getElementById('bh-'+t.id.replace('-','_'));
+    taskHours[t.id] = el ? (parseFloat(el.value) || 0) : (parseFloat(baseline.taskHours[t.id]) || 0);
+  });
+  MODULES.forEach(function(mod) {
+    var out = document.getElementById('bf-'+mod);
+    if (!out) return;
+    var dateEl = document.getElementById('bs-'+mod);
+    var vEl    = document.getElementById('bv-'+mod);
+    var count  = vEl ? (parseInt(vEl.value) || 0) : getModuleSectionCount(mod);
+    if (count <= 0) count = SECTIONS_PER_MODULE;
+    var f = computeModuleForecast(mod, { start: dateEl ? dateEl.value : undefined, count: count, taskHours: taskHours });
+    if (!f.completionDate) {
+      out.textContent = !f.totalHours ? '請先填寫每小節任務時數' : '請填寫起算日期';
+      out.classList.add('empty');
+    } else {
+      var d = f.completionDate;
+      out.textContent = d.getFullYear() + '/' + formatDate(d) + '・共 ' + f.weeksTotal + ' 週・' + f.totalHours + ' 小時';
+      out.classList.remove('empty');
+    }
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2844,17 +2882,21 @@ function formatDate(d) {
     ['日','一','二','三','四','五','六'][d.getDay()] + ')';
 }
 
-function computeModuleForecast(mod) {
-  var total = getModuleSectionCount(mod);
+// draft (optional): unsaved form values { start, count, taskHours } used by the
+// live preview in 完工預測設定; without it the saved baseline is used
+function computeModuleForecast(mod, draft) {
+  draft = draft || {};
+  var total     = draft.count !== undefined ? draft.count : getModuleSectionCount(mod);
+  var taskHours = draft.taskHours || baseline.taskHours;
 
   var totalHours = 0;
   FORECAST_TASKS.forEach(function(t) {
-    var h = parseFloat(baseline.taskHours[t.id]) || 0;
+    var h = parseFloat(taskHours[t.id]) || 0;
     totalHours += h * total;
   });
 
   var currentPct = modulePct(mod);
-  var startStr   = baseline.moduleStart[mod];
+  var startStr   = draft.start !== undefined ? draft.start : baseline.moduleStart[mod];
 
   if (!startStr || totalHours === 0) {
     return { currentPct: currentPct, completionDate: null, weeksTotal: null, totalHours: totalHours, sectionCount: total, reason: '請填寫設定' };
