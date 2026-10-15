@@ -618,7 +618,9 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .ov-tab:hover { color:var(--white); background:rgba(255,255,255,0.06); }
 .ov-tab.active { background:var(--yellow); color:var(--black); }
 .ov-grid { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
-.ov-project { background:rgba(255,234,65,0.05); border:1px solid rgba(255,234,65,0.2); border-radius:8px; padding:24px 32px; margin-bottom:24px; }
+.ov-project { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; margin-bottom:24px; }
+.ov-project-card { background:rgba(255,234,65,0.05); border:1px solid rgba(255,234,65,0.2); border-radius:8px; padding:24px 32px; }
+@media (max-width:900px) { .ov-project { grid-template-columns:1fr; } }
 .ov-project-top { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:14px; }
 .ov-project-label { font-size:15px; font-weight:700; color:rgba(255,255,255,0.7); letter-spacing:0.04em; }
 .ov-project-pct { font-size:40px; font-weight:700; letter-spacing:-0.04em; color:var(--yellow); line-height:1; }
@@ -2546,13 +2548,37 @@ function renderOverview() {
         if (sectionPct(mod, sec) >= 100) doneSecsAll++;
       });
     });
+    // Year-end target: modules whose forecast completion date falls on or before 12/31
+    var year       = new Date().getFullYear();
+    var yearEnd    = new Date(year, 11, 31, 23, 59, 59);
+    var targetMods = MODULES.filter(function(mod) {
+      var f = computeModuleForecast(mod);
+      return f.completionDate && f.completionDate <= yearEnd;
+    });
+    var targetPcts = targetMods.map(modulePct);
+    var targetPct  = targetMods.length ? Math.round(targetPcts.reduce(function(a,b){ return a+b; },0) / targetMods.length) : 0;
+    var targetDone = targetPcts.filter(function(p){ return p >= 100; }).length;
+
     projectEl.innerHTML =
-      '<div class="ov-project-top">' +
-        '<div class="ov-project-label">整體專案完成度</div>' +
-        '<div class="ov-project-pct">'+projPct+'%</div>' +
+      '<div class="ov-project-card">' +
+        '<div class="ov-project-top">' +
+          '<div class="ov-project-label">整體專案完成度</div>' +
+          '<div class="ov-project-pct">'+projPct+'%</div>' +
+        '</div>' +
+        '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+projPct+'%"></div></div>' +
+        '<div class="ov-project-sub">已完成 '+doneMods+' / '+MODULES.length+' 個模組・'+doneSecsAll+' / '+totalSecs+' 小節</div>' +
       '</div>' +
-      '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+projPct+'%"></div></div>' +
-      '<div class="ov-project-sub">已完成 '+doneMods+' / '+MODULES.length+' 個模組・'+doneSecsAll+' / '+totalSecs+' 小節</div>';
+      '<div class="ov-project-card">' +
+        '<div class="ov-project-top">' +
+          '<div class="ov-project-label">'+year+' 年底目標完成度</div>' +
+          '<div class="ov-project-pct">'+(targetMods.length ? targetPct+'%' : '—')+'</div>' +
+        '</div>' +
+        '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+targetPct+'%"></div></div>' +
+        '<div class="ov-project-sub">' + (targetMods.length
+          ? '預計 12/31 前完工：'+targetMods.join('、')+'・已完成 '+targetDone+' / '+targetMods.length+' 個模組'
+          : '尚無預計 12/31 前完工的模組（請在專案概況的完工預測設定填寫起算日期與時數）') +
+        '</div>' +
+      '</div>';
   }
 
   const cardsEl = document.getElementById('ov-module-cards');
@@ -2792,7 +2818,7 @@ function saveBaseline() {
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
-    else { showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); }
+    else { showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); renderOverview(); }
   });
 }
 
@@ -2935,6 +2961,7 @@ function loadHolidayCalendar() {
   })).then(function() {
     renderForecastCards();
     renderFormForecasts();
+    renderOverview();
   });
 }
 
