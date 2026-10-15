@@ -2851,7 +2851,8 @@ function renderFormForecasts() {
       out.classList.add('empty');
     } else {
       var d = f.completionDate;
-      out.textContent = d.getFullYear() + '/' + formatDate(d) + '・共 ' + f.weeksTotal + ' 週・' + f.totalHours + ' 小時';
+      out.textContent = d.getFullYear() + '/' + formatDate(d) + '・共 ' + f.weeksTotal + ' 週・' + f.totalHours + ' 小時' +
+        (f.missingCalendar ? '（部分日期無國定假日資料，只扣週末）' : '');
       out.classList.remove('empty');
     }
   });
@@ -2861,20 +2862,51 @@ function renderFormForecasts() {
    FORECAST CALCULATION
    totalHours(mod) = Σ( taskHours[t] × SECTIONS_PER_MODULE )
    weeksNeeded = totalHours / hoursPerWeek
-   completionDate = moduleStart + weeksNeeded weeks (skip weekends)
+   completionDate = moduleStart + weeksNeeded weeks (skip weekends + Taiwan holidays)
 ═══════════════════════════════════════════════════════════ */
 
+/* Taiwan government calendar (national holidays, 補假, 補班) from
+   github.com/ruyut/TaiwanCalendar via jsDelivr. Years that are not published
+   yet (or fail to load) fall back to skipping weekends only. */
+var HOLIDAY_CAL_URL = 'https://cdn.jsdelivr.net/gh/ruyut/TaiwanCalendar/data/';
+var holidayCal      = {};   // 'YYYYMMDD' → true when it is a day off (weekends included)
+
+function loadHolidayCalendar() {
+  var y = new Date().getFullYear();
+  return Promise.all([y-1, y, y+1, y+2].map(function(year) {
+    return fetch(HOLIDAY_CAL_URL + year + '.json')
+      .then(function(res){ return res.ok ? res.json() : []; })
+      .then(function(list) {
+        list.forEach(function(e){ holidayCal[e.date] = !!e.isHoliday; });
+      })
+      .catch(function(){});
+  })).then(function() {
+    renderForecastCards();
+    renderFormForecasts();
+  });
+}
+
+function calKey(d) {
+  return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+}
+
+// Add N working weeks (5 working days each), counting from the day after startDate.
+// Returns { date, missingCalendar } — missingCalendar is true when some day had
+// no calendar data and only weekends were skipped.
 function addWorkingWeeks(startDate, weeks) {
-  // Add N working weeks (Mon–Fri), starting from a Thursday
   var d = new Date(startDate);
-  var daysToAdd = Math.ceil(weeks * 5); // 5 working days per week
-  var added = 0;
+  var daysToAdd = Math.ceil(weeks * 5);
+  var added = 0, missing = false;
   while (added < daysToAdd) {
     d.setDate(d.getDate() + 1);
-    var day = d.getDay();
-    if (day !== 0 && day !== 6) added++; // skip Sun(0) Sat(6)
+    var off = holidayCal[calKey(d)];
+    if (off === undefined) {
+      missing = true;
+      off = d.getDay() === 0 || d.getDay() === 6;
+    }
+    if (!off) added++;
   }
-  return d;
+  return { date: d, missingCalendar: missing };
 }
 
 function formatDate(d) {
@@ -2904,11 +2936,12 @@ function computeModuleForecast(mod, draft) {
 
   var startDate  = new Date(startStr);
   var weeksTotal = totalHours / baseline.hoursPerWeek;
-  var endDate    = addWorkingWeeks(startDate, weeksTotal);
+  var end        = addWorkingWeeks(startDate, weeksTotal);
 
   return {
     currentPct: currentPct,
-    completionDate: endDate,
+    completionDate: end.date,
+    missingCalendar: end.missingCalendar,
     weeksTotal: Math.round(weeksTotal * 10) / 10,
     totalHours: Math.round(totalHours),
     sectionCount: total,
@@ -2934,7 +2967,7 @@ function renderForecastCards() {
       dateClass = 'unknown';
     } else {
       dateStr  = formatDate(f.completionDate);
-      weeksStr = '共 '+f.weeksTotal+' 週・'+f.totalHours+' 小時';
+      weeksStr = '共 '+f.weeksTotal+' 週・'+f.totalHours+' 小時' + (f.missingCalendar ? '・部分日期未扣國定假日' : '');
       dateClass = '';
     }
 
@@ -3354,6 +3387,7 @@ window.closeTrendDrilldown = closeTrendDrilldown;
 window.switchTrendTab      = switchTrendTab;
 
 /* ── INIT ── */
+loadHolidayCalendar();
 initSupabase().then(function() {
   var _savedMember = localStorage.getItem('bb6-member');
   if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
