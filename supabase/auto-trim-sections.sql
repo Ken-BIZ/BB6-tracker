@@ -5,6 +5,8 @@
 -- → 儲存設定) or the row is deleted (重設), scores and log rows whose section
 -- number is greater than the module's 小節數 are PERMANENTLY deleted. A module
 -- with no 小節數 set counts as 20, the same default the app uses.
+-- Section ids look like 3.5 (C modules) or TA1.5 (TA modules); only the number
+-- after the dot is compared.
 --
 -- security definer: the app's anon key has no delete policy on scores / log,
 -- so the function deletes with the owner's rights instead.
@@ -24,11 +26,11 @@ begin
   end if;
 
   delete from scores s
-   where substring(s.section from '^[0-9]+\.([0-9]+)$')::int >
+   where substring(s.section from '\.([0-9]+)$')::int >
          coalesce(nullif(nullif(counts ->> s.module, '')::int, 0), 20);
 
   delete from log l
-   where substring(l.section from '^[0-9]+\.([0-9]+)$')::int >
+   where substring(l.section from '\.([0-9]+)$')::int >
          coalesce(nullif(nullif(counts ->> l.module, '')::int, 0), 20);
 
   return null;

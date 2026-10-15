@@ -1881,7 +1881,8 @@ function backupToSheet(mod, sec, taskId, score, memberName) {
 /* ═══════════════════════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════════════════════ */
-const MODULES             = ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19'];
+const MODULES             = ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10','C11','C12','C13','C14','C15','C16','C17','C18','C19','TA1','TA4','TA5'];
+// Section ids are '<module number>.<n>' for C modules (C3 → 3.1) and '<module>.<n>' otherwise (TA1 → TA1.1)
 const SECTIONS_PER_MODULE = 20;
 
 const TASKS = [
