@@ -617,9 +617,28 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .ov-tab { font-size:14px; font-weight:700; min-width:46px; height:34px; padding:0 10px; border:none; border-radius:4px; background:transparent; color:var(--grey-dark); cursor:pointer; transition:all 0.18s; font-family:inherit; white-space:nowrap; }
 .ov-tab:hover { color:var(--white); background:rgba(255,255,255,0.06); }
 .ov-tab.active { background:var(--yellow); color:var(--black); }
-.ov-grid { display:flex; flex-direction:column; gap:24px; margin-bottom:40px; }
+.ov-grid { display:flex; flex-direction:column; gap:12px; margin-bottom:40px; }
+.ov-project { background:rgba(255,234,65,0.05); border:1px solid rgba(255,234,65,0.2); border-radius:8px; padding:24px 32px; margin-bottom:24px; }
+.ov-project-top { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:14px; }
+.ov-project-label { font-size:15px; font-weight:700; color:rgba(255,255,255,0.7); letter-spacing:0.04em; }
+.ov-project-pct { font-size:40px; font-weight:700; letter-spacing:-0.04em; color:var(--yellow); line-height:1; }
+.ov-project-track { height:12px; background:rgba(255,255,255,0.07); border-radius:6px; overflow:hidden; }
+.ov-project-fill { height:100%; background:var(--yellow); border-radius:6px; transition:width 0.5s; }
+.ov-project-sub { margin-top:10px; font-size:13px; color:var(--grey-dark); }
+.ov-module-head { cursor:pointer; user-select:none; transition:background 0.15s; }
+.ov-module-head:hover { background:rgba(255,255,255,0.025); }
+.ov-module-title { font-size:14px; font-weight:600; color:rgba(255,255,255,0.55); flex:0 1 260px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ov-module-chevron { font-size:12px; color:rgba(255,255,255,0.3); transition:transform 0.2s; flex-shrink:0; }
+.ov-module-card.open .ov-module-chevron { transform:rotate(180deg); }
+.ov-module-card .ov-module-body { display:none; }
+.ov-module-card.open .ov-module-body { display:block; }
+.ov-module-card:not(.open) .ov-module-head { border-bottom:none; }
+.ov-sections-label { font-size:12px; font-weight:700; color:var(--grey-dark); letter-spacing:0.1em; margin:24px 0 8px; }
+.ov-sections { border:1px solid rgba(255,255,255,0.06); border-radius:6px; overflow:hidden; }
+.ov-done-toggle { align-self:flex-start; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.25); color:#4ade80; font-size:13px; font-weight:700; padding:8px 14px; border-radius:6px; cursor:pointer; font-family:inherit; }
+.ov-done-toggle:hover { background:rgba(74,222,128,0.14); }
 .ov-module-card { background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); border-radius:8px; overflow:hidden; }
-.ov-module-head { padding:24px 32px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:20px; }
+.ov-module-head { padding:18px 32px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; align-items:center; gap:20px; }
 .ov-module-label { font-size:13px; font-weight:700; letter-spacing:0.1em; color:var(--grey-dark); text-transform:uppercase; min-width:44px; }
 .ov-module-name { font-size:22px; font-weight:700; letter-spacing:-0.02em; flex:0 0 60px; }
 .ov-module-total-track { flex:1; height:8px; background:rgba(255,255,255,0.07); border-radius:4px; overflow:hidden; }
@@ -1655,14 +1674,11 @@ function toggleAcc(btn) {
     <div class="section-label">整體專案進度</div>
     <div class="section-title">各模組完成狀況</div>
 
-    <!-- Module summary cards -->
-    <div class="ov-grid" id="ov-module-cards"></div>
+    <!-- Whole-project completion (average of module completion) -->
+    <div class="ov-project" id="ov-project"></div>
 
-    <!-- Section detail — collapsible per module -->
-    <div style="margin-top:8px">
-      <div class="section-label" style="margin-bottom:16px">小節細項</div>
-      <div id="ov-section-accordion"></div>
-    </div>
+    <!-- Module cards — click to expand gates + section detail -->
+    <div class="ov-grid" id="ov-module-cards"></div>
   </section>
 
   <footer>
@@ -2239,9 +2255,17 @@ function switchSection(sec) {
   renderGates();  // renderKey change triggers full rebuild automatically
   renderMembers();
 }
-function toggleOvAccordion(mod) {
-  var item = document.getElementById('ov-acc-'+mod);
-  if (item) item.classList.toggle('open');
+var ovOpen     = {};     // mod → true when its card is expanded in 全部模組
+var ovShowDone = false;  // show 100% modules in 全部模組
+function toggleOvModule(mod) {
+  if (currentOvTab !== 'all') return;  // single-module view is always expanded
+  ovOpen[mod] = !ovOpen[mod];
+  var card = document.getElementById('ov-card-'+mod);
+  if (card) card.classList.toggle('open', ovOpen[mod]);
+}
+function toggleOvDone() {
+  ovShowDone = !ovShowDone;
+  renderOverview();
 }
 
 function renderOverviewTabs() {
@@ -2509,69 +2533,97 @@ function refreshAll() {
    RENDER OVERVIEW
 ═══════════════════════════════════════════════════════════ */
 function renderOverview() {
-  const modsToDraw = currentOvTab === 'all' ? MODULES : [currentOvTab];
-  const cardsEl    = document.getElementById('ov-module-cards');
-  if (cardsEl) {
-    cardsEl.innerHTML = modsToDraw.map(function(mod) {
-      const secCount = getSections(mod).length;
-      const pct      = modulePct(mod);
-      const doneSecs = getSections(mod).filter(function(sec){ return sectionPct(mod,sec) >= 100; }).length;
-      const gateRows = GATES.map(function(g) {
-        const gp      = Math.round(getSections(mod).reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / secCount);
-        const doneSec = getSections(mod).filter(function(sec){ return gatePct(g.num,mod,sec) >= 100; }).length;
-        const color   = GATE_COLORS[g.num];
-        return '<div class="ov-gate-row">' +
-          '<div class="ov-gate-label"><span class="ov-gate-num">Gate '+g.num+'</span>'+g.name+'</div>' +
-          '<div class="ov-gate-track"><div class="ov-gate-fill" style="width:'+gp+'%;background:'+color+'"></div></div>' +
-          '<div class="ov-gate-pct" style="color:'+color+'">'+gp+'%</div>' +
-          '<div class="ov-gate-sections">'+doneSec+'/'+secCount+' 節</div>' +
-        '</div>';
-      }).join('');
-      return '<div class="ov-module-card">' +
-        '<div class="ov-module-head">' +
-          '<div class="ov-module-label">模組</div>' +
-          '<div class="ov-module-name">'+mod+'</div>' +
-          '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
-          '<div class="ov-module-pct">'+pct+'%</div>' +
-          '<div class="ov-module-sub">'+doneSecs+'/'+secCount+' 小節</div>' +
-        '</div>' +
-        '<div class="ov-module-body">'+gateRows+'</div>' +
+  // Whole project: plain average of every module's completion
+  var projectEl = document.getElementById('ov-project');
+  if (projectEl) {
+    var pcts      = MODULES.map(modulePct);
+    var projPct   = Math.round(pcts.reduce(function(a,b){ return a+b; },0) / MODULES.length);
+    var doneMods  = pcts.filter(function(p){ return p >= 100; }).length;
+    var totalSecs = 0, doneSecsAll = 0;
+    MODULES.forEach(function(mod) {
+      getSections(mod).forEach(function(sec) {
+        totalSecs++;
+        if (sectionPct(mod, sec) >= 100) doneSecsAll++;
+      });
+    });
+    projectEl.innerHTML =
+      '<div class="ov-project-top">' +
+        '<div class="ov-project-label">整體專案完成度</div>' +
+        '<div class="ov-project-pct">'+projPct+'%</div>' +
+      '</div>' +
+      '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+projPct+'%"></div></div>' +
+      '<div class="ov-project-sub">已完成 '+doneMods+' / '+MODULES.length+' 個模組・'+doneSecsAll+' / '+totalSecs+' 小節</div>';
+  }
+
+  const cardsEl = document.getElementById('ov-module-cards');
+  if (!cardsEl) return;
+  const single  = currentOvTab !== 'all';
+  const mods    = single ? [currentOvTab] : MODULES;
+  // In 全部模組, finished modules are folded into one line unless the user reveals them
+  const shown   = mods.filter(function(mod){ return single || ovShowDone || modulePct(mod) < 100; });
+  const hidden  = mods.filter(function(mod){ return shown.indexOf(mod) < 0; });
+
+  cardsEl.innerHTML = shown.map(function(mod) {
+    const sections = getSections(mod);
+    const secCount = sections.length;
+    const pct      = modulePct(mod);
+    const doneSecs = sections.filter(function(sec){ return sectionPct(mod,sec) >= 100; }).length;
+    const isOpen   = single || !!ovOpen[mod];
+    const gateRows = GATES.map(function(g) {
+      const gp      = Math.round(sections.reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / secCount);
+      const doneSec = sections.filter(function(sec){ return gatePct(g.num,mod,sec) >= 100; }).length;
+      const color   = GATE_COLORS[g.num];
+      return '<div class="ov-gate-row">' +
+        '<div class="ov-gate-label"><span class="ov-gate-num">Gate '+g.num+'</span>'+g.name+'</div>' +
+        '<div class="ov-gate-track"><div class="ov-gate-fill" style="width:'+gp+'%;background:'+color+'"></div></div>' +
+        '<div class="ov-gate-pct" style="color:'+color+'">'+gp+'%</div>' +
+        '<div class="ov-gate-sections">'+doneSec+'/'+secCount+' 節</div>' +
       '</div>';
     }).join('');
-  }
-  var accordion = document.getElementById('ov-section-accordion');
-  if (accordion) {
-    accordion.innerHTML = modsToDraw.map(function(mod) {
-      var modPct  = modulePct(mod);
-      var doneSecs = getSections(mod).filter(function(s){ return sectionPct(mod,s)>=100; }).length;
-      var sectionRows = getSections(mod).map(function(sec) {
-        var gPcts = GATES.map(function(g){ return gatePct(g.num,mod,sec); });
-        var total = sectionPct(mod, sec);
-        var status = total>=100?'done':total>0?'active':'blocked';
-        var label  = total>=100?'完成':total>0?'進行中':'未開始';
-        var gatePills = gPcts.map(function(p,i){
-          var cls = p>=100?'done':p>0?'active':'';
-          return '<span class="ov-section-gate '+cls+'" style="'+(p>0?'color:'+GATE_COLORS[i+1]+';background:'+GATE_COLORS[i+1]+'18':'')+'">G'+(i+1)+' '+p+'%</span>';
-        }).join('');
-        return '<div class="ov-section-row">' +
-          '<span class="ov-section-id">'+sec+'</span>' +
-          '<div class="ov-section-gates">'+gatePills+'</div>' +
-          '<span class="ov-section-pct">'+total+'%</span>' +
-          '<span class="ov-section-pill '+status+'">'+label+'</span>' +
-        '</div>';
+    const sectionRows = sections.map(function(sec) {
+      var gPcts  = GATES.map(function(g){ return gatePct(g.num,mod,sec); });
+      var total  = sectionPct(mod, sec);
+      var status = total>=100?'done':total>0?'active':'blocked';
+      var label  = total>=100?'完成':total>0?'進行中':'未開始';
+      var gatePills = gPcts.map(function(p,i){
+        var cls = p>=100?'done':p>0?'active':'';
+        return '<span class="ov-section-gate '+cls+'" style="'+(p>0?'color:'+GATE_COLORS[i+1]+';background:'+GATE_COLORS[i+1]+'18':'')+'">G'+(i+1)+' '+p+'%</span>';
       }).join('');
-      return '<div class="ov-accordion-item" id="ov-acc-'+mod+'">' +
-        '<div class="ov-accordion-head" onclick="toggleOvAccordion(\''+mod+'\')">'+
-          '<span class="ov-accordion-mod">'+mod+'</span>' +
-          '<div class="ov-accordion-bar-wrap"><div class="ov-accordion-bar" style="width:'+modPct+'%"></div></div>' +
-          '<span class="ov-accordion-pct">'+modPct+'%</span>' +
-          '<span class="ov-accordion-sub">'+doneSecs+'/'+getSections(mod).length+' 小節</span>' +
-          '<span class="ov-accordion-chevron">▼</span>' +
-        '</div>' +
-        '<div class="ov-accordion-body">'+sectionRows+'</div>' +
+      return '<div class="ov-section-row">' +
+        '<span class="ov-section-id">'+sec+'</span>' +
+        '<div class="ov-section-gates">'+gatePills+'</div>' +
+        '<span class="ov-section-pct">'+total+'%</span>' +
+        '<span class="ov-section-pill '+status+'">'+label+'</span>' +
       '</div>';
     }).join('');
-  }
+    return '<div class="ov-module-card'+(isOpen?' open':'')+'" id="ov-card-'+mod+'">' +
+      '<div class="ov-module-head" onclick="toggleOvModule(\''+mod+'\')">' +
+        '<div class="ov-module-name">'+mod+'</div>' +
+        '<div class="ov-module-title"></div>' +
+        '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
+        '<div class="ov-module-pct">'+pct+'%</div>' +
+        '<div class="ov-module-sub">'+doneSecs+'/'+secCount+' 小節</div>' +
+        '<span class="ov-module-chevron">▼</span>' +
+      '</div>' +
+      '<div class="ov-module-body">' +
+        '<div class="ov-gates">'+gateRows+'</div>' +
+        '<div class="ov-sections-label">小節細項</div>' +
+        '<div class="ov-sections">'+sectionRows+'</div>' +
+      '</div>' +
+    '</div>';
+  }).join('') +
+  (hidden.length || (!single && ovShowDone && MODULES.some(function(m){ return modulePct(m) >= 100; }))
+    ? '<button class="ov-done-toggle" onclick="toggleOvDone()">' +
+        (ovShowDone ? '收合已完成模組' : '已完成 '+hidden.length+' 個模組（'+hidden.join('、')+'）・點此展開') +
+      '</button>'
+    : '');
+
+  // Module names go in via textContent (free text typed in 完工預測設定)
+  shown.forEach(function(mod) {
+    var el = document.querySelector('#ov-card-'+mod+' .ov-module-title');
+    var name = (baseline.moduleNames[mod] || '').trim();
+    if (el) el.textContent = name === mod ? '' : name;
+  });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -3373,7 +3425,8 @@ window.switchPage        = switchPage;
 window.switchRModule     = switchRModule;
 window.switchSection     = switchSection;
 window.switchOvTab       = switchOvTab;
-window.toggleOvAccordion = toggleOvAccordion;
+window.toggleOvModule    = toggleOvModule;
+window.toggleOvDone      = toggleOvDone;
 window.updateScore       = updateScore;
 window.toggleAcc         = toggleAcc;
 window.exportCSV         = exportCSV;
