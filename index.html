@@ -2861,7 +2861,7 @@ function renderBaselineForm() {
   // Module start dates + section counts
   var modRows = document.getElementById('baseline-module-rows');
   if (modRows) {
-    modRows.innerHTML = MODULES.map(function(mod) {
+    modRows.innerHTML = modulesByForecast().map(function(mod) {
       var dateVal  = baseline.moduleStart[mod]   || '';
       var vVal     = baseline.videoSections[mod] !== undefined ? baseline.videoSections[mod] : '';
       var nVal     = (baseline.moduleNames[mod] || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
@@ -3039,11 +3039,22 @@ function computeModuleForecast(mod, draft) {
   };
 }
 
+// 專案概況 lists modules by forecast completion date (earliest first); modules
+// without a forecast (no start date / hours) follow in their usual order
+function modulesByForecast() {
+  var keyed = MODULES.map(function(mod, i) {
+    var d = computeModuleForecast(mod).completionDate;
+    return { mod: mod, i: i, t: d ? d.getTime() : Infinity };
+  });
+  keyed.sort(function(a, b){ return (a.t - b.t) || (a.i - b.i); });
+  return keyed.map(function(k){ return k.mod; });
+}
+
 function renderForecastCards() {
   var container = document.getElementById('forecast-cards');
   if (!container) return;
 
-  container.innerHTML = MODULES.map(function(mod) {
+  container.innerHTML = modulesByForecast().map(function(mod) {
     var f = computeModuleForecast(mod);
     var dateStr, weeksStr, dateClass;
 
@@ -3132,7 +3143,7 @@ var CHART_AXIS_TICK      = { fill:'rgba(255,255,255,0.4)', fontSize:11 };
 function renderModuleTrendSelect() {
   var sel = document.getElementById('module-trend-select');
   if (!sel) return;
-  sel.innerHTML = MODULES.map(function(m){
+  sel.innerHTML = modulesByForecast().map(function(m){
     return '<option value="'+m+'"'+(m===trendModule?' selected':'')+'>'+m+'</option>';
   }).join('');
 }
@@ -3163,7 +3174,7 @@ function renderModuleProgress() {
 
 /* ── 各模組完成度總覽（長條圖＋Gate 明細 tooltip） ── */
 function computeAllModulesData() {
-  return MODULES.map(function(mod) {
+  return modulesByForecast().map(function(mod) {
     var gates = GATES.map(function(g) {
       return { num: g.num, name: g.name, pct: moduleGatePct(mod, g.num) };
     });
