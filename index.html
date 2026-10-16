@@ -811,7 +811,11 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 #page-weekly .baseline-row-sub { font-size: 13px; }
 #page-weekly .chart-card-title { font-size: 16px; }
 #page-weekly .chart-card-sub { font-size: 14px; }
-#page-weekly .forecast-mod { font-size: 12px; margin-bottom: 6px; }
+#page-weekly .forecast-mod { margin-bottom: 10px; }
+.forecast-mod { display: flex; align-items: center; gap: 10px; min-width: 0; letter-spacing: 0; text-transform: none; }
+.mod-badge { flex-shrink: 0; display: inline-flex; align-items: center; height: 26px; padding: 0 10px; border-radius: 4px; font-size: 14px; font-weight: 800; letter-spacing: 0.02em; color: var(--yellow); background: rgba(255,234,65,0.12); border: 1px solid rgba(255,234,65,0.35); }
+.mod-badge.ta { color: #B9ADFF; background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.45); }
+.mod-badge-name { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.75); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 #page-weekly .forecast-date { font-size: 22px; white-space: nowrap; }
 #page-weekly .forecast-date.done { font-size: 20px; }
 #page-weekly .forecast-date.unknown { font-size: 16px; }
@@ -2866,7 +2870,7 @@ function renderBaselineForm() {
       var vVal     = baseline.videoSections[mod] !== undefined ? baseline.videoSections[mod] : '';
       var nVal     = (baseline.moduleNames[mod] || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
       return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
-        '<div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);margin-bottom:10px;letter-spacing:0.06em">模組 '+mod+'</div>' +
+        '<div class="forecast-mod" style="margin-bottom:12px">'+moduleBadge(mod)+'</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">模組名稱</span>' +
           '<input class="baseline-input baseline-input-text" type="text" maxlength="40" id="bn-'+mod+'" value="'+nVal+'" placeholder="顯示在進度填報標題">' +
@@ -3041,6 +3045,15 @@ function computeModuleForecast(mod, draft) {
 
 // 專案概況 lists modules by forecast completion date (earliest first); modules
 // without a forecast (no start date / hours) follow in their usual order
+// Module code badge + its name (from 完工預測設定), used on 專案概況
+function moduleBadge(mod) {
+  var name = (baseline.moduleNames[mod] || '').trim();
+  if (name === mod) name = '';
+  name = name.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+  return '<span class="mod-badge'+(/^TA/.test(mod) ? ' ta' : '')+'">'+mod+'</span>' +
+    (name ? '<span class="mod-badge-name" title="'+name+'">'+name+'</span>' : '');
+}
+
 function modulesByForecast() {
   var keyed = MODULES.map(function(mod, i) {
     var d = computeModuleForecast(mod).completionDate;
@@ -3073,7 +3086,7 @@ function renderForecastCards() {
     }
 
     return '<div class="forecast-card">' +
-      '<div class="forecast-mod">模組 '+mod+'</div>' +
+      '<div class="forecast-mod">'+moduleBadge(mod)+'</div>' +
       '<div class="forecast-date '+dateClass+'">'+dateStr+'</div>' +
       '<div class="forecast-weeks">'+weeksStr+'</div>' +
       '<div class="forecast-detail-row"><span>目前完成度</span><span>'+f.currentPct+'%</span></div>' +
