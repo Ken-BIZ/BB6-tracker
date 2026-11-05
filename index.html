@@ -934,11 +934,13 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .member-card.ai .mtask-bar { background: var(--ai); }
 .pf-meta-val.highlight-ai { color: var(--ai); font-weight: 700; }
 .gates-grid.gates-4 { grid-template-columns: repeat(4, 1fr); }
+.outputs-row.outputs-4 { grid-template-columns: repeat(4, 1fr); }
 .flow-note { margin-top: 20px; max-width: 640px; padding: 12px 16px; background: rgba(255,234,65,0.05); border: 1px solid rgba(255,234,65,0.15); border-radius: 3px; font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
 .baseline-input-select { width: 140px; text-align: left; cursor: pointer; }
 .baseline-input-select option { background: #1e2023; color: var(--white); }
 @media (max-width: 900px) {
   .gates-grid.gates-4 { grid-template-columns: 1fr 1fr; }
+  .outputs-row.outputs-4 { grid-template-columns: 1fr 1fr; }
 }
 </style>
 
@@ -1123,6 +1125,16 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
             <div class="task-name">WU 上架・影片 QC</div>
             <div class="task-owner owner-ellen">Ellen</div>
           </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-3</div>
+            <div class="task-name">逐字稿排版</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
+          <div class="task-item">
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-4</div>
+            <div class="task-name">重點整理</div>
+            <div class="task-owner owner-ellen">Ellen</div>
+          </div>
         </div>
       </div>
       <div style="margin-top:16px;padding:14px;background:rgba(234,88,12,0.06);border:1px solid rgba(234,88,12,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
@@ -1170,6 +1182,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="gate-card-sub">WU 上架與成品 QC</div>
       <div class="check-item"><div class="check-dot"></div>WU 上架・文字 QC 完成（A4-1）</div>
       <div class="check-item"><div class="check-dot"></div>WU 上架・影片 QC 完成（A4-2）</div>
+      <div class="check-item"><div class="check-dot"></div>逐字稿排版完成（A4-3）</div>
+      <div class="check-item"><div class="check-dot"></div>重點整理完成（A4-4）</div>
       <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">輸出：課程上架完成</div>
     </div>
   </div>
@@ -1204,6 +1218,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="member-name">Ellen</div>
       <div class="member-divider"></div>
       <div class="member-task"><span class="member-task-num">A4-2</span>WU 上架・影片 QC</div>
+      <div class="member-task"><span class="member-task-num">A4-3</span>逐字稿排版</div>
+      <div class="member-task"><span class="member-task-num">A4-4</span>重點整理</div>
     </div>
   </div>
   <div class="collab-bar" style="margin-top:24px;">
@@ -1304,7 +1320,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <button class="acc-trigger" onclick="toggleAcc(this)">
         <div class="acc-trigger-left">
           <span class="acc-name ellen-text">Ellen</span>
-          <span class="acc-count">1 項工作</span>
+          <span class="acc-count">3 項工作</span>
         </div>
         <div class="acc-trigger-right">
           <span class="acc-tags">
@@ -1316,13 +1332,35 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="acc-body">
         <div class="personal-flow">
           <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div></div>
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
             <div class="pf-node"><div class="pf-node-inner">
               <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-2</span></div>
               <div class="pf-task-name">WU 上架・影片 QC</div>
               <div class="pf-meta">
                 <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
                 <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-3</span></div>
+              <div class="pf-task-name">逐字稿排版</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
+              </div>
+            </div></div>
+          </div>
+          <div class="pf-row">
+            <div class="pf-spine"><div class="pf-dot ellen-color"></div></div>
+            <div class="pf-node"><div class="pf-node-inner">
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-4</span></div>
+              <div class="pf-task-name">重點整理</div>
+              <div class="pf-meta">
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
                 <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
               </div>
             </div></div>
@@ -1354,12 +1392,14 @@ function toggleAcc(btn) {
       <div class="section-title">最終交付項目</div>
     </div>
   </div>
-  <div class="outputs-row">
+  <div class="outputs-row outputs-4">
     <div class="output-card"><div class="output-icon">📊</div><div class="output-name">英文簡報</div></div>
     <div class="output-card"><div class="output-icon">🎥</div><div class="output-name">英文影片檔</div></div>
     <div class="output-card"><div class="output-icon">📄</div><div class="output-name">中文簡報</div></div>
     <div class="output-card"><div class="output-icon">🎬</div><div class="output-name">剪輯後影片</div></div>
     <div class="output-card"><div class="output-icon">💬</div><div class="output-name">中英文 VTT 字幕檔</div></div>
+    <div class="output-card"><div class="output-icon">📝</div><div class="output-name">逐字稿</div></div>
+    <div class="output-card"><div class="output-icon">📌</div><div class="output-name">重點整理</div></div>
     <div class="output-card"><div class="output-icon">🌐</div><div class="output-name">WU 上架完成</div></div>
   </div>
 </section>
@@ -1602,6 +1642,8 @@ const WORKFLOWS = {
       { id:'A3-1', gate:3, name:'AI 生成中文簡報、剪輯後影片、中英文 VTT 字幕', owners:['AI'],     prereqs:['A2-1'], moduleLevel:false, firstSectionOnly:false },
       { id:'A4-1', gate:4, name:'WU 上架・文字 QC',                            owners:['Ken'],    prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
       { id:'A4-2', gate:4, name:'WU 上架・影片 QC',                            owners:['Ellen'],  prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A4-3', gate:4, name:'逐字稿排版',                                  owners:['Ellen'],  prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A4-4', gate:4, name:'重點整理',                                    owners:['Ellen'],  prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
     ],
     gates: [
       { num:1, name:'取得原檔',         goal:'交付：課程原始檔案',                     unlock:'解鎖：AI 影片製作' },
