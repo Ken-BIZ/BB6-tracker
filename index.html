@@ -922,6 +922,24 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
   .baseline-grid { grid-template-columns: 1fr; gap: 20px; }
   .forecast-row { grid-template-columns: 1fr; }
 }
+
+/* ── AI WORKFLOW ─────────────────────────────────────────── */
+:root { --ai: #14B8A6; }
+.owner-ai { color: var(--ai); }
+.chip-ai { background: rgba(20,184,166,0.2); color: #5EEAD4; }
+.member-card.ai { background: rgba(20,184,166,0.05); border-color: rgba(20,184,166,0.3); }
+.member-card.ai .member-name { color: var(--ai); }
+.member-card.ai .member-divider { background: var(--ai); }
+.member-card.ai .member-head { background: rgba(20,184,166,0.1); }
+.member-card.ai .mtask-bar { background: var(--ai); }
+.pf-meta-val.highlight-ai { color: var(--ai); font-weight: 700; }
+.gates-grid.gates-4 { grid-template-columns: repeat(4, 1fr); }
+.flow-note { margin-top: 20px; max-width: 640px; padding: 12px 16px; background: rgba(255,234,65,0.05); border: 1px solid rgba(255,234,65,0.15); border-radius: 3px; font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
+.baseline-input-select { width: 140px; text-align: left; cursor: pointer; }
+.baseline-input-select option { background: #1e2023; color: var(--white); }
+@media (max-width: 900px) {
+  .gates-grid.gates-4 { grid-template-columns: 1fr 1fr; }
+}
 </style>
 
 <body>
@@ -956,17 +974,17 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <button class="member-select-btn ken" onclick="selectMember('Ken','#2563EB')">
         <div class="msb-initial">K</div>
         <div class="msb-name">Ken</div>
-        <div class="msb-role">翻譯・剪輯・字幕</div>
+        <div class="msb-role">AI 影片製作・文字 QC</div>
       </button>
       <button class="member-select-btn daniel" onclick="selectMember('Daniel','#16A34A')">
         <div class="msb-initial">D</div>
         <div class="msb-name">Daniel</div>
-        <div class="msb-role">審稿・題目・QC</div>
+        <div class="msb-role">取得原檔・審稿</div>
       </button>
       <button class="member-select-btn ellen" onclick="selectMember('Ellen','#EA580C')">
         <div class="msb-initial">E</div>
         <div class="msb-name">Ellen</div>
-        <div class="msb-role">排版・設計・上架</div>
+        <div class="msb-role">影片 QC・上架</div>
       </button>
       <button class="member-select-btn emily" onclick="selectMember('Emily','#EC4899')">
         <div class="msb-initial">Em</div>
@@ -1021,14 +1039,15 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 <div class="hero">
   <div class="hero-tag">Business Booster 6</div>
   <h1>課程製作<span>流程</span><br>與工作分配圖</h1>
-  <p class="hero-sub">從內容在地化到正式上架，五個製作關卡、四位負責人，確保每一個環節有序推進。</p>
+  <p class="hero-sub">導入 AI 協作後的製作流程：從取得原檔、AI 影片製作、AI 生成，到 WU 上架與成品 QC，四個製作關卡、三位負責人加上 AI，確保每一個環節有序推進。</p>
+  <div class="flow-note">已依舊流程開工的模組（C1–C5、TA1、TA4）維持原本的五個關卡；各模組採用哪一套流程，可在「專案概況 → 完工預測設定 → 製作流程」切換。</div>
 </div>
 
 <!-- SECTION 1: PHASES -->
 <section id="phases">
   <div class="section-header">
     <div>
-      <div class="section-label">五大製作關卡</div>
+      <div class="section-label">四大製作關卡</div>
       <div class="section-title">課程製作流程</div>
     </div>
   </div>
@@ -1038,169 +1057,80 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     <!-- Gate 1 -->
     <div class="phase-card">
       <div class="phase-num">Gate 1</div>
-      <div class="phase-name">翻譯基礎完成</div>
-      <div class="phase-goal">交付：80% 中文課程內容</div>
+      <div class="phase-name">取得原檔</div>
+      <div class="phase-goal">交付：課程原始檔案</div>
       <div class="task-list">
         <div class="task-item">
-          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-1</div>
-          <div class="task-name">簡報翻譯（含審稿）</div>
-          <div class="task-owner owner-ken">Ken</div>
-        </div>
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-2</div>
-          <div class="task-name">中文字幕製作</div>
-          <div class="task-owner owner-ken">Ken</div>
-        </div>
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--ken)">1-3</div>
-          <div class="task-name">題目翻譯或改寫</div>
-          <div style="display:flex;gap:4px">
-            <div class="task-owner owner-ken">Ken</div>
-            <div class="task-owner owner-daniel">Daniel</div>
-          </div>
-        </div>
-        <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px; margin-top:4px;">
-          <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">獨立平行</div>
-          <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
-            <div class="task-num" style="background:rgba(234,88,12,0.12);color:var(--ellen)">1-4</div>
-            <div class="task-name">教材封面、封底設計</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
+          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--phase1)">A1-1</div>
+          <div class="task-name">取得原檔</div>
+          <div class="task-owner owner-daniel">Daniel</div>
         </div>
       </div>
       <div style="margin-top:12px;padding:10px;background:rgba(255,234,65,0.05);border:1px solid rgba(255,234,65,0.12);border-radius:3px;font-size:13px;color:rgba(255,234,65,0.5);line-height:1.6;">
-        1-1 → 1-2 → 1-3 依序；1-4 獨立同時進行
+        原檔到位後交給 Ken 進行 AI 影片製作
       </div>
     </div>
 
     <!-- Gate 2 -->
     <div class="phase-card">
       <div class="phase-num">Gate 2</div>
-      <div class="phase-name">文字內容凍結</div>
-      <div class="phase-goal">交付：95% 定稿中文內容</div>
-      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
-        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
-        <div class="task-list">
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--daniel)">2-1</div>
-            <div class="task-name">簡報排版＋動畫確認</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--daniel)">2-2</div>
-            <div class="task-name">中文內容審稿</div>
-            <div class="task-owner owner-daniel">Daniel</div>
-          </div>
+      <div class="phase-name">AI 影片製作</div>
+      <div class="phase-goal">交付：英文簡報、英文影片檔</div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--phase2)">A2-1</div>
+          <div class="task-name">AI 影片製作（英文簡報、英文影片檔）</div>
+          <div class="task-owner owner-ken">Ken</div>
         </div>
       </div>
-      <div style="margin-top:16px;padding:14px;background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
-        <div style="font-weight:700;color:var(--daniel);margin-bottom:6px;font-size:13px;">審稿範圍</div>
-        翻譯一致性 · 專有名詞 · 語氣統一<br>台灣中文在地化 · 題目用詞合理性
+      <div style="margin-top:12px;padding:10px;background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
+        A2-1 依賴 A1-1
       </div>
     </div>
 
     <!-- Gate 3 -->
     <div class="phase-card">
       <div class="phase-num">Gate 3</div>
-      <div class="phase-name">課程素材產出</div>
-      <div class="phase-goal">交付：完整影片與教材素材</div>
+      <div class="phase-name">AI 生成</div>
+      <div class="phase-goal">交付：中文簡報、剪輯後影片、中英文 VTT 字幕檔</div>
       <div class="task-list">
         <div class="task-item">
-          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-1</div>
-          <div class="task-name">課程影片簡報錄製</div>
-          <div class="task-owner owner-emily">Emily</div>
-        </div>
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-2</div>
-          <div class="task-name">課程影片剪輯</div>
-          <div class="task-owner owner-ken">Ken</div>
-        </div>
-        <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px; margin-top:4px;">
-          <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;">同時進行</div>
-          <div class="task-list">
-            <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
-              <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-3</div>
-              <div class="task-name">紙本逐字稿排版</div>
-              <div class="task-owner owner-emily">Emily</div>
-            </div>
-            <div class="task-item" style="border-color:rgba(255,255,255,0.08);">
-              <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">3-4</div>
-              <div class="task-name">閱讀與表格設計</div>
-              <div style="display:flex;gap:4px">
-                <div class="task-owner owner-daniel">Daniel</div>
-                <div class="task-owner owner-ellen">Ellen</div>
-              </div>
-            </div>
-          </div>
+          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">A3-1</div>
+          <div class="task-name">AI 生成中文簡報、剪輯後影片、中英文 VTT 字幕</div>
+          <div class="task-owner owner-ai">AI</div>
         </div>
       </div>
       <div style="margin-top:12px;padding:10px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
-        3-1 → 3-2 依序；3-3 依賴 3-1；3-4 依賴 2-2
+        A3-1 依賴 A2-1；由 AI 執行，進度由 Ken 填報
       </div>
     </div>
 
     <!-- Gate 4 -->
     <div class="phase-card">
       <div class="phase-num">Gate 4</div>
-      <div class="phase-name">上架執行</div>
-      <div class="phase-goal">交付：課程正式上架</div>
+      <div class="phase-name">WU 上架與成品 QC</div>
+      <div class="phase-goal">輸出：課程上架完成</div>
       <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
         <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
         <div class="task-list">
           <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-1</div>
-            <div class="task-name">學習目標、成果、時間碼摘要生成</div>
-            <div class="task-owner owner-emily">Emily</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-2</div>
-            <div class="task-name">紙本講義組合</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-3</div>
-            <div class="task-name">英文字幕製作</div>
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-1</div>
+            <div class="task-name">WU 上架・文字 QC</div>
             <div class="task-owner owner-ken">Ken</div>
           </div>
           <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">4-4</div>
-            <div class="task-name">影片與字幕上架</div>
+            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-2</div>
+            <div class="task-name">WU 上架・影片 QC</div>
             <div class="task-owner owner-ellen">Ellen</div>
           </div>
         </div>
       </div>
-      <div style="margin-top:12px;padding:10px;background:rgba(234,88,12,0.06);border:1px solid rgba(234,88,12,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
-        4-1、4-3、4-4 依賴 3-2；4-2 依賴 3-3、3-4
+      <div style="margin-top:16px;padding:14px;background:rgba(234,88,12,0.06);border:1px solid rgba(234,88,12,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
+        <div style="font-weight:700;color:var(--phase4);margin-bottom:6px;font-size:13px;">QC 範圍</div>
+        文字（Ken）：中文簡報 · 中英文 VTT 字幕<br>影片（Ellen）：剪輯後影片
       </div>
     </div>
 
-  </div>
-
-  <!-- Gate 5 -->
-  <div style="margin-top:2px;">
-    <div class="phase-card" style="border-top: 3px solid var(--phase5);">
-      <div class="phase-num" style="color:var(--phase5)">Gate 5</div>
-      <div class="phase-name">開課前 QC</div>
-      <div class="phase-goal">交付：正式開課</div>
-      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
-        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
-        <div class="task-list">
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(8,145,178,0.15);color:#67E8F9">5-1</div>
-            <div class="task-name">字幕＋逐字稿 Final QC</div>
-            <div style="display:flex;gap:4px">
-              <div class="task-owner owner-ken">Ken</div>
-              <div class="task-owner owner-daniel">Daniel</div>
-            </div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(8,145,178,0.15);color:#67E8F9">5-2</div>
-            <div class="task-name">上架後平台適性測試</div>
-            <div class="task-owner owner-daniel">Daniel</div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1212,51 +1142,35 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="section-title">關卡檢查清單</div>
     </div>
   </div>
-  <div class="gates-grid">
+  <div class="gates-grid gates-4">
     <div class="gate-card">
       <div class="gate-card-title">Gate 1</div>
-      <div class="gate-card-sub">翻譯基礎完成</div>
-      <div class="check-item"><div class="check-dot"></div>簡報翻譯審稿完成（1-1）</div>
-      <div class="check-item"><div class="check-dot"></div>中文字幕製作完成（1-2）</div>
-      <div class="check-item"><div class="check-dot"></div>題目翻譯或改寫完成（1-3）</div>
-      <div class="check-item"><div class="check-dot"></div>封面封底可獨立推進（1-4）</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：2-1 排版、2-2 審稿</div>
+      <div class="gate-card-sub">取得原檔</div>
+      <div class="check-item"><div class="check-dot"></div>原檔取得完成（A1-1）</div>
+      <div class="check-item"><div class="check-dot"></div>原檔已交給 Ken</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：AI 影片製作</div>
     </div>
     <div class="gate-card">
       <div class="gate-card-title">Gate 2</div>
-      <div class="gate-card-sub">文字內容凍結</div>
-      <div class="check-item"><div class="check-dot"></div>簡報排版＋動畫確認完成（2-1）</div>
-      <div class="check-item"><div class="check-dot"></div>中文內容審稿完成（2-2）</div>
-      <div class="check-item"><div class="check-dot"></div>翻譯一致性、術語統一</div>
-      <div class="check-item"><div class="check-dot"></div>台灣中文在地化確認</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：所有中期製作</div>
+      <div class="gate-card-sub">AI 影片製作</div>
+      <div class="check-item"><div class="check-dot"></div>英文簡報完成（A2-1）</div>
+      <div class="check-item"><div class="check-dot"></div>英文影片檔完成（A2-1）</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：AI 生成</div>
     </div>
     <div class="gate-card">
       <div class="gate-card-title">Gate 3</div>
-      <div class="gate-card-sub">課程素材產出</div>
-      <div class="check-item"><div class="check-dot"></div>影片錄製與剪輯完成（3-1、3-2）</div>
-      <div class="check-item"><div class="check-dot"></div>逐字稿排版完成（3-3）</div>
-      <div class="check-item"><div class="check-dot"></div>閱讀與表格設計完成（3-4）</div>
-      <div class="check-item"><div class="check-dot"></div>所有素材檔案完整</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：上架執行</div>
+      <div class="gate-card-sub">AI 生成</div>
+      <div class="check-item"><div class="check-dot"></div>中文簡報已生成（A3-1）</div>
+      <div class="check-item"><div class="check-dot"></div>剪輯後影片已生成（A3-1）</div>
+      <div class="check-item"><div class="check-dot"></div>中英文 VTT 字幕檔已生成（A3-1）</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：WU 上架與成品 QC</div>
     </div>
     <div class="gate-card">
       <div class="gate-card-title">Gate 4</div>
-      <div class="gate-card-sub">上架執行</div>
-      <div class="check-item"><div class="check-dot"></div>學習目標、時間碼摘要（4-1）</div>
-      <div class="check-item"><div class="check-dot"></div>紙本講義組合完成（4-2）</div>
-      <div class="check-item"><div class="check-dot"></div>英文字幕製作完成（4-3）</div>
-      <div class="check-item"><div class="check-dot"></div>影片與字幕上架完成（4-4）</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：開課前 QC</div>
-    </div>
-    <div class="gate-card">
-      <div class="gate-card-title">Gate 5</div>
-      <div class="gate-card-sub">開課前 QC</div>
-      <div class="check-item"><div class="check-dot"></div>字幕＋逐字稿 Final QC（5-1）</div>
-      <div class="check-item"><div class="check-dot"></div>平台適性測試通過（5-2）</div>
-      <div class="check-item"><div class="check-dot"></div>中英文字幕最終對齊</div>
-      <div class="check-item"><div class="check-dot"></div>全課程最終確認</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">輸出：正式開課</div>
+      <div class="gate-card-sub">WU 上架與成品 QC</div>
+      <div class="check-item"><div class="check-dot"></div>WU 上架・文字 QC 完成（A4-1）</div>
+      <div class="check-item"><div class="check-dot"></div>WU 上架・影片 QC 完成（A4-2）</div>
+      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">輸出：課程上架完成</div>
     </div>
   </div>
 </section>
@@ -1270,47 +1184,32 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     </div>
   </div>
   <div class="team-grid">
-    <div class="member-card ken">
-      <div class="member-name">Ken</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">1-1</span>簡報翻譯（含審稿）</div>
-      <div class="member-task"><span class="member-task-num">1-2</span>中文字幕製作</div>
-      <div class="member-task"><span class="member-task-num">1-3</span>題目翻譯或改寫</div>
-      <div class="member-task"><span class="member-task-num">3-2</span>課程影片剪輯</div>
-      <div class="member-task"><span class="member-task-num">4-3</span>英文字幕製作</div>
-      <div class="member-task"><span class="member-task-num">5-1</span>字幕＋逐字稿 Final QC</div>
-    </div>
     <div class="member-card daniel">
       <div class="member-name">Daniel</div>
       <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">1-3</span>題目翻譯或改寫</div>
-      <div class="member-task"><span class="member-task-num">2-2</span>中文內容審稿</div>
-      <div class="member-task"><span class="member-task-num">3-4</span>閱讀與表格設計</div>
-      <div class="member-task"><span class="member-task-num">5-1</span>字幕＋逐字稿 Final QC</div>
-      <div class="member-task"><span class="member-task-num">5-2</span>上架後平台適性測試</div>
+      <div class="member-task"><span class="member-task-num">A1-1</span>取得原檔</div>
+    </div>
+    <div class="member-card ken">
+      <div class="member-name">Ken</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">A2-1</span>AI 影片製作（英文簡報、英文影片檔）</div>
+      <div class="member-task"><span class="member-task-num">A4-1</span>WU 上架・文字 QC</div>
+    </div>
+    <div class="member-card ai">
+      <div class="member-name">AI</div>
+      <div class="member-divider"></div>
+      <div class="member-task"><span class="member-task-num">A3-1</span>生成中文簡報、剪輯後影片、中英文 VTT 字幕</div>
     </div>
     <div class="member-card ellen">
       <div class="member-name">Ellen</div>
       <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">1-4</span>教材封面、封底設計</div>
-      <div class="member-task"><span class="member-task-num">2-1</span>簡報排版＋動畫確認</div>
-      <div class="member-task"><span class="member-task-num">3-4</span>閱讀與表格設計</div>
-      <div class="member-task"><span class="member-task-num">4-2</span>紙本講義組合</div>
-      <div class="member-task"><span class="member-task-num">4-4</span>影片與字幕上架</div>
-    </div>
-    <div class="member-card emily">
-      <div class="member-name">Emily</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">3-1</span>課程影片簡報錄製</div>
-      <div class="member-task"><span class="member-task-num">3-3</span>紙本逐字稿排版</div>
-      <div class="member-task"><span class="member-task-num">4-1</span>學習目標、成果、時間碼摘要生成</div>
+      <div class="member-task"><span class="member-task-num">A4-2</span>WU 上架・影片 QC</div>
     </div>
   </div>
   <div class="collab-bar" style="margin-top:24px;">
     <div class="collab-item"><strong>跨人員合作：</strong></div>
-    <div class="collab-item">題目翻譯或改寫（Ken ↔ Daniel）</div>
-    <div class="collab-item">閱讀與表格設計（Daniel ↔ Ellen）</div>
-    <div class="collab-item">開課前 QC（Ken ↔ Daniel）</div>
+    <div class="collab-item">AI 生成（AI 執行 ↔ Ken 填報進度）</div>
+    <div class="collab-item">WU 上架與成品 QC（Ken 文字 ↔ Ellen 影片）</div>
   </div>
 </section>
 
@@ -1325,19 +1224,16 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
   <div class="accordion">
 
-    <!-- KEN -->
-    <div class="acc-item ken">
+    <!-- DANIEL -->
+    <div class="acc-item daniel">
       <button class="acc-trigger" onclick="toggleAcc(this)">
         <div class="acc-trigger-left">
-          <span class="acc-name ken-text">Ken</span>
-          <span class="acc-count">6 項工作</span>
+          <span class="acc-name daniel-text">Daniel</span>
+          <span class="acc-count">1 項工作</span>
         </div>
         <div class="acc-trigger-right">
           <span class="acc-tags">
             <span class="acc-tag gate-badge-1">Gate 1</span>
-            <span class="acc-tag gate-badge-3">Gate 3</span>
-            <span class="acc-tag gate-badge-4">Gate 4</span>
-            <span class="acc-tag gate-badge-5">Gate 5</span>
           </span>
           <span class="acc-chevron">▾</span>
         </div>
@@ -1345,70 +1241,13 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="acc-body">
         <div class="personal-flow">
           <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
+            <div class="pf-spine"><div class="pf-dot daniel-color"></div></div>
             <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-1</span></div>
-              <div class="pf-task-name">簡報翻譯（含審稿）</div>
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">A1-1</span></div>
+              <div class="pf-task-name">取得原檔</div>
               <div class="pf-meta">
                 <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">無，可直接開始</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 2-1</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-2</span></div>
-              <div class="pf-task-name">中文字幕製作</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">1-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-emily">Emily → 3-3</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-3</span></div>
-              <div class="pf-task-name">題目翻譯或改寫</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">1-2 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 2-2</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-2</span></div>
-              <div class="pf-task-name">課程影片剪輯</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-emily">Emily 3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">Emily → 4-1；Ellen → 4-4；Ken → 4-3</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-3</span></div>
-              <div class="pf-task-name">英文字幕製作</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">3-2 剪輯完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-1</span></div>
-              <div class="pf-task-name">字幕＋逐字稿 Final QC</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ken">Ken → A2-1</span></div>
               </div>
             </div></div>
           </div>
@@ -1416,19 +1255,17 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </div>
     </div>
 
-    <!-- DANIEL -->
-    <div class="acc-item daniel">
+    <!-- KEN -->
+    <div class="acc-item ken">
       <button class="acc-trigger" onclick="toggleAcc(this)">
         <div class="acc-trigger-left">
-          <span class="acc-name daniel-text">Daniel</span>
-          <span class="acc-count">5 項工作</span>
+          <span class="acc-name ken-text">Ken</span>
+          <span class="acc-count">2 項工作</span>
         </div>
         <div class="acc-trigger-right">
           <span class="acc-tags">
-            <span class="acc-tag gate-badge-1">Gate 1</span>
             <span class="acc-tag gate-badge-2">Gate 2</span>
-            <span class="acc-tag gate-badge-3">Gate 3</span>
-            <span class="acc-tag gate-badge-5">Gate 5</span>
+            <span class="acc-tag gate-badge-4">Gate 4</span>
           </span>
           <span class="acc-chevron">▾</span>
         </div>
@@ -1436,59 +1273,25 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <div class="acc-body">
         <div class="personal-flow">
           <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
             <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-3</span></div>
-              <div class="pf-task-name">題目翻譯或改寫</div>
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">A2-1</span></div>
+              <div class="pf-task-name">AI 影片製作（英文簡報、英文影片檔）</div>
               <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 1-2 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">Daniel A1-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ai">AI → A3-1</span></div>
               </div>
             </div></div>
           </div>
           <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
+            <div class="pf-spine"><div class="pf-dot ken-color"></div></div>
             <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">2-2</span></div>
-              <div class="pf-task-name">中文內容審稿</div>
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-1</span></div>
+              <div class="pf-task-name">WU 上架・文字 QC</div>
               <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 1 全部完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">Gate 3 解鎖</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-4</span></div>
-              <div class="pf-task-name">閱讀與表格設計</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">2-2 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
                 <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ellen">Ellen</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 4-2</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div><div class="pf-line daniel-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-1</span></div>
-              <div class="pf-task-name">字幕＋逐字稿 Final QC</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-5">Gate 5</span><span class="pf-task-id">5-2</span></div>
-              <div class="pf-task-name">上架後平台適性測試</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">Gate 4 全部完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">正式開課</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
               </div>
             </div></div>
           </div>
@@ -1501,13 +1304,10 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <button class="acc-trigger" onclick="toggleAcc(this)">
         <div class="acc-trigger-left">
           <span class="acc-name ellen-text">Ellen</span>
-          <span class="acc-count">5 項工作</span>
+          <span class="acc-count">1 項工作</span>
         </div>
         <div class="acc-trigger-right">
           <span class="acc-tags">
-            <span class="acc-tag gate-badge-1">Gate 1</span>
-            <span class="acc-tag gate-badge-2">Gate 2</span>
-            <span class="acc-tag gate-badge-3">Gate 3</span>
             <span class="acc-tag gate-badge-4">Gate 4</span>
           </span>
           <span class="acc-chevron">▾</span>
@@ -1515,113 +1315,15 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </button>
       <div class="acc-body">
         <div class="personal-flow">
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">1-4</span></div>
-              <div class="pf-task-name">教材封面、封底設計</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">無，可直接開始</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">4-2 紙本講義</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">2-1</span></div>
-              <div class="pf-task-name">簡報排版＋動畫確認</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 1-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-emily">Emily → 3-1</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-4</span></div>
-              <div class="pf-task-name">閱讀與表格設計</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">Daniel 2-2 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-daniel">Daniel</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">4-2 紙本講義</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-2</span></div>
-              <div class="pf-task-name">紙本講義組合</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">3-3、3-4 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
-              </div>
-            </div></div>
-          </div>
           <div class="pf-row">
             <div class="pf-spine"><div class="pf-dot ellen-color"></div></div>
             <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-4</span></div>
-              <div class="pf-task-name">影片與字幕上架</div>
+              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-2</span></div>
+              <div class="pf-task-name">WU 上架・影片 QC</div>
               <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 3-2 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
-              </div>
-            </div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- EMILY -->
-    <div class="acc-item emily">
-      <button class="acc-trigger" onclick="toggleAcc(this)">
-        <div class="acc-trigger-left">
-          <span class="acc-name emily-text">Emily</span>
-          <span class="acc-count">3 項工作</span>
-        </div>
-        <div class="acc-trigger-right">
-          <span class="acc-tags">
-            <span class="acc-tag gate-badge-3">Gate 3</span>
-            <span class="acc-tag gate-badge-4">Gate 4</span>
-          </span>
-          <span class="acc-chevron">▾</span>
-        </div>
-      </button>
-      <div class="acc-body">
-        <div class="personal-flow">
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot emily-color"></div><div class="pf-line emily-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-1</span></div>
-              <div class="pf-task-name">課程影片簡報錄製</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ellen">Ellen 2-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ken">Ken → 3-2 剪輯</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot emily-color"></div><div class="pf-line emily-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-3">Gate 3</span><span class="pf-task-id">3-3</span></div>
-              <div class="pf-task-name">紙本逐字稿排版</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-emily">3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ellen">Ellen → 4-2</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot emily-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">4-1</span></div>
-              <div class="pf-task-name">學習目標、成果、時間碼摘要生成</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ken">Ken 3-2 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-daniel">Daniel → 5-2</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
+                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
               </div>
             </div></div>
           </div>
@@ -1653,12 +1355,12 @@ function toggleAcc(btn) {
     </div>
   </div>
   <div class="outputs-row">
-    <div class="output-card"><div class="output-icon">🎬</div><div class="output-name">完整課程影片</div></div>
-    <div class="output-card"><div class="output-icon">💬</div><div class="output-name">中文字幕</div></div>
-    <div class="output-card"><div class="output-icon">🌏</div><div class="output-name">英文字幕</div></div>
-    <div class="output-card"><div class="output-icon">📄</div><div class="output-name">閱讀與表格附件</div></div>
-    <div class="output-card"><div class="output-icon">📖</div><div class="output-name">紙本講義</div></div>
-    <div class="output-card"><div class="output-icon">🌐</div><div class="output-name">LMS 上架完成</div></div>
+    <div class="output-card"><div class="output-icon">📊</div><div class="output-name">英文簡報</div></div>
+    <div class="output-card"><div class="output-icon">🎥</div><div class="output-name">英文影片檔</div></div>
+    <div class="output-card"><div class="output-icon">📄</div><div class="output-name">中文簡報</div></div>
+    <div class="output-card"><div class="output-icon">🎬</div><div class="output-name">剪輯後影片</div></div>
+    <div class="output-card"><div class="output-icon">💬</div><div class="output-name">中英文 VTT 字幕檔</div></div>
+    <div class="output-card"><div class="output-icon">🌐</div><div class="output-name">WU 上架完成</div></div>
   </div>
 </section>
 
@@ -1722,7 +1424,7 @@ function toggleAcc(btn) {
 
   <!-- Gates grid -->
   <section style="padding-top:20px">
-    <div class="section-label">五大製作關卡</div>
+    <div class="section-label">製作關卡</div>
     <div class="section-title" id="reporter-section-title">1.1 任務進度填報</div>
     <div class="gates-grid reporter-gates" id="gates-grid"></div>
   </section>
@@ -1860,8 +1562,8 @@ const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw3GBc6M8nYf7A2
 function backupToSheet(mod, sec, taskId, score, memberName) {
   try {
     const taskObj      = TASKS.find(t => t.id === taskId);
-    const sectionTasks = TASKS.filter(t => !t.moduleLevel);
-    const moduleTasks  = TASKS.filter(t =>  t.moduleLevel);
+    const sectionTasks = getTasks(mod).filter(t => !t.moduleLevel);
+    const moduleTasks  = getTasks(mod).filter(t =>  t.moduleLevel);
     let row, col;
     if (taskObj && taskObj.moduleLevel) {
       row = 22;
@@ -1889,34 +1591,70 @@ const MODULES             = ['C1','C2','C3','C4','C5','C6','C7','C8','C9','C10',
 // Section ids are '<module number>.<n>' for C modules (C3 → 3.1) and '<module>.<n>' otherwise (TA1 → TA1.1)
 const SECTIONS_PER_MODULE = 20;
 
-const TASKS = [
-  { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],     prereqs:[],                        moduleLevel:false, firstSectionOnly:false },
-  { id:'1-2', gate:1, name:'中文字幕製作',                 owners:['Ken'],     prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'1-3', gate:1, name:'題目翻譯或改寫',               owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'1-4', gate:1, name:'教材封面、封底設計',            owners:['Ellen'],   prereqs:[],                        moduleLevel:false, firstSectionOnly:true  },
-  { id:'2-1', gate:2, name:'簡報排版＋動畫確認',            owners:['Ellen'],   prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'2-2', gate:2, name:'中文內容審稿',                 owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'3-1', gate:3, name:'課程影片簡報錄製',              owners:['Emily'],   prereqs:['2-1','2-2'],             moduleLevel:false, firstSectionOnly:false },
-  { id:'3-2', gate:3, name:'課程影片剪輯',                 owners:['Ken'],     prereqs:['3-1'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],            moduleLevel:false, firstSectionOnly:false },
-  { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],   prereqs:['3-3','3-4'],             moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
-  { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],     prereqs:['1-3'],                   moduleLevel:false, firstSectionOnly:false },
-  { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],   prereqs:['2-2','3-2'],             moduleLevel:false, firstSectionOnly:false },
-  { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken'],     prereqs:['4-1','4-3','4-4'],       moduleLevel:false, firstSectionOnly:false },
-  { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],  prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
-];
-const GATES = [
-  { num:1, name:'翻譯基礎完成',  goal:'交付：80% 中文課程內容',   unlock:'解鎖：排版與審稿' },
-  { num:2, name:'文字內容凍結',  goal:'交付：95% 定稿中文內容',   unlock:'解鎖：所有中期製作' },
-  { num:3, name:'課程素材產出',  goal:'交付：完整影片與教材素材',  unlock:'解鎖：上架執行' },
-  { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
-  { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
-];
+// Each module follows one workflow (chosen in 完工預測設定). Task ids are unique
+// across workflows, so scores saved under one never show up in the other.
+const WORKFLOWS = {
+  ai: {
+    name: 'AI 協作流程',
+    tasks: [
+      { id:'A1-1', gate:1, name:'取得原檔',                                   owners:['Daniel'], prereqs:[],       moduleLevel:false, firstSectionOnly:false },
+      { id:'A2-1', gate:2, name:'AI 影片製作（英文簡報、英文影片檔）',          owners:['Ken'],    prereqs:['A1-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A3-1', gate:3, name:'AI 生成中文簡報、剪輯後影片、中英文 VTT 字幕', owners:['AI'],     prereqs:['A2-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A4-1', gate:4, name:'WU 上架・文字 QC',                            owners:['Ken'],    prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A4-2', gate:4, name:'WU 上架・影片 QC',                            owners:['Ellen'],  prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
+    ],
+    gates: [
+      { num:1, name:'取得原檔',         goal:'交付：課程原始檔案',                     unlock:'解鎖：AI 影片製作' },
+      { num:2, name:'AI 影片製作',      goal:'交付：英文簡報、英文影片檔',             unlock:'解鎖：AI 生成' },
+      { num:3, name:'AI 生成',          goal:'交付：中文簡報、剪輯後影片、中英文字幕',  unlock:'解鎖：WU 上架與成品 QC' },
+      { num:4, name:'WU 上架與成品 QC', goal:'輸出：課程上架完成',                     unlock:'課程上架完成' },
+    ]
+  },
+  legacy: {
+    name: '舊流程',
+    tasks: [
+      { id:'1-1', gate:1, name:'簡報翻譯（含審稿）',          owners:['Ken'],     prereqs:[],                        moduleLevel:false, firstSectionOnly:false },
+      { id:'1-2', gate:1, name:'中文字幕製作',                 owners:['Ken'],     prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'1-3', gate:1, name:'題目翻譯或改寫',               owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'1-4', gate:1, name:'教材封面、封底設計',            owners:['Ellen'],   prereqs:[],                        moduleLevel:false, firstSectionOnly:true  },
+      { id:'2-1', gate:2, name:'簡報排版＋動畫確認',            owners:['Ellen'],   prereqs:['1-1'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'2-2', gate:2, name:'中文內容審稿',                 owners:['Daniel'],  prereqs:['1-2'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'3-1', gate:3, name:'課程影片簡報錄製',              owners:['Emily'],   prereqs:['2-1','2-2'],             moduleLevel:false, firstSectionOnly:false },
+      { id:'3-2', gate:3, name:'課程影片剪輯',                 owners:['Ken'],     prereqs:['3-1'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'3-3', gate:3, name:'紙本逐字稿排版',               owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'3-4', gate:3, name:'閱讀與表格設計',               owners:['Daniel','Ellen'], prereqs:['2-2'],            moduleLevel:false, firstSectionOnly:false },
+      { id:'4-1', gate:4, name:'學習目標、成果、時間碼摘要',    owners:['Emily'],   prereqs:['2-2'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'4-2', gate:4, name:'紙本講義組合',                 owners:['Ellen'],   prereqs:['3-3','3-4'],             moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
+      { id:'4-3', gate:4, name:'英文字幕製作',                 owners:['Ken'],     prereqs:['1-3'],                   moduleLevel:false, firstSectionOnly:false },
+      { id:'4-4', gate:4, name:'影片與字幕上架',               owners:['Ellen'],   prereqs:['2-2','3-2'],             moduleLevel:false, firstSectionOnly:false },
+      { id:'5-1', gate:5, name:'字幕＋逐字稿 Final QC',        owners:['Ken'],     prereqs:['4-1','4-3','4-4'],       moduleLevel:false, firstSectionOnly:false },
+      { id:'5-2', gate:5, name:'上架後平台適性測試',            owners:['Daniel'],  prereqs:['4-1','4-2','4-3','4-4'], moduleLevel:false, firstSectionOnly:false, lastSectionOnly:true },
+    ],
+    gates: [
+      { num:1, name:'翻譯基礎完成',  goal:'交付：80% 中文課程內容',   unlock:'解鎖：排版與審稿' },
+      { num:2, name:'文字內容凍結',  goal:'交付：95% 定稿中文內容',   unlock:'解鎖：所有中期製作' },
+      { num:3, name:'課程素材產出',  goal:'交付：完整影片與教材素材',  unlock:'解鎖：上架執行' },
+      { num:4, name:'上架執行',      goal:'交付：課程正式上架',       unlock:'解鎖：開課前 QC' },
+      { num:5, name:'開課前 QC',     goal:'輸出：正式開課',           unlock:'正式開課' },
+    ]
+  }
+};
+// Modules already in production when the AI workflow was introduced default to the old one
+const LEGACY_WORKFLOW_MODULES = ['C1','C2','C3','C4','C5','TA1','TA4'];
+const TASKS = WORKFLOWS.legacy.tasks.concat(WORKFLOWS.ai.tasks);  // every task, for lookups by id
+
+function getWorkflowKey(mod) {
+  var key = baseline.moduleWorkflow[mod];
+  if (WORKFLOWS[key]) return key;
+  return LEGACY_WORKFLOW_MODULES.indexOf(mod) >= 0 ? 'legacy' : 'ai';
+}
+function getTasks(mod) { return WORKFLOWS[getWorkflowKey(mod)].tasks; }
+function getGates(mod) { return WORKFLOWS[getWorkflowKey(mod)].gates; }
+
 const MEMBERS       = ['Ting','Ken','Daniel','Ellen','Emily'];
-const OWNER_CLASS   = { Ting:'ting', Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily' };
-const CHIP_CLASS    = { Ting:'chip-ting', Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily' };
+const TASK_OWNERS   = ['Ken','Daniel','Ellen','Emily','AI'];  // who tasks are assigned to; AI tasks are reported by Ken
+const OWNER_CLASS   = { Ting:'ting', Ken:'ken', Daniel:'daniel', Ellen:'ellen', Emily:'emily', AI:'ai' };
+const CHIP_CLASS    = { Ting:'chip-ting', Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', Emily:'chip-emily', AI:'chip-ai' };
 const MEMBER_COLORS = { Ting:'#8B5CF6', Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Emily:'#EC4899' };
 const GATE_COLORS   = ['','var(--gate1)','var(--gate2)','var(--gate3)','var(--gate4)','var(--gate5)'];
 
@@ -1968,11 +1706,11 @@ function isLastSection(mod, sec) {
   var num   = parseInt(sec.split('.')[1]);
   return num === total;
 }
-// Returns tasks visible for a given section (filters firstSectionOnly)
+// Returns the module's workflow tasks visible for a given section (filters firstSectionOnly)
 function getActiveTasks(sec, mod) {
   var isFirst  = sec && sec.endsWith('.1');
-  var isLast   = mod ? isLastSection(mod, sec) : false;
-  return TASKS.filter(function(t) {
+  var isLast   = isLastSection(mod, sec);
+  return getTasks(mod).filter(function(t) {
     if (t.firstSectionOnly  && !isFirst) return false;
     if (t.lastSectionOnly   && !isLast)  return false;
     return true;
@@ -2119,7 +1857,6 @@ function prereqPct(taskId, mod, sec) {
   if (!task.prereqs.length) return 100;
   return Math.round(task.prereqs.reduce(function(s,p){ return s+getScore(p,mod,sec); },0) / task.prereqs.length * 10);
 }
-function getGateTasks(n) { return TASKS.filter(function(t){ return t.gate === n; }); }
 function gatePct(n, mod, sec) {
   var ts = getActiveTasks(sec, mod).filter(function(t){ return t.gate === n; });
   if (!ts.length) return 0;
@@ -2335,18 +2072,19 @@ let _lastRenderKey = '';
 function renderGates() {
   const container = document.getElementById('gates-grid');
   if (!container) return;
-  const renderKey = currentModule + '|' + currentSection;
-  // Only rebuild DOM when module or section actually changes
-  if (_lastRenderKey === renderKey && container.querySelectorAll('.gate-col').length === GATES.length) {
+  const renderKey = currentModule + '|' + currentSection + '|' + getWorkflowKey(currentModule);
+  const gates     = getGates(currentModule);
+  // Only rebuild DOM when module, section or workflow actually changes
+  if (_lastRenderKey === renderKey && container.querySelectorAll('.gate-col').length === gates.length) {
     refreshAll();
     return;
   }
   _lastRenderKey = renderKey;
   container.innerHTML = '';
+  container.classList.toggle('gates-4', gates.length === 4);
   const mod = currentModule, sec = currentSection;
 
-  GATES.forEach(function(gate) {
-    const tasks = getGateTasks(gate.num);
+  gates.forEach(function(gate) {
     const pct   = gatePct(gate.num, mod, sec);
     const done  = isGateDone(gate.num, mod, sec);
     const col   = document.createElement('div');
@@ -2434,9 +2172,10 @@ function renderMembers() {
   container.innerHTML = '';
   const mod = currentModule, sec = currentSection;
 
-  MEMBERS.filter(function(m){ return m !== 'Ting'; }).forEach(function(member) {
+  TASK_OWNERS.forEach(function(member) {
     const myTasks = getActiveTasks(sec, mod).filter(function(t){ return t.owners.indexOf(member) >= 0; });
-    const myPct   = Math.round(myTasks.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (myTasks.length*10) * 100);
+    if (!myTasks.length) return;  // no part in this module's workflow
+    const myPct   =Math.round(myTasks.reduce(function(s,t){ return s+getScore(t.id,mod,sec); },0) / (myTasks.length*10) * 100);
     const done    = myTasks.filter(function(t){ return getScore(t.id,mod,sec) >= 10; }).length;
     const blocked = myTasks.filter(function(t){ return !isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
     const ready   = myTasks.filter(function(t){ return  isPrereqMet(t.id,mod,sec) && getScore(t.id,mod,sec) < 10; });
@@ -2491,7 +2230,7 @@ function renderMembers() {
 ═══════════════════════════════════════════════════════════ */
 function refreshAll() {
   const mod = currentModule, sec = currentSection;
-  GATES.forEach(function(gate) {
+  getGates(mod).forEach(function(gate) {
     const pct  = gatePct(gate.num, mod, sec);
     const done = isGateDone(gate.num, mod, sec);
     var fill = document.getElementById('gfill-'+gate.num);
@@ -2501,7 +2240,7 @@ function refreshAll() {
     if (fill) fill.style.width  = pct+'%';
     if (pEl)  pEl.textContent   = pct+'%';
     if (dot)  dot.classList.toggle('on', done);
-    if (utxt) utxt.textContent  = done ? '已解鎖下一關' : GATES[gate.num-1].unlock;
+    if (utxt) utxt.textContent  = done ? '已解鎖下一關' : gate.unlock;
   });
   TASKS.forEach(function(task) {
     var row = document.getElementById('task-row-'+task.id.replace('-','_'));
@@ -2598,7 +2337,8 @@ function renderOverview() {
     const pct      = modulePct(mod);
     const doneSecs = sections.filter(function(sec){ return sectionPct(mod,sec) >= 100; }).length;
     const isOpen   = single || !!ovOpen[mod];
-    const gateRows = GATES.map(function(g) {
+    const gates    = getGates(mod);
+    const gateRows = gates.map(function(g) {
       const gp      = Math.round(sections.reduce(function(s,sec){ return s+gatePct(g.num,mod,sec); },0) / secCount);
       const doneSec = sections.filter(function(sec){ return gatePct(g.num,mod,sec) >= 100; }).length;
       const color   = GATE_COLORS[g.num];
@@ -2610,7 +2350,7 @@ function renderOverview() {
       '</div>';
     }).join('');
     const sectionRows = sections.map(function(sec) {
-      var gPcts  = GATES.map(function(g){ return gatePct(g.num,mod,sec); });
+      var gPcts  = gates.map(function(g){ return gatePct(g.num,mod,sec); });
       var total  = sectionPct(mod, sec);
       var status = total>=100?'done':total>0?'active':'blocked';
       var label  = total>=100?'完成':total>0?'進行中':'未開始';
@@ -2635,6 +2375,7 @@ function renderOverview() {
         '<span class="ov-module-chevron">▼</span>' +
       '</div>' +
       '<div class="ov-module-body">' +
+        '<div class="ov-sections-label" style="margin-top:0">'+WORKFLOWS[getWorkflowKey(mod)].name+'</div>' +
         '<div class="ov-gates">'+gateRows+'</div>' +
         '<div class="ov-sections-label">小節細項</div>' +
         '<div class="ov-sections">'+sectionRows+'</div>' +
@@ -2665,10 +2406,11 @@ function exportCSV() {
   var allCsv = '';
   MODULES.forEach(function(mod, modIdx) {
     if (modIdx > 0) allCsv += '\n\n';
-    allCsv += '=== ' + mod + ' ===\n';
-    allCsv += '模組,小節,Gate 1 翻譯基礎完成,Gate 2 文字內容凍結,Gate 3 課程素材產出,Gate 4 上架執行,Gate 5 開課前 QC,完成度,狀態\n';
+    const gates = getGates(mod);
+    allCsv += '=== ' + mod + '（' + WORKFLOWS[getWorkflowKey(mod)].name + '）===\n';
+    allCsv += '模組,小節,' + gates.map(function(g){ return 'Gate '+g.num+' '+g.name; }).join(',') + ',完成度,狀態\n';
     getSections(mod).forEach(function(sec) {
-      const gPcts = GATES.map(function(g){ return gatePct(g.num,mod,sec)+'%'; });
+      const gPcts = gates.map(function(g){ return gatePct(g.num,mod,sec)+'%'; });
       const total = sectionPct(mod, sec);
       const status = total>=100 ? '完成' : total>0 ? '進行中' : '未開始';
       allCsv += mod+','+sec+','+gPcts.join(',')+','+total+'%,'+status+'\n';
@@ -2717,6 +2459,7 @@ function getWeekLabel(cutoff) {
      taskHours: { '1-1': 3, '1-2': 2, ... },
      moduleStart: { C1: '2026-06-01', C2: '...', C3: '...' },
      moduleNames: { C1: '模組名稱', C2: '...' },
+     moduleWorkflow: { C1: 'legacy', C6: 'ai', ... },
      yearEndTargets: ['C1', 'C2', ...],
      hoursPerWeek: 30
    }
@@ -2727,6 +2470,7 @@ var baseline = {
   moduleStart:   {},   // mod → 'YYYY-MM-DD'
   videoSections: {},   // mod → number of sections (default 20)
   moduleNames:   {},   // mod → display name shown on 進度填報
+  moduleWorkflow: {},  // mod → key of WORKFLOWS (unset → see getWorkflowKey)
   yearEndTargets: [],  // modules counted in 年底目標完成度
   hoursPerWeek: 30
 };
@@ -2734,17 +2478,20 @@ var baseline = {
 // Tasks eligible for time estimation (exclude 1-4 firstSectionOnly)
 var FORECAST_TASKS = TASKS.filter(function(t){ return !t.firstSectionOnly; });
 
+function applyBaselineRow(data) {
+  if (!data) return;
+  baseline.taskHours      = data.task_hours    || {};
+  baseline.moduleStart    = data.module_start  || {};
+  baseline.videoSections  = data.video_sections || {};
+  baseline.moduleNames    = data.module_names   || {};
+  baseline.moduleWorkflow = data.module_workflow || {};
+  baseline.yearEndTargets = data.year_end_targets || [];
+  baseline.hoursPerWeek   = data.hours_per_week || 30;
+}
+
 function loadBaseline() {
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
-    var data = res.data;
-    if (data) {
-      baseline.taskHours     = data.task_hours    || {};
-      baseline.moduleStart   = data.module_start  || {};
-      baseline.videoSections = data.video_sections || {};
-      baseline.moduleNames   = data.module_names   || {};
-      baseline.yearEndTargets = data.year_end_targets || [];
-      baseline.hoursPerWeek  = data.hours_per_week || 30;
-    }
+    applyBaselineRow(res.data);
     renderBaselineForm();
     renderForecastCards();
   });
@@ -2755,7 +2502,7 @@ function applyBaselineAccess() {
   var body = document.getElementById('baseline-body');
   if (!body) return;
   var canEdit = canEditBaseline(currentMember);
-  body.querySelectorAll('input').forEach(function(el){ el.disabled = !canEdit; });
+  body.querySelectorAll('input, select').forEach(function(el){ el.disabled = !canEdit; });
   var actions = document.getElementById('baseline-actions');
   var note    = document.getElementById('baseline-readonly-note');
   if (actions) actions.style.display = canEdit ? 'flex' : 'none';
@@ -2815,7 +2562,9 @@ function saveBaseline() {
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
     var nEl    = document.getElementById('bn-'+mod);
+    var wEl    = document.getElementById('bw-'+mod);
     if (nEl)    baseline.moduleNames[mod]   = nEl.value.trim();
+    if (wEl)    baseline.moduleWorkflow[mod] = wEl.value;
     if (dateEl) baseline.moduleStart[mod]   = dateEl.value;
     if (vEl)    baseline.videoSections[mod] = parseInt(vEl.value) || 0;
   });
@@ -2825,11 +2574,15 @@ function saveBaseline() {
     module_start:       baseline.moduleStart,
     video_sections:     baseline.videoSections,
     module_names:       baseline.moduleNames,
+    module_workflow:    baseline.moduleWorkflow,
     year_end_targets:   baseline.yearEndTargets,
     hours_per_week:     baseline.hoursPerWeek
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
-    else { showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); renderOverview(); }
+    else {
+      showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); renderOverview();
+      renderModuleProgress(); if (trendTab === 'all') renderAllModulesChart();
+    }
   });
 }
 
@@ -2869,11 +2622,19 @@ function renderBaselineForm() {
       var dateVal  = baseline.moduleStart[mod]   || '';
       var vVal     = baseline.videoSections[mod] !== undefined ? baseline.videoSections[mod] : '';
       var nVal     = (baseline.moduleNames[mod] || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+      var wKey     = getWorkflowKey(mod);
+      var wOpts    = Object.keys(WORKFLOWS).map(function(key) {
+        return '<option value="'+key+'"'+(key === wKey ? ' selected' : '')+'>'+WORKFLOWS[key].name+'</option>';
+      }).join('');
       return '<div style="margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,0.06)">' +
         '<div class="forecast-mod" style="margin-bottom:12px">'+moduleBadge(mod)+'</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">模組名稱</span>' +
           '<input class="baseline-input baseline-input-text" type="text" maxlength="40" id="bn-'+mod+'" value="'+nVal+'" placeholder="顯示在進度填報標題">' +
+        '</div>' +
+        '<div class="baseline-row">' +
+          '<span class="baseline-row-label">製作流程</span>' +
+          '<select class="baseline-input baseline-input-select" id="bw-'+mod+'">'+wOpts+'</select>' +
         '</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">起算日期</span>' +
@@ -2896,21 +2657,25 @@ function renderBaselineForm() {
     }).join('');
   }
 
-  // Task hours — grouped by gate
+  // Task hours — grouped by workflow, then gate
   var taskRows = document.getElementById('baseline-task-rows');
   if (taskRows) {
     var html = '';
-    GATES.forEach(function(gate) {
-      var gateTasks = FORECAST_TASKS.filter(function(t){ return t.gate === gate.num; });
-      if (!gateTasks.length) return;
-      html += '<div style="font-size:12px;font-weight:700;color:'+GATE_COLORS[gate.num]+';margin:10px 0 6px;letter-spacing:0.06em;text-transform:uppercase">Gate '+gate.num+' · '+gate.name+'</div>';
-      gateTasks.forEach(function(t) {
-        var val = baseline.taskHours[t.id] || '';
-        html += '<div class="baseline-row">' +
-          '<span class="baseline-row-label">'+t.id+' '+t.name+'</span>' +
-          '<input class="baseline-input" type="number" min="0" step="0.5" id="bh-'+t.id.replace('-','_')+'" value="'+val+'" placeholder="0">' +
-          '<span class="baseline-unit">小時 / 小節</span>' +
-        '</div>';
+    Object.keys(WORKFLOWS).forEach(function(key, i) {
+      var wf = WORKFLOWS[key];
+      html += '<div style="font-size:14px;font-weight:700;color:var(--white);margin:'+(i ? '24px' : '0')+' 0 4px">'+wf.name+'</div>';
+      wf.gates.forEach(function(gate) {
+        var gateTasks = FORECAST_TASKS.filter(function(t){ return t.gate === gate.num && wf.tasks.indexOf(t) >= 0; });
+        if (!gateTasks.length) return;
+        html += '<div style="font-size:12px;font-weight:700;color:'+GATE_COLORS[gate.num]+';margin:10px 0 6px;letter-spacing:0.06em;text-transform:uppercase">Gate '+gate.num+' · '+gate.name+'</div>';
+        gateTasks.forEach(function(t) {
+          var val = baseline.taskHours[t.id] || '';
+          html += '<div class="baseline-row">' +
+            '<span class="baseline-row-label">'+t.id+' '+t.name+'</span>' +
+            '<input class="baseline-input" type="number" min="0" step="0.5" id="bh-'+t.id.replace('-','_')+'" value="'+val+'" placeholder="0">' +
+            '<span class="baseline-unit">小時 / 小節</span>' +
+          '</div>';
+        });
       });
     });
     taskRows.innerHTML = html;
@@ -2936,9 +2701,10 @@ function renderFormForecasts() {
     if (!out) return;
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
+    var wEl    = document.getElementById('bw-'+mod);
     var count  = vEl ? (parseInt(vEl.value) || 0) : getModuleSectionCount(mod);
     if (count <= 0) count = SECTIONS_PER_MODULE;
-    var f = computeModuleForecast(mod, { start: dateEl ? dateEl.value : undefined, count: count, taskHours: taskHours });
+    var f = computeModuleForecast(mod, { start: dateEl ? dateEl.value : undefined, count: count, taskHours: taskHours, workflow: wEl ? wEl.value : undefined });
     if (!f.completionDate) {
       out.textContent = !f.totalHours ? '請先填寫每小節任務時數' : '請填寫起算日期';
       out.classList.add('empty');
@@ -3008,15 +2774,16 @@ function formatDate(d) {
     ['日','一','二','三','四','五','六'][d.getDay()] + ')';
 }
 
-// draft (optional): unsaved form values { start, count, taskHours } used by the
-// live preview in 完工預測設定; without it the saved baseline is used
+// draft (optional): unsaved form values { start, count, taskHours, workflow } used by
+// the live preview in 完工預測設定; without it the saved baseline is used
 function computeModuleForecast(mod, draft) {
   draft = draft || {};
   var total     = draft.count !== undefined ? draft.count : getModuleSectionCount(mod);
   var taskHours = draft.taskHours || baseline.taskHours;
+  var wfTasks   = WORKFLOWS[draft.workflow || getWorkflowKey(mod)].tasks;
 
   var totalHours = 0;
-  FORECAST_TASKS.forEach(function(t) {
+  FORECAST_TASKS.filter(function(t){ return wfTasks.indexOf(t) >= 0; }).forEach(function(t) {
     var h = parseFloat(taskHours[t.id]) || 0;
     totalHours += h * total;
   });
@@ -3112,7 +2879,7 @@ function computeModuleWeeklySnapshots(logData, mod) {
   var state = {};
   getSections(mod).forEach(function(sec) {
     state[sec] = {};
-    getActiveTasks(sec).forEach(function(t){ state[sec][t.id] = 0; });
+    getActiveTasks(sec, mod).forEach(function(t){ state[sec][t.id] = 0; });
   });
 
   var snapshots = [];
@@ -3129,7 +2896,7 @@ function computeModuleWeeklySnapshots(logData, mod) {
     }
     var total = 0, count = 0;
     getSections(mod).forEach(function(sec) {
-      getActiveTasks(sec).forEach(function(t) {
+      getActiveTasks(sec, mod).forEach(function(t) {
         total += state[sec][t.id]||0; count += 10;
       });
     });
@@ -3188,7 +2955,7 @@ function renderModuleProgress() {
 /* ── 各模組完成度總覽（長條圖＋Gate 明細 tooltip） ── */
 function computeAllModulesData() {
   return modulesByForecast().map(function(mod) {
-    var gates = GATES.map(function(g) {
+    var gates = getGates(mod).map(function(g) {
       return { num: g.num, name: g.name, pct: moduleGatePct(mod, g.num) };
     });
     return { mod: mod, pct: modulePct(mod), gates: gates };
@@ -3298,12 +3065,12 @@ function computeModuleDailyDeltas(logData, mod) {
   var state = {};
   getSections(mod).forEach(function(sec) {
     state[sec] = {};
-    getActiveTasks(sec).forEach(function(t){ state[sec][t.id] = 0; });
+    getActiveTasks(sec, mod).forEach(function(t){ state[sec][t.id] = 0; });
   });
   function overall() {
     var total = 0, count = 0;
     getSections(mod).forEach(function(sec) {
-      getActiveTasks(sec).forEach(function(t){ total += state[sec][t.id] || 0; count += 10; });
+      getActiveTasks(sec, mod).forEach(function(t){ total += state[sec][t.id] || 0; count += 10; });
     });
     return count > 0 ? Math.round(total / count * 100) : 0;
   }
@@ -3355,7 +3122,7 @@ var lastLogData = null;
 function computeModuleMaxTotal(mod) {
   var total = 0;
   getSections(mod).forEach(function(sec) {
-    total += getActiveTasks(sec).length * 10;
+    total += getActiveTasks(sec, mod).length * 10;
   });
   return total;
 }
@@ -3370,7 +3137,7 @@ function computeCompositionForRange(logData, mod, rangeStart, rangeEnd) {
   var baseline = {}, current = {};
   getSections(mod).forEach(function(sec) {
     baseline[sec] = {}; current[sec] = {};
-    getActiveTasks(sec).forEach(function(t){ baseline[sec][t.id] = 0; current[sec][t.id] = 0; });
+    getActiveTasks(sec, mod).forEach(function(t){ baseline[sec][t.id] = 0; current[sec][t.id] = 0; });
   });
 
   entries.forEach(function(e) {
@@ -3384,7 +3151,7 @@ function computeCompositionForRange(logData, mod, rangeStart, rangeEnd) {
   var maxTotal = computeModuleMaxTotal(mod);
   var items = [];
   getSections(mod).forEach(function(sec) {
-    getActiveTasks(sec).forEach(function(t) {
+    getActiveTasks(sec, mod).forEach(function(t) {
       var b = baseline[sec][t.id] || 0, c = current[sec][t.id] || 0;
       if (c !== b) {
         items.push({
@@ -3512,15 +3279,7 @@ initSupabase().then(function() {
   }
   // Load baseline first so section counts are correct for all users
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
-    var data = res.data;
-    if (data) {
-      baseline.taskHours     = data.task_hours    || {};
-      baseline.moduleStart   = data.module_start  || {};
-      baseline.videoSections = data.video_sections || {};
-      baseline.moduleNames   = data.module_names   || {};
-      baseline.yearEndTargets = data.year_end_targets || [];
-      baseline.hoursPerWeek  = data.hours_per_week || 30;
-    }
+    applyBaselineRow(res.data);
     renderReporterTabs();
     renderOverviewTabs();
     populateSectionSelect();
