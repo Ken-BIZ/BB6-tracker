@@ -934,13 +934,70 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .member-card.ai .mtask-bar { background: var(--ai); }
 .pf-meta-val.highlight-ai { color: var(--ai); font-weight: 700; }
 .gates-grid.gates-4 { grid-template-columns: repeat(4, 1fr); }
-.outputs-row.outputs-4 { grid-template-columns: repeat(4, 1fr); }
-.flow-note { margin-top: 20px; max-width: 640px; padding: 12px 16px; background: rgba(255,234,65,0.05); border: 1px solid rgba(255,234,65,0.15); border-radius: 3px; font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.6; }
 .baseline-input-select { width: 140px; text-align: left; cursor: pointer; }
 .baseline-input-select option { background: #1e2023; color: var(--white); }
 @media (max-width: 900px) {
   .gates-grid.gates-4 { grid-template-columns: 1fr 1fr; }
-  .outputs-row.outputs-4 { grid-template-columns: 1fr 1fr; }
+}
+/* ── FLOW PAGE: flow chart + cards ───────────────────────── */
+.g1 { --g: var(--gate1); } .g2 { --g: var(--gate2); } .g3 { --g: var(--gate3); } .g4 { --g: var(--gate4); }
+.fx-hero-note { flex-shrink: 0; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.6); padding: 12px 16px; border: 1px solid rgba(255,234,65,0.18); background: rgba(255,234,65,0.05); border-radius: 4px; }
+.fx-hero-note b { color: var(--yellow); }
+.fx-legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; font-weight: 700; }
+.fx-flow { display: grid; grid-template-columns: 1fr 32px 1fr 32px 1fr 32px 1fr; }
+.fx-gate { display: flex; flex-direction: column; gap: 16px; min-width: 0; padding: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid var(--g); border-radius: 4px; }
+.fx-gate-num { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--g); }
+.fx-gate-name { margin-top: 4px; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.fx-arrow { display: flex; align-items: center; justify-content: center; color: rgba(255,255,255,0.3); }
+.fx-arrow svg { width: 20px; height: 20px; }
+.fx-tasks { display: flex; flex-direction: column; gap: 6px; }
+.fx-sub { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); }
+.fx-task { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 9px 10px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; }
+.fx-id { flex-shrink: 0; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 3px; color: var(--g, #fff); background: rgba(255,255,255,0.07); }
+.fx-name { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fx-owner { flex-shrink: 0; font-size: 12px; font-weight: 700; }
+.fx-note { font-size: 12px; color: rgba(255,255,255,0.45); padding-left: 2px; }
+.fx-out { margin-top: auto; padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); }
+.fx-out-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); margin-bottom: 6px; }
+.fx-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.fx-chip { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; color: rgba(255,255,255,0.8); background: rgba(255,255,255,0.06); }
+
+.fx-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
+.fx-person { --p: #fff; padding: 18px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-top: 3px solid var(--p); border-radius: 4px; display: flex; flex-direction: column; gap: 10px; }
+.fx-person.daniel { --p: var(--daniel); } .fx-person.ken { --p: var(--ken); } .fx-person.ai { --p: var(--ai); } .fx-person.ellen { --p: var(--ellen); }
+.fx-person-head { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+.fx-avatar { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff; background: var(--p); }
+.fx-person-info { flex: 1; min-width: 0; }
+.fx-person-name { font-size: 17px; font-weight: 700; color: var(--p); }
+.fx-person-role { font-size: 12px; color: rgba(255,255,255,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fx-count { flex-shrink: 0; font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.4); }
+.fx-ptask { padding: 10px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.06); border-left: 3px solid var(--g); border-radius: 4px; }
+.fx-ptask-top { display: flex; align-items: center; gap: 8px; min-width: 0; margin-bottom: 6px; }
+.fx-ptask-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fx-handoff { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 12px; color: rgba(255,255,255,0.6); }
+.fx-handoff-label { font-weight: 700; color: rgba(255,255,255,0.3); }
+.fx-handoff-label + * { margin-right: 6px; }
+
+.fx-outputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.fx-output { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 12px; text-align: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-bottom: 3px solid var(--g); border-radius: 4px; }
+.fx-output-icon { font-size: 22px; }
+.fx-output-name { font-size: 14px; font-weight: 700; }
+.fx-output-meta { font-size: 12px; font-weight: 600; color: var(--g); }
+
+@media (max-width: 1100px) {
+  .fx-flow { grid-template-columns: 1fr; }
+  .fx-gate { display: grid; grid-template-columns: 150px 1fr 1fr; gap: 20px; align-items: start; }
+  .fx-out { margin-top: 0; padding-top: 0; border-top: none; }
+  .fx-arrow { height: 32px; }
+  .fx-arrow svg { transform: rotate(90deg); }
+  .fx-team { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .fx-gate { display: flex; gap: 14px; }
+  .fx-out { padding-top: 12px; border-top: 1px dashed rgba(255,255,255,0.1); }
+  .fx-team { grid-template-columns: 1fr; }
+  .fx-outputs { grid-template-columns: 1fr 1fr; }
+  .fx-hero-note { width: 100%; }
 }
 </style>
 
@@ -1019,11 +1076,9 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
   </div>
   <div class="header-right">
     <nav id="flow-nav">
-      <a href="#phases">製作階段</a>
-      <a href="#gates">關卡檢查</a>
+      <a href="#phases">流程圖</a>
       <a href="#team">團隊分工</a>
-      <a href="#personal">個人流程</a>
-      <a href="#outputs">輸出成果</a>
+      <a href="#outputs">交付成果</a>
     </nav>
     <div id="overview-nav" style="display:none"></div>
     <div class="tracker-actions" id="tracker-nav" style="display:none">
@@ -1039,368 +1094,192 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 <div class="page active" id="page-flow">
 <div class="hero">
-  <div class="hero-tag">Business Booster 6</div>
-  <h1>課程製作<span>流程</span><br>與工作分配圖</h1>
-  <p class="hero-sub">導入 AI 協作後的製作流程：從取得原檔、AI 影片製作、AI 生成，到 WU 上架與成品 QC，四個製作關卡、三位負責人加上 AI，確保每一個環節有序推進。</p>
-  <div class="flow-note">已依舊流程開工的模組（C1–C5、TA1、TA4）維持原本的五個關卡；各模組採用哪一套流程，可在「專案概況 → 完工預測設定 → 製作流程」切換。</div>
+  <div class="hero-left">
+    <div class="hero-tag">Business Booster 6</div>
+    <h1>課程製作<span>流程</span>與分工</h1>
+    <p class="hero-sub">AI 協作版・4 個關卡・Daniel、Ken、Ellen ＋ AI</p>
+  </div>
+  <div class="fx-hero-note"><b>C1–C5、TA1、TA4</b> 沿用舊流程<br>切換：專案概況 → 完工預測設定</div>
 </div>
 
-<!-- SECTION 1: PHASES -->
+<!-- SECTION 1: FLOW CHART -->
 <section id="phases">
   <div class="section-header">
     <div>
       <div class="section-label">四大製作關卡</div>
-      <div class="section-title">課程製作流程</div>
+      <div class="section-title">製作流程圖</div>
+    </div>
+    <div class="fx-legend">
+      <span class="owner-daniel">● Daniel</span>
+      <span class="owner-ken">● Ken</span>
+      <span class="owner-ai">● AI</span>
+      <span class="owner-ellen">● Ellen</span>
     </div>
   </div>
 
-  <div class="phases-grid">
+  <div class="fx-flow">
 
-    <!-- Gate 1 -->
-    <div class="phase-card">
-      <div class="phase-num">Gate 1</div>
-      <div class="phase-name">取得原檔</div>
-      <div class="phase-goal">交付：課程原始檔案</div>
-      <div class="task-list">
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(37,99,235,0.15);color:var(--phase1)">A1-1</div>
-          <div class="task-name">取得原檔</div>
-          <div class="task-owner owner-daniel">Daniel</div>
-        </div>
+    <div class="fx-gate g1">
+      <div class="fx-gate-head">
+        <div class="fx-gate-num">Gate 1</div>
+        <div class="fx-gate-name">取得原檔</div>
       </div>
-      <div style="margin-top:12px;padding:10px;background:rgba(255,234,65,0.05);border:1px solid rgba(255,234,65,0.12);border-radius:3px;font-size:13px;color:rgba(255,234,65,0.5);line-height:1.6;">
-        原檔到位後交給 Ken 進行 AI 影片製作
+      <div class="fx-tasks">
+        <div class="fx-task"><span class="fx-id">A1-1</span><span class="fx-name">取得原檔</span><span class="fx-owner owner-daniel">Daniel</span></div>
+      </div>
+      <div class="fx-out">
+        <div class="fx-out-label">產出</div>
+        <div class="fx-chips"><span class="fx-chip">課程原始檔案</span></div>
       </div>
     </div>
 
-    <!-- Gate 2 -->
-    <div class="phase-card">
-      <div class="phase-num">Gate 2</div>
-      <div class="phase-name">AI 影片製作</div>
-      <div class="phase-goal">交付：英文簡報、英文影片檔</div>
-      <div class="task-list">
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(22,163,74,0.15);color:var(--phase2)">A2-1</div>
-          <div class="task-name">AI 影片製作（英文簡報、英文影片檔）</div>
-          <div class="task-owner owner-ken">Ken</div>
-        </div>
+    <div class="fx-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="fx-gate g2">
+      <div class="fx-gate-head">
+        <div class="fx-gate-num">Gate 2</div>
+        <div class="fx-gate-name">AI 影片製作</div>
       </div>
-      <div style="margin-top:12px;padding:10px;background:rgba(22,163,74,0.06);border:1px solid rgba(22,163,74,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
-        A2-1 依賴 A1-1
+      <div class="fx-tasks">
+        <div class="fx-task"><span class="fx-id">A2-1</span><span class="fx-name">製作英文簡報與影片</span><span class="fx-owner owner-ken">Ken</span></div>
+      </div>
+      <div class="fx-out">
+        <div class="fx-out-label">產出</div>
+        <div class="fx-chips"><span class="fx-chip">英文簡報</span><span class="fx-chip">英文影片檔</span></div>
       </div>
     </div>
 
-    <!-- Gate 3 -->
-    <div class="phase-card">
-      <div class="phase-num">Gate 3</div>
-      <div class="phase-name">AI 生成</div>
-      <div class="phase-goal">交付：中文簡報、剪輯後影片、中英文 VTT 字幕檔</div>
-      <div class="task-list">
-        <div class="task-item">
-          <div class="task-num" style="background:rgba(124,58,237,0.15);color:var(--purple)">A3-1</div>
-          <div class="task-name">AI 生成中文簡報、剪輯後影片、中英文 VTT 字幕</div>
-          <div class="task-owner owner-ai">AI</div>
-        </div>
+    <div class="fx-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="fx-gate g3">
+      <div class="fx-gate-head">
+        <div class="fx-gate-num">Gate 3</div>
+        <div class="fx-gate-name">AI 生成</div>
       </div>
-      <div style="margin-top:12px;padding:10px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.45);line-height:1.6;">
-        A3-1 依賴 A2-1；由 AI 執行，進度由 Ken 填報
+      <div class="fx-tasks">
+        <div class="fx-task"><span class="fx-id">A3-1</span><span class="fx-name">生成中文素材與字幕</span><span class="fx-owner owner-ai">AI</span></div>
+        <div class="fx-note">AI 執行，Ken 填報進度</div>
+      </div>
+      <div class="fx-out">
+        <div class="fx-out-label">產出</div>
+        <div class="fx-chips"><span class="fx-chip">中文簡報</span><span class="fx-chip">剪輯後影片</span><span class="fx-chip">中英文 VTT 字幕</span></div>
       </div>
     </div>
 
-    <!-- Gate 4 -->
-    <div class="phase-card">
-      <div class="phase-num">Gate 4</div>
-      <div class="phase-name">WU 上架與成品 QC</div>
-      <div class="phase-goal">輸出：課程上架完成</div>
-      <div style="border-left: 2px solid rgba(255,255,255,0.12); padding-left:10px;">
-        <div class="parallel-label" style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.28);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;">同時進行</div>
-        <div class="task-list">
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-1</div>
-            <div class="task-name">WU 上架・文字 QC</div>
-            <div class="task-owner owner-ken">Ken</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-2</div>
-            <div class="task-name">WU 上架・影片 QC</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-3</div>
-            <div class="task-name">逐字稿排版</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
-          <div class="task-item">
-            <div class="task-num" style="background:rgba(234,88,12,0.15);color:var(--phase4)">A4-4</div>
-            <div class="task-name">重點整理</div>
-            <div class="task-owner owner-ellen">Ellen</div>
-          </div>
-        </div>
+    <div class="fx-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+
+    <div class="fx-gate g4">
+      <div class="fx-gate-head">
+        <div class="fx-gate-num">Gate 4</div>
+        <div class="fx-gate-name">上架與成品 QC</div>
       </div>
-      <div style="margin-top:16px;padding:14px;background:rgba(234,88,12,0.06);border:1px solid rgba(234,88,12,0.2);border-radius:3px;font-size:13px;color:rgba(255,255,255,0.55);line-height:1.6;">
-        <div style="font-weight:700;color:var(--phase4);margin-bottom:6px;font-size:13px;">QC 範圍</div>
-        文字（Ken）：中文簡報 · 中英文 VTT 字幕<br>影片（Ellen）：剪輯後影片
+      <div class="fx-tasks">
+        <div class="fx-sub">同時進行</div>
+        <div class="fx-task"><span class="fx-id">A4-1</span><span class="fx-name">文字 QC・上架</span><span class="fx-owner owner-ken">Ken</span></div>
+        <div class="fx-task"><span class="fx-id">A4-2</span><span class="fx-name">影片 QC・上架</span><span class="fx-owner owner-ellen">Ellen</span></div>
+        <div class="fx-task"><span class="fx-id">A4-3</span><span class="fx-name">逐字稿排版</span><span class="fx-owner owner-ellen">Ellen</span></div>
+        <div class="fx-task"><span class="fx-id">A4-4</span><span class="fx-name">重點整理</span><span class="fx-owner owner-ellen">Ellen</span></div>
+      </div>
+      <div class="fx-out">
+        <div class="fx-out-label">產出</div>
+        <div class="fx-chips"><span class="fx-chip">WU 上架完成</span><span class="fx-chip">逐字稿</span><span class="fx-chip">重點整理</span></div>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- SECTION 2: GATES CHECKLIST -->
-<section id="gates">
-  <div class="section-header">
-    <div>
-      <div class="section-label">重要提醒</div>
-      <div class="section-title">關卡檢查清單</div>
-    </div>
-  </div>
-  <div class="gates-grid gates-4">
-    <div class="gate-card">
-      <div class="gate-card-title">Gate 1</div>
-      <div class="gate-card-sub">取得原檔</div>
-      <div class="check-item"><div class="check-dot"></div>原檔取得完成（A1-1）</div>
-      <div class="check-item"><div class="check-dot"></div>原檔已交給 Ken</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：AI 影片製作</div>
-    </div>
-    <div class="gate-card">
-      <div class="gate-card-title">Gate 2</div>
-      <div class="gate-card-sub">AI 影片製作</div>
-      <div class="check-item"><div class="check-dot"></div>英文簡報完成（A2-1）</div>
-      <div class="check-item"><div class="check-dot"></div>英文影片檔完成（A2-1）</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：AI 生成</div>
-    </div>
-    <div class="gate-card">
-      <div class="gate-card-title">Gate 3</div>
-      <div class="gate-card-sub">AI 生成</div>
-      <div class="check-item"><div class="check-dot"></div>中文簡報已生成（A3-1）</div>
-      <div class="check-item"><div class="check-dot"></div>剪輯後影片已生成（A3-1）</div>
-      <div class="check-item"><div class="check-dot"></div>中英文 VTT 字幕檔已生成（A3-1）</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">解鎖：WU 上架與成品 QC</div>
-    </div>
-    <div class="gate-card">
-      <div class="gate-card-title">Gate 4</div>
-      <div class="gate-card-sub">WU 上架與成品 QC</div>
-      <div class="check-item"><div class="check-dot"></div>WU 上架・文字 QC 完成（A4-1）</div>
-      <div class="check-item"><div class="check-dot"></div>WU 上架・影片 QC 完成（A4-2）</div>
-      <div class="check-item"><div class="check-dot"></div>逐字稿排版完成（A4-3）</div>
-      <div class="check-item"><div class="check-dot"></div>重點整理完成（A4-4）</div>
-      <div style="margin-top:12px;padding:10px;background:rgba(192,237,226,0.05);border-radius:2px;font-size:13px;color:var(--grey-dark);">輸出：課程上架完成</div>
-    </div>
-  </div>
-</section>
-
-<!-- SECTION 3: TEAM -->
+<!-- SECTION 2: TEAM -->
 <section id="team">
   <div class="section-header">
     <div>
-      <div class="section-label">團隊分工總覽</div>
-      <div class="section-title">負責人與工作項目</div>
-    </div>
-  </div>
-  <div class="team-grid">
-    <div class="member-card daniel">
-      <div class="member-name">Daniel</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">A1-1</span>取得原檔</div>
-    </div>
-    <div class="member-card ken">
-      <div class="member-name">Ken</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">A2-1</span>AI 影片製作（英文簡報、英文影片檔）</div>
-      <div class="member-task"><span class="member-task-num">A4-1</span>WU 上架・文字 QC</div>
-    </div>
-    <div class="member-card ai">
-      <div class="member-name">AI</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">A3-1</span>生成中文簡報、剪輯後影片、中英文 VTT 字幕</div>
-    </div>
-    <div class="member-card ellen">
-      <div class="member-name">Ellen</div>
-      <div class="member-divider"></div>
-      <div class="member-task"><span class="member-task-num">A4-2</span>WU 上架・影片 QC</div>
-      <div class="member-task"><span class="member-task-num">A4-3</span>逐字稿排版</div>
-      <div class="member-task"><span class="member-task-num">A4-4</span>重點整理</div>
-    </div>
-  </div>
-  <div class="collab-bar" style="margin-top:24px;">
-    <div class="collab-item"><strong>跨人員合作：</strong></div>
-    <div class="collab-item">AI 生成（AI 執行 ↔ Ken 填報進度）</div>
-    <div class="collab-item">WU 上架與成品 QC（Ken 文字 ↔ Ellen 影片）</div>
-  </div>
-</section>
-
-<!-- SECTION 4: PERSONAL FLOW -->
-<section id="personal">
-  <div class="section-header">
-    <div>
-      <div class="section-label">個人視角</div>
-      <div class="section-title">我的工作節點與交接關係</div>
+      <div class="section-label">團隊分工</div>
+      <div class="section-title">負責人與交接</div>
     </div>
   </div>
 
-  <div class="accordion">
+  <div class="fx-team">
 
-    <!-- DANIEL -->
-    <div class="acc-item daniel">
-      <button class="acc-trigger" onclick="toggleAcc(this)">
-        <div class="acc-trigger-left">
-          <span class="acc-name daniel-text">Daniel</span>
-          <span class="acc-count">1 項工作</span>
-        </div>
-        <div class="acc-trigger-right">
-          <span class="acc-tags">
-            <span class="acc-tag gate-badge-1">Gate 1</span>
-          </span>
-          <span class="acc-chevron">▾</span>
-        </div>
-      </button>
-      <div class="acc-body">
-        <div class="personal-flow">
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot daniel-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-1">Gate 1</span><span class="pf-task-id">A1-1</span></div>
-              <div class="pf-task-name">取得原檔</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val">無，可直接開始</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ken">Ken → A2-1</span></div>
-              </div>
-            </div></div>
-          </div>
-        </div>
+    <div class="fx-person daniel">
+      <div class="fx-person-head">
+        <span class="fx-avatar">D</span>
+        <div class="fx-person-info"><div class="fx-person-name">Daniel</div><div class="fx-person-role">原檔窗口</div></div>
+        <span class="fx-count">1 項</span>
+      </div>
+      <div class="fx-ptask g1">
+        <div class="fx-ptask-top"><span class="fx-id">A1-1</span><span class="fx-ptask-name">取得原檔</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span>無<span class="fx-handoff-label">交付</span><b class="owner-ken">Ken</b></div>
       </div>
     </div>
 
-    <!-- KEN -->
-    <div class="acc-item ken">
-      <button class="acc-trigger" onclick="toggleAcc(this)">
-        <div class="acc-trigger-left">
-          <span class="acc-name ken-text">Ken</span>
-          <span class="acc-count">2 項工作</span>
-        </div>
-        <div class="acc-trigger-right">
-          <span class="acc-tags">
-            <span class="acc-tag gate-badge-2">Gate 2</span>
-            <span class="acc-tag gate-badge-4">Gate 4</span>
-          </span>
-          <span class="acc-chevron">▾</span>
-        </div>
-      </button>
-      <div class="acc-body">
-        <div class="personal-flow">
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div><div class="pf-line ken-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-2">Gate 2</span><span class="pf-task-id">A2-1</span></div>
-              <div class="pf-task-name">AI 影片製作（英文簡報、英文影片檔）</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-daniel">Daniel A1-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val highlight-ai">AI → A3-1</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ken-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-1</span></div>
-              <div class="pf-task-name">WU 上架・文字 QC</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ellen">Ellen</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
-              </div>
-            </div></div>
-          </div>
-        </div>
+    <div class="fx-person ken">
+      <div class="fx-person-head">
+        <span class="fx-avatar">K</span>
+        <div class="fx-person-info"><div class="fx-person-name">Ken</div><div class="fx-person-role">AI 影片製作・文字 QC</div></div>
+        <span class="fx-count">2 項</span>
+      </div>
+      <div class="fx-ptask g2">
+        <div class="fx-ptask-top"><span class="fx-id">A2-1</span><span class="fx-ptask-name">製作英文簡報與影片</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-daniel">Daniel</b><span class="fx-handoff-label">交付</span><b class="owner-ai">AI</b></div>
+      </div>
+      <div class="fx-ptask g4">
+        <div class="fx-ptask-top"><span class="fx-id">A4-1</span><span class="fx-ptask-name">文字 QC・上架</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ai">AI</b><span class="fx-handoff-label">交付</span>上架完成</div>
       </div>
     </div>
 
-    <!-- ELLEN -->
-    <div class="acc-item ellen">
-      <button class="acc-trigger" onclick="toggleAcc(this)">
-        <div class="acc-trigger-left">
-          <span class="acc-name ellen-text">Ellen</span>
-          <span class="acc-count">3 項工作</span>
-        </div>
-        <div class="acc-trigger-right">
-          <span class="acc-tags">
-            <span class="acc-tag gate-badge-4">Gate 4</span>
-          </span>
-          <span class="acc-chevron">▾</span>
-        </div>
-      </button>
-      <div class="acc-body">
-        <div class="personal-flow">
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-2</span></div>
-              <div class="pf-task-name">WU 上架・影片 QC</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">協作</span><span class="pf-meta-val highlight-ken">Ken</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div><div class="pf-line ellen-line"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-3</span></div>
-              <div class="pf-task-name">逐字稿排版</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
-              </div>
-            </div></div>
-          </div>
-          <div class="pf-row">
-            <div class="pf-spine"><div class="pf-dot ellen-color"></div></div>
-            <div class="pf-node"><div class="pf-node-inner">
-              <div class="pf-tag-row"><span class="pf-gate-badge gate-badge-4">Gate 4</span><span class="pf-task-id">A4-4</span></div>
-              <div class="pf-task-name">重點整理</div>
-              <div class="pf-meta">
-                <div class="pf-meta-item"><span class="pf-meta-label">前置</span><span class="pf-meta-val highlight-ai">AI A3-1 完成</span></div>
-                <div class="pf-meta-item"><span class="pf-meta-label">交付</span><span class="pf-meta-val">課程上架完成</span></div>
-              </div>
-            </div></div>
-          </div>
-        </div>
+    <div class="fx-person ai">
+      <div class="fx-person-head">
+        <span class="fx-avatar">AI</span>
+        <div class="fx-person-info"><div class="fx-person-name">AI</div><div class="fx-person-role">自動生成・Ken 填報</div></div>
+        <span class="fx-count">1 項</span>
+      </div>
+      <div class="fx-ptask g3">
+        <div class="fx-ptask-top"><span class="fx-id">A3-1</span><span class="fx-ptask-name">生成中文素材與字幕</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ken">Ken</b><span class="fx-handoff-label">交付</span><span><b class="owner-ken">Ken</b>・<b class="owner-ellen">Ellen</b></span></div>
+      </div>
+    </div>
+
+    <div class="fx-person ellen">
+      <div class="fx-person-head">
+        <span class="fx-avatar">E</span>
+        <div class="fx-person-info"><div class="fx-person-name">Ellen</div><div class="fx-person-role">影片 QC・文件整理</div></div>
+        <span class="fx-count">3 項</span>
+      </div>
+      <div class="fx-ptask g4">
+        <div class="fx-ptask-top"><span class="fx-id">A4-2</span><span class="fx-ptask-name">影片 QC・上架</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ai">AI</b><span class="fx-handoff-label">交付</span>上架完成</div>
+      </div>
+      <div class="fx-ptask g4">
+        <div class="fx-ptask-top"><span class="fx-id">A4-3</span><span class="fx-ptask-name">逐字稿排版</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ai">AI</b><span class="fx-handoff-label">交付</span>上架完成</div>
+      </div>
+      <div class="fx-ptask g4">
+        <div class="fx-ptask-top"><span class="fx-id">A4-4</span><span class="fx-ptask-name">重點整理</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ai">AI</b><span class="fx-handoff-label">交付</span>上架完成</div>
       </div>
     </div>
 
   </div>
 </section>
 
-<script>
-function toggleAcc(btn) {
-  const item = btn.closest('.acc-item');
-  const body = item.querySelector('.acc-body');
-  const chevron = btn.querySelector('.acc-chevron');
-  const isOpen = item.classList.contains('open');
-  item.classList.toggle('open', !isOpen);
-  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
-  chevron.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-}
-</script>
-
-<!-- SECTION 5: OUTPUTS -->
+<!-- SECTION 3: OUTPUTS -->
 <section id="outputs">
   <div class="section-header">
     <div>
-      <div class="section-label">輸出成果</div>
+      <div class="section-label">交付成果</div>
       <div class="section-title">最終交付項目</div>
     </div>
   </div>
-  <div class="outputs-row outputs-4">
-    <div class="output-card"><div class="output-icon">📊</div><div class="output-name">英文簡報</div></div>
-    <div class="output-card"><div class="output-icon">🎥</div><div class="output-name">英文影片檔</div></div>
-    <div class="output-card"><div class="output-icon">📄</div><div class="output-name">中文簡報</div></div>
-    <div class="output-card"><div class="output-icon">🎬</div><div class="output-name">剪輯後影片</div></div>
-    <div class="output-card"><div class="output-icon">💬</div><div class="output-name">中英文 VTT 字幕檔</div></div>
-    <div class="output-card"><div class="output-icon">📝</div><div class="output-name">逐字稿</div></div>
-    <div class="output-card"><div class="output-icon">📌</div><div class="output-name">重點整理</div></div>
-    <div class="output-card"><div class="output-icon">🌐</div><div class="output-name">WU 上架完成</div></div>
+  <div class="fx-outputs">
+    <div class="fx-output g2"><div class="fx-output-icon">📊</div><div class="fx-output-name">英文簡報</div><div class="fx-output-meta">Gate 2・Ken</div></div>
+    <div class="fx-output g2"><div class="fx-output-icon">🎥</div><div class="fx-output-name">英文影片檔</div><div class="fx-output-meta">Gate 2・Ken</div></div>
+    <div class="fx-output g3"><div class="fx-output-icon">📄</div><div class="fx-output-name">中文簡報</div><div class="fx-output-meta">Gate 3・AI</div></div>
+    <div class="fx-output g3"><div class="fx-output-icon">🎬</div><div class="fx-output-name">剪輯後影片</div><div class="fx-output-meta">Gate 3・AI</div></div>
+    <div class="fx-output g3"><div class="fx-output-icon">💬</div><div class="fx-output-name">中英文 VTT 字幕</div><div class="fx-output-meta">Gate 3・AI</div></div>
+    <div class="fx-output g4"><div class="fx-output-icon">📝</div><div class="fx-output-name">逐字稿</div><div class="fx-output-meta">Gate 4・Ellen</div></div>
+    <div class="fx-output g4"><div class="fx-output-icon">📌</div><div class="fx-output-name">重點整理</div><div class="fx-output-meta">Gate 4・Ellen</div></div>
+    <div class="fx-output g4"><div class="fx-output-icon">🌐</div><div class="fx-output-name">WU 上架完成</div><div class="fx-output-meta">Gate 4・Ken、Ellen</div></div>
   </div>
 </section>
 
