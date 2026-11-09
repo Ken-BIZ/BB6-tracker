@@ -800,6 +800,82 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
   .observer-banner { padding: 8px 20px; }
 }
 
+/* ── 專案概況：KR 視角 ─────────────────────────────── */
+.kr-card { margin-bottom: 20px; }
+.kr-tiles { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
+.kr-tile { min-width: 0; padding: 16px 18px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; }
+.kr-tile.warn { border-color: rgba(251,146,60,0.45); }
+.kr-tile-label { font-size: 13px; font-weight: 700; color: var(--grey-dark); }
+.kr-tile-val { margin: 8px 0 6px; font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--white); }
+.kr-tile-sub { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.45); }
+.kr-note { margin: 14px 0 6px; font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.7); }
+.kr-note b { color: var(--white); }
+.kr-good { font-weight: 700; color: #4ade80; }
+.kr-bad { font-weight: 700; color: #FB923C; }
+#kr-burnup-chart { margin-top: 8px; }
+.kr-legend { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 10px; font-size: 12px; color: rgba(255,255,255,0.55); }
+.kr-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.kr-key { display: inline-block; width: 18px; height: 0; border-top: 2px solid #FFEA41; }
+.kr-key.pace { border-top: 2px dashed rgba(255,255,255,0.45); }
+.kr-key.forecast { border-top: 2px dotted rgba(255,234,65,0.7); }
+.kr-key.target { border-top: 1px solid rgba(255,255,255,0.55); }
+.okr-status.none { color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.06); }
+.contrib-note { margin-top: 0; margin-bottom: 14px; }
+.contrib-list { display: flex; flex-direction: column; }
+.contrib-row { display: grid; grid-template-columns: minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.1fr); gap: 16px; align-items: center; padding: 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+.contrib-headrow { padding-top: 0; font-size: 12px; font-weight: 700; color: var(--grey-dark); }
+.contrib-row .forecast-mod.contrib-mod { margin: 0; }
+.contrib-pct { display: flex; align-items: center; gap: 10px; }
+.contrib-pct b { min-width: 38px; text-align: right; }
+.contrib-bar { flex: 1; height: 6px; background: rgba(255,255,255,0.07); border-radius: 3px; overflow: hidden; }
+.contrib-bar i { display: block; height: 100%; background: var(--yellow); border-radius: 3px; }
+.contrib-date, .contrib-remain { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.contrib-date small, .contrib-remain small { font-size: 11px; color: rgba(255,255,255,0.35); }
+.contrib-remain b { color: var(--yellow); }
+.contrib-muted { color: rgba(255,255,255,0.3); }
+.contrib-idle { padding: 12px 4px 0; font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.5); }
+.contrib-done { padding: 12px 4px 0; font-size: 13px; color: #4ade80; }
+.bn-wf { margin-bottom: 20px; }
+.bn-wf-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+.bn-wf-name { font-size: 15px; font-weight: 700; }
+.bn-wf-mods { font-size: 12px; color: var(--grey-dark); }
+.bn-owners { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.bn-owner { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-size: 13px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; }
+.bn-owner.top { border-color: rgba(251,146,60,0.5); }
+.bn-owner-sub { font-size: 12px; color: rgba(255,255,255,0.4); }
+.bn-top-tag { font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 999px; color: #FB923C; background: rgba(251,146,60,0.14); }
+.bn-gates { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; }
+.bn-gates.gates-4 { grid-template-columns: repeat(4, minmax(0,1fr)); }
+.bn-gate { min-width: 0; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.06); border-top: 3px solid; border-radius: 4px; }
+.bn-gate-name { margin-bottom: 10px; font-size: 12px; font-weight: 700; }
+.bn-task { margin-bottom: 12px; }
+.bn-task:last-child { margin-bottom: 0; }
+.bn-task-head { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.bn-task-name { flex: 1; min-width: 0; font-size: 13px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bn-bar { display: flex; gap: 2px; height: 8px; }
+.bn-seg { display: block; flex-basis: 0; min-width: 3px; border-radius: 2px; }
+.bn-seg.done, .bn-key.done { background: #4ade80; }
+.bn-seg.doing, .bn-key.doing { background: var(--yellow); }
+.bn-seg.ready, .bn-key.ready { background: #FB923C; }
+.bn-seg.waiting, .bn-key.waiting { background: rgba(255,255,255,0.1); }
+.bn-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; }
+.bn-task-nums { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 6px; font-size: 11px; color: rgba(255,255,255,0.4); }
+.bn-task-nums b { color: #FB923C; }
+@media (max-width: 1100px) {
+  .kr-tiles { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .bn-gates, .bn-gates.gates-4 { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 640px) {
+  .kr-tile-val { font-size: 24px; }
+  .contrib-headrow { display: none; }
+  .trend-select-row { flex-wrap: wrap; }
+  .trend-controls { flex-wrap: wrap; max-width: 100%; }
+  .trend-controls .section-select { max-width: 100%; }
+  .contrib-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 8px 12px; }
+  .contrib-row .contrib-mod { grid-column: 1 / -1; }
+  .bn-gates, .bn-gates.gates-4 { grid-template-columns: 1fr; }
+}
+
 /* ── WEEKLY OVERVIEW: ENLARGED TEXT ─────────────────────── */
 #page-weekly .section-label { font-size: 15px; }
 #page-weekly .section-title { font-size: 30px; }
@@ -1475,11 +1551,30 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
   </div>
 
   <section>
-    <div class="section-label">全體視角</div>
-    <div class="section-title">專案概況</div>
+    <div class="section-label">OKR 視角</div>
+    <div class="section-title" id="kr-panel-title">KR 達成追蹤</div>
 
-    <!-- ── 完工預測卡片 ── -->
-    <div class="forecast-row" id="forecast-cards"></div>
+    <!-- ── KR：速度指標＋燃起圖 ── -->
+    <div class="chart-card kr-card">
+      <div id="kr-tiles"></div>
+      <div id="kr-burnup-chart"></div>
+      <div class="kr-legend" id="kr-burnup-legend"></div>
+    </div>
+
+    <!-- ── 模組對 KR 的貢獻（依預計完工排序） ── -->
+    <div class="chart-card kr-card">
+      <div class="chart-card-title">模組對 KR 的貢獻</div>
+      <div class="chart-card-sub" id="contrib-sub">依預計完工日排序；預計完工沿用完工預測設定（起算日期＋任務時數）</div>
+      <div id="contrib-summary"></div>
+      <div id="forecast-cards"></div>
+    </div>
+
+    <!-- ── 關卡瓶頸 ── -->
+    <div class="chart-card kr-card">
+      <div class="chart-card-title">關卡瓶頸</div>
+      <div class="chart-card-sub">製作中模組（未完成，且已有進度或起算日期已到）各任務的小節數：可開始＝前置已完成、尚未動工</div>
+      <div id="bottleneck"></div>
+    </div>
 
     <!-- ── 圖表區 ── -->
     <div class="charts-stack">
@@ -1487,7 +1582,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
         <div class="trend-select-row">
           <div>
             <div class="chart-card-title">模組完成度趨勢</div>
-            <div class="chart-card-sub" id="module-trend-sub">選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成</div>
+            <div class="chart-card-sub" id="module-trend-sub">選擇整體專案或單一模組，查看即時總進度與週完成度增量，點擊長條可細看組成</div>
           </div>
           <div class="trend-controls">
             <div class="trend-tabs" id="trend-tabs">
@@ -1507,7 +1602,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </div>
       <div class="chart-card">
         <div class="chart-card-title">單日完成度增量</div>
-        <div class="chart-card-sub">選定模組每天新增的完成百分比，點擊長條可細看組成</div>
+        <div class="chart-card-sub">選定範圍（整體專案或單一模組）每天新增的完成百分比，點擊長條可細看組成</div>
         <div id="daily-chart-container"></div>
       </div>
     </div>
@@ -1663,7 +1758,7 @@ let currentSection = '1.1';
 let currentOvTab   = 'all';
 let allScores      = {};
 let moduleListeners = {};
-let trendModule    = 'C1';
+let trendModule    = '__project__';   // '__project__' = 整體專案 (KR)
 let trendTab       = 'single';
 
 function initScores() {
@@ -1732,8 +1827,10 @@ function applyScoreRows(mod, rows) {
     if (ovPage && ovPage.classList.contains('active')) renderOverview();
     const wkPage = document.getElementById('page-weekly');
     if (wkPage && wkPage.classList.contains('active')) {
+      renderKRPanel();
       renderForecastCards();
-      if (mod === trendModule) renderModuleProgress();
+      renderBottleneck();
+      if (mod === trendModule || trendModule === '__project__') renderModuleProgress();
       if (trendTab === 'all') renderAllModulesChart();
     }
     const okrPage = document.getElementById('page-okr');
@@ -1950,11 +2047,13 @@ function switchPage(page) {
   if (page === 'overview') {
     MODULES.forEach(function(m){ subscribeModule(m); });
     renderOverview();
+    loadOKR();
   }
   if (page === 'weekly') {
     MODULES.forEach(function(m){ subscribeModule(m); });
     loadBaseline();
     renderWeekly();
+    loadOKR();
   }
   if (page === 'okr') {
     MODULES.forEach(function(m){ subscribeModule(m); });
@@ -2286,12 +2385,27 @@ function renderOverview() {
         if (sectionPct(mod, sec) >= 100) doneSecsAll++;
       });
     });
-    // Year-end target: modules ticked 列入年底目標 in 完工預測設定
-    var year       = new Date().getFullYear();
-    var targetMods = MODULES.filter(function(mod){ return baseline.yearEndTargets.indexOf(mod) >= 0; });
-    var targetPcts = targetMods.map(modulePct);
-    var targetPct  = targetMods.length ? Math.round(targetPcts.reduce(function(a,b){ return a+b; },0) / targetMods.length) : 0;
-    var targetDone = targetPcts.filter(function(p){ return p >= 100; }).length;
+    var k = activeProjectKR();
+    var krHtml;
+    if (k) {
+      var elapsed = Math.max(0, Math.min(1, (new Date() - k.start) / (k.endEx - k.start)));
+      var pace    = k.target * elapsed;   // same rule as the OKR page
+      var exact   = projectPctExact();
+      var st      = exact >= k.target ? ['done','已達成'] : exact >= pace ? ['ok','進度正常'] : ['behind','落後時程'];
+      krHtml =
+        '<div class="ov-project-top">' +
+          '<div class="ov-project-label">'+k.label+' '+escHtml(k.kr.title)+'・目標 '+fmtNum(k.target)+'% <span class="okr-status '+st[0]+'">'+st[1]+'</span></div>' +
+          '<div class="ov-project-pct">'+projPct+'%</div>' +
+        '</div>' +
+        '<div class="okr-track"><div class="okr-fill '+st[0]+'" style="width:'+Math.min(exact,100)+'%"></div>' +
+          '<div class="okr-mark target" style="left:'+Math.min(k.target,100)+'%"></div>' +
+          '<div class="okr-mark pace" style="left:'+Math.min(pace,100)+'%"></div></div>' +
+        '<div class="ov-project-sub">'+escHtml(k.o.quarter)+'・截止 '+formatDay(k.o.end_date)+'・依時程今天應達 '+fmtNum(pace)+'%・還差 '+fmtNum(Math.max(0, k.target - exact))+' 個百分點</div>';
+    } else {
+      krHtml =
+        '<div class="ov-project-top"><div class="ov-project-label">本季 KR</div><div class="ov-project-pct">—</div></div>' +
+        '<div class="ov-project-sub">'+(okr.loaded ? '本季 OKR 尚未設定以整體專案完成度計算的 KR（由 Daniel 在 OKR 頁設定）' : '載入中…')+'</div>';
+    }
 
     projectEl.innerHTML =
       '<div class="ov-project-card">' +
@@ -2302,17 +2416,7 @@ function renderOverview() {
         '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+projPct+'%"></div></div>' +
         '<div class="ov-project-sub">已完成 '+doneMods+' / '+MODULES.length+' 個模組・'+doneSecsAll+' / '+totalSecs+' 小節</div>' +
       '</div>' +
-      '<div class="ov-project-card">' +
-        '<div class="ov-project-top">' +
-          '<div class="ov-project-label">'+year+' 年底目標完成度</div>' +
-          '<div class="ov-project-pct">'+(targetMods.length ? targetPct+'%' : '—')+'</div>' +
-        '</div>' +
-        '<div class="ov-project-track"><div class="ov-project-fill" style="width:'+targetPct+'%"></div></div>' +
-        '<div class="ov-project-sub">' + (targetMods.length
-          ? '目標模組：'+targetMods.join('、')+'・已完成 '+targetDone+' / '+targetMods.length+' 個模組'
-          : '尚未選擇目標模組（請在專案概況的完工預測設定勾選「列入年底目標」）') +
-        '</div>' +
-      '</div>';
+      '<div class="ov-project-card">' + krHtml + '</div>';
   }
 
   const cardsEl = document.getElementById('ov-module-cards');
@@ -2450,6 +2554,7 @@ function loadOKR() {
     okr.loaded = true; okr.error = null;
     if (okrQuarters().indexOf(okr.quarter) < 0) okr.quarter = defaultOKRQuarter();
     renderOKR();
+    renderKRViews();
   });
 }
 
@@ -2762,7 +2867,7 @@ var baseline = {
   videoSections: {},   // mod → number of sections (default 20)
   moduleNames:   {},   // mod → display name shown on 進度填報
   moduleWorkflow: {},  // mod → key of WORKFLOWS (unset → see getWorkflowKey)
-  yearEndTargets: [],  // modules counted in 年底目標完成度
+  yearEndTargets: [],  // legacy 年底目標 list; no longer shown (KR on the OKR page replaced it), kept as saved
   hoursPerWeek: 30
 };
 
@@ -2784,7 +2889,9 @@ function loadBaseline() {
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {
     applyBaselineRow(res.data);
     renderBaselineForm();
+    renderKRPanel();
     renderForecastCards();
+    renderBottleneck();
   });
 }
 
@@ -2845,10 +2952,6 @@ function saveBaseline() {
     var el = document.getElementById('bh-'+t.id.replace('-','_'));
     if (el) baseline.taskHours[t.id] = parseFloat(el.value) || 0;
   });
-  baseline.yearEndTargets = MODULES.filter(function(mod) {
-    var el = document.getElementById('by-'+mod);
-    return el ? el.checked : baseline.yearEndTargets.indexOf(mod) >= 0;
-  });
   MODULES.forEach(function(mod) {
     var dateEl = document.getElementById('bs-'+mod);
     var vEl    = document.getElementById('bv-'+mod);
@@ -2871,7 +2974,7 @@ function saveBaseline() {
   }).then(function(res) {
     if (res.error) { showToast('儲存失敗'); }
     else {
-      showToast('設定已儲存 ✓'); dropTrimmedSections(); renderForecastCards(); renderOverview();
+      showToast('設定已儲存 ✓'); dropTrimmedSections(); renderKRPanel(); renderForecastCards(); renderBottleneck(); renderOverview();
       renderModuleProgress(); if (trendTab === 'all') renderAllModulesChart();
     }
   });
@@ -2935,10 +3038,6 @@ function renderBaselineForm() {
           '<span class="baseline-row-label">小節數</span>' +
           '<input class="baseline-input" type="number" min="0" step="1" id="bv-'+mod+'" value="'+vVal+'" placeholder="0">' +
           '<span class="baseline-unit">小節</span>' +
-        '</div>' +
-        '<div class="baseline-row">' +
-          '<span class="baseline-row-label">列入年底目標</span>' +
-          '<input class="baseline-check" type="checkbox" id="by-'+mod+'"'+(baseline.yearEndTargets.indexOf(mod) >= 0 ? ' checked' : '')+'>' +
         '</div>' +
         '<div class="baseline-row">' +
           '<span class="baseline-row-label">預計完工</span>' +
@@ -3121,40 +3220,378 @@ function modulesByForecast() {
   return keyed.map(function(k){ return k.mod; });
 }
 
+/* ═══════════════════════════════════════════════════════════
+   KR 視角（專案概況）
+   以本季 OKR 中「自動：整體專案完成度」的 KR 為準（目標、期間都從 OKR 頁讀取）
+═══════════════════════════════════════════════════════════ */
+var WEEK_MS = 7 * 24 * 60 * 60 * 1000;
+
+// The running quarter's KR measured by 整體專案完成度, with its objective
+function activeProjectKR() {
+  if (!okr.loaded) return null;
+  var q = defaultOKRQuarter();
+  var objs = okr.objectives.filter(function(o){ return o.quarter === q; });
+  for (var i = 0; i < objs.length; i++) {
+    var krs = okr.krs.filter(function(k){ return k.objective_id === objs[i].id; });
+    for (var j = 0; j < krs.length; j++) {
+      if (krs[j].metric === 'project_completion') {
+        var start = parseDay(objs[i].start_date), endEx = parseDay(objs[i].end_date);
+        endEx.setDate(endEx.getDate() + 1);
+        return { o: objs[i], kr: krs[j], label: 'KR' + (j + 1), target: parseFloat(krs[j].target) || 0, start: start, endEx: endEx };
+      }
+    }
+  }
+  return null;
+}
+
+// Module completion from a { sec: { taskId: score } } map — same rounding as modulePct
+function modulePctFrom(mod, secScores) {
+  var secs = getSections(mod);
+  if (!secs.length) return 0;
+  var sum = 0;
+  secs.forEach(function(sec) {
+    var active = getActiveTasks(sec, mod);
+    if (!active.length) return;
+    var s = secScores[sec] || {};
+    sum += Math.round(active.reduce(function(a,t){ return a + (s[t.id] || 0); }, 0) / (active.length * 10) * 100);
+  });
+  return Math.round(sum / secs.length);
+}
+function avg1(arr) { return arr.length ? Math.round(arr.reduce(function(a,b){ return a+b; }, 0) / arr.length * 10) / 10 : 0; }
+
+// 整體專案完成度 with one decimal (projectPct() rounds to an integer)
+function projectPctExact() { return avg1(MODULES.map(modulePct)); }
+
+var sortedLogCache = { src: null, list: [] };
+function sortedLog(logData) {
+  if (sortedLogCache.src !== logData) {
+    sortedLogCache.src  = logData;
+    sortedLogCache.list = (logData || []).map(function(e){ return { mod: e.mod, sec: e.sec, taskId: e.taskId, score: parseInt(e.score) || 0, t: new Date(e.ts) }; })
+      .sort(function(a,b){ return a.t - b.t; });
+  }
+  return sortedLogCache.list;
+}
+
+// Replays the log and returns, for each time (ascending), every module's completion and the project average
+function replayProject(logData, times) {
+  var entries = sortedLog(logData);
+  var state = {};
+  MODULES.forEach(function(mod){ state[mod] = {}; });
+  var idx = 0;
+  return times.map(function(time) {
+    while (idx < entries.length && entries[idx].t <= time) {
+      var e = entries[idx++];
+      if (!state[e.mod]) continue;
+      if (!state[e.mod][e.sec]) state[e.mod][e.sec] = {};
+      state[e.mod][e.sec][e.taskId] = e.score;
+    }
+    var mods = {};
+    MODULES.forEach(function(mod){ mods[mod] = modulePctFrom(mod, state[mod]); });
+    return { t: time, mods: mods, project: avg1(MODULES.map(function(m){ return mods[m]; })) };
+  });
+}
+
+function mdLabel(d) { return (d.getMonth()+1) + '/' + d.getDate(); }
+function signed(n) { return (n > 0 ? '+' : '') + fmtNum(n); }
+
+// Pace / forecast numbers for the KR; null when there is no KR or no log yet
+function computeKRStats(logData) {
+  var k = activeProjectKR();
+  if (!k || !logData) return null;
+  var now  = new Date();
+  var cur  = projectPctExact();
+  var lastCut = getWeekCutoff(now);
+  var snaps = replayProject(logData, [k.start, new Date(lastCut.getTime() - 4 * WEEK_MS), lastCut]);
+  var startVal  = snaps[0].project;
+  var rate      = Math.max(0, (snaps[2].project - snaps[1].project) / 4);
+  var weeksLeft = Math.max(0, (k.endEx - now) / WEEK_MS);
+  var elapsed   = Math.max(0, Math.min(1, (now - k.start) / (k.endEx - k.start)));
+  var gap       = Math.max(0, k.target - cur);
+  return {
+    k: k, now: now, cur: cur, startVal: startVal, rate: rate, weeksLeft: weeksLeft, elapsed: elapsed, gap: gap,
+    required:  weeksLeft > 0 ? gap / weeksLeft : null,
+    projected: Math.min(100, cur + rate * weeksLeft),
+    paceNow:   startVal + (k.target - startVal) * elapsed,
+    modulesEq: gap / (100 / MODULES.length)
+  };
+}
+var krStats = null;
+
+function renderKRPanel() {
+  var tiles = document.getElementById('kr-tiles');
+  if (!tiles) return;
+  var title = document.getElementById('kr-panel-title');
+  var legend = document.getElementById('kr-burnup-legend');
+  var root  = getReactRoot('kr-burnup-chart');
+  var k = activeProjectKR();
+  if (!okr.loaded || !lastLogData) {
+    tiles.innerHTML = '<div class="chart-empty">載入中…</div>';
+    return;
+  }
+  if (!k) {
+    krStats = null;
+    if (title) title.textContent = 'KR 達成追蹤';
+    tiles.innerHTML = '<div class="okr-empty">本季 OKR 尚未設定以「自動：整體專案完成度」計算的 KR（由 Daniel 在 OKR 頁設定）</div>';
+    if (legend) legend.innerHTML = '';
+    if (root) root.render(null);
+    return;
+  }
+  var s = krStats = computeKRStats(lastLogData);
+  if (title) title.textContent = s.k.label + ' ' + s.k.kr.title + '・' + quarterDeadlineText(s.k);
+  var reach   = s.cur >= s.k.target;
+  var onTrack = reach || s.projected >= s.k.target;
+  var status  = reach ? ['done', '已達成'] : onTrack ? ['ok', '預計達標'] : ['behind', '預計未達標'];
+  var paceOk  = s.cur >= s.paceNow;
+  tiles.innerHTML =
+    '<div class="kr-tiles">' +
+      krTile('目前完成度', fmtNum(s.cur) + '%', '目標 ' + fmtNum(s.k.target) + '%・還差 ' + fmtNum(s.gap) + ' 個百分點') +
+      krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 ' + fmtNum(s.weeksLeft) + ' 週才能達到 ' + fmtNum(s.k.target) + '%') +
+      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '') +
+      krTile('照目前速度 ' + formatDay(s.k.o.end_date).slice(5) + ' 預計', fmtNum(s.projected) + '%', '<span class="okr-status ' + status[0] + '">' + status[1] + '</span>') +
+    '</div>' +
+    '<div class="kr-note">' +
+      (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點，約等於再完成 <b>' + fmtNum(s.modulesEq) + '</b> 個完整模組（每個模組佔整體 ' + fmtNum(100 / MODULES.length) + '%）。' : '已達到 KR 目標。') +
+      ' 依時程今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '% 直線拉到 ' + fmtNum(s.k.target) + '%），目前' + (paceOk ? '<span class="kr-good">超前</span>' : '<span class="kr-bad">落後</span>') + ' ' + fmtNum(Math.abs(s.cur - s.paceNow)) + ' 個百分點。' +
+    '</div>';
+  renderKRBurnup(s);
+  if (legend) legend.innerHTML =
+    '<span><i class="kr-key actual"></i>實際（每週三 18:30）</span>' +
+    '<span><i class="kr-key pace"></i>應達線</span>' +
+    '<span><i class="kr-key forecast"></i>預測（近 4 週速度）</span>' +
+    '<span><i class="kr-key target"></i>目標 ' + fmtNum(s.k.target) + '%</span>';
+}
+function quarterDeadlineText(k) { return k.o.quarter + ' 目標 ' + fmtNum(k.target) + '%'; }
+function krTile(label, value, sub, cls) {
+  return '<div class="kr-tile' + (cls ? ' ' + cls : '') + '"><div class="kr-tile-label">' + label + '</div><div class="kr-tile-val">' + value + '</div><div class="kr-tile-sub">' + sub + '</div></div>';
+}
+
+function renderKRBurnup(s) {
+  var root = getReactRoot('kr-burnup-chart');
+  if (!root) return;
+  var k = s.k, now = s.now;
+  var endLast = new Date(k.endEx.getTime() - 1);
+  // Checkpoints: quarter start, every Wednesday cutoff, today, quarter end
+  var pts = [{ t: k.start, label: mdLabel(k.start) }];
+  var c = getWeekCutoff(k.start);
+  if (c <= k.start) c = new Date(c.getTime() + WEEK_MS);
+  for (; c < endLast; c = new Date(c.getTime() + WEEK_MS)) pts.push({ t: c, label: mdLabel(c) });
+  pts.push({ t: endLast, label: mdLabel(endLast) });
+  if (now > k.start && now < endLast) pts.push({ t: now, label: '今天', isNow: true });
+  pts.sort(function(a,b){ return a.t - b.t; });
+  var past = pts.filter(function(p){ return p.t <= now && !p.isNow; });
+  var replay = replayProject(lastLogData, past.map(function(p){ return p.t; }));
+  past.forEach(function(p, i){ p.actual = replay[i].project; });
+  var data = pts.map(function(p) {
+    var frac = (p.t - k.start) / (k.endEx - k.start);
+    var row = { label: p.label, pace: Math.round((s.startVal + (k.target - s.startVal) * frac) * 10) / 10 };
+    if (p.isNow) { row.actual = s.cur; row.forecast = s.cur; }
+    else if (p.t <= now) row.actual = p.actual;
+    else row.forecast = Math.round(Math.min(100, s.cur + s.rate * (p.t - now) / WEEK_MS) * 10) / 10;
+    if (now >= endLast && p.t === endLast) row.actual = s.cur;
+    return row;
+  });
+  var names = { actual: '實際', pace: '應達', forecast: '預測' };
+  root.render(
+    h(Recharts.ResponsiveContainer, { width: '100%', height: 280 },
+      h(Recharts.LineChart, { data: data, margin: { top: 20, right: 24, left: 0, bottom: 0 } },
+        h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
+        h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false, interval: 'preserveStartEnd' }),
+        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%', domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100] }),
+        h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v, n){ return [v + '%', names[n] || n]; } }),
+        h(Recharts.ReferenceLine, { y: k.target, stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1, label: { value: '目標 ' + fmtNum(k.target) + '%', position: 'insideTopRight', fill: 'rgba(255,255,255,0.6)', fontSize: 11 } }),
+        h(Recharts.ReferenceLine, { x: '今天', stroke: 'rgba(255,255,255,0.2)', strokeDasharray: '2 3' }),
+        h(Recharts.Line, { dataKey: 'pace', stroke: 'rgba(255,255,255,0.45)', strokeWidth: 2, strokeDasharray: '6 4', dot: false, isAnimationActive: false }),
+        h(Recharts.Line, { dataKey: 'forecast', stroke: '#FFEA41', strokeOpacity: 0.7, strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }),
+        h(Recharts.Line, { dataKey: 'actual', stroke: '#FFEA41', strokeWidth: 2, dot: { r: 4, fill: '#FFEA41', stroke: '#16181b', strokeWidth: 2 }, activeDot: { r: 5 }, connectNulls: true, isAnimationActive: false })
+      )
+    )
+  );
+}
+
+/* ── 關卡瓶頸：製作中模組各任務的小節狀態 ── */
+function bottleneckModules() {
+  var today = calKey(new Date());
+  return MODULES.filter(function(mod) {
+    var pct = modulePct(mod);
+    if (pct >= 100) return false;
+    var start = baseline.moduleStart[mod];
+    return pct > 0 || (start && start.replace(/-/g,'') <= today);
+  });
+}
+function renderBottleneck() {
+  var el = document.getElementById('bottleneck');
+  if (!el) return;
+  var mods = bottleneckModules();
+  if (!mods.length) { el.innerHTML = '<div class="okr-empty">目前沒有製作中的模組</div>'; return; }
+  var html = '';
+  Object.keys(WORKFLOWS).forEach(function(key) {
+    var wfMods = mods.filter(function(m){ return getWorkflowKey(m) === key; });
+    if (!wfMods.length) return;
+    var wf = WORKFLOWS[key];
+    var byOwner = {};
+    var rows = wf.tasks.map(function(t) {
+      var c = { done: 0, doing: 0, ready: 0, waiting: 0, total: 0 };
+      wfMods.forEach(function(mod) {
+        getSections(mod).forEach(function(sec) {
+          if (getActiveTasks(sec, mod).indexOf(t) < 0) return;
+          var sc = getScore(t.id, mod, sec);
+          c.total++;
+          if (sc >= 10) c.done++;
+          else if (sc > 0) c.doing++;
+          else if (isPrereqMet(t.id, mod, sec)) c.ready++;
+          else c.waiting++;
+        });
+      });
+      t.owners.forEach(function(o) {
+        byOwner[o] = byOwner[o] || { ready: 0, doing: 0 };
+        byOwner[o].ready += c.ready; byOwner[o].doing += c.doing;
+      });
+      return { t: t, c: c };
+    });
+    var owners = TASK_OWNERS.filter(function(o){ return byOwner[o]; });
+    var top = owners.slice().sort(function(a,b){ return (byOwner[b].ready + byOwner[b].doing) - (byOwner[a].ready + byOwner[a].doing); })[0];
+    html += '<div class="bn-wf">' +
+      '<div class="bn-wf-head"><span class="bn-wf-name">' + wf.name + '</span><span class="bn-wf-mods">' + wfMods.join('、') + '</span></div>' +
+      '<div class="bn-owners">' + owners.map(function(o) {
+        var b = byOwner[o], load = b.ready + b.doing;
+        return '<div class="bn-owner' + (o === top && load > 0 ? ' top' : '') + '"><span class="owner-chip ' + CHIP_CLASS[o] + '">' + o + '</span>' +
+          '<span>待處理 <b>' + load + '</b></span><span class="bn-owner-sub">可開始 ' + b.ready + '・進行中 ' + b.doing + '</span>' +
+          (o === top && load > 0 ? '<span class="bn-top-tag">最多</span>' : '') + '</div>';
+      }).join('') + '</div>' +
+      '<div class="bn-gates gates-' + wf.gates.length + '">' + wf.gates.map(function(g) {
+        var gRows = rows.filter(function(r){ return r.t.gate === g.num; });
+        return '<div class="bn-gate" style="border-top-color:' + GATE_COLORS[g.num] + '">' +
+          '<div class="bn-gate-name" style="color:' + GATE_COLORS[g.num] + '">Gate ' + g.num + '・' + g.name + '</div>' +
+          gRows.map(function(r) {
+            var c = r.c, tot = c.total || 1;
+            function seg(cls, n){ return n ? '<i class="bn-seg ' + cls + '" style="flex-grow:' + n + '"></i>' : ''; }
+            return '<div class="bn-task">' +
+              '<div class="bn-task-head"><span class="bn-task-name" title="' + escHtml(r.t.name) + '">' + escHtml(r.t.name) + '</span>' +
+                r.t.owners.map(function(o){ return '<span class="owner-chip ' + CHIP_CLASS[o] + '">' + o + '</span>'; }).join('') + '</div>' +
+              '<div class="bn-bar">' + seg('done', c.done) + seg('doing', c.doing) + seg('ready', c.ready) + seg('waiting', c.waiting) + (c.total ? '' : '<i class="bn-seg waiting" style="flex-grow:1"></i>') + '</div>' +
+              '<div class="bn-task-nums"><span><b>' + c.ready + '</b> 可開始</span><span>' + c.doing + ' 進行中</span><span>' + c.waiting + ' 等待前置</span><span>' + c.done + '/' + c.total + ' 完成</span></div>' +
+            '</div>';
+          }).join('') +
+        '</div>';
+      }).join('') + '</div>' +
+    '</div>';
+  });
+  el.innerHTML = html +
+    '<div class="kr-legend"><span><i class="bn-key done"></i>已完成</span><span><i class="bn-key doing"></i>進行中</span><span><i class="bn-key ready"></i>可開始</span><span><i class="bn-key waiting"></i>等待前置</span></div>';
+}
+
+// Re-render everything on 專案概況 / 整體專案進度 that depends on the KR
+function renderKRViews() {
+  var wk = document.getElementById('page-weekly');
+  if (wk && wk.classList.contains('active')) {
+    renderKRPanel(); renderForecastCards();
+    if (trendModule === '__project__' && lastLogData) renderWeeklyChart(lastLogData);
+    if (trendTab === 'all') renderAllModulesChart();
+  }
+  var ov = document.getElementById('page-overview');
+  if (ov && ov.classList.contains('active')) renderOverview();
+}
+
+// 模組對 KR 的貢獻：each module's remaining share of 整體專案完成度 and whether
+// its forecast completion falls before the KR deadline
 function renderForecastCards() {
   var container = document.getElementById('forecast-cards');
   if (!container) return;
-
-  container.innerHTML = modulesByForecast().map(function(mod) {
+  var summary = document.getElementById('contrib-summary');
+  var k = activeProjectKR();
+  var N = MODULES.length;
+  var share = 100 / N;
+  var today = new Date(); today.setHours(0, 0, 0, 0);
+  var rows = modulesByForecast().map(function(mod) {
     var f = computeModuleForecast(mod);
-    var dateStr, weeksStr, dateClass;
+    var state = f.currentPct >= 100 ? 'done' : !f.completionDate ? 'unknown' : (k && f.completionDate >= k.endEx) ? 'late' : f.completionDate < today ? 'overdue' : 'ontime';
+    return { mod: mod, f: f, state: state, remain: (100 - f.currentPct) / N };
+  });
+  // Not started and no forecast yet: folded into one line instead of a row each
+  var idle = rows.filter(function(r){ return r.state === 'unknown' && r.f.currentPct === 0; });
+  var open = rows.filter(function(r){ return r.state !== 'done' && idle.indexOf(r) < 0; });
+  var done = rows.filter(function(r){ return r.state === 'done'; });
 
-    if (f.currentPct >= 100) {
-      dateStr  = '已完成 🎉';
-      weeksStr = '';
-      dateClass = 'done';
-    } else if (!f.completionDate) {
-      dateStr  = f.reason || '資料不足';
-      weeksStr = '';
-      dateClass = 'unknown';
+  if (summary) {
+    if (k) {
+      // Past-due modules are still counted as finishing before the deadline, but called out
+      var reachable = rows.reduce(function(s, r){ return s + (['done','ontime','overdue'].indexOf(r.state) >= 0 ? 100 : r.f.currentPct); }, 0) / N;
+      var ontime  = rows.filter(function(r){ return r.state === 'ontime' || r.state === 'overdue'; });
+      var overdue = rows.filter(function(r){ return r.state === 'overdue'; });
+      var short  = k.target - reachable;
+      summary.innerHTML = '<div class="kr-note contrib-note">預計 ' + formatDay(k.o.end_date) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
+        (ontime.length ? '（' + ontime.map(function(r){ return r.mod; }).join('、') + '）' : '') +
+        '，加上已完成的模組，整體可達 <b>' + fmtNum(reachable) + '%</b>' +
+        (short > 0 ? '，距 ' + k.label + ' 目標 ' + fmtNum(k.target) + '% 仍差 <span class="kr-bad">' + fmtNum(short) + '</span> 個百分點（約 ' + fmtNum(short / share) + ' 個模組）。'
+                   : '，<span class="kr-good">可達成 ' + k.label + ' 目標 ' + fmtNum(k.target) + '%</span>。') +
+        (overdue.length ? '<br>其中 ' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成，建議更新起算日期或任務時數。' : '') +
+        '</div>';
     } else {
-      dateStr  = f.completionDate.getFullYear() + '/' + formatDate(f.completionDate);
-      weeksStr = '共 '+f.weeksTotal+' 週・'+f.totalHours+' 小時' + (f.missingCalendar ? '・部分日期未扣國定假日' : '');
-      dateClass = '';
+      summary.innerHTML = '';
     }
+  }
 
-    return '<div class="forecast-card">' +
-      '<div class="forecast-mod">'+moduleBadge(mod)+'</div>' +
-      '<div class="forecast-date '+dateClass+'">'+dateStr+'</div>' +
-      '<div class="forecast-weeks">'+weeksStr+'</div>' +
-      '<div class="forecast-detail-row"><span>目前完成度</span><span>'+f.currentPct+'%</span></div>' +
-      (f.sectionCount !== undefined ? '<div class="forecast-detail-row"><span>小節數</span><span>'+f.sectionCount+' 小節</span></div>' : '') +
-      (f.completionDate && baseline.moduleStart[mod] ?
-        '<div class="forecast-detail-row"><span>起算日期</span><span>'+baseline.moduleStart[mod]+'</span></div>' : '') +
-      '<div class="forecast-bar-wrap"><div class="forecast-bar" style="width:'+f.currentPct+'%"></div></div>' +
-    '</div>';
-  }).join('');
+  var pills = { ontime: ['ok', 'KR 期限前完成'], overdue: ['behind', '已逾預計完工'], late: ['behind', '超過 KR 期限'], unknown: ['none', '未設定預測'] };
+  container.innerHTML = '<div class="contrib-list">' +
+    '<div class="contrib-row contrib-headrow"><span>模組</span><span>目前完成度</span><span>預計完工</span><span>剩餘可貢獻</span><span>' + (k ? formatDay(k.o.end_date) + ' 前' : '') + '</span></div>' +
+    open.map(function(r) {
+      var f = r.f, dateHtml;
+      if (f.completionDate) {
+        dateHtml = '<b>' + f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) + '</b><small>共 ' + f.weeksTotal + ' 週・' + f.totalHours + ' 小時' + (f.missingCalendar ? '・部分日期未扣國定假日' : '') + '</small>';
+      } else {
+        dateHtml = '<span class="contrib-muted">' + (f.reason || '資料不足') + '</span>';
+      }
+      var pill = pills[r.state];
+      return '<div class="contrib-row">' +
+        '<span class="forecast-mod contrib-mod">' + moduleBadge(r.mod) + '</span>' +
+        '<span class="contrib-pct"><span class="contrib-bar"><i style="width:' + f.currentPct + '%"></i></span><b>' + f.currentPct + '%</b></span>' +
+        '<span class="contrib-date">' + dateHtml + '</span>' +
+        '<span class="contrib-remain"><b>+' + fmtNum(r.remain) + '%</b><small>最多 ' + fmtNum(share) + '%</small></span>' +
+        '<span>' + (k ? '<span class="okr-status ' + pill[0] + '">' + pill[1] + '</span>' : '') + '</span>' +
+      '</div>';
+    }).join('') +
+    (idle.length ? '<div class="contrib-idle">尚未開始、未設定預測 ' + idle.length + ' 個模組：' + idle.map(function(r){ return r.mod; }).join('、') + '（各可貢獻 ' + fmtNum(share) + '%，合計 ' + fmtNum(idle.length * share) + '%）</div>' : '') +
+    (done.length ? '<div class="contrib-done">已完成 ' + done.length + ' 個模組：' + done.map(function(r){ return r.mod; }).join('、') + '（已貢獻 ' + fmtNum(done.length * share) + '%）</div>' : '') +
+  '</div>';
 }
+
+/* ── 整體專案（KR）的週／日增量與組成 ── */
+function computeProjectWeeklyDeltas(logData) {
+  var entries = sortedLog(logData);
+  if (!entries.length) return [];
+  var cuts = [];
+  for (var c = getWeekCutoff(entries[0].t), max = getWeekCutoff(new Date()); c <= max; c = new Date(c.getTime() + WEEK_MS)) cuts.push(c);
+  var snaps = replayProject(logData, cuts);
+  return snaps.map(function(s, i) {
+    var prev = i === 0 ? 0 : snaps[i - 1].project;
+    return { label: getWeekLabel(s.t), delta: Math.max(0, Math.round((s.project - prev) * 10) / 10), cutoff: s.t, prevCutoff: i === 0 ? null : snaps[i - 1].t };
+  });
+}
+function computeProjectDailyDeltas(logData) {
+  var entries = sortedLog(logData);
+  var days = [], lastKey = '';
+  entries.forEach(function(e) {
+    var key = calKey(e.t);
+    if (key !== lastKey) { days.push(new Date(e.t.getFullYear(), e.t.getMonth(), e.t.getDate(), 23, 59, 59, 999)); lastKey = key; }
+  });
+  var snaps = replayProject(logData, days);
+  return snaps.map(function(s, i) {
+    var prev = i === 0 ? 0 : snaps[i - 1].project;
+    return { label: formatDateLabel(s.t), delta: Math.max(0, Math.round((s.project - prev) * 10) / 10), date: s.t };
+  });
+}
+// Per-module contribution to the project between two times (for the drilldown)
+function computeProjectComposition(logData, rangeStart, rangeEnd) {
+  var times = [rangeStart || new Date(0), rangeEnd];
+  var snaps = replayProject(logData, times);
+  var N = MODULES.length;
+  return MODULES.map(function(mod) {
+    var from = rangeStart ? snaps[0].mods[mod] : 0, to = snaps[1].mods[mod];
+    var name = (baseline.moduleNames[mod] || '').trim();
+    return { sec: mod, name: name && name !== mod ? escHtml(name) : '模組完成度', owners: [], scoreText: from + '% → ' + to + '%', delta: to - from, contribution: Math.round((to - from) / N * 10) / 10 };
+  }).filter(function(it){ return it.delta !== 0; }).sort(function(a, b){ return b.delta - a.delta; });
+}
+function trendScopeLabel() { return trendModule === '__project__' ? '整體專案' : trendModule; }
 
 /* ═══════════════════════════════════════════════════════════
    WEEKLY TREND CHART — 3 lines (one per module)
@@ -3214,16 +3651,18 @@ var CHART_AXIS_TICK      = { fill:'rgba(255,255,255,0.4)', fontSize:11 };
 function renderModuleTrendSelect() {
   var sel = document.getElementById('module-trend-select');
   if (!sel) return;
-  sel.innerHTML = modulesByForecast().map(function(m){
-    return '<option value="'+m+'"'+(m===trendModule?' selected':'')+'>'+m+'</option>';
-  }).join('');
+  sel.innerHTML = '<option value="__project__"'+(trendModule==='__project__'?' selected':'')+'>整體專案（KR）</option>' +
+    modulesByForecast().map(function(m){
+      return '<option value="'+m+'"'+(m===trendModule?' selected':'')+'>'+m+'</option>';
+    }).join('');
 }
 
 function renderModuleProgress() {
   var root = getReactRoot('module-progress-ring');
   if (!root) return;
-  var pct  = modulePct(trendModule);
-  var data = [{ name: trendModule, value: pct, fill: 'var(--yellow)' }];
+  var isProject = trendModule === '__project__';
+  var pct  = isProject ? projectPct() : modulePct(trendModule);
+  var data = [{ name: trendScopeLabel(), value: pct, fill: 'var(--yellow)' }];
   root.render(
     h('div', { className: 'module-progress-ring' },
       h(Recharts.ResponsiveContainer, { width: 180, height: 180 },
@@ -3237,7 +3676,7 @@ function renderModuleProgress() {
       ),
       h('div', { className: 'module-progress-ring-label' },
         h('div', { className: 'module-progress-ring-pct' }, pct + '%'),
-        h('div', { className: 'module-progress-ring-sub' }, trendModule + ' 即時總進度')
+        h('div', { className: 'module-progress-ring-sub' }, trendScopeLabel() + ' 即時總進度')
       )
     )
   );
@@ -3271,6 +3710,7 @@ function renderAllModulesChart() {
   var root = getReactRoot('all-modules-chart-container');
   if (!root) return;
   var data = computeAllModulesData();
+  var k    = activeProjectKR();
   root.render(
     h(Recharts.ResponsiveContainer, { width: '100%', height: 260 },
       h(Recharts.BarChart, { data: data, margin: { top: 20, right: 10, left: 0, bottom: 0 } },
@@ -3278,7 +3718,8 @@ function renderAllModulesChart() {
         h(Recharts.XAxis, { dataKey: 'mod', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
         h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%', domain: [0, 100] }),
         h(Recharts.Tooltip, { content: AllModulesTooltip, cursor: { fill: 'rgba(255,255,255,0.04)' } }),
-        h(Recharts.Bar, { dataKey: 'pct', fill: 'var(--yellow)', radius: [4, 4, 0, 0] })
+        h(Recharts.Bar, { dataKey: 'pct', fill: 'var(--yellow)', radius: [4, 4, 0, 0] }),
+        k ? h(Recharts.ReferenceLine, { y: k.target, stroke: 'rgba(255,255,255,0.55)', strokeDasharray: '6 4', label: { value: k.label + ' 目標 ' + fmtNum(k.target) + '%（整體平均）', position: 'insideTopRight', fill: 'rgba(255,255,255,0.6)', fontSize: 11 } }) : null
       )
     )
   );
@@ -3297,13 +3738,13 @@ function switchTrendTab(tab) {
     if (singleEl) singleEl.style.display = 'none';
     if (allEl) allEl.style.display = '';
     if (select) select.style.display = 'none';
-    if (sub) sub.textContent = '各模組目前總完成度，滑鼠移至長條上可查看各 Gate 的完成百分比';
+    if (sub) sub.textContent = '各模組目前總完成度，虛線為 KR 目標（整體平均），滑鼠移至長條上可查看各 Gate 的完成百分比';
     renderAllModulesChart();
   } else {
     if (singleEl) singleEl.style.display = '';
     if (allEl) allEl.style.display = 'none';
     if (select) select.style.display = '';
-    if (sub) sub.textContent = '選擇模組查看即時總進度與週完成度增量，點擊長條可細看組成';
+    if (sub) sub.textContent = '選擇整體專案或單一模組，查看即時總進度與週完成度增量，點擊長條可細看組成';
   }
 }
 
@@ -3319,26 +3760,33 @@ function computeModuleWeeklyDeltas(logData, mod) {
 function handleWeeklyBarClick(barData) {
   var d = barData && barData.payload;
   if (!d) return;
-  var items = computeCompositionForRange(lastLogData, trendModule, d.prevCutoff, d.cutoff);
-  openTrendDrilldown(trendModule + ' · ' + d.label + ' 週完成度組成', '該週新增 ' + d.delta + '%', items);
+  var items = trendModule === '__project__'
+    ? computeProjectComposition(lastLogData, d.prevCutoff, d.cutoff)
+    : computeCompositionForRange(lastLogData, trendModule, d.prevCutoff, d.cutoff);
+  openTrendDrilldown(trendScopeLabel() + ' · ' + d.label + ' 週完成度組成', '該週新增 ' + d.delta + '%' + (trendModule === '__project__' ? '（依模組拆解）' : ''), items);
 }
 
 function renderWeeklyChart(logData) {
   var root = getReactRoot('weekly-chart-container');
   if (!root) return;
-  var data = computeModuleWeeklyDeltas(logData, trendModule);
+  var isProject = trendModule === '__project__';
+  var data = isProject ? computeProjectWeeklyDeltas(logData) : computeModuleWeeklyDeltas(logData, trendModule);
   if (data.length < 1) {
     root.render(h('div', { className: 'chart-empty' }, '資料累積中，尚無完整一週紀錄'));
     return;
   }
+  // 整體專案: dashed line at the weekly pace the KR still needs
+  var need = isProject && krStats && krStats.required !== null && krStats.gap > 0 ? Math.round(krStats.required * 10) / 10 : null;
+  var maxDelta = data.reduce(function(m, d){ return Math.max(m, d.delta); }, 0);
   root.render(
     h(Recharts.ResponsiveContainer, { width: '100%', height: 220 },
       h(Recharts.BarChart, { data: data, margin: { top: 20, right: 10, left: 0, bottom: 0 } },
         h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
         h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false }),
-        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%' }),
+        h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%', domain: [0, need ? Math.ceil(Math.max(maxDelta, need * 1.15)) : 'auto'] }),
         h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v){ return [v + '%', '週增量']; } }),
-        h(Recharts.Bar, { dataKey: 'delta', fill: 'var(--yellow)', radius: [4, 4, 0, 0], onClick: handleWeeklyBarClick })
+        h(Recharts.Bar, { dataKey: 'delta', fill: 'var(--yellow)', radius: [4, 4, 0, 0], onClick: handleWeeklyBarClick }),
+        need ? h(Recharts.ReferenceLine, { y: need, stroke: 'rgba(255,255,255,0.6)', strokeDasharray: '6 4', label: { value: '需要 +' + need + '%／週', position: 'insideTopRight', fill: 'rgba(255,255,255,0.7)', fontSize: 11 } }) : null
       )
     )
   );
@@ -3383,14 +3831,16 @@ function handleDailyBarClick(barData) {
   var dayStart = new Date(d.date.getFullYear(), d.date.getMonth(), d.date.getDate(), 0, 0, 0, 0);
   var dayEnd   = new Date(dayStart.getTime() + 24*60*60*1000 - 1);
   var rangeStart = new Date(dayStart.getTime() - 1);
-  var items = computeCompositionForRange(lastLogData, trendModule, rangeStart, dayEnd);
-  openTrendDrilldown(trendModule + ' · ' + d.label + ' 完成度組成', '當日新增 ' + d.delta + '%', items);
+  var items = trendModule === '__project__'
+    ? computeProjectComposition(lastLogData, rangeStart, dayEnd)
+    : computeCompositionForRange(lastLogData, trendModule, rangeStart, dayEnd);
+  openTrendDrilldown(trendScopeLabel() + ' · ' + d.label + ' 完成度組成', '當日新增 ' + d.delta + '%' + (trendModule === '__project__' ? '（依模組拆解）' : ''), items);
 }
 
 function renderDailyChart(logData) {
   var root = getReactRoot('daily-chart-container');
   if (!root) return;
-  var data = computeModuleDailyDeltas(logData, trendModule);
+  var data = trendModule === '__project__' ? computeProjectDailyDeltas(logData) : computeModuleDailyDeltas(logData, trendModule);
   if (data.length < 2) {
     root.render(h('div', { className: 'chart-empty' }, '資料累積中，至少需要兩天紀錄'));
     return;
@@ -3468,9 +3918,9 @@ function openTrendDrilldown(title, sub, items) {
           '<div class="trend-drilldown-sec">'+it.sec+'</div>' +
           '<div class="trend-drilldown-main">' +
             '<div class="trend-drilldown-name">'+it.name+'</div>' +
-            '<div class="trend-drilldown-owner">'+it.owners.join('、')+'</div>' +
+            (it.owners.length ? '<div class="trend-drilldown-owner">'+it.owners.join('、')+'</div>' : '') +
           '</div>' +
-          '<div class="trend-drilldown-score">'+it.from+' → '+it.to+' 分</div>' +
+          '<div class="trend-drilldown-score">'+(it.scoreText || (it.from+' → '+it.to+' 分'))+'</div>' +
           '<div class="trend-drilldown-delta'+deltaClass+'">'+contribText+'</div>' +
         '</div>';
       }).join('')
@@ -3515,6 +3965,7 @@ function refreshTrendCharts() {
       return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
     });
     lastLogData = logData;
+    renderKRPanel();
     renderWeeklyChart(logData);
     renderDailyChart(logData);
     var el = document.getElementById('weekly-last-synced');
@@ -3532,7 +3983,9 @@ function onModuleTrendChange(mod) {
 
 function renderWeekly() {
   renderBaselineForm();
+  renderKRPanel();
   renderForecastCards();
+  renderBottleneck();
   renderModuleTrendSelect();
   renderModuleProgress();
   refreshTrendCharts();
