@@ -55,3 +55,5 @@ create policy "public delete baseline" on settings_baseline for delete using (tr
 
 -- Enable realtime (live score updates across clients)
 alter publication supabase_realtime add table scores;
+
+-- OKR tables (objectives, key results, manual updates): see add-okr.sql
