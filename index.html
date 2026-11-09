@@ -1123,6 +1123,25 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .okr-update { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .okr-update .baseline-input-text { flex: 1; width: auto; min-width: 140px; }
 .okr-rule { margin-top: 8px; font-size: 12px; line-height: 1.7; color: rgba(255,255,255,0.4); }
+.okr-ms { display: flex; flex-direction: column; gap: 6px; padding: 10px 0 2px; border-top: 1px dashed rgba(255,255,255,0.08); }
+.okr-ms-row { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+.okr-ms-dot { flex-shrink: 0; width: 9px; height: 9px; border: 2px solid var(--white); border-radius: 50%; }
+.okr-ms-row.due .okr-ms-dot { background: var(--white); }
+.okr-ms-date { flex-shrink: 0; min-width: 40px; font-weight: 700; }
+.okr-ms-label { flex: 1; min-width: 0; color: rgba(255,255,255,0.75); }
+.okr-ms-label small { margin-left: 8px; font-size: 12px; color: rgba(255,255,255,0.4); }
+.okr-ms-edit { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.okr-field .okr-ms-edit .baseline-input { min-width: 0; }
+.okr-field .okr-ms-edit .okr-ms-f-date { width: 150px; flex-shrink: 0; }
+.okr-field .okr-ms-edit .okr-ms-f-value { width: 64px; flex-shrink: 0; text-align: center; }
+.okr-field .okr-ms-edit .okr-ms-f-note { flex: 1; width: auto; }
+.okr-field .okr-ms-edit .okr-edit { flex-shrink: 0; }
+@media (max-width: 640px) {
+  .okr-ms-edit { flex-wrap: wrap; }
+  .okr-field .okr-ms-edit .okr-ms-f-note { flex-basis: 100%; order: 5; }
+}
+.okr-modal { max-width: 560px; }
+.kr-key.ms { width: 10px; height: 10px; border: 2px solid #FFFFFF; border-radius: 50%; }
 .okr-empty { padding: 40px; text-align: center; font-size: 14px; color: var(--grey-dark); border: 1px dashed rgba(255,255,255,0.12); border-radius: 4px; }
 .okr-modal-overlay { position: fixed; inset: 0; z-index: 600; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0,0,0,0.75); }
 .okr-modal { display: flex; flex-direction: column; gap: 14px; width: 100%; max-width: 480px; max-height: 90vh; overflow: auto; padding: 24px; background: #1e2023; border: 1px solid rgba(255,255,255,0.12); border-radius: 6px; }
@@ -1438,7 +1457,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </div>
     </div>
     <div id="okr-content"></div>
-    <div class="okr-rule">達成率 = 目前值 ÷ 目標值（上限 1.0），OKR 分數為各 KR 達成率平均。達成率不低於本季時間已過比例為「進度正常」，低於為「落後時程」。O 與 KR 由 Daniel 設定。</div>
+    <div class="okr-rule">達成率 = 目前值 ÷ 目標值（上限 1.0），OKR 分數為各 KR 達成率平均。「依時程應達」從季初的實際值出發，沿著各里程碑直線推進，在截止日達到目標值；目前值不低於應達值為「進度正常」，低於為「落後時程」。O 與 KR 由 Daniel 設定；截止日與里程碑由 Daniel、Ken 設定。</div>
   </section>
 
   <footer>
@@ -2048,6 +2067,7 @@ function switchPage(page) {
     MODULES.forEach(function(m){ subscribeModule(m); });
     renderOverview();
     loadOKR();
+    loadLogData().then(renderOverview);
   }
   if (page === 'weekly') {
     MODULES.forEach(function(m){ subscribeModule(m); });
@@ -2059,6 +2079,7 @@ function switchPage(page) {
     MODULES.forEach(function(m){ subscribeModule(m); });
     renderOKR();
     loadOKR();
+    loadLogData().then(renderOKR);
   }
 }
 function renderReporterTabs() {
@@ -2388,19 +2409,18 @@ function renderOverview() {
     var k = activeProjectKR();
     var krHtml;
     if (k) {
-      var elapsed = Math.max(0, Math.min(1, (new Date() - k.start) / (k.endEx - k.start)));
-      var pace    = k.target * elapsed;   // same rule as the OKR page
+      var pace    = krPaceAt(k.kr, new Date());   // same rule as the OKR page
       var exact   = projectPctExact();
-      var st      = exact >= k.target ? ['done','已達成'] : exact >= pace ? ['ok','進度正常'] : ['behind','落後時程'];
+      var st      = krStatus(k.kr);
       krHtml =
         '<div class="ov-project-top">' +
           '<div class="ov-project-label">'+k.label+' '+escHtml(k.kr.title)+'・目標 '+fmtNum(k.target)+'% <span class="okr-status '+st[0]+'">'+st[1]+'</span></div>' +
-          '<div class="ov-project-pct">'+projPct+'%</div>' +
+          '<div class="ov-project-pct">'+fmtNum(exact)+'%</div>' +
         '</div>' +
         '<div class="okr-track"><div class="okr-fill '+st[0]+'" style="width:'+Math.min(exact,100)+'%"></div>' +
           '<div class="okr-mark target" style="left:'+Math.min(k.target,100)+'%"></div>' +
-          '<div class="okr-mark pace" style="left:'+Math.min(pace,100)+'%"></div></div>' +
-        '<div class="ov-project-sub">'+escHtml(k.o.quarter)+'・截止 '+formatDay(k.o.end_date)+'・依時程今天應達 '+fmtNum(pace)+'%・還差 '+fmtNum(Math.max(0, k.target - exact))+' 個百分點</div>';
+          (pace === null ? '' : '<div class="okr-mark pace" style="left:'+Math.min(pace,100)+'%"></div>')+'</div>' +
+        '<div class="ov-project-sub">'+escHtml(k.o.quarter)+'・截止 '+formatDay(k.dueStr)+'・依時程今天應達 '+(pace === null ? '計算中' : fmtNum(pace)+'%')+'・還差 '+fmtNum(Math.max(0, k.target - exact))+' 個百分點</div>';
     } else {
       krHtml =
         '<div class="ov-project-top"><div class="ov-project-label">本季 KR</div><div class="ov-project-pct">—</div></div>' +
@@ -2584,7 +2604,71 @@ function okrElapsed(o) {
   return Math.max(0, Math.min(1, (new Date() - start) / (end - start)));
 }
 function krCurrent(kr) {
-  return kr.metric === 'project_completion' ? projectPct() : (parseFloat(kr.current_value) || 0);
+  return kr.metric === 'project_completion' ? projectPctExact() : (parseFloat(kr.current_value) || 0);
+}
+
+/* ── KR 時程：截止日＋里程碑（Daniel、Ken 設定）
+   應達值 = 從季初實際值出發，依序直線連到每個里程碑，截止日達到目標值 ── */
+function canEditKRSchedule(member) { return ['Daniel','Ken'].indexOf(member) >= 0; }
+function krObjective(kr) { return okr.objectives.filter(function(o){ return o.id === kr.objective_id; })[0]; }
+function krDueStr(kr) { var o = krObjective(kr); return kr.due_date || (o ? o.end_date : null); }
+function dayEnd(str) { var d = parseDay(str); d.setHours(23, 59, 59, 999); return d; }
+function krMilestones(kr) {
+  return (Array.isArray(kr.milestones) ? kr.milestones : [])
+    .filter(function(m){ return m && m.date && !isNaN(parseFloat(m.value)); })
+    .map(function(m){ return { date: m.date, value: parseFloat(m.value), note: m.note || '' }; })
+    .sort(function(a, b){ return a.date.localeCompare(b.date); });
+}
+// The KR's value at a past moment: manual → last update at or before it;
+// 整體專案完成度 → log replay (null until the log has loaded)
+function krValueAt(kr, time) {
+  if (kr.metric === 'project_completion') return lastLogData ? replayProject(lastLogData, [time])[0].project : null;
+  var u = okr.updates.filter(function(x){ return x.kr_id === kr.id && new Date(x.created_at) <= time; })[0];
+  return u ? (parseFloat(u.value) || 0) : 0;
+}
+// Pace path: [{ t, v }] from the objective start through the milestones to the deadline
+function krPacePoints(kr) {
+  var o = krObjective(kr), due = krDueStr(kr);
+  if (!o || !due) return null;
+  var start = parseDay(o.start_date);
+  var startVal = krValueAt(kr, start);
+  if (startVal === null) return null;
+  var pts = [{ t: start, v: startVal }];
+  krMilestones(kr).forEach(function(m){ pts.push({ t: dayEnd(m.date), v: m.value }); });
+  pts.push({ t: dayEnd(due), v: parseFloat(kr.target) || 0 });
+  return pts;
+}
+function krPaceAt(kr, time) {
+  var pts = krPacePoints(kr);
+  if (!pts) return null;
+  if (time <= pts[0].t) return pts[0].v;
+  for (var i = 1; i < pts.length; i++) {
+    if (time <= pts[i].t) {
+      var a = pts[i - 1], b = pts[i];
+      return a.v + (b.v - a.v) * (time - a.t) / (b.t - a.t);
+    }
+  }
+  return pts[pts.length - 1].v;
+}
+// [class, label] — shared by the OKR page, 整體專案進度 and 專案概況
+function krStatus(kr) {
+  var cur = krCurrent(kr), target = parseFloat(kr.target) || 0, now = new Date();
+  if (cur >= target) return ['done', '已達成'];
+  var due = krDueStr(kr);
+  if (due && now > dayEnd(due)) return ['behind', '逾期未達成'];
+  var pace = krPaceAt(kr, now);
+  if (pace === null) return ['none', '計算中'];
+  return cur >= pace ? ['ok', '進度正常'] : ['behind', '落後時程'];
+}
+
+// Log rows for every page that needs history (專案概況, OKR, 整體專案進度)
+function loadLogData() {
+  return fetchAllLog().then(function(rows) {
+    lastLogData = rows.map(function(r) {
+      return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
+    });
+    return lastLogData;
+  });
 }
 function krRatio(kr) {
   var target = parseFloat(kr.target) || 0;
@@ -2648,8 +2732,8 @@ function renderKR(kr, i, elapsed) {
   var cur    = krCurrent(kr);
   var target = parseFloat(kr.target) || 0;
   var ratio  = krRatio(kr);
-  var pace   = target * elapsed;
-  var status = ratio >= 1 ? ['done', '已達成'] : ratio >= elapsed ? ['ok', '進度正常'] : ['behind', '落後時程'];
+  var pace   = krPaceAt(kr, new Date());
+  var status = krStatus(kr);
   var meta;
   if (kr.metric === 'manual') {
     var last = okr.updates.filter(function(u){ return u.kr_id === kr.id; })[0];
@@ -2674,6 +2758,7 @@ function renderKR(kr, i, elapsed) {
       '<span class="okr-kr-num">KR' + (i + 1) + '</span>' +
       '<span class="okr-kr-title">' + escHtml(kr.title) + '</span>' +
       '<span class="okr-status ' + status[0] + '">' + status[1] + '</span>' +
+      (canEditKRSchedule(currentMember) ? '<button class="okr-edit" onclick="openKRSchedule(' + kr.id + ')">時程</button>' : '') +
       (canEditOKR(currentMember) ? '<button class="okr-edit" onclick="openKRForm(' + kr.id + ')">編輯</button>' : '') +
     '</div>' +
     '<div class="okr-kr-nums">' +
@@ -2684,12 +2769,108 @@ function renderKR(kr, i, elapsed) {
     '<div class="okr-track">' +
       '<div class="okr-fill ' + status[0] + '" style="width:' + Math.min(cur, 100) + '%"></div>' +
       '<div class="okr-mark target" style="left:' + Math.min(target, 100) + '%"></div>' +
-      '<div class="okr-mark pace" style="left:' + Math.min(pace, 100) + '%"></div>' +
+      (pace === null ? '' : '<div class="okr-mark pace" style="left:' + Math.min(pace, 100) + '%"></div>') +
     '</div>' +
-    '<div class="okr-legend-row"><span><i class="okr-dot"></i>目標 ' + fmtNum(target) + '%</span><span><i class="okr-dot pace"></i>依時程應達 ' + Math.round(pace) + '%</span></div>' +
+    '<div class="okr-legend-row"><span><i class="okr-dot"></i>目標 ' + fmtNum(target) + '%</span><span><i class="okr-dot pace"></i>依時程今天應達 ' + (pace === null ? '計算中' : fmtNum(pace) + '%') + '</span></div>' +
+    renderKRTimeline(kr) +
     '<div class="okr-kr-meta">' + meta + '</div>' +
     updateForm +
   '</div>';
+}
+
+// Milestones + deadline under each KR
+function renderKRTimeline(kr) {
+  var now = new Date(), cur = krCurrent(kr), target = parseFloat(kr.target) || 0;
+  var due = krDueStr(kr);
+  if (!due) return '';
+  var o = krObjective(kr);
+  var rows = krMilestones(kr).map(function(m) {
+    var end = dayEnd(m.date), st;
+    if (end < now) {
+      var then = krValueAt(kr, end);
+      st = then === null ? ['none', '計算中'] : then >= m.value ? ['ok', '已達成'] : ['behind', '未達成・當時 ' + fmtNum(then) + '%'];
+    } else {
+      st = cur >= m.value ? ['ok', '已提前達成'] : ['none', '剩 ' + Math.ceil((end - now) / 86400000) + ' 天・還差 ' + fmtNum(m.value - cur) + '%'];
+    }
+    return { date: m.date, label: '應達 ' + fmtNum(m.value) + '%', note: m.note, st: st };
+  });
+  var dueEnd = dayEnd(due);
+  rows.push({ date: due, label: '截止・目標 ' + fmtNum(target) + '%', due: true,
+    note: kr.due_date && o && kr.due_date !== o.end_date ? '' : '同目標結束日',
+    st: cur >= target ? ['done', '已達成'] : dueEnd < now ? ['behind', '逾期未達成'] : ['none', '剩 ' + Math.ceil((dueEnd - now) / 86400000) + ' 天'] });
+  return '<div class="okr-ms">' + rows.map(function(r) {
+    return '<div class="okr-ms-row' + (r.due ? ' due' : '') + '">' +
+      '<i class="okr-ms-dot"></i>' +
+      '<span class="okr-ms-date">' + formatDay(r.date).slice(5) + '</span>' +
+      '<span class="okr-ms-label">' + r.label + (r.note ? '<small>' + escHtml(r.note) + '</small>' : '') + '</span>' +
+      '<span class="okr-status ' + r.st[0] + '">' + r.st[1] + '</span>' +
+    '</div>';
+  }).join('') + '</div>';
+}
+
+// 時程 form: KR deadline + milestones (Daniel, Ken)
+function msRowHtml(m) {
+  m = m || { date: '', value: '', note: '' };
+  return '<div class="okr-ms-edit">' +
+    '<input class="baseline-input baseline-input-date okr-ms-f-date" type="date" value="' + m.date + '">' +
+    '<input class="baseline-input okr-ms-f-value" type="number" min="0" max="100" step="1" value="' + m.value + '" placeholder="應達"><span class="baseline-unit">%</span>' +
+    '<input class="baseline-input baseline-input-text okr-ms-f-note" type="text" maxlength="40" value="' + escHtml(m.note) + '" placeholder="說明（選填）">' +
+    '<button type="button" class="okr-edit" onclick="this.parentNode.remove()">移除</button>' +
+  '</div>';
+}
+function addMilestoneRow() {
+  var box = document.getElementById('okr-ms-rows');
+  if (box) box.insertAdjacentHTML('beforeend', msRowHtml());
+}
+function openKRSchedule(id) {
+  if (!canEditKRSchedule(currentMember)) return;
+  var kr = okr.krs.filter(function(k){ return k.id === id; })[0];
+  var o  = kr && krObjective(kr);
+  if (!o) return;
+  openOKRModal(
+    '<div class="okr-modal-title">KR 時程・' + escHtml(kr.title) + '</div>' +
+    '<label class="okr-field">截止日<input class="baseline-input" type="date" id="okr-f-due" min="' + o.start_date + '" max="' + o.end_date + '" value="' + (kr.due_date || '') + '">' +
+      '<span class="okr-hint">空白＝沿用目標結束日 ' + formatDay(o.end_date) + '；需在 ' + formatDay(o.start_date) + '–' + formatDay(o.end_date) + ' 之間</span></label>' +
+    '<div class="okr-field">里程碑<div id="okr-ms-rows">' + krMilestones(kr).map(msRowHtml).join('') + '</div>' +
+      '<button type="button" class="btn btn-ghost" style="align-self:flex-start" onclick="addMilestoneRow()">＋ 新增里程碑</button>' +
+      '<span class="okr-hint">日期在開始日之後、截止日之前；應達值依日期遞增且不超過目標 ' + fmtNum(parseFloat(kr.target) || 0) + '%。「依時程應達」會沿著里程碑分段計算。</span></div>' +
+    '<div class="okr-modal-actions">' +
+      '<button class="btn btn-ghost" onclick="closeOKRModal()">取消</button>' +
+      '<button class="btn btn-yellow" onclick="saveKRSchedule(' + id + ')">儲存</button>' +
+    '</div>');
+}
+function saveKRSchedule(id) {
+  if (!canEditKRSchedule(currentMember)) return;
+  var kr = okr.krs.filter(function(k){ return k.id === id; })[0];
+  var o  = kr && krObjective(kr);
+  if (!o) return;
+  var due = document.getElementById('okr-f-due').value || null;
+  var dueStr = due || o.end_date;
+  if (due && (due < o.start_date || due > o.end_date)) { showToast('截止日需在目標期間內'); return; }
+  var ms = [], err = null;
+  document.querySelectorAll('#okr-ms-rows .okr-ms-edit').forEach(function(row) {
+    var date  = row.querySelector('.okr-ms-f-date').value;
+    var raw   = row.querySelector('.okr-ms-f-value').value;
+    var note  = row.querySelector('.okr-ms-f-note').value.trim();
+    if (!date && raw === '' && !note) return;  // blank row
+    var value = parseFloat(raw);
+    if (!date || isNaN(value)) err = err || '里程碑請填日期和應達值';
+    ms.push({ date: date, value: value, note: note });
+  });
+  ms.sort(function(a, b){ return a.date.localeCompare(b.date); });
+  var target = parseFloat(kr.target) || 0;
+  ms.forEach(function(m, i) {
+    if (m.date <= o.start_date || m.date >= dueStr) err = err || '里程碑日期需在開始日之後、截止日之前';
+    if (m.value < 0 || m.value > target) err = err || '里程碑應達值需在 0–' + fmtNum(target) + '% 之間';
+    if (i && m.date === ms[i - 1].date) err = err || '里程碑日期不能重複';
+    if (i && m.value < ms[i - 1].value) err = err || '里程碑應達值需依日期遞增';
+  });
+  if (err) { showToast(err); return; }
+  ms = ms.map(function(m){ return m.note ? m : { date: m.date, value: m.value }; });
+  db.from('okr_key_results').update({ due_date: due, milestones: ms }).eq('id', id).then(function(res) {
+    if (res.error) { showToast('⚠ 儲存失敗'); return; }
+    closeOKRModal(); showToast('KR 時程已儲存 ✓'); loadOKR();
+  });
 }
 
 function submitKRUpdate(id) {
@@ -3235,9 +3416,10 @@ function activeProjectKR() {
     var krs = okr.krs.filter(function(k){ return k.objective_id === objs[i].id; });
     for (var j = 0; j < krs.length; j++) {
       if (krs[j].metric === 'project_completion') {
-        var start = parseDay(objs[i].start_date), endEx = parseDay(objs[i].end_date);
+        var dueStr = krDueStr(krs[j]);
+        var start = parseDay(objs[i].start_date), endEx = parseDay(dueStr);
         endEx.setDate(endEx.getDate() + 1);
-        return { o: objs[i], kr: krs[j], label: 'KR' + (j + 1), target: parseFloat(krs[j].target) || 0, start: start, endEx: endEx };
+        return { o: objs[i], kr: krs[j], label: 'KR' + (j + 1), target: parseFloat(krs[j].target) || 0, start: start, endEx: endEx, dueStr: dueStr };
       }
     }
   }
@@ -3307,11 +3489,15 @@ function computeKRStats(logData) {
   var weeksLeft = Math.max(0, (k.endEx - now) / WEEK_MS);
   var elapsed   = Math.max(0, Math.min(1, (now - k.start) / (k.endEx - k.start)));
   var gap       = Math.max(0, k.target - cur);
+  // Next milestone still ahead, with the weekly pace needed to reach it
+  var next = krMilestones(k.kr).filter(function(m){ return dayEnd(m.date) > now; })[0] || null;
+  var nextWeeks = next ? Math.max(0, (dayEnd(next.date) - now) / WEEK_MS) : 0;
   return {
+    next: next, nextRequired: next && nextWeeks > 0 ? Math.max(0, next.value - cur) / nextWeeks : null,
     k: k, now: now, cur: cur, startVal: startVal, rate: rate, weeksLeft: weeksLeft, elapsed: elapsed, gap: gap,
     required:  weeksLeft > 0 ? gap / weeksLeft : null,
     projected: Math.min(100, cur + rate * weeksLeft),
-    paceNow:   startVal + (k.target - startVal) * elapsed,
+    paceNow:   krPaceAt(k.kr, now),
     modulesEq: gap / (100 / MODULES.length)
   };
 }
@@ -3347,20 +3533,23 @@ function renderKRPanel() {
       krTile('目前完成度', fmtNum(s.cur) + '%', '目標 ' + fmtNum(s.k.target) + '%・還差 ' + fmtNum(s.gap) + ' 個百分點') +
       krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 ' + fmtNum(s.weeksLeft) + ' 週才能達到 ' + fmtNum(s.k.target) + '%') +
       krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '') +
-      krTile('照目前速度 ' + formatDay(s.k.o.end_date).slice(5) + ' 預計', fmtNum(s.projected) + '%', '<span class="okr-status ' + status[0] + '">' + status[1] + '</span>') +
+      krTile('照目前速度 ' + formatDay(s.k.dueStr).slice(5) + ' 預計', fmtNum(s.projected) + '%', '<span class="okr-status ' + status[0] + '">' + status[1] + '</span>') +
     '</div>' +
     '<div class="kr-note">' +
       (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點，約等於再完成 <b>' + fmtNum(s.modulesEq) + '</b> 個完整模組（每個模組佔整體 ' + fmtNum(100 / MODULES.length) + '%）。' : '已達到 KR 目標。') +
-      ' 依時程今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '% 直線拉到 ' + fmtNum(s.k.target) + '%），目前' + (paceOk ? '<span class="kr-good">超前</span>' : '<span class="kr-bad">落後</span>') + ' ' + fmtNum(Math.abs(s.cur - s.paceNow)) + ' 個百分點。' +
+      ' 依時程今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + formatDay(s.k.dueStr).slice(5) + ' 的 ' + fmtNum(s.k.target) + '%），目前' + (paceOk ? '<span class="kr-good">超前</span>' : '<span class="kr-bad">落後</span>') + ' ' + fmtNum(Math.abs(s.cur - s.paceNow)) + ' 個百分點。' +
+      (s.next ? '<br>下一個里程碑 ' + formatDay(s.next.date).slice(5) + ' 應達 ' + fmtNum(s.next.value) + '%' + (s.next.note ? '（' + escHtml(s.next.note) + '）' : '') + '，' +
+        (s.cur >= s.next.value ? '<span class="kr-good">已提前達成</span>。' : '每週需 ' + signed(s.nextRequired) + '%。') : '') +
     '</div>';
   renderKRBurnup(s);
   if (legend) legend.innerHTML =
     '<span><i class="kr-key actual"></i>實際（每週三 18:30）</span>' +
     '<span><i class="kr-key pace"></i>應達線</span>' +
     '<span><i class="kr-key forecast"></i>預測（近 4 週速度）</span>' +
-    '<span><i class="kr-key target"></i>目標 ' + fmtNum(s.k.target) + '%</span>';
+    '<span><i class="kr-key target"></i>目標 ' + fmtNum(s.k.target) + '%</span>' +
+    (krMilestones(s.k.kr).length ? '<span><i class="kr-key ms"></i>里程碑</span>' : '');
 }
-function quarterDeadlineText(k) { return k.o.quarter + ' 目標 ' + fmtNum(k.target) + '%'; }
+function quarterDeadlineText(k) { return k.o.quarter + '・' + formatDay(k.dueStr).slice(5) + ' 前達到 ' + fmtNum(k.target) + '%'; }
 function krTile(label, value, sub, cls) {
   return '<div class="kr-tile' + (cls ? ' ' + cls : '') + '"><div class="kr-tile-label">' + label + '</div><div class="kr-tile-val">' + value + '</div><div class="kr-tile-sub">' + sub + '</div></div>';
 }
@@ -3377,20 +3566,25 @@ function renderKRBurnup(s) {
   for (; c < endLast; c = new Date(c.getTime() + WEEK_MS)) pts.push({ t: c, label: mdLabel(c) });
   pts.push({ t: endLast, label: mdLabel(endLast) });
   if (now > k.start && now < endLast) pts.push({ t: now, label: '今天', isNow: true });
+  krMilestones(k.kr).forEach(function(m) {
+    var same = pts.filter(function(p){ return !p.isNow && calKey(p.t) === m.date.replace(/-/g,''); })[0];
+    if (same) same.ms = m.value;
+    else pts.push({ t: dayEnd(m.date), label: mdLabel(parseDay(m.date)), ms: m.value });
+  });
   pts.sort(function(a,b){ return a.t - b.t; });
   var past = pts.filter(function(p){ return p.t <= now && !p.isNow; });
   var replay = replayProject(lastLogData, past.map(function(p){ return p.t; }));
   past.forEach(function(p, i){ p.actual = replay[i].project; });
   var data = pts.map(function(p) {
-    var frac = (p.t - k.start) / (k.endEx - k.start);
-    var row = { label: p.label, pace: Math.round((s.startVal + (k.target - s.startVal) * frac) * 10) / 10 };
+    var row = { label: p.label, pace: Math.round(krPaceAt(k.kr, p.t) * 10) / 10 };
+    if (p.ms !== undefined) row.ms = p.ms;
     if (p.isNow) { row.actual = s.cur; row.forecast = s.cur; }
     else if (p.t <= now) row.actual = p.actual;
     else row.forecast = Math.round(Math.min(100, s.cur + s.rate * (p.t - now) / WEEK_MS) * 10) / 10;
     if (now >= endLast && p.t === endLast) row.actual = s.cur;
     return row;
   });
-  var names = { actual: '實際', pace: '應達', forecast: '預測' };
+  var names = { actual: '實際', pace: '應達', forecast: '預測', ms: '里程碑' };
   root.render(
     h(Recharts.ResponsiveContainer, { width: '100%', height: 280 },
       h(Recharts.LineChart, { data: data, margin: { top: 20, right: 24, left: 0, bottom: 0 } },
@@ -3402,7 +3596,8 @@ function renderKRBurnup(s) {
         h(Recharts.ReferenceLine, { x: '今天', stroke: 'rgba(255,255,255,0.2)', strokeDasharray: '2 3' }),
         h(Recharts.Line, { dataKey: 'pace', stroke: 'rgba(255,255,255,0.45)', strokeWidth: 2, strokeDasharray: '6 4', dot: false, isAnimationActive: false }),
         h(Recharts.Line, { dataKey: 'forecast', stroke: '#FFEA41', strokeOpacity: 0.7, strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }),
-        h(Recharts.Line, { dataKey: 'actual', stroke: '#FFEA41', strokeWidth: 2, dot: { r: 4, fill: '#FFEA41', stroke: '#16181b', strokeWidth: 2 }, activeDot: { r: 5 }, connectNulls: true, isAnimationActive: false })
+        h(Recharts.Line, { dataKey: 'actual', stroke: '#FFEA41', strokeWidth: 2, dot: { r: 4, fill: '#FFEA41', stroke: '#16181b', strokeWidth: 2 }, activeDot: { r: 5 }, connectNulls: true, isAnimationActive: false }),
+        h(Recharts.Line, { dataKey: 'ms', stroke: 'none', dot: { r: 6, fill: '#16181b', stroke: '#FFFFFF', strokeWidth: 2 }, activeDot: { r: 7 }, isAnimationActive: false, legendType: 'none' })
       )
     )
   );
@@ -3519,7 +3714,7 @@ function renderForecastCards() {
       var ontime  = rows.filter(function(r){ return r.state === 'ontime' || r.state === 'overdue'; });
       var overdue = rows.filter(function(r){ return r.state === 'overdue'; });
       var short  = k.target - reachable;
-      summary.innerHTML = '<div class="kr-note contrib-note">預計 ' + formatDay(k.o.end_date) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
+      summary.innerHTML = '<div class="kr-note contrib-note">預計 ' + formatDay(k.dueStr) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
         (ontime.length ? '（' + ontime.map(function(r){ return r.mod; }).join('、') + '）' : '') +
         '，加上已完成的模組，整體可達 <b>' + fmtNum(reachable) + '%</b>' +
         (short > 0 ? '，距 ' + k.label + ' 目標 ' + fmtNum(k.target) + '% 仍差 <span class="kr-bad">' + fmtNum(short) + '</span> 個百分點（約 ' + fmtNum(short / share) + ' 個模組）。'
@@ -3533,7 +3728,7 @@ function renderForecastCards() {
 
   var pills = { ontime: ['ok', 'KR 期限前完成'], overdue: ['behind', '已逾預計完工'], late: ['behind', '超過 KR 期限'], unknown: ['none', '未設定預測'] };
   container.innerHTML = '<div class="contrib-list">' +
-    '<div class="contrib-row contrib-headrow"><span>模組</span><span>目前完成度</span><span>預計完工</span><span>剩餘可貢獻</span><span>' + (k ? formatDay(k.o.end_date) + ' 前' : '') + '</span></div>' +
+    '<div class="contrib-row contrib-headrow"><span>模組</span><span>目前完成度</span><span>預計完工</span><span>剩餘可貢獻</span><span>' + (k ? formatDay(k.dueStr) + ' 前' : '') + '</span></div>' +
     open.map(function(r) {
       var f = r.f, dateHtml;
       if (f.completionDate) {
@@ -3960,11 +4155,7 @@ function fetchAllLog(from, acc) {
 }
 
 function refreshTrendCharts() {
-  fetchAllLog().then(function(rows) {
-    var logData = rows.map(function(r) {
-      return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
-    });
-    lastLogData = logData;
+  loadLogData().then(function(logData) {
     renderKRPanel();
     renderWeeklyChart(logData);
     renderDailyChart(logData);
@@ -4020,6 +4211,9 @@ window.deleteObjective     = deleteObjective;
 window.saveKR              = saveKR;
 window.deleteKR            = deleteKR;
 window.submitKRUpdate      = submitKRUpdate;
+window.openKRSchedule      = openKRSchedule;
+window.saveKRSchedule      = saveKRSchedule;
+window.addMilestoneRow     = addMilestoneRow;
 
 /* ── INIT ── */
 loadHolidayCalendar();
