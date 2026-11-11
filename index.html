@@ -1196,7 +1196,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       <button class="member-select-btn ellen" onclick="selectMember('Ellen','#EA580C')">
         <div class="msb-initial">E</div>
         <div class="msb-name">Ellen</div>
-        <div class="msb-role">影片 QC・文件整理</div>
+        <div class="msb-role">影片製作・QC・文件整理</div>
       </button>
     </div>
   </div>
@@ -1292,7 +1292,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
         <div class="fx-gate-name">AI 影片製作</div>
       </div>
       <div class="fx-tasks">
-        <div class="fx-task"><span class="fx-id">A2-1</span><span class="fx-name">製作英文簡報與影片</span><span class="fx-owner owner-ken">Ken</span></div>
+        <div class="fx-task"><span class="fx-id">A2-1</span><span class="fx-name">製作英文簡報與影片</span><span class="fx-owner owner-ken">Ken</span><span class="fx-owner owner-ellen">Ellen</span></div>
       </div>
       <div class="fx-out">
         <div class="fx-out-label">產出</div>
@@ -1359,7 +1359,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </div>
       <div class="fx-ptask g1">
         <div class="fx-ptask-top"><span class="fx-id">A1-1</span><span class="fx-ptask-name">取得原檔</span></div>
-        <div class="fx-handoff"><span class="fx-handoff-label">前置</span>無<span class="fx-handoff-label">交付</span><b class="owner-ken">Ken</b></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span>無<span class="fx-handoff-label">交付</span><span><b class="owner-ken">Ken</b>・<b class="owner-ellen">Ellen</b></span></div>
       </div>
     </div>
 
@@ -1387,15 +1387,19 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
       </div>
       <div class="fx-ptask g3">
         <div class="fx-ptask-top"><span class="fx-id">A3-1</span><span class="fx-ptask-name">生成中文素材與字幕</span></div>
-        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-ken">Ken</b><span class="fx-handoff-label">交付</span><span><b class="owner-ken">Ken</b>・<b class="owner-ellen">Ellen</b></span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><span><b class="owner-ken">Ken</b>・<b class="owner-ellen">Ellen</b></span><span class="fx-handoff-label">交付</span><span><b class="owner-ken">Ken</b>・<b class="owner-ellen">Ellen</b></span></div>
       </div>
     </div>
 
     <div class="fx-person ellen">
       <div class="fx-person-head">
         <span class="fx-avatar">E</span>
-        <div class="fx-person-info"><div class="fx-person-name">Ellen</div><div class="fx-person-role">影片 QC・文件整理</div></div>
-        <span class="fx-count">3 項</span>
+        <div class="fx-person-info"><div class="fx-person-name">Ellen</div><div class="fx-person-role">影片製作・QC・文件整理</div></div>
+        <span class="fx-count">4 項</span>
+      </div>
+      <div class="fx-ptask g2">
+        <div class="fx-ptask-top"><span class="fx-id">A2-1</span><span class="fx-ptask-name">製作英文簡報與影片</span></div>
+        <div class="fx-handoff"><span class="fx-handoff-label">前置</span><b class="owner-daniel">Daniel</b><span class="fx-handoff-label">交付</span><b class="owner-ai">AI</b></div>
       </div>
       <div class="fx-ptask g4">
         <div class="fx-ptask-top"><span class="fx-id">A4-2</span><span class="fx-ptask-name">影片 QC・上架</span></div>
@@ -1423,8 +1427,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
     </div>
   </div>
   <div class="fx-outputs">
-    <div class="fx-output g2"><div class="fx-output-icon">📊</div><div class="fx-output-name">英文簡報</div><div class="fx-output-meta">Gate 2・Ken</div></div>
-    <div class="fx-output g2"><div class="fx-output-icon">🎥</div><div class="fx-output-name">英文影片檔</div><div class="fx-output-meta">Gate 2・Ken</div></div>
+    <div class="fx-output g2"><div class="fx-output-icon">📊</div><div class="fx-output-name">英文簡報</div><div class="fx-output-meta">Gate 2・Ken、Ellen</div></div>
+    <div class="fx-output g2"><div class="fx-output-icon">🎥</div><div class="fx-output-name">英文影片檔</div><div class="fx-output-meta">Gate 2・Ken、Ellen</div></div>
     <div class="fx-output g3"><div class="fx-output-icon">📄</div><div class="fx-output-name">中文簡報</div><div class="fx-output-meta">Gate 3・AI</div></div>
     <div class="fx-output g3"><div class="fx-output-icon">🎬</div><div class="fx-output-name">剪輯後影片</div><div class="fx-output-meta">Gate 3・AI</div></div>
     <div class="fx-output g3"><div class="fx-output-icon">💬</div><div class="fx-output-name">中英文 VTT 字幕</div><div class="fx-output-meta">Gate 3・AI</div></div>
@@ -1706,7 +1710,7 @@ const WORKFLOWS = {
     name: 'AI 協作流程',
     tasks: [
       { id:'A1-1', gate:1, name:'取得原檔',                                   owners:['Daniel'], prereqs:[],       moduleLevel:false, firstSectionOnly:false },
-      { id:'A2-1', gate:2, name:'AI 影片製作（英文簡報、英文影片檔）',          owners:['Ken'],    prereqs:['A1-1'], moduleLevel:false, firstSectionOnly:false },
+      { id:'A2-1', gate:2, name:'AI 影片製作（英文簡報、英文影片檔）',          owners:['Ken','Ellen'], prereqs:['A1-1'], moduleLevel:false, firstSectionOnly:false },
       { id:'A3-1', gate:3, name:'AI 生成中文簡報、剪輯後影片、中英文 VTT 字幕', owners:['AI'],     prereqs:['A2-1'], moduleLevel:false, firstSectionOnly:false },
       { id:'A4-1', gate:4, name:'WU 上架・文字 QC',                            owners:['Ken'],    prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
       { id:'A4-2', gate:4, name:'WU 上架・影片 QC',                            owners:['Ellen'],  prereqs:['A3-1'], moduleLevel:false, firstSectionOnly:false },
