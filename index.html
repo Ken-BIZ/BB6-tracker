@@ -1465,7 +1465,6 @@ html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--
 .greet-title { font-size: 15px; font-weight: 700; color: var(--accent-ink); }
 .greet-line { margin: 0; font-size: 15px; color: rgba(var(--fg-rgb),0.72); }
 .kr-big { text-align: right; }
-.kr-big-val .flap { font-size: 64px; }
 .kr-big-label { margin-top: 8px; font-size: 14px; color: var(--grey-dark); }
 #page-weekly .kr-tiles { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; margin: 16px 0 6px; }
 #page-weekly .kr-tile { min-height: 0; padding: 22px 24px; color: var(--text); background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 20px;
@@ -1483,7 +1482,7 @@ html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--
 .board-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .board-seen-btn { padding: 7px 14px; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--alert); background: color-mix(in srgb, var(--alert) 10%, transparent); border: 1px solid color-mix(in srgb, var(--alert) 40%, transparent); border-radius: 10px; cursor: pointer; }
 .board { display: grid; gap: 4px; margin-top: 4px; }
-.board-row { display: grid; grid-template-columns: 112px minmax(0,1.5fr) 120px minmax(0,1.25fr) 120px 170px; gap: 18px; align-items: center; padding: 14px 16px; border-radius: 14px;
+.board-row { display: grid; grid-template-columns: 112px minmax(0,1.5fr) 120px minmax(0,1.25fr) 120px 170px; gap: 18px; align-items: center; padding: 14px 16px;
   transition: background-color .18s var(--ease), transform .18s var(--ease), opacity .18s var(--ease), box-shadow .18s var(--ease); }
 .board-row:not(.board-hd):hover { background: rgba(var(--fg-rgb),0.045); transform: translateX(4px); }
 .board-hd { padding-top: 4px; padding-bottom: 8px; font-size: 13px; font-weight: 700; color: var(--grey-dark); border-bottom: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 0; }
@@ -1684,6 +1683,45 @@ html[data-theme="light"] .sb-logo { padding: 4px 6px; background: #0B0D10; borde
   .baseline-sub { flex-basis: 100%; order: 3; }
 }
 @media (prefers-reduced-motion: reduce) { .scen:hover, .kr-stuck-link:hover, .board-advice-btn:hover { transform: none; } }
+
+/* ═══ Critique round 3: three stat cards, gate-first bottleneck, conservative line, a11y, phone ═══ */
+:root, :root[data-theme="dark"] { --alert-text: #FF6A4A; }
+:root[data-theme="light"] { --alert-text: #A3290D; }
+#page-weekly .kr-tiles { grid-template-columns: repeat(3, minmax(0,1fr)); }
+.scen:hover { transform: none; background: rgba(var(--fg-rgb),0.05); }
+.scen-label, .scen-note { font-size: 14px; }
+.scen-val { font-size: 20px; line-height: 1.3; }
+.scen-val .flap { font-size: 20px; }
+.scen:first-child .scen-val .flap i { color: var(--flap-ink); }
+.scen.tight .scen-note { color: var(--accent-ink); font-weight: 700; }
+.scen.below .scen-val .flap i { color: var(--text); }
+.scen-row { max-width: 760px; }
+#page-weekly .last-saved { font-size: 14px; color: rgba(var(--fg-rgb),0.72); }
+.kr-stuck-link, .board-advice-btn { font-size: 14px; }
+.kr-stuck { line-height: 1.8; }
+.kr-stuck b.kr-stuck-gate { font-family: inherit; font-stretch: normal; font-size: 16px; color: var(--text); }
+.kr-stuck-wf { font-size: 14px; color: var(--grey-dark); }
+.kr-stuck-n { font-family: var(--mono); font-stretch: 75%; font-size: 18px; color: var(--accent-ink); }
+#bottleneck-card:focus, #forecast-cards:focus { outline: none; }
+#bottleneck-card:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 4px; }
+.board-name small { font-size: 14px; }
+.board-owner-note { margin: 4px 0 12px; font-size: 14px; color: rgba(var(--fg-rgb),0.72); }
+.board.no-who .board-who, .board.no-who .board-hd > :nth-child(5) { display: none; }
+.board.no-who .board-row { grid-template-columns: 88px minmax(0,2fr) 112px minmax(0,1.4fr) 180px; }
+@media (min-width: 1700px) { .board.no-who .board-row { grid-template-columns: 96px minmax(0,1.4fr) 140px minmax(0,1.1fr) 220px; } }
+@media (max-width: 1100px) { .board.no-who .board-row { grid-template-columns: 80px minmax(0,2fr) 104px minmax(0,1.2fr) 140px; } }
+button.board-new { font-family: inherit; border: 0; cursor: pointer; line-height: 1.5; }
+button.board-new:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.board-row.late .board-date .flap i, .board-status.late { color: var(--alert-text); }
+.board-row.idle .flap i, .board-idle-codes .flap i { color: rgba(var(--fg-rgb),0.72); }
+html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
+.kr-key.calm { border-top: 2px dotted var(--grey-dark); }
+@media (min-width: 1600px) { .scen-row { max-width: none; } }
+@media (max-width: 900px) {
+  #page-weekly .kr-tiles { grid-template-columns: 1fr; }
+  #page-weekly .kr-verdict-main { font-size: 24px; }
+  .board.no-who .board-row { grid-template-columns: auto minmax(0,1fr); }
+}
 </style>
 
 <body>
@@ -2093,12 +2131,12 @@ html[data-theme="light"] .sb-logo { padding: 4px 6px; background: #0B0D10; borde
     <div class="chart-card kr-card board-card">
       <div class="board-title-row"><div class="chart-card-title">出發看板・模組對 KR 的貢獻</div><button type="button" class="board-seen-btn" id="board-seen-btn" onclick="markBoardSeen()" hidden>全部標為已看過</button></div>
       <div class="chart-card-sub" id="contrib-sub">依預計完工日排序；預計完工沿用完工預測設定（起算日期＋任務時數）。Gate 或狀態有變動的模組會亮起，點一下就算看過。</div>
-      <div id="forecast-cards"></div>
+      <div id="forecast-cards" tabindex="-1"></div>
       <div id="contrib-summary"></div>
     </div>
 
     <!-- ── 關卡瓶頸 ── -->
-    <div class="chart-card kr-card" id="bottleneck-card">
+    <div class="chart-card kr-card" id="bottleneck-card" tabindex="-1">
       <div class="chart-card-title">關卡瓶頸</div>
       <div class="chart-card-sub">待處理小節最多的 3 項任務。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
       <div id="bottleneck"></div>
@@ -4156,11 +4194,12 @@ function computeKRStats(logData) {
 }
 var krStats = null;
 var krScheduled = null;   // { pct, noForecast, ontime } from the departure board, for the scenario row
-function scenChip(label, val, target, note) {
+function scenChip(label, val, target, note, key, belowNote) {
   var below = val !== null && val < target;
-  return '<span class="scen' + (below ? ' below' : '') + '"><span class="scen-label">' + label + '</span>' +
-    '<span class="scen-val">' + (val === null ? '—' : fmtNum(val) + '%') + '</span>' +
-    (val === null ? '' : '<span class="scen-note">' + (below ? '低於目標' : note) + '</span>') + '</span>';
+  var tight = val !== null && !below && val - target < 5;
+  return '<span class="scen' + (below ? ' below' : '') + (tight ? ' tight' : '') + '"><span class="scen-label">' + label + '</span>' +
+    '<span class="scen-val">' + (val === null ? '—' : flap(fmtNum(val) + '%', key)) + '</span>' +
+    (val === null ? '' : '<span class="scen-note">' + (below ? (belowNote || '低於目標') : tight ? '只高 ' + fmtNum(val - target) + ' 個百分點' : note) + '</span>') + '</span>';
 }
 function renderScenarioRow() {
   var el = document.getElementById('kr-scen');
@@ -4170,13 +4209,13 @@ function renderScenarioRow() {
   var sch = krScheduled;
   var wasOpen = el.querySelector('details') && el.querySelector('details').open;
   el.innerHTML = '<div class="scen-row">' +
-      scenChip('速度預測', s.projected, t, '本頁結論') +
-      (hasSpike ? scenChip('不計暴衝', s.calmProjected, t, '仍達標') : '') +
-      scenChip('只計已排程模組', sch ? sch.pct : null, t, '可達標') +
+      scenChip('速度預測', s.projected, t, '本頁結論', 'sc-v') +
+      (hasSpike ? scenChip('保守估計（不計暴衝）', s.calmProjected, t, '仍達標', 'sc-c') : '') +
+      scenChip('只計已排程模組', sch ? sch.pct : null, t, '可達標', 'sc-s', sch && sch.noForecast ? '低於目標・' + sch.noForecast + ' 個模組未設預測' : '') +
     '</div>' +
     '<details class="kr-why"' + (wasOpen ? ' open' : '') + '><summary>這幾個數字怎麼來的？</summary><div class="kr-why-body">' +
       '<p><b>速度預測</b>：用近 4 週全團隊的實際產出推估到 ' + formatDay(s.k.dueStr) + '，是本頁的結論。</p>' +
-      (hasSpike ? '<p><b>不計暴衝</b>：近 4 週中 ' + s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
+      (hasSpike ? '<p><b>保守估計（不計暴衝）</b>：近 4 週中 ' + s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
         ' 增量特別大；不計' + (s.spikes.length > 1 ? '這幾週' : '這一週') + '，週速度約 ' + signed(fmtNum(s.calmRate)) + '%。</p>' : '') +
       (sch ? '<p><b>只計已排程模組</b>：只有設定了完工預測的模組會前進' + (sch.noForecast ? '，其餘 ' + sch.noForecast + ' 個模組只算目前進度' : '') + '。設定更多模組的預測，這個數字就會更接近實際。</p>' : '') +
     '</div></details>';
@@ -4225,7 +4264,10 @@ function renderKRPanel() {
         (reach ? '' : '<span>' + (onTrack ? '比目標高 ' : '比目標少 ') + margin + ' 個百分點</span>') + '</div>' +
       '<div class="kr-verdict-sub">' + (reach
         ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
-        : '照近 4 週速度（每週 ' + signed(s.rate) + '%）推估，' + dueFull + ' 達 <b>' + fmtNum(s.projected) + '%</b>（目標 ' + fmtNum(s.k.target) + '%）。今天應達 ' + fmtNum(s.paceNow) + '%，目前' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點。') +
+        : '照近 4 週速度（每週 ' + signed(s.rate) + '%）推估，' + dueFull + ' 達 <b>' + fmtNum(s.projected) + '%</b>（目標 ' + fmtNum(s.k.target) + '%）' +
+          (s.spikes.length && s.calmRate !== null
+            ? '；保守估計（不計暴衝）<b>' + fmtNum(s.calmProjected) + '%</b>，' + (s.calmProjected >= s.k.target ? '只高 ' + fmtNum(s.calmProjected - s.k.target) + ' 個百分點。' : '會少 ' + fmtNum(s.k.target - s.calmProjected) + ' 個百分點。')
+            : '。')) +
       '</div>' +
       (reach ? '' : '<div id="kr-scen"></div>');
     renderScenarioRow();
@@ -4234,8 +4276,7 @@ function renderKRPanel() {
     '<div class="kr-tiles">' +
       krTile('目標 ' + dueFull, fmtNum(s.k.target) + '%', '還差 <span class="nw">' + fmtNum(s.gap) + ' 個百分點</span>・<span class="nw">約 ' + fmtNum(s.modulesEq) + ' 個模組</span>', '', 'kr-target') +
       krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 <span class="nw">' + fmtNum(s.weeksLeft) + ' 週</span>才能達到 ' + fmtNum(s.k.target) + '%', '', 'kr-req') +
-      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
-      krTile('照目前速度 ' + dueFull + ' 預計', fmtNum(s.projected) + '%', '本頁的正式預測', onTrack ? 'ok' : 'behind', 'kr-proj') +
+      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）' + (s.spikes.length ? '，含 ' + s.spikes.length + ' 週暴衝' : ''), s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
     '</div>';
   var noteEl = document.getElementById('kr-note');
   if (noteEl) noteEl.innerHTML =
@@ -4249,7 +4290,8 @@ function renderKRPanel() {
   if (legend) legend.innerHTML =
     '<span><i class="kr-key actual"></i>實際（每週三 18:30）</span>' +
     '<span><i class="kr-key pace"></i>應達線</span>' +
-    '<span><i class="kr-key forecast"></i>預測（近 4 週速度）</span>' +
+    '<span><i class="kr-key forecast"></i>速度預測（近 4 週）</span>' +
+    (s.calmRate !== null ? '<span><i class="kr-key calm"></i>保守估計（不計暴衝）</span>' : '') +
     '<span><i class="kr-key target"></i>目標 ' + fmtNum(s.k.target) + '%</span>' +
     (krMilestones(s.k.kr).length ? '<span><i class="kr-key ms"></i>里程碑</span>' : '');
 }
@@ -4300,10 +4342,18 @@ function renderKRBurnup(s) {
     if (p.isNow) { row.actual = s.cur; row.forecast = s.cur; }
     else if (p.t <= now) row.actual = p.actual;
     else row.forecast = Math.round(Math.min(100, s.cur + s.rate * (p.t - now) / WEEK_MS) * 10) / 10;
+    if (s.calmRate !== null && (p.isNow || p.t > now)) row.calm = p.isNow ? s.cur : Math.round(Math.min(100, s.cur + s.calmRate * (p.t - now) / WEEK_MS) * 10) / 10;
     if (now >= endLast && p.t === endLast) row.actual = s.cur;
     return row;
   });
-  var names = { actual: '實際', pace: '應達', forecast: '預測', ms: '里程碑' };
+  var names = { actual: '實際', pace: '應達', forecast: '速度預測', calm: '保守估計', ms: '里程碑' };
+  var lastIdx = data.length - 1;
+  function endLabel(color) {
+    return function(props) {
+      if (props.index !== lastIdx || props.value === undefined || props.value === null) return null;
+      return h('text', { x: props.x - 6, y: props.y - 8, textAnchor: 'end', fill: color, fontSize: 13, fontWeight: 700 }, props.value + '%');
+    };
+  }
   // A time axis, so 今天 and milestones sit at their real distance from the Wednesday cutoffs
   function fullDate(v) { var d = new Date(v); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
   root.render(
@@ -4316,7 +4366,8 @@ function renderKRBurnup(s) {
         h(Recharts.ReferenceLine, { y: k.target, stroke: 'rgba(var(--fg-rgb),0.55)', strokeWidth: 1, label: { value: '目標 ' + fmtNum(k.target) + '%', position: 'insideTopLeft', fill: 'rgba(var(--fg-rgb),0.75)', fontSize: 13 } }),
         now < endLast ? h(Recharts.ReferenceLine, { x: now.getTime(), stroke: 'rgba(var(--fg-rgb),0.35)', strokeDasharray: '2 3', label: { value: '今天', position: 'top', fill: 'rgba(var(--fg-rgb),0.8)', fontSize: 13 } }) : null,
         h(Recharts.Line, { dataKey: 'pace', stroke: 'rgba(var(--fg-rgb),0.45)', strokeWidth: 2, strokeDasharray: '6 4', dot: false, isAnimationActive: false }),
-        h(Recharts.Line, { dataKey: 'forecast', stroke: 'var(--chart-accent)', strokeOpacity: 0.8, strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }),
+        s.calmRate !== null ? h(Recharts.Line, { dataKey: 'calm', stroke: 'var(--grey-dark)', strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }, h(Recharts.LabelList, { dataKey: 'calm', content: endLabel('var(--grey-dark)') })) : null,
+        h(Recharts.Line, { dataKey: 'forecast', stroke: 'var(--chart-accent)', strokeOpacity: 0.8, strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }, h(Recharts.LabelList, { dataKey: 'forecast', content: endLabel('var(--chart-accent)') })),
         h(Recharts.Line, { dataKey: 'actual', stroke: 'var(--chart-accent)', strokeWidth: 2.5, dot: { r: 4, fill: 'var(--chart-accent)', stroke: 'var(--raised)', strokeWidth: 2 }, activeDot: { r: 5 }, connectNulls: true, isAnimationActive: false }),
         h(Recharts.Line, { dataKey: 'ms', stroke: 'none', dot: { r: 6, fill: 'var(--raised)', stroke: 'var(--text)', strokeWidth: 2 }, activeDot: { r: 7 }, isAnimationActive: false, legendType: 'none' })
       )
@@ -4436,19 +4487,25 @@ function renderBottleneck() {
       }).join('') + '</div>' +
     '</div>';
   });
-  // Owner carrying the most pending sections across every workflow, for the verdict card
-  var ownerLoad = {};
-  pending.forEach(function(p){ p.t.owners.forEach(function(o){ ownerLoad[o] = (ownerLoad[o] || 0) + p.c.ready + p.c.doing; }); });
+  // The gate holding the most pending sections (ready + in progress), and who it waits on, for the verdict card
+  var gateLoad = {};
+  pending.forEach(function(p) {
+    var key = p.wf.name + '|' + p.t.gate;
+    var g = gateLoad[key] = gateLoad[key] || { wf: p.wf, num: p.t.gate, name: p.gate ? p.gate.name : '', ready: 0, doing: 0, owners: {} };
+    g.ready += p.c.ready; g.doing += p.c.doing;
+    p.t.owners.forEach(function(o){ g.owners[o] = (g.owners[o] || 0) + p.c.ready + p.c.doing; });
+  });
   var stuckEl = document.getElementById('kr-stuck');
+  var topGate = Object.keys(gateLoad).map(function(k){ return gateLoad[k]; }).sort(function(a, b){ return (b.ready + b.doing) - (a.ready + a.doing); })[0];
+  var topOwner = topGate ? Object.keys(topGate.owners).sort(function(a, b){ return topGate.owners[b] - topGate.owners[a]; })[0] : null;
+  krTopOwner = topOwner || null;
   if (stuckEl) {
-    var topOwner = Object.keys(ownerLoad).sort(function(a, b){ return ownerLoad[b] - ownerLoad[a]; })[0];
-    krTopOwner = topOwner || null;
     var isMe = topOwner && topOwner === currentMember;
-    var topTask = pending.slice().sort(function(a, b){ return (b.c.ready + b.c.doing) - (a.c.ready + a.c.doing); })[0];
-    stuckEl.innerHTML = topOwner
-      ? '目前卡最多：<span class="owner-chip ' + CHIP_CLASS[topOwner] + '">' + (isMe ? '你（' + topOwner + '）' : topOwner) + '</span> <b>' + ownerLoad[topOwner] + '</b> 個小節待處理' +
-        (topTask ? '，最多的是「' + escHtml(topTask.t.name) + '」（' + (topTask.c.ready + topTask.c.doing) + '）' : '') +
-        ' <button type="button" class="kr-stuck-link" onclick="document.getElementById(\'bottleneck-card\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">看關卡瓶頸</button>'
+    stuckEl.innerHTML = topGate
+      ? '卡最多的關卡：<b class="kr-stuck-gate">Gate ' + topGate.num + '・' + escHtml(topGate.name) + '</b><span class="kr-stuck-wf">（' + topGate.wf.name + '）</span> ' +
+        '<b class="kr-stuck-n">' + (topGate.ready + topGate.doing) + '</b> 個小節待處理（可開始 ' + topGate.ready + '・進行中 ' + topGate.doing + '），主要等 ' +
+        '<span class="owner-chip ' + CHIP_CLASS[topOwner] + '">' + (isMe ? '你（' + topOwner + '）' : topOwner) + '</span>' +
+        ' <button type="button" class="kr-stuck-link" onclick="goToBottleneck()">看關卡瓶頸</button>'
       : '';
   }
   renderWeeklyGreeting();
@@ -4559,12 +4616,22 @@ function moduleTopOwner(mod) {
 }
 // 'idle' is only how a not-started row is shown; it is stored under its underlying state
 function boardSig(r) { return moduleCurrentGate(r.mod) + '|' + (r.state === 'idle' ? 'unknown' : r.state); }
+function goToBottleneck() {
+  var card = document.getElementById('bottleneck-card');
+  if (!card) return;
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  card.focus({ preventScroll: true });
+}
 function markBoardSeen(mod) {
   var seen = boardSeen() || {};
   var rows = boardRowsCache.filter(function(r){ return !mod || r.mod === mod; });
   rows.forEach(function(r){ seen[r.mod] = boardSig(r); });
   boardSeenSave(seen);
   renderForecastCards();
+  // Keep keyboard focus on the board: next 有變動 button, else the board itself
+  var next = document.querySelector('#forecast-cards .board-new');
+  var host = document.getElementById('forecast-cards');
+  (next || host).focus({ preventScroll: true });
 }
 var boardRowsCache = [];
 // Change tracking compares like with like only once every module's scores and the settings have arrived
@@ -4582,7 +4649,10 @@ function renderDepartureBoard(open, idle, done, share, k) {
     if (added) boardSeenSave(seen);
   }
   var changedCount = 0;
-  var html = '<div class="board" role="table" aria-label="出發看板">' +
+  var whos = rows.map(function(r){ var o = r.state === 'idle' ? null : moduleTopOwner(r.mod); return o ? o.who : null; }).filter(Boolean);
+  var oneWho = whos.length > 1 && whos.every(function(w){ return w === whos[0]; }) ? whos[0] : null;
+  var html = (oneWho ? '<div class="board-owner-note">各製作中模組待處理最多的都是 <span class="owner-chip ' + CHIP_CLASS[oneWho] + '">' + oneWho + '</span>，所以看板不另列負責人。</div>' : '') +
+    '<div class="board' + (oneWho ? ' no-who' : '') + '" role="table" aria-label="出發看板">' +
     '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate（1–5）</span><span role="columnheader">待處理最多</span><span role="columnheader">狀態' + (k ? '（' + formatDay(k.dueStr) + ' 前）' : '') + '</span></div>' +
     rows.map(function(r) {
       var f = r.f, gates = getGates(r.mod), cur = moduleCurrentGate(r.mod);
@@ -4593,7 +4663,7 @@ function renderDepartureBoard(open, idle, done, share, k) {
       var st = BOARD_STATUS[r.state] || BOARD_STATUS.unknown;
       var owner = r.state === 'idle' ? null : moduleTopOwner(r.mod);
       var started = f.currentPct > 0;
-      return '<div class="board-row' + (changed ? ' changed' : '') + (st[0] === 'late' ? ' late' : '') + (r.state === 'idle' ? ' idle' : '') + '" role="row"' + (changed ? ' tabindex="0" onclick="markBoardSeen(\'' + r.mod + '\')" role="button" aria-label="' + r.mod + ' 有變動，按下標為已看過" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();markBoardSeen(\'' + r.mod + '\')}" title="點一下標為已看過"' : '') + '>' +
+      return '<div class="board-row' + (changed ? ' changed' : '') + (st[0] === 'late' ? ' late' : '') + (r.state === 'idle' ? ' idle' : '') + '" role="row"' + (changed ? ' onclick="markBoardSeen(\'' + r.mod + '\')" title="點一下標為已看過"' : '') + '>' +
         '<span class="board-code" role="cell">' + flap(r.mod, 'bc-' + r.mod) + '</span>' +
         '<span class="board-name" role="cell"><b>' + (name ? escHtml(name) : '（未命名）') + '</b><small>' + f.currentPct + '%・剩餘可貢獻 +' + fmtNum(r.remain) + '%</small></span>' +
         '<span class="board-date" role="cell" title="' + (f.completionDate ? f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) : (f.reason || '')) + '">' + (f.completionDate ? flap(date, 'bd-' + r.mod) : '<span class="board-dim">—</span>') + '</span>' +
@@ -4601,7 +4671,7 @@ function renderDepartureBoard(open, idle, done, share, k) {
             return '<i class="' + (i < cur ? 'd' : i === cur && started ? 'c' : '') + '" title="Gate ' + g.num + '・' + g.name + '"></i>'; }).join('') + '</span>' +
           '<small>' + (cur >= gates.length ? '全部完成' : started ? 'Gate ' + gates[cur].num + '・' + gates[cur].name : '尚未開始') + '</small></span>' +
         '<span class="board-who" role="cell">' + (owner ? '<span class="owner-chip ' + CHIP_CLASS[owner.who] + '">' + owner.who + '</span> ' + flap(String(owner.n), 'bw-' + r.mod) : '<span class="board-dim">—</span>') + '</span>' +
-        '<span class="board-status ' + st[0] + '" role="cell">' + st[1] + (changed ? '<em class="board-new">有變動</em>' : '') + '</span>' +
+        '<span class="board-status ' + st[0] + '" role="cell">' + st[1] + (changed ? '<button type="button" class="board-new" onclick="event.stopPropagation();markBoardSeen(\'' + r.mod + '\')" aria-label="' + r.mod + ' 有變動，標為已看過">有變動</button>' : '') + '</span>' +
       '</div>';
     }).join('') + '</div>';
   var more = idle.length - shownIdle.length;
@@ -5068,6 +5138,7 @@ window.toggleBaseline    = toggleBaseline;
 window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
 window.markBoardSeen     = markBoardSeen;
+window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;
