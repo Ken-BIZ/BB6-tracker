@@ -828,6 +828,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .kr-verdict.behind .kr-verdict-main { color: #FB923C; }
 .kr-verdict.done .kr-verdict-main { color: var(--yellow); }
 .kr-verdict-sub b { color: var(--white); }
+.kr-verdict-warn { margin-top: 8px; color: #FDBA74; }
+.kr-verdict-warn b { color: #FB923C; }
 .contrib-list { display: flex; flex-direction: column; }
 .contrib-row { display: grid; grid-template-columns: minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.1fr); gap: 16px; align-items: center; padding: 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
 .contrib-headrow { padding-top: 0; font-size: 12px; font-weight: 700; color: var(--grey-dark); }
@@ -1660,7 +1662,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
           </div>
           <div class="trend-controls">
             <div class="trend-tabs" id="trend-tabs">
-              <button type="button" class="trend-tab active" data-tab="single" onclick="switchTrendTab('single')">單一模組</button>
+              <button type="button" class="trend-tab active" data-tab="single" onclick="switchTrendTab('single')">進度趨勢</button>
               <button type="button" class="trend-tab" data-tab="all" onclick="switchTrendTab('all')">各模組總覽</button>
             </div>
             <select class="section-select" id="module-trend-select" onchange="onModuleTrendChange(this.value)"></select>
@@ -3543,10 +3545,21 @@ function computeKRStats(logData) {
   var now  = new Date();
   var cur  = projectPctExact();
   var lastCut = getWeekCutoff(now);
-  var snaps = replayProject(logData, [k.start, new Date(lastCut.getTime() - 4 * WEEK_MS), lastCut]);
+  var times = [k.start];
+  for (var w = 4; w >= 0; w--) times.push(new Date(lastCut.getTime() - w * WEEK_MS));
+  var snaps = replayProject(logData, times);
   var startVal  = snaps[0].project;
-  var rate      = Math.max(0, (snaps[2].project - snaps[1].project) / 4);
+  var rate      = Math.max(0, (snaps[5].project - snaps[1].project) / 4);
   var weeksLeft = Math.max(0, (k.endEx - now) / WEEK_MS);
+  // Weeks inside the 4-week window that are far above the others inflate the rate
+  var weeks = [2, 3, 4, 5].map(function(i){ return { end: snaps[i].t, delta: Math.max(0, snaps[i].project - snaps[i - 1].project) }; });
+  var spikes = weeks.filter(function(wk) {
+    var others = weeks.filter(function(o){ return o !== wk; });
+    var otherAvg = others.reduce(function(a, o){ return a + o.delta; }, 0) / others.length;
+    return wk.delta >= 1 && wk.delta > otherAvg * 1.5;
+  });
+  var calm = weeks.filter(function(wk){ return spikes.indexOf(wk) < 0; });
+  var calmRate = spikes.length && calm.length ? calm.reduce(function(a, wk){ return a + wk.delta; }, 0) / calm.length : null;
   var elapsed   = Math.max(0, Math.min(1, (now - k.start) / (k.endEx - k.start)));
   var gap       = Math.max(0, k.target - cur);
   // Next milestone still ahead, with the weekly pace needed to reach it
@@ -3557,6 +3570,8 @@ function computeKRStats(logData) {
     k: k, now: now, cur: cur, startVal: startVal, rate: rate, weeksLeft: weeksLeft, elapsed: elapsed, gap: gap,
     required:  weeksLeft > 0 ? gap / weeksLeft : null,
     projected: Math.min(100, cur + rate * weeksLeft),
+    spikes: spikes, calmRate: calmRate,
+    calmProjected: calmRate === null ? null : Math.min(100, cur + calmRate * weeksLeft),
     paceNow:   krPaceAt(k.kr, now),
     modulesEq: gap / (100 / MODULES.length)
   };
@@ -3604,7 +3619,15 @@ function renderKRPanel() {
         : '照目前速度（近 4 週平均每週 ' + signed(s.rate) + '%），' + dueFull + ' 預計達 <b>' + fmtNum(s.projected) + '%</b>，目標 ' + fmtNum(s.k.target) + '%' +
           (onTrack ? '。' : '，還少 ' + fmtNum(s.k.target - s.projected) + ' 個百分點。') +
           '「超前／落後」是跟今天的應達線（' + fmtNum(s.paceNow) + '%）比較。') +
-      '</div>';
+      '</div>' +
+      (!reach && s.spikes.length && s.calmRate !== null
+        ? '<div class="kr-verdict-warn">速度可能被拉高：近 4 週中 ' +
+            s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
+            ' 增量特別大。不計' + (s.spikes.length > 1 ? '這幾週' : '這一週') + '，週速度約 ' + signed(fmtNum(s.calmRate)) + '%，' +
+            dueFull + ' 預計 ' + fmtNum(s.calmProjected) + '%，' +
+            (s.calmProjected >= s.k.target ? '仍可達標。' : '<b>會未達標</b>。') +
+          '</div>'
+        : '');
   }
   tiles.innerHTML =
     '<div class="kr-tiles">' +
@@ -3787,9 +3810,9 @@ function renderForecastCards() {
 
   if (summary) {
     if (k) {
-      // Past-due modules are still counted as finishing before the deadline, but called out
-      var reachable = rows.reduce(function(s, r){ return s + (['done','ontime','overdue'].indexOf(r.state) >= 0 ? 100 : r.f.currentPct); }, 0) / N;
-      var ontime  = rows.filter(function(r){ return r.state === 'ontime' || r.state === 'overdue'; });
+      // Past-due modules have already missed their own forecast, so only their current progress counts
+      var reachable = rows.reduce(function(s, r){ return s + (r.state === 'done' || r.state === 'ontime' ? 100 : r.f.currentPct); }, 0) / N;
+      var ontime  = rows.filter(function(r){ return r.state === 'ontime'; });
       var overdue = rows.filter(function(r){ return r.state === 'overdue'; });
       var short  = k.target - reachable;
       var noForecast = rows.filter(function(r){ return r.state === 'unknown'; });
@@ -3803,7 +3826,7 @@ function renderForecastCards() {
         '<br><span class="contrib-why">這是情境估算，不是本頁的結論' + (velocity ? '（上方速度預測：' + velocity + '）' : '') + '。' +
         (noForecast.length ? '它比較低，是因為 ' + noForecast.length + ' 個模組尚未設定預測，在這裡只算目前進度、不再前進；' : '') +
         '速度預測則用近 4 週全團隊的實際產出推估，不管產出落在哪個模組。</span>' +
-        (overdue.length ? '<br>其中 ' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成，建議更新起算日期或任務時數。' : '') +
+        (overdue.length ? '<br>' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成，這裡只算目前進度；建議更新起算日期或任務時數。' : '') +
         '</div>';
     } else {
       summary.innerHTML = '';
