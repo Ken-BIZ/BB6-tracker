@@ -821,6 +821,13 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .kr-key.target { border-top: 1px solid rgba(255,255,255,0.55); }
 .okr-status.none { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.06); }
 .contrib-note { margin-top: 0; margin-bottom: 14px; }
+.contrib-why { color: rgba(255,255,255,0.6); }
+.kr-verdict { margin-bottom: 20px; }
+.kr-verdict-main { font-weight: 700; }
+.kr-verdict.ok .kr-verdict-main { color: #4ade80; }
+.kr-verdict.behind .kr-verdict-main { color: #FB923C; }
+.kr-verdict.done .kr-verdict-main { color: var(--yellow); }
+.kr-verdict-sub b { color: var(--white); }
 .contrib-list { display: flex; flex-direction: column; }
 .contrib-row { display: grid; grid-template-columns: minmax(0,2.2fr) minmax(0,1.4fr) minmax(0,1.6fr) minmax(0,1fr) minmax(0,1.1fr); gap: 16px; align-items: center; padding: 12px 4px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
 .contrib-headrow { padding-top: 0; font-size: 12px; font-weight: 700; color: var(--grey-dark); }
@@ -1622,6 +1629,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 
     <!-- ── KR：速度指標＋燃起圖 ── -->
     <div class="chart-card kr-card">
+      <div id="kr-verdict"></div>
       <div id="kr-tiles"></div>
       <div id="kr-burnup-chart"></div>
       <div class="kr-legend" id="kr-burnup-legend"></div>
@@ -3562,12 +3570,15 @@ function renderKRPanel() {
   var legend = document.getElementById('kr-burnup-legend');
   var root  = getReactRoot('kr-burnup-chart');
   var k = activeProjectKR();
+  var verdictEl = document.getElementById('kr-verdict');
   if (!okr.loaded || !lastLogData) {
+    if (verdictEl) { verdictEl.className = ''; verdictEl.innerHTML = ''; }
     tiles.innerHTML = '<div class="chart-empty">載入中…</div>';
     return;
   }
   if (!k) {
     krStats = null;
+    if (verdictEl) { verdictEl.className = ''; verdictEl.innerHTML = ''; }
     if (title) title.textContent = 'KR 達成追蹤';
     tiles.innerHTML = '<div class="okr-empty">本季 OKR 尚未設定以「自動：整體專案完成度」計算的 KR（由 Daniel 在 OKR 頁設定）</div>';
     if (legend) legend.innerHTML = '';
@@ -3580,17 +3591,32 @@ function renderKRPanel() {
   var onTrack = reach || s.projected >= s.k.target;
   var status  = reach ? ['done', '已達成'] : onTrack ? ['ok', '預計達標'] : ['behind', '預計未達標'];
   var paceOk  = s.cur >= s.paceNow;
+  var dueFull = formatDay(s.k.dueStr);
+  var paceGap = fmtNum(Math.abs(s.cur - s.paceNow));
+  var verdict = document.getElementById('kr-verdict');
+  if (verdict) {
+    verdict.className = 'kr-verdict ' + status[0];
+    verdict.innerHTML =
+      '<div class="kr-verdict-main">' + status[1] +
+        (reach ? '' : '・' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點') + '</div>' +
+      '<div class="kr-verdict-sub">' + (reach
+        ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
+        : '照目前速度（近 4 週平均每週 ' + signed(s.rate) + '%），' + dueFull + ' 預計達 <b>' + fmtNum(s.projected) + '%</b>，目標 ' + fmtNum(s.k.target) + '%' +
+          (onTrack ? '。' : '，還少 ' + fmtNum(s.k.target - s.projected) + ' 個百分點。') +
+          '「超前／落後」是跟今天的應達線（' + fmtNum(s.paceNow) + '%）比較。') +
+      '</div>';
+  }
   tiles.innerHTML =
     '<div class="kr-tiles">' +
       krTile('目前完成度', fmtNum(s.cur) + '%', '目標 ' + fmtNum(s.k.target) + '%・還差 ' + fmtNum(s.gap) + ' 個百分點') +
       krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 ' + fmtNum(s.weeksLeft) + ' 週才能達到 ' + fmtNum(s.k.target) + '%') +
       krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '') +
-      krTile('照目前速度 ' + formatDay(s.k.dueStr).slice(5) + ' 預計', fmtNum(s.projected) + '%', '<span class="okr-status ' + status[0] + '">' + status[1] + '</span>') +
+      krTile('照目前速度 ' + dueFull + ' 預計', fmtNum(s.projected) + '%', '本頁的正式預測・目標 ' + fmtNum(s.k.target) + '%', onTrack ? 'ok' : 'behind') +
     '</div>' +
     '<div class="kr-note">' +
       (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點，約等於再完成 <b>' + fmtNum(s.modulesEq) + '</b> 個完整模組（每個模組佔整體 ' + fmtNum(100 / MODULES.length) + '%）。' : '已達到 KR 目標。') +
-      ' 依時程今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + formatDay(s.k.dueStr).slice(5) + ' 的 ' + fmtNum(s.k.target) + '%），目前' + (paceOk ? '<span class="kr-good">超前</span>' : '<span class="kr-bad">落後</span>') + ' ' + fmtNum(Math.abs(s.cur - s.paceNow)) + ' 個百分點。' +
-      (s.next ? '<br>下一個里程碑 ' + formatDay(s.next.date).slice(5) + ' 應達 ' + fmtNum(s.next.value) + '%' + (s.next.note ? '（' + escHtml(s.next.note) + '）' : '') + '，' +
+      ' 應達線：今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + dueFull + ' 的 ' + fmtNum(s.k.target) + '%）。' +
+      (s.next ? '<br>下一個里程碑 ' + formatDay(s.next.date) + ' 應達 ' + fmtNum(s.next.value) + '%' + (s.next.note ? '（' + escHtml(s.next.note) + '）' : '') + '，' +
         (s.cur >= s.next.value ? '<span class="kr-good">已提前達成</span>。' : '每週需 ' + signed(s.nextRequired) + '%。') : '') +
     '</div>';
   renderKRBurnup(s);
@@ -3766,11 +3792,17 @@ function renderForecastCards() {
       var ontime  = rows.filter(function(r){ return r.state === 'ontime' || r.state === 'overdue'; });
       var overdue = rows.filter(function(r){ return r.state === 'overdue'; });
       var short  = k.target - reachable;
-      summary.innerHTML = '<div class="kr-note contrib-note">預計 ' + formatDay(k.dueStr) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
-        (ontime.length ? '（' + ontime.map(function(r){ return r.mod; }).join('、') + '）' : '') +
-        '，加上已完成的模組，整體可達 <b>' + fmtNum(reachable) + '%</b>' +
-        (short > 0 ? '，距 ' + k.label + ' 目標 ' + fmtNum(k.target) + '% 仍差 <span class="kr-bad">' + fmtNum(short) + '</span> 個百分點（約 ' + fmtNum(short / share) + ' 個模組）。'
+      var noForecast = rows.filter(function(r){ return r.state === 'unknown'; });
+      var velocity = krStats && krStats.k.kr.id === k.kr.id ? fmtNum(krStats.projected) + '%' : null;
+      summary.innerHTML = '<div class="kr-note contrib-note">' +
+        '<b>若只計已排程模組：' + fmtNum(reachable) + '%</b>' +
+        (short > 0 ? '，比 ' + k.label + ' 目標 ' + fmtNum(k.target) + '% 少 <span class="kr-bad">' + fmtNum(short) + '</span> 個百分點（約 ' + fmtNum(short / share) + ' 個模組）。'
                    : '，<span class="kr-good">可達成 ' + k.label + ' 目標 ' + fmtNum(k.target) + '%</span>。') +
+        '預計 ' + formatDay(k.dueStr) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
+        (ontime.length ? '（' + ontime.map(function(r){ return r.mod; }).join('、') + '）' : '') + '，再加上已完成的模組。' +
+        '<br><span class="contrib-why">這是情境估算，不是本頁的結論' + (velocity ? '（上方速度預測：' + velocity + '）' : '') + '。' +
+        (noForecast.length ? '它比較低，是因為 ' + noForecast.length + ' 個模組尚未設定預測，在這裡只算目前進度、不再前進；' : '') +
+        '速度預測則用近 4 週全團隊的實際產出推估，不管產出落在哪個模組。</span>' +
         (overdue.length ? '<br>其中 ' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成，建議更新起算日期或任務時數。' : '') +
         '</div>';
     } else {
@@ -4209,6 +4241,7 @@ function fetchAllLog(from, acc) {
 function refreshTrendCharts() {
   loadLogData().then(function(logData) {
     renderKRPanel();
+    renderForecastCards();   // its scenario note quotes the velocity forecast from krStats
     renderWeeklyChart(logData);
     renderDailyChart(logData);
     var el = document.getElementById('weekly-last-synced');
