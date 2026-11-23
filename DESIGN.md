@@ -292,11 +292,14 @@ The one big surface: panel colour, 24px radius, 5% hairline, clipped. The page f
 ### Verdict card
 Card colour, 24px radius, 22px × 30px padding. Left: the state-coloured headline, sub-lines, then the greeting line (name in full text colour). Right: the big flap completion figure with a 14px steel caption.
 
+### Verdict scenarios
+Under the verdict sub-line, a row of up to three scenario figures (速度預測, 不計暴衝, 只計已排程模組): 12px-radius tiles on a 5% wash, steel label, Martian Mono 22px value (accent ink for the page's verdict, good when at or above target, full text colour when below, never alert), steel note. A `details` toggle 「這幾個數字怎麼來的？」 holds the explanation. Below it, the bottleneck line 「目前卡最多：」 names the owner with the most pending sections (a neutral chip with an identity dot; 「你」 when it is the signed-in member) and links to the bottleneck card.
+
 ### Stat cards
 Four equal cards, 20px radius, 16px × 20px padding, 6% hairline: steel label, flap figure, sub-line at 70% with an optional status chip. On track borders in good at 40%; behind borders in alert at 45%. Hover lifts.
 
 ### Departure board (signature)
-Inside a chart card. Column heads (13px / 700 steel) sit under a 2px accent-ink rule. Rows are ruled by 7% hairlines and nudge 3px right on hover. Each row: flap code; name (16px bold, ellipsis) with steel meta; flap forecast date; five gate segments (done in full text colour, current in chart accent, rest at 10%) with the gate name below; neutral owner chip with a flap count; status in good, alert or steel. Not-started rows rest at 55% opacity. **Late:** date flaps and status in alert ink. **Changed:** 12px radius, 11% alert wash, full 45% alert ring, a pulsing 有變動 pill (six cycles), cleared on click or by the alert-outlined 全部標為已看過 button.
+Inside a chart card. Column heads (13px / 700 steel) sit under a 2px accent-ink rule. Rows are ruled by 7% hairlines and nudge 3px right on hover. Each row: flap code; name (16px bold, ellipsis) with steel meta; flap forecast date; five gate segments (done in full text colour, current in chart accent, rest at 10%) with the gate name below; neutral owner chip with a flap count; status in good, alert or steel. Not-started rows dim by colour, not opacity (steel flap characters, name at 72%), so their text keeps AA contrast; blank values are a plain steel dash, never a flap. Modules beyond the first two not-started rows sit in an idle strip of small steel flap codes under the board. The status column head reads 狀態（deadline 前）. **Late:** date flaps and status in alert ink. **Changed:** 12px radius, 11% alert wash, full 45% alert ring, a pulsing 有變動 pill (six cycles), cleared on click or by the alert-outlined 全部標為已看過 button.
 
 ### Boarding passes
 Bottleneck tasks: pass-slate ground, 18px radius, 7% hairline. A 118px stub holds the 44px mono pending count in accent ink, then a dashed perforation with notches, then details. The top pass is outlined in accent ink at 55%. Hover lifts.
@@ -317,7 +320,7 @@ Fully round, 13 to 14px / 700: status chips on a 14% wash of their state colour;
 - **Do** use the theme's accent ink for yellow-family text: #FFEA41 in dark, #6E5A00 in light.
 - **Do** keep alert orange for late and changed only, and keep a changed row lit until it is clicked.
 - **Do** put black ink (#111214) on any yellow fill.
-- **Do** keep owner chips on the board neutral; let member colour carry identity elsewhere.
+- **Do** keep owner chips on the board, the bottleneck line and the boarding passes neutral, with a 7px identity dot; full member colour returns on the tracker, flow and login.
 - **Do** carry gate or member identity as a full 45% tinted 1px border or a 20% wash chip.
 - **Do** keep motion to 160 to 200ms transitions with `cubic-bezier(.2,.7,.2,1)`: lift `translateY(-3px)` for cards and passes, nudge `translateX(3px)` for rows and nav, flap flips only on value change; drop all of it under reduced motion.
 - **Do** open external tools in a new tab, marked with the small arrow.

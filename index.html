@@ -1630,6 +1630,60 @@ html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-gre
 @media (prefers-reduced-motion: reduce) {
   .reporter-tab:hover, .ov-tab:hover, .score-btn:hover, .ov-project-card:hover, .ov-module-card:hover, .member-card:hover, .fx-output:hover, .fx-gate:hover, .fx-person:hover { transform: none; }
 }
+
+/* ═══ Critique round 2: one verdict + scenarios, bottleneck owner, orange semantics, board details, phone order ═══ */
+.sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.scen-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 16px; max-width: 640px; }
+.scen { display: grid; gap: 2px; padding: 10px 14px; background: rgba(var(--fg-rgb),0.05); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 12px; transition: transform .18s var(--ease), background-color .18s; }
+.scen:hover { transform: translateY(-2px); background: rgba(var(--fg-rgb),0.07); }
+.scen-label { font-size: 13px; font-weight: 700; color: var(--grey-dark); }
+.scen-val { font-family: var(--mono); font-stretch: 75%; font-size: 22px; font-weight: 600; color: var(--good); font-variant-numeric: tabular-nums; }
+.scen:first-child .scen-val { color: var(--accent-ink); }
+.scen.below .scen-val { color: var(--text); }
+.scen-note { font-size: 13px; color: var(--grey-dark); }
+.kr-why { margin-top: 10px; font-size: 14px; color: rgba(var(--fg-rgb),0.72); }
+.kr-why > summary { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-weight: 700; color: var(--grey-dark); list-style: none; }
+.kr-why > summary::-webkit-details-marker { display: none; }
+.kr-why > summary::after { content: ''; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg) translateY(-2px); transition: transform .18s var(--ease); }
+.kr-why[open] > summary::after { transform: rotate(-135deg); }
+.kr-why > summary:hover { color: var(--text); }
+.kr-why-body { max-width: 680px; margin-top: 8px; line-height: 1.7; }
+.kr-why-body p + p { margin-top: 6px; }
+.kr-why-body b { color: var(--text); }
+.kr-stuck { margin-top: 14px; font-size: 15px; color: rgba(var(--fg-rgb),0.8); }
+.kr-stuck:empty { display: none; }
+.kr-stuck b { font-family: var(--mono); font-stretch: 75%; font-size: 18px; color: var(--accent-ink); }
+.kr-stuck-link, .board-advice-btn { margin-left: 6px; padding: 4px 12px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 10px; cursor: pointer; transition: transform .18s var(--ease), border-color .18s; }
+.kr-stuck-link:hover, .board-advice-btn:hover { transform: translateY(-1px); border-color: rgba(var(--fg-rgb),0.4); }
+.board-advice { margin-top: 16px; }
+/* Members as a neutral chip with an identity dot wherever alert orange may sit nearby */
+#page-weekly .kr-stuck .owner-chip, #page-weekly .bn-top .owner-chip { display: inline-flex; align-items: center; gap: 6px; color: var(--text); background: rgba(var(--fg-rgb),0.08); }
+#page-weekly .kr-stuck .owner-chip::before, #page-weekly .bn-top .owner-chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--grey-dark); }
+#page-weekly .owner-chip.chip-ken::before { background: var(--ken); }
+#page-weekly .owner-chip.chip-daniel::before { background: var(--daniel); }
+#page-weekly .owner-chip.chip-ellen::before { background: var(--ellen); }
+#page-weekly .owner-chip.chip-ai::before { background: #14B8A6; }
+:root[data-theme="light"] { --ink-orange: #9a3412; --ink-green: #166534; --ink-teal: #115e59; --ink-blue: #1e40af; }
+html[data-theme="light"] .bn-top-tag { color: #9a3412; }
+/* Not-started rows dim by colour, not opacity, so their text stays readable */
+.board-row.idle { opacity: 1; }
+.board-row.idle .flap i { color: var(--grey-dark); }
+.board-row.idle .board-name b { color: rgba(var(--fg-rgb),0.72); }
+.board-date .board-dim { font-family: var(--mono); font-size: 17px; }
+.board-idle-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; padding: 14px 16px 4px; }
+.board-idle-label { font-size: 14px; color: var(--grey-dark); }
+.board-idle-codes { display: flex; flex-wrap: wrap; gap: 6px; }
+.board-idle-codes .flap { font-size: 14px; }
+.board-idle-codes .flap i { color: var(--grey-dark); }
+html[data-theme="light"] .sb-logo { padding: 4px 6px; background: #0B0D10; border-radius: 8px; }
+@media (min-width: 1700px) { .board-row { grid-template-columns: 96px minmax(0,1.3fr) 130px minmax(0,1fr) 150px 200px; } }
+@media (max-width: 900px) {
+  .board-head .kr-big { order: -1; }
+  .scen-row { grid-template-columns: 1fr 1fr; }
+  .baseline-bar-top { flex-wrap: wrap; row-gap: 8px; }
+  .baseline-sub { flex-basis: 100%; order: 3; }
+}
+@media (prefers-reduced-motion: reduce) { .scen:hover, .kr-stuck-link:hover, .board-advice-btn:hover { transform: none; } }
 </style>
 
 <body>
@@ -1648,7 +1702,7 @@ html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-gre
       <img class="login-logo-mark" src="logo-mark.png" alt="BizCivilization">
       <div class="login-logo-text">BB6 課程製作</div>
     </div>
-    <div class="login-box-title">歡迎回來</div>
+    <div class="login-box-title" id="login-box-title">你是哪一位？</div>
     <div class="login-box-sub">請選擇你的名字以繼續填報進度</div>
     <div class="member-select-grid rows">
       <button class="member-select-btn daniel" onclick="selectMember('Daniel','#16A34A')">
@@ -2028,6 +2082,7 @@ html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-gre
     <div class="board-head">
       <div class="board-head-main">
         <div id="kr-verdict"></div>
+        <div class="kr-stuck" id="kr-stuck"></div>
         <div class="greet-hello" id="weekly-greeting"></div>
       </div>
       <div class="kr-big" id="kr-big"></div>
@@ -2042,6 +2097,13 @@ html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-gre
       <div id="contrib-summary"></div>
     </div>
 
+    <!-- ── 關卡瓶頸 ── -->
+    <div class="chart-card kr-card" id="bottleneck-card">
+      <div class="chart-card-title">關卡瓶頸</div>
+      <div class="chart-card-sub">待處理小節最多的 3 項任務。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
+      <div id="bottleneck"></div>
+    </div>
+
     <!-- ── KR 燃起圖 ── -->
     <div class="chart-card kr-card">
       <div class="chart-card-title">KR 進度與預測</div>
@@ -2049,13 +2111,6 @@ html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-gre
       <div id="kr-burnup-chart"></div>
       <div class="kr-legend" id="kr-burnup-legend"></div>
       <div id="kr-note"></div>
-    </div>
-
-    <!-- ── 關卡瓶頸 ── -->
-    <div class="chart-card kr-card">
-      <div class="chart-card-title">關卡瓶頸</div>
-      <div class="chart-card-sub">待處理小節最多的 3 項任務。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
-      <div id="bottleneck"></div>
     </div>
 
     <!-- ── 圖表區 ── -->
@@ -4100,6 +4155,32 @@ function computeKRStats(logData) {
   };
 }
 var krStats = null;
+var krScheduled = null;   // { pct, noForecast, ontime } from the departure board, for the scenario row
+function scenChip(label, val, target, note) {
+  var below = val !== null && val < target;
+  return '<span class="scen' + (below ? ' below' : '') + '"><span class="scen-label">' + label + '</span>' +
+    '<span class="scen-val">' + (val === null ? '—' : fmtNum(val) + '%') + '</span>' +
+    (val === null ? '' : '<span class="scen-note">' + (below ? '低於目標' : note) + '</span>') + '</span>';
+}
+function renderScenarioRow() {
+  var el = document.getElementById('kr-scen');
+  var s = krStats;
+  if (!el || !s) return;
+  var t = s.k.target, hasSpike = s.spikes.length && s.calmRate !== null;
+  var sch = krScheduled;
+  var wasOpen = el.querySelector('details') && el.querySelector('details').open;
+  el.innerHTML = '<div class="scen-row">' +
+      scenChip('速度預測', s.projected, t, '本頁結論') +
+      (hasSpike ? scenChip('不計暴衝', s.calmProjected, t, '仍達標') : '') +
+      scenChip('只計已排程模組', sch ? sch.pct : null, t, '可達標') +
+    '</div>' +
+    '<details class="kr-why"' + (wasOpen ? ' open' : '') + '><summary>這幾個數字怎麼來的？</summary><div class="kr-why-body">' +
+      '<p><b>速度預測</b>：用近 4 週全團隊的實際產出推估到 ' + formatDay(s.k.dueStr) + '，是本頁的結論。</p>' +
+      (hasSpike ? '<p><b>不計暴衝</b>：近 4 週中 ' + s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
+        ' 增量特別大；不計' + (s.spikes.length > 1 ? '這幾週' : '這一週') + '，週速度約 ' + signed(fmtNum(s.calmRate)) + '%。</p>' : '') +
+      (sch ? '<p><b>只計已排程模組</b>：只有設定了完工預測的模組會前進' + (sch.noForecast ? '，其餘 ' + sch.noForecast + ' 個模組只算目前進度' : '') + '。設定更多模組的預測，這個數字就會更接近實際。</p>' : '') +
+    '</div></details>';
+}
 
 function renderKRPanel() {
   var tiles = document.getElementById('kr-tiles');
@@ -4138,23 +4219,16 @@ function renderKRPanel() {
   var verdict = document.getElementById('kr-verdict');
   if (verdict) {
     verdict.className = 'kr-verdict ' + status[0];
+    var margin = fmtNum(Math.abs(s.projected - s.k.target));
     verdict.innerHTML =
       '<div class="kr-verdict-main"><span>' + status[1] + (reach ? '' : '・') + '</span>' +
-        (reach ? '' : '<span>' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點</span>') + '</div>' +
+        (reach ? '' : '<span>' + (onTrack ? '比目標高 ' : '比目標少 ') + margin + ' 個百分點</span>') + '</div>' +
       '<div class="kr-verdict-sub">' + (reach
         ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
-        : '照目前速度（近 4 週平均每週 ' + signed(s.rate) + '%），' + dueFull + ' 預計達 <b>' + fmtNum(s.projected) + '%</b>，目標 ' + fmtNum(s.k.target) + '%' +
-          (onTrack ? '。' : '，還少 ' + fmtNum(s.k.target - s.projected) + ' 個百分點。') +
-          '「超前／落後」是跟今天的應達線（' + fmtNum(s.paceNow) + '%）比較。') +
+        : '照近 4 週速度（每週 ' + signed(s.rate) + '%）推估，' + dueFull + ' 達 <b>' + fmtNum(s.projected) + '%</b>（目標 ' + fmtNum(s.k.target) + '%）。今天應達 ' + fmtNum(s.paceNow) + '%，目前' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點。') +
       '</div>' +
-      (!reach && s.spikes.length && s.calmRate !== null
-        ? '<div class="kr-verdict-warn">速度可能被拉高：近 4 週中 ' +
-            s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
-            ' 增量特別大。不計' + (s.spikes.length > 1 ? '這幾週' : '這一週') + '，週速度約 ' + signed(fmtNum(s.calmRate)) + '%，' +
-            dueFull + ' 預計 ' + fmtNum(s.calmProjected) + '%，' +
-            (s.calmProjected >= s.k.target ? '仍可達標。' : '<b>會未達標</b>。') +
-          '</div>'
-        : '');
+      (reach ? '' : '<div id="kr-scen"></div>');
+    renderScenarioRow();
   }
   tiles.innerHTML =
     '<div class="kr-tiles">' +
@@ -4187,9 +4261,9 @@ function flap(str, key) {
   str = String(str);
   var prev = key ? flapLast[key] : undefined;
   if (key) flapLast[key] = str;
-  return '<span class="flap">' + Array.from(str).map(function(ch, i) {
+  return '<span class="flap"><span class="sr-only">' + escHtml(str) + '</span>' + Array.from(str).map(function(ch, i) {
     var flip = prev !== undefined && Array.from(prev)[i] !== ch ? ' flip' : '';
-    return ch === ' ' ? '<i class="sp"></i>' : '<i class="' + flip.trim() + '">' + escHtml(ch) + '</i>';
+    return ch === ' ' ? '<i class="sp" aria-hidden="true"></i>' : '<i class="' + flip.trim() + '" aria-hidden="true">' + escHtml(ch) + '</i>';
   }).join('') + '</span>';
 }
 var KR_TILE_CHIP = { ok: '預計達標', behind: '預計未達標', warn: '低於所需速度' };
@@ -4287,14 +4361,18 @@ function renderWeeklyGreeting() {
     return;
   }
   var p = memberPending(currentMember);
+  if (krTopOwner === currentMember) {   // the 目前卡最多 line above already speaks to this person
+    el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>';
+    return;
+  }
   el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>' +
     '<div class="greet-line">' + (p.total
       ? '你目前有 <b>' + p.total + '</b> 個小節待處理，最多的是「' + escHtml(p.top) + '」（' + p.topCount + ' 個）。'
       : '你目前沒有等著處理的小節。') + '</div>';
 }
 
+var krTopOwner = null;   // who carries the most pending sections, set by renderBottleneck
 function renderBottleneck() {
-  renderWeeklyGreeting();
   var el = document.getElementById('bottleneck');
   if (!el) return;
   var mods = bottleneckModules();
@@ -4358,6 +4436,22 @@ function renderBottleneck() {
       }).join('') + '</div>' +
     '</div>';
   });
+  // Owner carrying the most pending sections across every workflow, for the verdict card
+  var ownerLoad = {};
+  pending.forEach(function(p){ p.t.owners.forEach(function(o){ ownerLoad[o] = (ownerLoad[o] || 0) + p.c.ready + p.c.doing; }); });
+  var stuckEl = document.getElementById('kr-stuck');
+  if (stuckEl) {
+    var topOwner = Object.keys(ownerLoad).sort(function(a, b){ return ownerLoad[b] - ownerLoad[a]; })[0];
+    krTopOwner = topOwner || null;
+    var isMe = topOwner && topOwner === currentMember;
+    var topTask = pending.slice().sort(function(a, b){ return (b.c.ready + b.c.doing) - (a.c.ready + a.c.doing); })[0];
+    stuckEl.innerHTML = topOwner
+      ? '目前卡最多：<span class="owner-chip ' + CHIP_CLASS[topOwner] + '">' + (isMe ? '你（' + topOwner + '）' : topOwner) + '</span> <b>' + ownerLoad[topOwner] + '</b> 個小節待處理' +
+        (topTask ? '，最多的是「' + escHtml(topTask.t.name) + '」（' + (topTask.c.ready + topTask.c.doing) + '）' : '') +
+        ' <button type="button" class="kr-stuck-link" onclick="document.getElementById(\'bottleneck-card\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">看關卡瓶頸</button>'
+      : '';
+  }
+  renderWeeklyGreeting();
   // Most pending sections first; ties go to the task with more not yet started
   pending.sort(function(a, b){ return (b.c.ready + b.c.doing) - (a.c.ready + a.c.doing) || b.c.ready - a.c.ready; });
   var top = pending.slice(0, 3);
@@ -4425,18 +4519,12 @@ function renderForecastCards() {
       var overdue = rows.filter(function(r){ return r.state === 'overdue'; });
       var short  = k.target - reachable;
       var noForecast = rows.filter(function(r){ return r.state === 'unknown'; });
-      var velocity = krStats && krStats.k.kr.id === k.kr.id ? fmtNum(krStats.projected) + '%' : null;
-      summary.innerHTML = '<div class="kr-note contrib-note">' +
-        '<b>若只計已排程模組：' + fmtNum(reachable) + '%</b>' +
-        (short > 0 ? '，比 ' + k.label + ' 目標 ' + fmtNum(k.target) + '% 少 <span class="kr-bad">' + fmtNum(short) + '</span> 個百分點（約 ' + fmtNum(short / share) + ' 個模組）。'
-                   : '，<span class="kr-good">可達成 ' + k.label + ' 目標 ' + fmtNum(k.target) + '%</span>。') +
-        '預計 ' + formatDay(k.dueStr) + ' 前完成 <b>' + ontime.length + '</b> 個模組' +
-        (ontime.length ? '（' + ontime.map(function(r){ return r.mod; }).join('、') + '）' : '') + '，再加上已完成的模組。' +
-        '<br><span class="contrib-why">這是情境估算，不是本頁的結論' + (velocity ? '（上方速度預測：' + velocity + '）' : '') + '。' +
-        (noForecast.length ? '它比較低，是因為 ' + noForecast.length + ' 個模組尚未設定預測，在這裡只算目前進度、不再前進；' : '') +
-        '速度預測則用近 4 週全團隊的實際產出推估，不管產出落在哪個模組。</span>' +
-        (overdue.length ? '<br>' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成，這裡只算目前進度；建議更新起算日期或任務時數。' : '') +
-        '</div>';
+      krScheduled = { pct: reachable, noForecast: noForecast.length, ontime: ontime.length };
+      renderScenarioRow();
+      summary.innerHTML = overdue.length
+        ? '<div class="kr-note contrib-note board-advice">' + overdue.map(function(r){ return r.mod; }).join('、') + ' 已超過預計完工日仍未完成（看板上只算目前進度）。' +
+            '<button type="button" class="board-advice-btn" onclick="openBaseline()">更新完工預測設定</button></div>'
+        : '';
     } else {
       summary.innerHTML = '';
     }
@@ -4495,7 +4583,7 @@ function renderDepartureBoard(open, idle, done, share, k) {
   }
   var changedCount = 0;
   var html = '<div class="board" role="table" aria-label="出發看板">' +
-    '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate</span><span role="columnheader">待處理最多</span><span role="columnheader">' + (k ? formatDay(k.dueStr) + ' 前' : '狀態') + '</span></div>' +
+    '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate（1–5）</span><span role="columnheader">待處理最多</span><span role="columnheader">狀態' + (k ? '（' + formatDay(k.dueStr) + ' 前）' : '') + '</span></div>' +
     rows.map(function(r) {
       var f = r.f, gates = getGates(r.mod), cur = moduleCurrentGate(r.mod);
       var changed = seen[r.mod] !== undefined && seen[r.mod] !== boardSig(r);
@@ -4505,10 +4593,10 @@ function renderDepartureBoard(open, idle, done, share, k) {
       var st = BOARD_STATUS[r.state] || BOARD_STATUS.unknown;
       var owner = r.state === 'idle' ? null : moduleTopOwner(r.mod);
       var started = f.currentPct > 0;
-      return '<div class="board-row' + (changed ? ' changed' : '') + (st[0] === 'late' ? ' late' : '') + (r.state === 'idle' ? ' idle' : '') + '" role="row"' + (changed ? ' tabindex="0" onclick="markBoardSeen(\'' + r.mod + '\')" onkeydown="if(event.key===\'Enter\')markBoardSeen(\'' + r.mod + '\')" title="點一下標為已看過"' : '') + '>' +
+      return '<div class="board-row' + (changed ? ' changed' : '') + (st[0] === 'late' ? ' late' : '') + (r.state === 'idle' ? ' idle' : '') + '" role="row"' + (changed ? ' tabindex="0" onclick="markBoardSeen(\'' + r.mod + '\')" role="button" aria-label="' + r.mod + ' 有變動，按下標為已看過" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();markBoardSeen(\'' + r.mod + '\')}" title="點一下標為已看過"' : '') + '>' +
         '<span class="board-code" role="cell">' + flap(r.mod, 'bc-' + r.mod) + '</span>' +
         '<span class="board-name" role="cell"><b>' + (name ? escHtml(name) : '（未命名）') + '</b><small>' + f.currentPct + '%・剩餘可貢獻 +' + fmtNum(r.remain) + '%</small></span>' +
-        '<span class="board-date" role="cell" title="' + (f.completionDate ? f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) : (f.reason || '')) + '">' + flap(date, 'bd-' + r.mod) + '</span>' +
+        '<span class="board-date" role="cell" title="' + (f.completionDate ? f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) : (f.reason || '')) + '">' + (f.completionDate ? flap(date, 'bd-' + r.mod) : '<span class="board-dim">—</span>') + '</span>' +
         '<span class="board-gate" role="cell"><span class="gate-segs">' + gates.map(function(g, i) {
             return '<i class="' + (i < cur ? 'd' : i === cur && started ? 'c' : '') + '" title="Gate ' + g.num + '・' + g.name + '"></i>'; }).join('') + '</span>' +
           '<small>' + (cur >= gates.length ? '全部完成' : started ? 'Gate ' + gates[cur].num + '・' + gates[cur].name : '尚未開始') + '</small></span>' +
@@ -4517,7 +4605,8 @@ function renderDepartureBoard(open, idle, done, share, k) {
       '</div>';
     }).join('') + '</div>';
   var more = idle.length - shownIdle.length;
-  if (more > 0) html += '<div class="contrib-idle">另有 ' + more + ' 個模組尚未開始、未設定預測：' + idle.slice(2).map(function(r){ return r.mod; }).join('、') + '（各可貢獻 ' + fmtNum(share) + '%）</div>';
+  if (more > 0) html += '<div class="board-idle-strip"><span class="board-idle-label">另有 ' + more + ' 個模組尚未開始・各可貢獻 ' + fmtNum(share) + '%</span><span class="board-idle-codes">' +
+    idle.slice(2).map(function(r){ return flap(r.mod); }).join('') + '</span></div>';
   if (done.length) html += '<div class="contrib-done">已完成 ' + done.length + ' 個模組：' + done.map(function(r){ return r.mod; }).join('、') + '（已貢獻 ' + fmtNum(done.length * share) + '%）</div>';
   var btn = document.getElementById('board-seen-btn');
   if (btn) btn.hidden = changedCount === 0;
