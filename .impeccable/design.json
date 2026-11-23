@@ -1,0 +1,657 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T07:51:49.185068+00:00",
+  "title": "Design System: BB6 課程製作",
+  "extensions": {
+    "colorMeta": {
+      "signal-yellow": {
+        "role": "primary",
+        "displayName": "Signal Yellow",
+        "canonical": "#FFEA41",
+        "tonalRamp": [
+          "#3c3810",
+          "#6c6313",
+          "#a29210",
+          "#dfc707",
+          "#f5df33",
+          "#ede078",
+          "#ede7b5",
+          "#f8f7ec"
+        ]
+      },
+      "tile-gold-2": {
+        "role": "primary",
+        "displayName": "Tile Gold 2",
+        "canonical": "#F6DC36",
+        "tonalRamp": [
+          "#3b3512",
+          "#695e17",
+          "#9c8a16",
+          "#d5bb10",
+          "#ecd43b",
+          "#e8d97d",
+          "#ebe4b7",
+          "#f8f6ed"
+        ]
+      },
+      "tile-gold-3": {
+        "role": "primary",
+        "displayName": "Tile Gold 3",
+        "canonical": "#ECCD2C",
+        "tonalRamp": [
+          "#393314",
+          "#65591a",
+          "#96831c",
+          "#cdb019",
+          "#e5cb43",
+          "#e3d382",
+          "#e9e1b9",
+          "#f7f6ed"
+        ]
+      },
+      "tile-gold-4": {
+        "role": "primary",
+        "displayName": "Tile Gold 4",
+        "canonical": "#E0BC22",
+        "tonalRamp": [
+          "#373116",
+          "#61551e",
+          "#907c22",
+          "#c4a521",
+          "#ddc14b",
+          "#dece87",
+          "#e6debc",
+          "#f7f5ee"
+        ]
+      },
+      "chart-amber": {
+        "role": "primary",
+        "displayName": "Chart Amber",
+        "canonical": "#F59E0B",
+        "tonalRamp": [
+          "#3b2b12",
+          "#694a17",
+          "#9d6b16",
+          "#d68c0f",
+          "#edab3b",
+          "#e8c07d",
+          "#ebd8b7",
+          "#f8f4ed"
+        ]
+      },
+      "accent-ink-light": {
+        "role": "primary",
+        "displayName": "Dark Gold Ink",
+        "canonical": "#735e00",
+        "tonalRamp": [
+          "#3c3410",
+          "#6c5c13",
+          "#a28810",
+          "#dfb707",
+          "#f5d133",
+          "#edd778",
+          "#ede3b5",
+          "#f8f6ec"
+        ]
+      },
+      "chart-accent-light": {
+        "role": "primary",
+        "displayName": "Chart Gold",
+        "canonical": "#A68600",
+        "tonalRamp": [
+          "#3c3410",
+          "#6c5b13",
+          "#a28610",
+          "#dfb507",
+          "#f5cf33",
+          "#edd678",
+          "#ede2b5",
+          "#f8f6ec"
+        ]
+      },
+      "charcoal-ground": {
+        "role": "neutral",
+        "displayName": "Charcoal Ground",
+        "canonical": "#111214",
+        "tonalRamp": [
+          "#242628",
+          "#3c3f43",
+          "#53575f",
+          "#6a707b",
+          "#8c919c",
+          "#aeb1b7",
+          "#cfd0d3",
+          "#f2f2f3"
+        ]
+      },
+      "panel-graphite": {
+        "role": "neutral",
+        "displayName": "Panel Graphite",
+        "canonical": "#1b1c1f",
+        "tonalRamp": [
+          "#252528",
+          "#3d3e43",
+          "#54575e",
+          "#6b6f7a",
+          "#8d919b",
+          "#aeb0b7",
+          "#cfd0d3",
+          "#f2f2f3"
+        ]
+      },
+      "raised-graphite": {
+        "role": "neutral",
+        "displayName": "Raised Graphite",
+        "canonical": "#232428",
+        "tonalRamp": [
+          "#252528",
+          "#3d3e43",
+          "#54565e",
+          "#6c6e7a",
+          "#8d909a",
+          "#afb0b6",
+          "#cfd0d3",
+          "#f2f2f3"
+        ]
+      },
+      "bone-text": {
+        "role": "neutral",
+        "displayName": "Bone Text",
+        "canonical": "#f4f4f2",
+        "tonalRamp": [
+          "#282824",
+          "#43433c",
+          "#5f5f53",
+          "#7c7c6a",
+          "#9c9c8c",
+          "#b7b7ae",
+          "#d3d3cf",
+          "#f3f3f2"
+        ]
+      },
+      "muted-slate": {
+        "role": "neutral",
+        "displayName": "Muted Slate",
+        "canonical": "#9599A4",
+        "tonalRamp": [
+          "#252528",
+          "#3c3e43",
+          "#54575f",
+          "#6b6f7b",
+          "#8d909b",
+          "#aeb0b7",
+          "#cfd0d3",
+          "#f2f2f3"
+        ]
+      },
+      "paper-ground": {
+        "role": "neutral",
+        "displayName": "Paper Ground",
+        "canonical": "#f3f2ee",
+        "tonalRamp": [
+          "#2a2922",
+          "#474438",
+          "#66614d",
+          "#857e60",
+          "#a59e83",
+          "#bdb9a8",
+          "#d6d4cc",
+          "#f3f3f1"
+        ]
+      },
+      "panel-white": {
+        "role": "neutral",
+        "displayName": "Panel White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#404040",
+          "#595959",
+          "#737373",
+          "#949494",
+          "#b2b2b2",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "ink-text": {
+        "role": "neutral",
+        "displayName": "Ink Text",
+        "canonical": "#18181b",
+        "tonalRamp": [
+          "#252528",
+          "#3d3d42",
+          "#55555e",
+          "#6c6c79",
+          "#8e8e9a",
+          "#afafb6",
+          "#cfcfd3",
+          "#f2f2f3"
+        ]
+      },
+      "muted-slate-light": {
+        "role": "neutral",
+        "displayName": "Muted Slate (light)",
+        "canonical": "#5f616a",
+        "tonalRamp": [
+          "#252527",
+          "#3d3e42",
+          "#55575d",
+          "#6d6f79",
+          "#8f9199",
+          "#afb0b6",
+          "#d0d0d3",
+          "#f2f2f3"
+        ]
+      },
+      "state-good": {
+        "role": "state",
+        "displayName": "Good",
+        "canonical": "#4ade80",
+        "tonalRamp": [
+          "#173622",
+          "#215f37",
+          "#278c4c",
+          "#28bd5f",
+          "#51d782",
+          "#8adba8",
+          "#bee5cc",
+          "#eef6f1"
+        ]
+      },
+      "state-warn": {
+        "role": "state",
+        "displayName": "Warn",
+        "canonical": "#FB923C",
+        "tonalRamp": [
+          "#3c2411",
+          "#6b3b15",
+          "#9f5213",
+          "#da680b",
+          "#f18b37",
+          "#eaad7b",
+          "#ecceb6",
+          "#f8f2ed"
+        ]
+      },
+      "state-bad": {
+        "role": "state",
+        "displayName": "Bad",
+        "canonical": "#f87171",
+        "tonalRamp": [
+          "#3a1212",
+          "#681717",
+          "#9c1717",
+          "#d41111",
+          "#ec3c3c",
+          "#e77e7e",
+          "#ebb7b7",
+          "#f8eded"
+        ]
+      },
+      "state-good-light": {
+        "role": "state",
+        "displayName": "Good (light)",
+        "canonical": "#15803d",
+        "tonalRamp": [
+          "#163622",
+          "#206038",
+          "#258e4c",
+          "#25c05f",
+          "#4ed982",
+          "#89dca8",
+          "#bde5cc",
+          "#eef6f1"
+        ]
+      },
+      "state-warn-light": {
+        "role": "state",
+        "displayName": "Warn (light)",
+        "canonical": "#c2410c",
+        "tonalRamp": [
+          "#3a1e13",
+          "#672f18",
+          "#9a3e19",
+          "#d24b13",
+          "#e9703e",
+          "#e69d7f",
+          "#eac7b8",
+          "#f7f0ed"
+        ]
+      },
+      "state-bad-light": {
+        "role": "state",
+        "displayName": "Bad (light)",
+        "canonical": "#b91c1c",
+        "tonalRamp": [
+          "#371616",
+          "#611f1f",
+          "#8f2323",
+          "#c22323",
+          "#db4d4d",
+          "#dd8888",
+          "#e6bcbc",
+          "#f7eeee"
+        ]
+      },
+      "member-ken": {
+        "role": "identity",
+        "displayName": "Ken Blue",
+        "canonical": "#2563EB",
+        "tonalRamp": [
+          "#141f39",
+          "#1b3265",
+          "#1c4296",
+          "#1951cc",
+          "#4376e4",
+          "#82a0e3",
+          "#bac8e9",
+          "#edf0f7"
+        ]
+      },
+      "member-daniel": {
+        "role": "identity",
+        "displayName": "Daniel Green",
+        "canonical": "#16A34A",
+        "tonalRamp": [
+          "#153722",
+          "#1e6237",
+          "#21914b",
+          "#21c55d",
+          "#4ade81",
+          "#86dfa7",
+          "#bce7cb",
+          "#eef7f1"
+        ]
+      },
+      "member-ellen": {
+        "role": "identity",
+        "displayName": "Ellen Orange",
+        "canonical": "#EA580C",
+        "tonalRamp": [
+          "#3a2012",
+          "#683317",
+          "#9b4417",
+          "#d45411",
+          "#eb783d",
+          "#e7a27e",
+          "#ebc9b8",
+          "#f8f1ed"
+        ]
+      },
+      "gate-1": {
+        "role": "identity",
+        "displayName": "Gate 1",
+        "canonical": "#D4A017",
+        "tonalRamp": [
+          "#382e14",
+          "#64501c",
+          "#94741e",
+          "#ca9a1c",
+          "#e2b746",
+          "#e1c884",
+          "#e8dbba",
+          "#f7f4ee"
+        ]
+      },
+      "gate-2": {
+        "role": "identity",
+        "displayName": "Gate 2",
+        "canonical": "#4F86C6",
+        "tonalRamp": [
+          "#1b2532",
+          "#293e57",
+          "#34567f",
+          "#3c6faa",
+          "#6290c5",
+          "#95b0d0",
+          "#c3d0e0",
+          "#eff2f5"
+        ]
+      },
+      "gate-3": {
+        "role": "identity",
+        "displayName": "Gate 3",
+        "canonical": "#7C3AED",
+        "tonalRamp": [
+          "#211439",
+          "#361b65",
+          "#491c96",
+          "#5b19cd",
+          "#7f43e5",
+          "#a682e3",
+          "#cbbae9",
+          "#f1edf7"
+        ]
+      },
+      "gate-4": {
+        "role": "identity",
+        "displayName": "Gate 4",
+        "canonical": "#0E9F8A",
+        "tonalRamp": [
+          "#143933",
+          "#1a655a",
+          "#1c9785",
+          "#18cdb3",
+          "#43e5ce",
+          "#82e3d5",
+          "#b9e9e2",
+          "#edf7f6"
+        ]
+      },
+      "gate-5": {
+        "role": "identity",
+        "displayName": "Gate 5",
+        "canonical": "#BE185D",
+        "tonalRamp": [
+          "#371523",
+          "#621d3a",
+          "#922050",
+          "#c61f65",
+          "#df4987",
+          "#e085ab",
+          "#e7bbcd",
+          "#f7eef1"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "KR tile numerals."
+      },
+      "greeting": {
+        "displayName": "Greeting",
+        "purpose": "Greeting banner headline in accent ink."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "KR verdict sentence, coloured by state."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Section labels and chart-card titles."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Explanatory copy and verdict sub-lines."
+      },
+      "nav": {
+        "displayName": "Nav",
+        "purpose": "Sidebar items."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Tile labels, meta, controls; 14px floor on the landing page."
+      }
+    },
+    "shadows": [
+      {
+        "name": "light-card-lift",
+        "value": "0 1px 2px rgba(24,24,27,0.04), 0 4px 16px rgba(24,24,27,0.04)",
+        "purpose": "Cards on the white panel, light theme only. Dark theme has no shadows."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state",
+        "value": "180ms ease-out",
+        "purpose": "Hover/active colour changes and sidebar collapse; removed under prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-banner",
+        "value": "1100px"
+      },
+      {
+        "name": "top-bar",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "640px"
+      }
+    ],
+    "themes": {
+      "dark": {
+        "bg": "#111214",
+        "panel": "#1b1c1f",
+        "text": "#f4f4f2",
+        "accentInk": "#FFEA41",
+        "chartAccent": "#FFEA41",
+        "chartAccent2": "#F59E0B",
+        "banner": "color-mix(in srgb, #FFEA41 7%, #1b1c1f)",
+        "activePill": "color-mix(in srgb, #FFEA41 14%, var(--panel))"
+      },
+      "light": {
+        "bg": "#f3f2ee",
+        "panel": "#ffffff",
+        "text": "#18181b",
+        "accentInk": "#735e00",
+        "chartAccent": "#A68600",
+        "chartAccent2": "#b45309",
+        "banner": "color-mix(in srgb, #FFEA41 26%, #ffffff)",
+        "activePill": "color-mix(in srgb, #FFEA41 32%, #ffffff)"
+      }
+    }
+  },
+  "components": [
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Sidebar pill list; active item gets a yellow-tinted pill and a yellow icon.",
+      "html": "<nav class=\"ds-sb\"><div class=\"ds-sb-group\">BB6</div><a class=\"ds-sb-item active\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/></svg><span>專案概況</span></a><a class=\"ds-sb-item\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/></svg><span>OKR</span></a></nav>",
+      "css": ".ds-sb { display:flex; flex-direction:column; gap:4px; width:248px; padding:20px 14px; background:#111214; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-sb-group { padding:16px 12px 6px; font-size:13px; font-weight:700; color:#9599A4; } .ds-sb-item { display:flex; align-items:center; gap:12px; min-height:46px; padding:0 12px; font-size:16px; font-weight:600; color:rgba(255,255,255,0.75); text-decoration:none; border-radius:12px; transition:background-color .18s, color .18s; } .ds-sb-item:hover { color:#f4f4f2; background:rgba(255,255,255,0.06); } .ds-sb-item.active { color:#f4f4f2; background:color-mix(in srgb, #FFEA41 14%, #1b1c1f); } .ds-sb-item.active svg { color:#FFEA41; } .ds-sb-item:focus-visible { outline:2px solid #FFEA41; outline-offset:-2px; }"
+    },
+    {
+      "name": "KR Tile",
+      "kind": "custom",
+      "refersTo": "kr-tile",
+      "description": "Signature solid-yellow tile with black ink, heavy numeral, status chip and one soft circle.",
+      "html": "<div class=\"ds-tile\"><div class=\"ds-tile-label\">目前完成度</div><div class=\"ds-tile-val\">36.1%</div><div class=\"ds-tile-sub\">目標 55%，還差 18.9 個百分點</div><span class=\"ds-tile-chip\">預計達標</span></div>",
+      "css": ".ds-tile { position:relative; overflow:hidden; display:flex; flex-direction:column; width:260px; min-height:200px; padding:26px 28px; background:#FFEA41; color:#111214; border-radius:24px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-tile::after { content:''; position:absolute; top:-70px; right:-60px; width:190px; height:190px; border-radius:50%; background:rgba(17,18,20,0.06); } .ds-tile > * { position:relative; z-index:1; } .ds-tile-label { font-size:15px; font-weight:700; color:rgba(17,18,20,0.7); } .ds-tile-val { margin:14px 0 10px; font-size:56px; font-weight:800; line-height:1; letter-spacing:-0.035em; font-variant-numeric:tabular-nums; } .ds-tile-sub { font-size:15px; line-height:1.5; color:rgba(17,18,20,0.75); } .ds-tile-chip { align-self:flex-start; margin-top:16px; padding:4px 12px; font-size:13px; font-weight:700; border-radius:999px; color:#4ade80; background:#111214; }"
+    },
+    {
+      "name": "Greeting Banner",
+      "kind": "card",
+      "refersTo": "content-panel",
+      "description": "Yellow-washed banner: greeting in accent ink, pending load, verdict behind a hairline.",
+      "html": "<div class=\"ds-greet\"><div><div class=\"ds-greet-title\">午安，Ken</div><p class=\"ds-greet-line\">你目前有 <b>2</b> 個小節待處理。</p></div><div class=\"ds-verdict\">預計達標・超前 6.6 個百分點</div></div>",
+      "css": ".ds-greet { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.6fr); gap:36px; align-items:center; padding:34px 40px; background:color-mix(in srgb, #FFEA41 7%, #1b1c1f); border-radius:24px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; } .ds-greet-title { font-size:34px; font-weight:800; line-height:1.2; letter-spacing:-0.02em; color:#FFEA41; } .ds-greet-line { margin-top:10px; font-size:16px; line-height:1.6; color:rgba(255,255,255,0.75); } .ds-greet-line b { color:#f4f4f2; } .ds-verdict { padding-left:36px; border-left:1px solid rgba(255,255,255,0.1); font-size:34px; font-weight:700; line-height:1.15; letter-spacing:-0.02em; color:#4ade80; }"
+    },
+    {
+      "name": "Chart Card",
+      "kind": "card",
+      "refersTo": "chart-card",
+      "description": "Full-width card for charts and tables inside the panel.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">KR 進度與預測</div><div class=\"ds-card-sub\">實際進度、依時程的應達線，以及預測</div></div>",
+      "css": ".ds-card { padding:28px 32px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; } .ds-card-title { font-size:20px; font-weight:700; letter-spacing:-0.01em; margin-bottom:6px; } .ds-card-sub { font-size:14px; color:rgba(255,255,255,0.65); }"
+    },
+    {
+      "name": "Quiet Button",
+      "kind": "button",
+      "refersTo": "button-quiet",
+      "description": "Outlined utility control (settings, expand).",
+      "html": "<button class=\"ds-btn\">完工預測設定</button>",
+      "css": ".ds-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:14px; font-weight:700; color:rgba(255,255,255,0.75); background:transparent; border:1px solid rgba(255,255,255,0.15); border-radius:10px; cursor:pointer; transition:color .15s, border-color .15s; } .ds-btn:hover { color:#f4f4f2; border-color:rgba(255,255,255,0.35); } .ds-btn:focus-visible { outline:2px solid #FFEA41; outline-offset:3px; }"
+    },
+    {
+      "name": "Member Chips",
+      "kind": "chip",
+      "refersTo": "member-chip",
+      "description": "Fixed member identity chips on a 20% wash with the member ink.",
+      "html": "<span class=\"ds-chip ken\">Ken</span> <span class=\"ds-chip daniel\">Daniel</span> <span class=\"ds-chip ellen\">Ellen</span>",
+      "css": ".ds-chip { display:inline-block; padding:3px 10px; border-radius:999px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:13px; font-weight:700; } .ds-chip.ken { background:rgba(37,99,235,0.2); color:#7BAEFF; } .ds-chip.daniel { background:rgba(22,163,74,0.2); color:#6EE7A0; } .ds-chip.ellen { background:rgba(234,88,12,0.2); color:#FDBA74; }"
+    },
+    {
+      "name": "Gate Card",
+      "kind": "card",
+      "refersTo": "chart-card",
+      "description": "Gate identity as a full 45% tinted border, never an edge bar.",
+      "html": "<div class=\"ds-gate\"><div class=\"ds-gate-num\">Gate 3・字幕＋逐字稿</div><div class=\"ds-gate-meta\">可開始 11・進行中 0</div></div>",
+      "css": ".ds-gate { --g:#7C3AED; padding:20px; border:1px solid color-mix(in srgb, var(--g) 45%, transparent); border-radius:16px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; background:#1b1c1f; } .ds-gate-num { font-size:18px; font-weight:700; letter-spacing:-0.01em; color:#A78BFA; } .ds-gate-meta { margin-top:6px; font-size:14px; color:rgba(255,255,255,0.65); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Department Desk",
+    "overview": "BB6 lives inside the company's internal-tool family: a quiet sidebar on a charcoal ground, one big rounded content panel floating beside it, a greeting banner that names who is looking and what is waiting on them, and a row of solid yellow tiles that carry the four KR numbers. It should sit next to the sibling department tool and read as the same house, while keeping the company's binding pairing of signal yellow on near-black.\n\nDensity is moderate and legible from a projector: heavy numerals, a 14px floor on the landing page, and one strong colour field (the yellow tile row) per screen. Everything else is tonal graphite in dark and warm paper in light, with gate and member hues reserved for identification, never decoration. The old top-tab bar with a yellow rule and flat square cards is retired.\n\nTwo themes ship as equals. Dark is the default; light mirrors the structure on a warm paper ground with a white panel and darker inks so every hue holds contrast on white. Switching themes happens in place, and charts re-colour without a reload.",
+    "keyCharacteristics": [
+      "Sidebar (248px, collapsible to an 80px icon rail) + one rounded content panel (24px radius).",
+      "Signal yellow as fill, not as line: tiles, active pills, chart series.",
+      "Black ink on yellow, always; yellow text only where it holds contrast (dark theme) or via the dark-gold ink in light.",
+      "Line icons at 1.75 stroke, 20px.",
+      "System sans with heavy (800) tabular numerals.",
+      "Motion limited to 180ms state transitions."
+    ],
+    "rules": [
+      {
+        "name": "The Yellow-Is-A-Fill Rule",
+        "body": "Signal yellow appears as a surface (tile, pill tint, banner wash, chart bar) with black ink on it. It is never a rule line under a header.",
+        "section": "colors"
+      },
+      {
+        "name": "The Two-Ink Rule",
+        "body": "Every hue used as text has a dark-theme ink and a light-theme ink. Never set the base #FFEA41, member or gate colour as text on white.",
+        "section": "colors"
+      },
+      {
+        "name": "The Fixed Identity Rule",
+        "body": "Member and gate colours mean one person or one gate everywhere; never reuse them as decoration or as a status.",
+        "section": "colors"
+      },
+      {
+        "name": "The Projector Floor Rule",
+        "body": "Nothing on the landing page goes below 14px except chips and pills.",
+        "section": "typography"
+      },
+      {
+        "name": "The Heavy Numeral Rule",
+        "body": "Every number that answers the KR question is weight 800 with `tabular-nums`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-In-The-Dark Rule",
+        "body": "Dark theme uses no shadows; separate surfaces by tone and hairline.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put black ink (#111214) on every yellow surface, in both themes.",
+      "**Do** use the theme's accent ink for yellow-family text: #FFEA41 in dark, #735e00 in light.",
+      "**Do** keep KR numbers at weight 800 with tabular figures, and the landing page at a 14px floor.",
+      "**Do** draw line icons at 20px with a 1.75 stroke, round caps and joins.",
+      "**Do** carry gate or member identity as a full 45% tinted 1px border or a 20% wash chip.",
+      "**Do** keep motion to 180ms colour and layout transitions, and drop them under reduced motion.",
+      "**Do** re-colour charts from the theme tokens when the theme changes."
+    ],
+    "donts": [
+      "**Don't** bring back the top tab bar with a yellow rule under the header.",
+      "**Don't** set #FFEA41, member or gate base colours as text on the light panel.",
+      "**Don't** mark gate or member identity with a coloured bar on one edge of a card.",
+      "**Don't** add shadows in dark theme.",
+      "**Don't** reuse member or gate hues for status or decoration."
+    ]
+  }
+}
