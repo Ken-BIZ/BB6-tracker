@@ -1033,6 +1033,12 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 /* ── CHARTS STACK ────────────────────────────────────────── */
 .charts-stack { display: flex; flex-direction: column; gap: 20px; }
+.chart-collapse > summary { display: flex; flex-direction: column; gap: 2px; padding-left: 22px; position: relative; cursor: pointer; list-style: none; }
+.chart-collapse > summary::-webkit-details-marker { display: none; }
+.chart-collapse > summary::before { content: ''; position: absolute; left: 2px; top: 10px; width: 8px; height: 8px; border-right: 2px solid rgba(255,255,255,0.7); border-bottom: 2px solid rgba(255,255,255,0.7); transform: rotate(-45deg); transition: transform 0.15s; }
+.chart-collapse[open] > summary::before { transform: rotate(45deg); top: 7px; }
+#page-weekly .chart-collapse:not([open]) > summary .chart-card-sub { margin-bottom: 0; }
+.chart-collapse > summary:hover .chart-card-title { color: var(--yellow); }
 .recharts-bar-rectangle { cursor: pointer; }
 
 /* ── TREND DRILLDOWN MODAL ──────────────────────────────── */
@@ -1711,11 +1717,13 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
           <div id="all-modules-chart-container"></div>
         </div>
       </div>
-      <div class="chart-card">
-        <div class="chart-card-title">單日完成度增量</div>
-        <div class="chart-card-sub">選定範圍（整體專案或單一模組）每天新增的完成百分比，點擊長條可細看組成</div>
+      <details class="chart-card chart-collapse" id="daily-chart-card" ontoggle="if (this.open && lastLogData) renderDailyChart(lastLogData)">
+        <summary>
+          <span class="chart-card-title">單日完成度增量</span>
+          <span class="chart-card-sub">選定範圍（整體專案或單一模組）每天新增的完成百分比，點擊長條可細看組成</span>
+        </summary>
         <div id="daily-chart-container"></div>
-      </div>
+      </details>
     </div>
   </section>
 
@@ -4086,7 +4094,11 @@ function renderModuleProgress() {
   var root = getReactRoot('module-progress-ring');
   if (!root) return;
   var isProject = trendModule === '__project__';
-  var pct  = isProject ? fmtNum(projectPctExact()) : modulePct(trendModule);
+  // The whole-project figure is already the first KR tile; the ring only adds a single module's view
+  var ringEl = document.getElementById('module-progress-ring');
+  if (ringEl) ringEl.style.display = isProject ? 'none' : '';
+  if (isProject) { root.render(null); return; }
+  var pct  = modulePct(trendModule);
   var data = [{ name: trendScopeLabel(), value: pct, fill: 'var(--yellow)' }];
   root.render(
     h('div', { className: 'module-progress-ring' },
@@ -4263,6 +4275,8 @@ function handleDailyBarClick(barData) {
 }
 
 function renderDailyChart(logData) {
+  var card = document.getElementById('daily-chart-card');
+  if (card && !card.open) return;   // collapsed by default; drawn when opened
   var root = getReactRoot('daily-chart-container');
   if (!root) return;
   var data = trendModule === '__project__' ? computeProjectDailyDeltas(logData) : computeModuleDailyDeltas(logData, trendModule);
