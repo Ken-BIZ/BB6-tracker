@@ -1289,8 +1289,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
   --ink-blue: #7BAEFF; --ink-green: #6EE7A0; --ink-orange: #FDBA74; --ink-pink: #F9A8D4; --ink-violet: #C4B5FD; --ink-teal: #5EEAD4;
   --chart-accent: #FFEA41; --chart-accent-2: #F59E0B;
   --surface: rgba(var(--fg-rgb),0.03); --border: rgba(var(--fg-rgb),0.08);
-  --banner: color-mix(in srgb, #FFEA41 7%, #1b1c1f);
-  --tile-1: #FFEA41; --tile-2: #F6DC36; --tile-3: #ECCD2C; --tile-4: #E0BC22;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -1300,7 +1298,6 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
   --good: #15803d; --warn: #c2410c; --bad: #b91c1c;
   --ink-blue: #1d4ed8; --ink-green: #15803d; --ink-orange: #c2410c; --ink-pink: #be185d; --ink-violet: #6d28d9; --ink-teal: #0f766e;
   --chart-accent: #A68600; --chart-accent-2: #b45309;
-  --banner: color-mix(in srgb, #FFEA41 26%, #ffffff);
   --ken-text: #1d4ed8;
   --gate1-text: #8a6a00; --gate2-text: #2f5f9e; --gate3-text: #6d28d9; --gate4-text: #0b7a68; --gate5-text: #be185d;
 }
@@ -1356,7 +1353,6 @@ html[data-theme="light"] #panel .chart-card { box-shadow: 0 1px 2px rgba(24,24,2
 #page-weekly section { padding-top: 24px; padding-bottom: 48px; border-bottom: 0; }
 .weekly-topbar { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-bottom: 16px; }
 .weekly-settings-btn { border-radius: 10px; }
-.greet-title { font-size: 34px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--accent-ink); }
 .greet-line { margin-top: 10px; font-size: 16px; line-height: 1.6; color: rgba(var(--fg-rgb),0.75); text-wrap: pretty; }
 .greet-line b { color: var(--text); }
 #page-weekly .sec-label { display: flex; align-items: center; gap: 16px; margin: 0 0 18px; font-size: 20px; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: var(--text); }
@@ -1588,6 +1584,52 @@ html[data-theme="light"] :focus-visible, html[data-theme="light"] input:focus-vi
 .board-new { color: #0B0D10; }
 @media (max-width: 1100px) { .board-row { grid-template-columns: 80px minmax(0,2fr) 104px minmax(0,1.2fr) 140px; } }
 @media (max-width: 900px) { .board-row { grid-template-columns: auto minmax(0,1fr); } }
+
+/* ═══ Polish: 進度填報 · 流程分工 · 整體專案進度 in the board world ═══ */
+/* Codes speak in the board's mono voice everywhere (tiles only where the board posts a value) */
+.task-id-badge, .fx-id, .mtask-id, .ov-gate-num, .ov-section-label, .reporter-section-tag { font-family: var(--mono); font-stretch: 75%; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.ov-module-pct, .ov-project-pct, .ov-gate-pct, .gate-pct-text, .member-stat-val { font-family: var(--mono); font-stretch: 75%; font-weight: 600; letter-spacing: 0; }
+.ov-module-name { flex: 0 0 auto; min-width: 72px; }
+.ov-module-name .flap { font-size: 20px; }
+/* Tabs and controls: 10px controls with press/hover feedback */
+.reporter-tab, .ov-tab { border-radius: 10px; transition: background-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease); }
+.reporter-tab:hover, .ov-tab:hover { transform: translateY(-1px); }
+.reporter-tab:active, .ov-tab:active { transform: scale(0.96); }
+.score-btn { transition: transform .16s var(--ease), background-color .18s, border-color .18s, color .18s; }
+.score-btn:not([disabled]):hover { transform: translateY(-1px); }
+.score-btn:not([disabled]):active { transform: scale(0.96); }
+.ov-gate-num { border-radius: 999px; padding: 1px 8px; }
+/* 整體專案進度: cards, not yellow washes */
+.ov-project-card { background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 20px; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.ov-project-card:hover { transform: translateY(-3px); box-shadow: var(--lift); }
+.ov-module-card { background: var(--card); border-radius: 16px; transition: box-shadow .2s var(--ease), transform .2s var(--ease), border-color .2s; }
+.ov-module-card:hover { transform: translateY(-2px); box-shadow: var(--lift); }
+.ov-module-card.open:hover { transform: none; }
+.ov-module-head { transition: background-color .18s var(--ease); }
+/* 進度填報: "Gate n" and the gate name form one two-line heading at the same size and weight (no small label above) */
+.gate-num { margin: 0; font-size: 16px; letter-spacing: -0.01em; line-height: 1.35; }
+.gate-name { margin: 0; line-height: 1.35; }
+.gate-goal { margin-top: 6px; }
+.task-row.mine, html[data-theme="light"] .task-row.mine { background: rgba(var(--fg-rgb),0.045); }
+.task-row { transition: background-color .18s var(--ease); }
+.member-card { border-radius: 16px; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.member-card:hover { transform: translateY(-3px); box-shadow: var(--lift); }
+.member-card.ken { border-color: color-mix(in srgb, var(--ken) 45%, transparent); }
+.member-card.daniel { border-color: color-mix(in srgb, var(--daniel) 45%, transparent); }
+.member-card.ellen { border-color: color-mix(in srgb, var(--ellen) 45%, transparent); }
+html[data-theme="light"] .member-card.ellen .member-name { color: var(--ink-orange); }
+html[data-theme="light"] .member-card.daniel .member-name { color: var(--ink-green); }
+/* 流程分工: no glow, no one-edge bars, names wrap instead of truncating */
+.hero::before { display: none; }
+.fx-hero-note { background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 16px; }
+.fx-output { border: 1px solid color-mix(in srgb, var(--g) 45%, transparent); border-radius: 16px; padding-top: 18px; transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.fx-output:hover, .fx-gate:hover, .fx-person:hover { transform: translateY(-3px); box-shadow: var(--lift); }
+.fx-gate, .fx-person { transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+.fx-task { border-radius: 10px; align-items: flex-start; }
+.fx-name { white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.4; }
+@media (prefers-reduced-motion: reduce) {
+  .reporter-tab:hover, .ov-tab:hover, .score-btn:hover, .ov-project-card:hover, .ov-module-card:hover, .member-card:hover, .fx-output:hover, .fx-gate:hover, .fx-person:hover { transform: none; }
+}
 </style>
 
 <body>
@@ -2743,8 +2785,8 @@ function renderGates() {
         var isPassed = score > v;
         var bg = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
         var border = isActive || isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
-        var btnStyle = 'flex:1;padding:8px 4px;border-radius:4px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:11px;font-weight:700;color:'+(isActive?'var(--black)':isPassed?gateColor:'rgba(var(--fg-rgb),0.6)')+';font-family:inherit;transition:all 0.15s;';
-        return '<button style="'+btnStyle+'"' +
+        var btnStyle = 'flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+(isActive?'var(--black)':isPassed?'var(--text)':'rgba(var(--fg-rgb),0.6)')+';font-family:inherit;';
+        return '<button class="score-btn" style="'+btnStyle+'"' +
           (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
           '>'+nodeLabels[i]+'</button>';
       }).join('');
@@ -2870,8 +2912,8 @@ function refreshAll() {
         var isPassed = sc > v;
         var bg     = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
         var border = isActive||isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
-        var col    = isActive ? 'var(--black)' : isPassed ? gateColor : 'rgba(var(--fg-rgb),0.4)';
-        return '<button style="flex:1;padding:8px 4px;border-radius:4px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:11px;font-weight:700;color:'+col+';font-family:inherit;transition:all 0.15s;"' +
+        var col    = isActive ? 'var(--black)' : isPassed ? 'var(--text)' : 'rgba(var(--fg-rgb),0.4)';
+        return '<button class="score-btn" style="flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+col+';font-family:inherit;"' +
           (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
           '>'+nodeLabels[i]+'</button>';
       }).join('');
@@ -2974,7 +3016,7 @@ function renderOverview() {
     }).join('');
     return '<div class="ov-module-card'+(isOpen?' open':'')+'" id="ov-card-'+mod+'">' +
       '<div class="ov-module-head" onclick="toggleOvModule(\''+mod+'\')">' +
-        '<div class="ov-module-name">'+mod+'</div>' +
+        '<div class="ov-module-name">'+flap(mod)+'</div>' +
         '<div class="ov-module-title"></div>' +
         '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
         '<div class="ov-module-pct">'+pct+'%</div>' +
