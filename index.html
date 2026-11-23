@@ -6,7 +6,7 @@
 <title>BB6 課程製作</title>
 <link rel="icon" type="image/png" href="favicon.png">
 <script>try { document.documentElement.setAttribute('data-theme', localStorage.getItem('bb6-theme') === 'light' ? 'light' : 'dark'); } catch (e) { document.documentElement.setAttribute('data-theme', 'dark'); }</script>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,400..700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ── SHARED RESET & VARS ─────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,7 +21,7 @@
   --surface: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.07);
 }
 html { scroll-behavior: smooth; }
-body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
 
 /* ── PAGE SWITCHING ──────────────────────────────────────── */
 .page { display: none; }
@@ -94,7 +94,7 @@ nav a:hover { color: var(--accent-ink); background: rgba(255,234,65,0.08); }
   }
 
   html { scroll-behavior: smooth; }
-  body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
+  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
 
   header { background: var(--bg); border-bottom: 2px solid var(--yellow); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .logo-area { display: flex; align-items: center; gap: 16px; }
@@ -325,7 +325,7 @@ nav a:hover { color: var(--accent-ink); background: rgba(255,234,65,0.08); }
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: 'Geist', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
 
 /* HEADER */
 header { background: var(--bg); border-bottom: 2px solid var(--yellow); padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
@@ -1356,36 +1356,15 @@ html[data-theme="light"] #panel .chart-card { box-shadow: 0 1px 2px rgba(24,24,2
 #page-weekly section { padding-top: 24px; padding-bottom: 48px; border-bottom: 0; }
 .weekly-topbar { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-bottom: 16px; }
 .weekly-settings-btn { border-radius: 10px; }
-.greet-banner { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.6fr); gap: 36px; align-items: center; margin-bottom: 40px; padding: 34px 40px; background: var(--banner); border-radius: 24px; }
 .greet-title { font-size: 34px; font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; color: var(--accent-ink); }
 .greet-line { margin-top: 10px; font-size: 16px; line-height: 1.6; color: rgba(var(--fg-rgb),0.75); text-wrap: pretty; }
 .greet-line b { color: var(--text); }
-.greet-banner #kr-verdict.kr-verdict { margin: 0; padding-left: 36px; border-left: 1px solid rgba(var(--fg-rgb),0.1); }
-.greet-banner #kr-verdict:empty { display: none; }
 #page-weekly .sec-label { display: flex; align-items: center; gap: 16px; margin: 0 0 18px; font-size: 20px; font-weight: 700; line-height: 1.35; letter-spacing: -0.01em; color: var(--text); }
 #page-weekly .sec-label::after { content: ''; flex: 1; min-width: 24px; height: 1px; background: rgba(var(--fg-rgb),0.12); }
-#page-weekly .kr-tiles { gap: 16px; }
-#page-weekly .kr-tile { position: relative; overflow: hidden; display: flex; flex-direction: column; min-height: 200px; padding: 26px 28px; color: var(--on-accent); background: var(--tile-1); border: 0; border-radius: 24px; }
-#page-weekly .kr-tile:nth-child(2) { background: var(--tile-2); }
-#page-weekly .kr-tile:nth-child(3) { background: var(--tile-3); }
-#page-weekly .kr-tile:nth-child(4) { background: var(--tile-4); }
-#page-weekly .kr-tile::after { content: ''; position: absolute; top: -70px; right: -60px; width: 190px; height: 190px; border-radius: 50%; background: rgba(17,18,20,0.06); pointer-events: none; }
-#page-weekly .kr-tile:nth-child(2)::after { top: auto; right: auto; bottom: -110px; left: -50px; }
-#page-weekly .kr-tile:nth-child(3)::after { top: auto; bottom: -80px; right: 30px; width: 150px; height: 150px; }
-#page-weekly .kr-tile:nth-child(4)::after { top: -40px; right: -90px; }
-#page-weekly .kr-tile > * { position: relative; z-index: 1; }
-#page-weekly .kr-tile-label { font-size: 15px; font-weight: 700; color: rgba(17,18,20,0.7); }
-#page-weekly .kr-tile-val { margin: 14px 0 10px; font-size: 56px; font-weight: 800; line-height: 1; letter-spacing: -0.035em; color: var(--on-accent); }
-#page-weekly .kr-tile-sub { font-size: 15px; line-height: 1.5; color: rgba(17,18,20,0.75); }
-.kr-tile-chip { align-self: flex-start; margin-top: auto; padding: 4px 12px; font-size: 13px; font-weight: 700; border-radius: 999px; color: #4ade80; background: #111214; }
-.kr-tile-sub + .kr-tile-chip { margin-top: 16px; }
-.kr-tile-chip.behind, .kr-tile-chip.warn { color: #FB923C; }
 #page-weekly .kr-note { margin: 18px 0 28px; }
 #page-weekly .kr-card { margin-bottom: 24px; }
 
 @media (max-width: 1100px) {
-  .greet-banner { grid-template-columns: 1fr; gap: 20px; }
-  .greet-banner #kr-verdict.kr-verdict { padding: 20px 0 0; border-left: 0; border-top: 1px solid rgba(var(--fg-rgb),0.1); }
 }
 @media (max-width: 900px) {
   .app { grid-template-columns: minmax(0, 1fr); }
@@ -1398,10 +1377,7 @@ html[data-theme="light"] #panel .chart-card { box-shadow: 0 1px 2px rgba(24,24,2
   .panel { margin: 0 8px 8px; border-radius: 20px; }
   #panel .page section { padding-left: 16px; padding-right: 16px; }
   .panel-top { padding: 16px 16px 0; }
-  .greet-banner { padding: 24px; border-radius: 20px; }
   .greet-title { font-size: 26px; }
-  #page-weekly .kr-tile { min-height: 0; padding: 20px; border-radius: 20px; }
-  #page-weekly .kr-tile-val { font-size: 38px; }
   #panel .chart-card { padding: 20px; border-radius: 16px; }
 }
 @media (max-width: 640px) {
@@ -1448,11 +1424,170 @@ html[data-theme="light"] .ov-mini-seg.filled, html[data-theme="light"] .bn-seg.d
 .fx-ptask { border-left-width: 1px; border-radius: 10px; }
 .task-row.mine { border-left: 0; background: rgba(255,234,65,0.06); }
 html[data-theme="light"] .task-row.mine { background: rgba(255,234,65,0.18); }
-#page-weekly .kr-tile-sub { word-break: keep-all; }
 .sb-menu-btn .ico-close { display: none; }
 body.sb-menu-open .sb-menu-btn .ico-open { display: none; }
 body.sb-menu-open .sb-menu-btn .ico-close { display: inline; }
 @media (prefers-reduced-motion: reduce) { .app { transition: none; } }
+/* ═══ Departure board world (palette, flap type, board rows) on the rounded card shell ═══ */
+:root, :root[data-theme="dark"] {
+  --bg: #0B0D10; --panel: #121419; --card: #191C22; --raised: #1C2127; --raised-2: #232830; --pass: #20242B;
+  --text: #F2F2EE; --grey-dark: #8A9098; --accent-ink: #FFEA41;
+  --flap-bg: #262B33; --flap-ink: #FFEA41; --alert: #FF5A36; --warn: #FF8A4C; --good: #4ade80;
+  --mono: "Martian Mono", ui-monospace, "SF Mono", Menlo, monospace; --ease: cubic-bezier(.2,.7,.2,1);
+  --lift: 0 12px 28px rgba(0,0,0,0.35);
+}
+:root[data-theme="light"] {
+  --bg: #E6E8EB; --panel: #F4F5F6; --card: #FFFFFF; --raised: #FFFFFF; --raised-2: #FFFFFF; --pass: #F4F5F6;
+  --text: #0B0D10; --grey-dark: #5C626A; --accent-ink: #6E5A00;
+  --flap-bg: #E9EBEE; --flap-ink: #0B0D10; --alert: #D93A16; --warn: #C2410C; --good: #15803d;
+  --lift: 0 12px 28px rgba(11,13,16,0.10);
+}
+.panel { border: 1px solid rgba(var(--fg-rgb),0.05); }
+.sb-brand-text { color: var(--accent-ink); }
+.sidebar .sb-item { transition: background-color .18s var(--ease), color .18s var(--ease), transform .18s var(--ease); }
+.sidebar .sb-item:hover { transform: translateX(3px); }
+.sidebar .sb-item:active { transform: scale(0.98); }
+.sidebar .sb-item.active, html[data-theme="light"] .sidebar .sb-item.active { background: var(--card); color: var(--text); box-shadow: inset 0 0 0 1px rgba(var(--fg-rgb),0.06); }
+.weekly-settings-btn, .board-seen-btn { transition: transform .18s var(--ease), border-color .18s, color .18s, background-color .18s; }
+.weekly-settings-btn:hover, .board-seen-btn:hover { transform: translateY(-1px); }
+.weekly-settings-btn:active, .board-seen-btn:active { transform: scale(0.97); }
+
+/* Split-flap characters */
+.flap { display: inline-flex; gap: 0.09em; font-family: var(--mono); font-stretch: 75%; font-weight: 600; font-variant-numeric: tabular-nums; perspective: 400px; }
+.flap i { display: inline-flex; align-items: center; justify-content: center; min-width: 0.78em; padding: 0.06em 0.05em; font-style: normal; line-height: 1.15; color: var(--flap-ink); border-radius: 0.14em;
+  background: linear-gradient(to bottom, var(--flap-bg) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% + 0.5px), var(--flap-bg) calc(50% + 0.5px)); }
+html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--flap-bg) calc(50% - 0.5px), rgba(11,13,16,0.16) calc(50% - 0.5px), rgba(11,13,16,0.16) calc(50% + 0.5px), var(--flap-bg) calc(50% + 0.5px)); }
+.flap i.sp { min-width: 0.32em; background: none; }
+.flap i.flip { animation: flapflip 0.24s steps(2, end) 1; transform-origin: 50% 50%; }
+@keyframes flapflip { 0% { transform: rotateX(0); opacity: 1; } 50% { transform: rotateX(-88deg); opacity: 0.4; } 100% { transform: rotateX(0); opacity: 1; } }
+
+/* ── 專案概況 ── */
+#page-weekly .weekly-topbar { display: grid; grid-template-columns: minmax(0,1fr) auto auto; align-items: center; gap: 16px; margin-bottom: 18px; }
+#page-weekly .weekly-topbar .sec-label { margin: 0; }
+.board-head { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 32px; align-items: center; padding: 30px 36px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 24px; }
+.greet-hello { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 10px; font-size: 15px; }
+.greet-title { font-size: 15px; font-weight: 700; color: var(--accent-ink); }
+.greet-line { margin: 0; font-size: 15px; color: rgba(var(--fg-rgb),0.72); }
+.kr-big { text-align: right; }
+.kr-big-val .flap { font-size: 64px; }
+.kr-big-label { margin-top: 8px; font-size: 14px; color: var(--grey-dark); }
+#page-weekly .kr-tiles { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; margin: 16px 0 6px; }
+#page-weekly .kr-tile { min-height: 0; padding: 22px 24px; color: var(--text); background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 20px;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s; }
+#page-weekly .kr-tile:hover { transform: translateY(-3px); box-shadow: var(--lift); }
+#page-weekly .kr-tile.ok { border-color: color-mix(in srgb, var(--good) 40%, transparent); }
+#page-weekly .kr-tile.warn, #page-weekly .kr-tile.behind { border-color: color-mix(in srgb, var(--alert) 45%, transparent); }
+#page-weekly .kr-tile-label { font-size: 14px; font-weight: 700; color: var(--grey-dark); }
+#page-weekly .kr-tile-val { margin: 14px 0 10px; font-size: 30px; line-height: 1; }
+#page-weekly .kr-tile-sub { font-size: 14px; line-height: 1.5; color: rgba(var(--fg-rgb),0.7); }
+.kr-tile-chip { display: inline-block; margin-left: 4px; padding: 1px 9px; font-size: 13px; font-weight: 700; border-radius: 999px; color: var(--good); background: color-mix(in srgb, var(--good) 14%, transparent); }
+.kr-tile-chip.behind, .kr-tile-chip.warn { color: var(--alert); background: color-mix(in srgb, var(--alert) 14%, transparent); }
+
+/* Departure board */
+.board-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.board-seen-btn { padding: 7px 14px; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--alert); background: color-mix(in srgb, var(--alert) 10%, transparent); border: 1px solid color-mix(in srgb, var(--alert) 40%, transparent); border-radius: 10px; cursor: pointer; }
+.board { display: grid; gap: 4px; margin-top: 4px; }
+.board-row { display: grid; grid-template-columns: 112px minmax(0,1.5fr) 120px minmax(0,1.25fr) 120px 170px; gap: 18px; align-items: center; padding: 14px 16px; border-radius: 14px;
+  transition: background-color .18s var(--ease), transform .18s var(--ease), opacity .18s var(--ease), box-shadow .18s var(--ease); }
+.board-row:not(.board-hd):hover { background: rgba(var(--fg-rgb),0.045); transform: translateX(4px); }
+.board-hd { padding-top: 4px; padding-bottom: 8px; font-size: 13px; font-weight: 700; color: var(--grey-dark); border-bottom: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 0; }
+.board-code .flap { font-size: 22px; }
+.board-date .flap { font-size: 17px; }
+.board-who .flap { font-size: 15px; }
+.board-name b { display: block; overflow: hidden; font-size: 16px; text-overflow: ellipsis; white-space: nowrap; }
+.board-name small, .board-gate small { display: block; margin-top: 4px; font-size: 13px; color: var(--grey-dark); }
+.gate-segs { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 4px; max-width: 190px; }
+.gate-segs i { height: 8px; border-radius: 4px; background: rgba(var(--fg-rgb),0.1); transition: background-color .3s var(--ease); }
+.gate-segs i.d { background: var(--text); }
+.gate-segs i.c { background: var(--chart-accent); }
+.board-who { display: flex; align-items: center; gap: 8px; }
+.board-dim { color: var(--grey-dark); }
+.board-status { font-size: 15px; font-weight: 700; }
+.board-status.ok { color: var(--good); }
+.board-status.late { color: var(--alert); }
+.board-status.none { color: var(--grey-dark); }
+.board-row.idle { opacity: 0.55; }
+.board-row.idle:hover { opacity: 1; }
+.board-row.changed { cursor: pointer; background: color-mix(in srgb, var(--alert) 11%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--alert) 45%, transparent); }
+.board-row.changed:hover { background: color-mix(in srgb, var(--alert) 16%, transparent); }
+.board-new { display: inline-block; margin-left: 8px; padding: 1px 8px; font-size: 12px; font-style: normal; font-weight: 700; color: #fff; background: var(--alert); border-radius: 999px; animation: boardglow 1.8s ease-in-out infinite alternate; }
+@keyframes boardglow { from { opacity: 1; } to { opacity: 0.55; } }
+#page-weekly .contrib-note { margin-bottom: 18px; }
+
+/* Bottleneck tasks as boarding passes: stub | perforation | details */
+#page-weekly .bn-top { gap: 16px; }
+#page-weekly .bn-top-item { position: relative; display: grid; grid-template-columns: 118px minmax(0,1fr); gap: 0; padding: 0; overflow: visible; background: var(--pass); border: 1px solid rgba(var(--fg-rgb),0.07); border-radius: 18px;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease); }
+#page-weekly .bn-top-item:hover { transform: translateY(-3px); box-shadow: var(--lift); }
+#page-weekly .bn-top-item:first-child { border-color: color-mix(in srgb, var(--alert) 50%, transparent); }
+#page-weekly .bn-top-num { position: relative; align-items: center; justify-content: center; padding: 20px 10px; text-align: center; border-right: 2px dashed rgba(var(--fg-rgb),0.16); }
+#page-weekly .bn-top-num::before, #page-weekly .bn-top-num::after { content: ''; position: absolute; right: -10px; width: 18px; height: 18px; border-radius: 50%; background: var(--card); }
+#page-weekly .bn-top-num::before { top: -10px; box-shadow: inset 0 -1px 0 rgba(var(--fg-rgb),0.07); }
+#page-weekly .bn-top-num::after { bottom: -10px; box-shadow: inset 0 1px 0 rgba(var(--fg-rgb),0.07); }
+#page-weekly .bn-top-num b { font-family: var(--mono); font-stretch: 75%; font-size: 44px; font-weight: 600; color: var(--accent-ink); }
+#page-weekly .bn-top-item:first-child .bn-top-num b { color: var(--alert); }
+#page-weekly .bn-top-main { padding: 18px 20px; }
+
+@media (max-width: 1100px) {
+  .board-row { grid-template-columns: 96px minmax(0,1.5fr) 110px minmax(0,1.2fr) 150px; }
+  .board-who { display: none; }
+  #page-weekly .kr-tiles { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+@media (max-width: 900px) {
+  .board-head { grid-template-columns: 1fr; padding: 22px; border-radius: 20px; }
+  .kr-big { text-align: left; }
+  .kr-big-val .flap { font-size: 48px; }
+  #page-weekly .weekly-topbar { grid-template-columns: 1fr auto; }
+  #page-weekly .weekly-topbar .sec-label { grid-column: 1 / -1; }
+  .board-hd { display: none; }
+  .board-row { grid-template-columns: auto minmax(0,1fr); gap: 6px 14px; }
+  .board-row > :nth-child(n+3) { grid-column: 2; }
+  .board-row:not(.board-hd):hover { transform: none; }
+  #page-weekly .kr-tile-val { font-size: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flap i.flip, .board-new { animation: none; }
+  .sidebar .sb-item:hover, .board-row:not(.board-hd):hover, #page-weekly .kr-tile:hover, #page-weekly .bn-top-item:hover { transform: none; }
+}
+
+/* ── Finish review round 1 (board) ── */
+:root[data-theme="light"] { --bg: #F2F3F1; --panel: #FAFAF9; --card: #FFFFFF; --pass: #F2F3F1; }
+.board-head { padding: 22px 30px; }
+.kr-big-val .flap { font-size: 56px; }
+#page-weekly .kr-tiles { margin: 14px 0 16px; }
+#page-weekly .kr-tile { padding: 16px 20px; }
+#page-weekly .kr-tile-val { margin: 10px 0 8px; font-size: 28px; }
+#page-weekly .board-card { padding-top: 22px; }
+#page-weekly .board-card .chart-card-sub { margin-bottom: 12px; }
+.greet-hello { margin: 10px 0 0; }
+.greet-title { color: var(--text); }
+.greet-line { color: rgba(var(--fg-rgb),0.72); }
+#page-weekly .kr-verdict-warn { color: rgba(var(--fg-rgb),0.62); }
+#page-weekly .kr-verdict-warn b { color: var(--text); }
+#page-weekly .contrib-summary-wrap, #page-weekly #contrib-summary { margin-top: 18px; }
+#kr-note .kr-note { margin: 14px 0 0; }
+/* Board: ruled rows under a yellow header rule */
+.board { gap: 0; }
+.board-row { grid-template-columns: 88px minmax(0,2fr) 112px minmax(0,1.25fr) 112px 160px; border-radius: 0; border-bottom: 1px solid rgba(var(--fg-rgb),0.07); }
+.board-hd { border-top: 2px solid var(--accent-ink); border-bottom: 1px solid rgba(var(--fg-rgb),0.12); padding-top: 10px; }
+.board-row:not(.board-hd):hover { transform: translateX(3px); }
+.board-row.changed { border-radius: 12px; }
+.board-row.late .board-date .flap i { color: var(--alert); }
+.board-who .owner-chip { color: var(--text); background: rgba(var(--fg-rgb),0.08); }
+.board-new { animation-iteration-count: 6; }
+/* Top bottleneck pass marked by yellow, not alert orange */
+#page-weekly .bn-top-item:first-child { border-color: color-mix(in srgb, var(--accent-ink) 55%, transparent); }
+#page-weekly .bn-top-item:first-child .bn-top-num b { color: var(--accent-ink); }
+.baseline-toggle { display: inline-flex; align-items: center; gap: 6px; }
+.baseline-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
+.chev { transition: transform .18s var(--ease); }
+#page-weekly .kr-tile-sub { text-wrap: pretty; }
+.nw { white-space: nowrap; }
+/* Light theme: the yellow focus ring vanishes on white; use the accent ink */
+html[data-theme="light"] :focus-visible, html[data-theme="light"] input:focus-visible, html[data-theme="light"] select:focus-visible, html[data-theme="light"] textarea:focus-visible { outline-color: var(--accent-ink); }
+.board-new { color: #0B0D10; }
+@media (max-width: 1100px) { .board-row { grid-template-columns: 80px minmax(0,2fr) 104px minmax(0,1.2fr) 140px; } }
+@media (max-width: 900px) { .board-row { grid-template-columns: auto minmax(0,1fr); } }
 </style>
 
 <body>
@@ -1838,6 +1973,7 @@ body.sb-menu-open .sb-menu-btn .ico-close { display: inline; }
 
   <section>
     <div class="weekly-topbar">
+      <h2 class="sec-label" id="kr-panel-title">KR 達成追蹤</h2>
       <span class="last-saved" id="weekly-last-synced">載入中...</span>
       <button type="button" class="weekly-settings-btn" onclick="openBaseline()" aria-controls="baseline-bar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1845,14 +1981,23 @@ body.sb-menu-open .sb-menu-btn .ico-close { display: inline; }
       </button>
     </div>
 
-    <!-- ── 問候＋KR 結論 ── -->
-    <div class="greet-banner">
-      <div class="greet-hello" id="weekly-greeting"></div>
-      <div id="kr-verdict"></div>
+    <!-- ── KR 結論＋目前完成度 ── -->
+    <div class="board-head">
+      <div class="board-head-main">
+        <div id="kr-verdict"></div>
+        <div class="greet-hello" id="weekly-greeting"></div>
+      </div>
+      <div class="kr-big" id="kr-big"></div>
     </div>
-
-    <h2 class="sec-label" id="kr-panel-title">KR 達成追蹤</h2>
     <div id="kr-tiles"></div>
+
+    <!-- ── 模組對 KR 的貢獻（依預計完工排序） ── -->
+    <div class="chart-card kr-card board-card">
+      <div class="board-title-row"><div class="chart-card-title">出發看板・模組對 KR 的貢獻</div><button type="button" class="board-seen-btn" id="board-seen-btn" onclick="markBoardSeen()" hidden>全部標為已看過</button></div>
+      <div class="chart-card-sub" id="contrib-sub">依預計完工日排序；預計完工沿用完工預測設定（起算日期＋任務時數）。Gate 或狀態有變動的模組會亮起，點一下就算看過。</div>
+      <div id="forecast-cards"></div>
+      <div id="contrib-summary"></div>
+    </div>
 
     <!-- ── KR 燃起圖 ── -->
     <div class="chart-card kr-card">
@@ -1860,14 +2005,7 @@ body.sb-menu-open .sb-menu-btn .ico-close { display: inline; }
       <div class="chart-card-sub">實際進度、依時程的應達線，以及照近 4 週速度推估的預測</div>
       <div id="kr-burnup-chart"></div>
       <div class="kr-legend" id="kr-burnup-legend"></div>
-    </div>
-
-    <!-- ── 模組對 KR 的貢獻（依預計完工排序） ── -->
-    <div class="chart-card kr-card">
-      <div class="chart-card-title">模組對 KR 的貢獻</div>
-      <div class="chart-card-sub" id="contrib-sub">依預計完工日排序；預計完工沿用完工預測設定（起算日期＋任務時數）</div>
-      <div id="contrib-summary"></div>
-      <div id="forecast-cards"></div>
+      <div id="kr-note"></div>
     </div>
 
     <!-- ── 關卡瓶頸 ── -->
@@ -1916,7 +2054,7 @@ body.sb-menu-open .sb-menu-btn .ico-close { display: inline; }
     <div class="baseline-bar-top">
       <span class="baseline-title">完工預測設定</span>
       <span class="baseline-sub">填入每小節各任務所需時數，系統自動計算預計完工日期</span>
-      <button class="baseline-toggle" onclick="toggleBaseline()">展開設定 ▾</button>
+      <button class="baseline-toggle" onclick="toggleBaseline()" aria-expanded="false"><span>展開設定</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
     </div>
     <div class="baseline-body" id="baseline-body" style="display:none">
       <div class="baseline-grid">
@@ -2092,6 +2230,8 @@ let currentSection = '1.1';
 let currentOvTab   = 'all';
 let allScores      = {};
 let moduleListeners = {};
+let moduleLoaded = {};       // module -> its scores have arrived at least once
+let baselineReady = false;   // settings_baseline row applied
 let trendModule    = '__project__';   // '__project__' = 整體專案 (KR)
 let trendTab       = 'single';
 
@@ -2178,7 +2318,9 @@ function subscribeModule(mod) {
   db.from('scores').select('section, task_id, score').eq('module', mod)
     .then(function(res) {
       if (res.error) { setSyncStatus('error', '連線失敗：' + res.error.message); return; }
+      moduleLoaded[mod] = true;
       applyScoreRows(mod, res.data);
+      if (boardDataReady()) renderForecastCards();
       setSyncStatus('ok', '即時同步中');
       updateLastSynced('last-saved');
       updateLastSynced('ov-last-synced');
@@ -2837,7 +2979,7 @@ function renderOverview() {
         '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
         '<div class="ov-module-pct">'+pct+'%</div>' +
         '<div class="ov-module-sub">'+doneSecs+'/'+secCount+' 小節</div>' +
-        '<span class="ov-module-chevron">▼</span>' +
+        '<span class="ov-module-chevron"><svg class=\"chev\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></span>' +
       '</div>' +
       '<div class="ov-module-body">' +
         '<div class="ov-sections-label" style="margin-top:0">'+WORKFLOWS[getWorkflowKey(mod)].name+'</div>' +
@@ -3405,6 +3547,7 @@ var baseline = {
 var FORECAST_TASKS = TASKS.filter(function(t){ return !t.firstSectionOnly; });
 
 function applyBaselineRow(data) {
+  baselineReady = true;
   if (!data) return;
   baseline.taskHours      = data.task_hours    || {};
   baseline.moduleStart    = data.module_start  || {};
@@ -3585,7 +3728,7 @@ function toggleBaseline() {
   if (!body) return;
   var isOpen = body.style.display !== 'none';
   body.style.display = isOpen ? 'none' : 'block';
-  if (btn) btn.textContent = isOpen ? '展開設定 ▾' : '收合設定 ▴';
+  if (btn) { btn.querySelector('span').textContent = isOpen ? '展開設定' : '收合設定'; btn.setAttribute('aria-expanded', String(!isOpen)); }
 }
 
 function renderBaselineForm() {
@@ -3923,6 +4066,8 @@ function renderKRPanel() {
   var root  = getReactRoot('kr-burnup-chart');
   var k = activeProjectKR();
   var verdictEl = document.getElementById('kr-verdict');
+  var bigEl = document.getElementById('kr-big');
+  if (bigEl && (!okr.loaded || !lastLogData || !k)) bigEl.innerHTML = '';
   if (!okr.loaded || !lastLogData) {
     if (verdictEl) { verdictEl.className = ''; verdictEl.innerHTML = ''; }
     tiles.innerHTML = '<div class="chart-empty">載入中…</div>';
@@ -3945,12 +4090,14 @@ function renderKRPanel() {
   var paceOk  = s.cur >= s.paceNow;
   var dueFull = formatDay(s.k.dueStr);
   var paceGap = fmtNum(Math.abs(s.cur - s.paceNow));
+  var big = document.getElementById('kr-big');
+  if (big) big.innerHTML = '<div class="kr-big-val">' + flap(fmtNum(s.cur) + '%', 'kr-big') + '</div><div class="kr-big-label">目前完成度</div>';
   var verdict = document.getElementById('kr-verdict');
   if (verdict) {
     verdict.className = 'kr-verdict ' + status[0];
     verdict.innerHTML =
-      '<div class="kr-verdict-main"><span>' + status[1] + '</span>' +
-        (reach ? '' : '<span>・' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點</span>') + '</div>' +
+      '<div class="kr-verdict-main"><span>' + status[1] + (reach ? '' : '・') + '</span>' +
+        (reach ? '' : '<span>' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點</span>') + '</div>' +
       '<div class="kr-verdict-sub">' + (reach
         ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
         : '照目前速度（近 4 週平均每週 ' + signed(s.rate) + '%），' + dueFull + ' 預計達 <b>' + fmtNum(s.projected) + '%</b>，目標 ' + fmtNum(s.k.target) + '%' +
@@ -3968,11 +4115,13 @@ function renderKRPanel() {
   }
   tiles.innerHTML =
     '<div class="kr-tiles">' +
-      krTile('目前完成度', fmtNum(s.cur) + '%', '目標 ' + fmtNum(s.k.target) + '%・還差 ' + fmtNum(s.gap) + ' 個百分點') +
-      krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 ' + fmtNum(s.weeksLeft) + ' 週才能達到 ' + fmtNum(s.k.target) + '%') +
-      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '') +
-      krTile('照目前速度 ' + dueFull + ' 預計', fmtNum(s.projected) + '%', '本頁的正式預測・目標 ' + fmtNum(s.k.target) + '%', onTrack ? 'ok' : 'behind') +
-    '</div>' +
+      krTile('目標 ' + dueFull, fmtNum(s.k.target) + '%', '還差 <span class="nw">' + fmtNum(s.gap) + ' 個百分點</span>・<span class="nw">約 ' + fmtNum(s.modulesEq) + ' 個模組</span>', '', 'kr-target') +
+      krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '剩 <span class="nw">' + fmtNum(s.weeksLeft) + ' 週</span>才能達到 ' + fmtNum(s.k.target) + '%', '', 'kr-req') +
+      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）', s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
+      krTile('照目前速度 ' + dueFull + ' 預計', fmtNum(s.projected) + '%', '本頁的正式預測', onTrack ? 'ok' : 'behind', 'kr-proj') +
+    '</div>';
+  var noteEl = document.getElementById('kr-note');
+  if (noteEl) noteEl.innerHTML =
     '<div class="kr-note">' +
       (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點，約等於再完成 <b>' + fmtNum(s.modulesEq) + '</b> 個完整模組（每個模組佔整體 ' + fmtNum(100 / MODULES.length) + '%）。' : '已達到 KR 目標。') +
       ' 應達線：今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + dueFull + ' 的 ' + fmtNum(s.k.target) + '%）。' +
@@ -3988,11 +4137,22 @@ function renderKRPanel() {
     (krMilestones(s.k.kr).length ? '<span><i class="kr-key ms"></i>里程碑</span>' : '');
 }
 function quarterDeadlineText(k) { return k.o.quarter + '・' + formatDay(k.dueStr) + ' 前達到 ' + fmtNum(k.target) + '%'; }
-// Tiles are yellow fields; their state rides as a dark chip, not a border, so it reads on the fill
+// Split-flap characters: each character in its own cell; a cell whose character changed since the
+// last render under the same key flips once (CSS, off under reduced motion)
+var flapLast = {};
+function flap(str, key) {
+  str = String(str);
+  var prev = key ? flapLast[key] : undefined;
+  if (key) flapLast[key] = str;
+  return '<span class="flap">' + Array.from(str).map(function(ch, i) {
+    var flip = prev !== undefined && Array.from(prev)[i] !== ch ? ' flip' : '';
+    return ch === ' ' ? '<i class="sp"></i>' : '<i class="' + flip.trim() + '">' + escHtml(ch) + '</i>';
+  }).join('') + '</span>';
+}
 var KR_TILE_CHIP = { ok: '預計達標', behind: '預計未達標', warn: '低於所需速度' };
-function krTile(label, value, sub, cls) {
-  return '<div class="kr-tile' + (cls ? ' ' + cls : '') + '"><div class="kr-tile-label">' + label + '</div><div class="kr-tile-val">' + value + '</div><div class="kr-tile-sub">' + sub + '</div>' +
-    (cls && KR_TILE_CHIP[cls] ? '<span class="kr-tile-chip ' + cls + '">' + KR_TILE_CHIP[cls] + '</span>' : '') + '</div>';
+function krTile(label, value, sub, cls, key) {
+  return '<div class="kr-tile' + (cls ? ' ' + cls : '') + '"><div class="kr-tile-label">' + label + '</div><div class="kr-tile-val">' + flap(value, key) + '</div><div class="kr-tile-sub">' + sub +
+    (cls && KR_TILE_CHIP[cls] ? ' <span class="kr-tile-chip ' + cls + '">' + KR_TILE_CHIP[cls] + '</span>' : '') + '</div></div>';
 }
 
 function renderKRBurnup(s) {
@@ -4239,28 +4399,86 @@ function renderForecastCards() {
     }
   }
 
-  var pills = { ontime: ['ok', 'KR 期限前完成'], overdue: ['behind', '已逾預計完工'], late: ['behind', '超過 KR 期限'], unknown: ['none', '未設定預測'] };
-  container.innerHTML = '<div class="contrib-list">' +
-    '<div class="contrib-row contrib-headrow"><span>模組</span><span>目前完成度</span><span>預計完工</span><span>剩餘可貢獻</span><span>' + (k ? formatDay(k.dueStr) + ' 前' : '') + '</span></div>' +
-    open.map(function(r) {
-      var f = r.f, dateHtml;
-      if (f.completionDate) {
-        dateHtml = '<b>' + f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) + '</b><small>共 ' + f.weeksTotal + ' 週・' + f.totalHours + ' 小時' + (f.missingCalendar ? '・部分日期未扣國定假日' : '') + '</small>';
-      } else {
-        dateHtml = '<span class="contrib-muted">' + (f.reason || '資料不足') + '</span>';
-      }
-      var pill = pills[r.state];
-      return '<div class="contrib-row">' +
-        '<span class="forecast-mod contrib-mod">' + moduleBadge(r.mod) + '</span>' +
-        '<span class="contrib-pct"><span class="contrib-bar"><i style="width:' + f.currentPct + '%"></i></span><b>' + f.currentPct + '%</b></span>' +
-        '<span class="contrib-date">' + dateHtml + '</span>' +
-        '<span class="contrib-remain"><b>+' + fmtNum(r.remain) + '%</b><small>最多 ' + fmtNum(share) + '%</small></span>' +
-        '<span>' + (k ? '<span class="okr-status ' + pill[0] + '">' + pill[1] + '</span>' : '') + '</span>' +
+  container.innerHTML = renderDepartureBoard(open, idle, done, share, k);
+}
+
+/* ── 出發看板：模組依預計完工排序；Gate 或狀態變動的列持續亮起，直到在這台瀏覽器點過 ── */
+var BOARD_SEEN_KEY = 'bb6-board-seen';
+var BOARD_STATUS = { ontime: ['ok', 'KR 期限前完成'], overdue: ['late', '已逾預計完工'], late: ['late', '超過 KR 期限'], unknown: ['none', '未設定預測'], idle: ['none', '尚未開始'] };
+function boardSeen() { try { return JSON.parse(localStorage.getItem(BOARD_SEEN_KEY) || 'null'); } catch (e) { return null; } }
+function boardSeenSave(map) { try { localStorage.setItem(BOARD_SEEN_KEY, JSON.stringify(map)); } catch (e) {} }
+// Index of the gate the module is working in (first gate under 100%), or the gate count when all are done
+function moduleCurrentGate(mod) {
+  var gates = getGates(mod);
+  for (var i = 0; i < gates.length; i++) if (moduleGatePct(mod, gates[i].num) < 100) return i;
+  return gates.length;
+}
+// Owner with the most sections ready or in progress inside one module
+function moduleTopOwner(mod) {
+  var load = {};
+  getSections(mod).forEach(function(sec) {
+    getActiveTasks(sec, mod).forEach(function(t) {
+      var sc = getScore(t.id, mod, sec);
+      if (sc >= 10 || (sc === 0 && !isPrereqMet(t.id, mod, sec))) return;
+      t.owners.forEach(function(o){ load[o] = (load[o] || 0) + 1; });
+    });
+  });
+  var top = Object.keys(load).sort(function(a, b){ return load[b] - load[a]; })[0];
+  return top ? { who: top, n: load[top] } : null;
+}
+// 'idle' is only how a not-started row is shown; it is stored under its underlying state
+function boardSig(r) { return moduleCurrentGate(r.mod) + '|' + (r.state === 'idle' ? 'unknown' : r.state); }
+function markBoardSeen(mod) {
+  var seen = boardSeen() || {};
+  var rows = boardRowsCache.filter(function(r){ return !mod || r.mod === mod; });
+  rows.forEach(function(r){ seen[r.mod] = boardSig(r); });
+  boardSeenSave(seen);
+  renderForecastCards();
+}
+var boardRowsCache = [];
+// Change tracking compares like with like only once every module's scores and the settings have arrived
+function boardDataReady() { return baselineReady && MODULES.every(function(m){ return moduleLoaded[m]; }); }
+function renderDepartureBoard(open, idle, done, share, k) {
+  var shownIdle = idle.slice(0, 2);
+  var rows = open.concat(shownIdle.map(function(r){ return { mod: r.mod, f: r.f, state: 'idle', remain: r.remain }; }));
+  boardRowsCache = open.concat(idle).concat(done);
+  var ready = boardDataReady();
+  var seen = ready ? boardSeen() : {};
+  if (ready && !seen) { seen = {}; boardRowsCache.forEach(function(r){ seen[r.mod] = boardSig(r); }); boardSeenSave(seen); }
+  if (ready) {   // modules seen for the first time (e.g. newly added) start as seen
+    var added = false;
+    boardRowsCache.forEach(function(r){ if (seen[r.mod] === undefined) { seen[r.mod] = boardSig(r); added = true; } });
+    if (added) boardSeenSave(seen);
+  }
+  var changedCount = 0;
+  var html = '<div class="board" role="table" aria-label="出發看板">' +
+    '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate</span><span role="columnheader">待處理最多</span><span role="columnheader">' + (k ? formatDay(k.dueStr) + ' 前' : '狀態') + '</span></div>' +
+    rows.map(function(r) {
+      var f = r.f, gates = getGates(r.mod), cur = moduleCurrentGate(r.mod);
+      var changed = seen[r.mod] !== undefined && seen[r.mod] !== boardSig(r);
+      if (changed) changedCount++;
+      var name = (baseline.moduleNames[r.mod] || '').trim();
+      var date = f.completionDate ? (f.completionDate.getMonth() + 1 + '/' + String(f.completionDate.getDate()).padStart(2, '0')) : '—';
+      var st = BOARD_STATUS[r.state] || BOARD_STATUS.unknown;
+      var owner = r.state === 'idle' ? null : moduleTopOwner(r.mod);
+      var started = f.currentPct > 0;
+      return '<div class="board-row' + (changed ? ' changed' : '') + (st[0] === 'late' ? ' late' : '') + (r.state === 'idle' ? ' idle' : '') + '" role="row"' + (changed ? ' tabindex="0" onclick="markBoardSeen(\'' + r.mod + '\')" onkeydown="if(event.key===\'Enter\')markBoardSeen(\'' + r.mod + '\')" title="點一下標為已看過"' : '') + '>' +
+        '<span class="board-code" role="cell">' + flap(r.mod, 'bc-' + r.mod) + '</span>' +
+        '<span class="board-name" role="cell"><b>' + (name ? escHtml(name) : '（未命名）') + '</b><small>' + f.currentPct + '%・剩餘可貢獻 +' + fmtNum(r.remain) + '%</small></span>' +
+        '<span class="board-date" role="cell" title="' + (f.completionDate ? f.completionDate.getFullYear() + '/' + formatDate(f.completionDate) : (f.reason || '')) + '">' + flap(date, 'bd-' + r.mod) + '</span>' +
+        '<span class="board-gate" role="cell"><span class="gate-segs">' + gates.map(function(g, i) {
+            return '<i class="' + (i < cur ? 'd' : i === cur && started ? 'c' : '') + '" title="Gate ' + g.num + '・' + g.name + '"></i>'; }).join('') + '</span>' +
+          '<small>' + (cur >= gates.length ? '全部完成' : started ? 'Gate ' + gates[cur].num + '・' + gates[cur].name : '尚未開始') + '</small></span>' +
+        '<span class="board-who" role="cell">' + (owner ? '<span class="owner-chip ' + CHIP_CLASS[owner.who] + '">' + owner.who + '</span> ' + flap(String(owner.n), 'bw-' + r.mod) : '<span class="board-dim">—</span>') + '</span>' +
+        '<span class="board-status ' + st[0] + '" role="cell">' + st[1] + (changed ? '<em class="board-new">有變動</em>' : '') + '</span>' +
       '</div>';
-    }).join('') +
-    (idle.length ? '<div class="contrib-idle">尚未開始、未設定預測 ' + idle.length + ' 個模組：' + idle.map(function(r){ return r.mod; }).join('、') + '（各可貢獻 ' + fmtNum(share) + '%，合計 ' + fmtNum(idle.length * share) + '%）</div>' : '') +
-    (done.length ? '<div class="contrib-done">已完成 ' + done.length + ' 個模組：' + done.map(function(r){ return r.mod; }).join('、') + '（已貢獻 ' + fmtNum(done.length * share) + '%）</div>' : '') +
-  '</div>';
+    }).join('') + '</div>';
+  var more = idle.length - shownIdle.length;
+  if (more > 0) html += '<div class="contrib-idle">另有 ' + more + ' 個模組尚未開始、未設定預測：' + idle.slice(2).map(function(r){ return r.mod; }).join('、') + '（各可貢獻 ' + fmtNum(share) + '%）</div>';
+  if (done.length) html += '<div class="contrib-done">已完成 ' + done.length + ' 個模組：' + done.map(function(r){ return r.mod; }).join('、') + '（已貢獻 ' + fmtNum(done.length * share) + '%）</div>';
+  var btn = document.getElementById('board-seen-btn');
+  if (btn) btn.hidden = changedCount === 0;
+  return html;
 }
 
 /* ── 整體專案（KR）的週／日增量與組成 ── */
@@ -4717,6 +4935,7 @@ window.exportCSV         = exportCSV;
 window.toggleBaseline    = toggleBaseline;
 window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
+window.markBoardSeen     = markBoardSeen;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;

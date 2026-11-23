@@ -1,12 +1,12 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-23T07:51:49.185068+00:00",
+  "generatedAt": "2026-11-23T08:28:51.729525+00:00",
   "title": "Design System: BB6 課程製作",
   "extensions": {
     "colorMeta": {
       "signal-yellow": {
         "role": "primary",
-        "displayName": "Signal Yellow",
+        "displayName": "Flap Yellow",
         "canonical": "#FFEA41",
         "tonalRamp": [
           "#3c3810",
@@ -19,79 +19,19 @@
           "#f8f7ec"
         ]
       },
-      "tile-gold-2": {
-        "role": "primary",
-        "displayName": "Tile Gold 2",
-        "canonical": "#F6DC36",
-        "tonalRamp": [
-          "#3b3512",
-          "#695e17",
-          "#9c8a16",
-          "#d5bb10",
-          "#ecd43b",
-          "#e8d97d",
-          "#ebe4b7",
-          "#f8f6ed"
-        ]
-      },
-      "tile-gold-3": {
-        "role": "primary",
-        "displayName": "Tile Gold 3",
-        "canonical": "#ECCD2C",
-        "tonalRamp": [
-          "#393314",
-          "#65591a",
-          "#96831c",
-          "#cdb019",
-          "#e5cb43",
-          "#e3d382",
-          "#e9e1b9",
-          "#f7f6ed"
-        ]
-      },
-      "tile-gold-4": {
-        "role": "primary",
-        "displayName": "Tile Gold 4",
-        "canonical": "#E0BC22",
-        "tonalRamp": [
-          "#373116",
-          "#61551e",
-          "#907c22",
-          "#c4a521",
-          "#ddc14b",
-          "#dece87",
-          "#e6debc",
-          "#f7f5ee"
-        ]
-      },
-      "chart-amber": {
-        "role": "primary",
-        "displayName": "Chart Amber",
-        "canonical": "#F59E0B",
-        "tonalRamp": [
-          "#3b2b12",
-          "#694a17",
-          "#9d6b16",
-          "#d68c0f",
-          "#edab3b",
-          "#e8c07d",
-          "#ebd8b7",
-          "#f8f4ed"
-        ]
-      },
       "accent-ink-light": {
         "role": "primary",
-        "displayName": "Dark Gold Ink",
-        "canonical": "#735e00",
+        "displayName": "Daylight Gold Ink",
+        "canonical": "#6E5A00",
         "tonalRamp": [
-          "#3c3410",
-          "#6c5c13",
-          "#a28810",
-          "#dfb707",
-          "#f5d133",
-          "#edd778",
-          "#ede3b5",
-          "#f8f6ec"
+          "#3b3411",
+          "#7b660a",
+          "#bd9a00",
+          "#f5c800",
+          "#ffd92e",
+          "#ffe366",
+          "#f8eaaa",
+          "#f9f7eb"
         ]
       },
       "chart-accent-light": {
@@ -109,139 +49,34 @@
           "#f8f6ec"
         ]
       },
-      "charcoal-ground": {
-        "role": "neutral",
-        "displayName": "Charcoal Ground",
-        "canonical": "#111214",
+      "alert-orange": {
+        "role": "secondary",
+        "displayName": "Alert Orange",
+        "canonical": "#FF5A36",
         "tonalRamp": [
-          "#242628",
-          "#3c3f43",
-          "#53575f",
-          "#6a707b",
-          "#8c919c",
-          "#aeb1b7",
-          "#cfd0d3",
-          "#f2f2f3"
+          "#3b1911",
+          "#7b1e0a",
+          "#bd2200",
+          "#f52c00",
+          "#ff532e",
+          "#ff8166",
+          "#f8b8aa",
+          "#f9eeeb"
         ]
       },
-      "panel-graphite": {
-        "role": "neutral",
-        "displayName": "Panel Graphite",
-        "canonical": "#1b1c1f",
+      "alert-orange-light": {
+        "role": "secondary",
+        "displayName": "Alert Orange (light)",
+        "canonical": "#D93A16",
         "tonalRamp": [
-          "#252528",
-          "#3d3e43",
-          "#54575e",
-          "#6b6f7a",
-          "#8d919b",
-          "#aeb0b7",
-          "#cfd0d3",
-          "#f2f2f3"
-        ]
-      },
-      "raised-graphite": {
-        "role": "neutral",
-        "displayName": "Raised Graphite",
-        "canonical": "#232428",
-        "tonalRamp": [
-          "#252528",
-          "#3d3e43",
-          "#54565e",
-          "#6c6e7a",
-          "#8d909a",
-          "#afb0b6",
-          "#cfd0d3",
-          "#f2f2f3"
-        ]
-      },
-      "bone-text": {
-        "role": "neutral",
-        "displayName": "Bone Text",
-        "canonical": "#f4f4f2",
-        "tonalRamp": [
-          "#282824",
-          "#43433c",
-          "#5f5f53",
-          "#7c7c6a",
-          "#9c9c8c",
-          "#b7b7ae",
-          "#d3d3cf",
-          "#f3f3f2"
-        ]
-      },
-      "muted-slate": {
-        "role": "neutral",
-        "displayName": "Muted Slate",
-        "canonical": "#9599A4",
-        "tonalRamp": [
-          "#252528",
-          "#3c3e43",
-          "#54575f",
-          "#6b6f7b",
-          "#8d909b",
-          "#aeb0b7",
-          "#cfd0d3",
-          "#f2f2f3"
-        ]
-      },
-      "paper-ground": {
-        "role": "neutral",
-        "displayName": "Paper Ground",
-        "canonical": "#f3f2ee",
-        "tonalRamp": [
-          "#2a2922",
-          "#474438",
-          "#66614d",
-          "#857e60",
-          "#a59e83",
-          "#bdb9a8",
-          "#d6d4cc",
-          "#f3f3f1"
-        ]
-      },
-      "panel-white": {
-        "role": "neutral",
-        "displayName": "Panel White",
-        "canonical": "#ffffff",
-        "tonalRamp": [
-          "#262626",
-          "#404040",
-          "#595959",
-          "#737373",
-          "#949494",
-          "#b2b2b2",
-          "#d1d1d1",
-          "#f2f2f2"
-        ]
-      },
-      "ink-text": {
-        "role": "neutral",
-        "displayName": "Ink Text",
-        "canonical": "#18181b",
-        "tonalRamp": [
-          "#252528",
-          "#3d3d42",
-          "#55555e",
-          "#6c6c79",
-          "#8e8e9a",
-          "#afafb6",
-          "#cfcfd3",
-          "#f2f2f3"
-        ]
-      },
-      "muted-slate-light": {
-        "role": "neutral",
-        "displayName": "Muted Slate (light)",
-        "canonical": "#5f616a",
-        "tonalRamp": [
-          "#252527",
-          "#3d3e42",
-          "#55575d",
-          "#6d6f79",
-          "#8f9199",
-          "#afb0b6",
-          "#d0d0d3",
-          "#f2f2f3"
+          "#371b15",
+          "#702514",
+          "#ab2e11",
+          "#de3b17",
+          "#ec6141",
+          "#f18b74",
+          "#f1bdb1",
+          "#f8efed"
         ]
       },
       "state-good": {
@@ -262,31 +97,16 @@
       "state-warn": {
         "role": "state",
         "displayName": "Warn",
-        "canonical": "#FB923C",
+        "canonical": "#FF8A4C",
         "tonalRamp": [
-          "#3c2411",
-          "#6b3b15",
-          "#9f5213",
-          "#da680b",
-          "#f18b37",
-          "#eaad7b",
-          "#ecceb6",
-          "#f8f2ed"
-        ]
-      },
-      "state-bad": {
-        "role": "state",
-        "displayName": "Bad",
-        "canonical": "#f87171",
-        "tonalRamp": [
-          "#3a1212",
-          "#681717",
-          "#9c1717",
-          "#d41111",
-          "#ec3c3c",
-          "#e77e7e",
-          "#ebb7b7",
-          "#f8eded"
+          "#3b2011",
+          "#7b310a",
+          "#bd4100",
+          "#f55500",
+          "#ff762e",
+          "#ff9b66",
+          "#f8c5aa",
+          "#f9f0eb"
         ]
       },
       "state-good-light": {
@@ -307,7 +127,7 @@
       "state-warn-light": {
         "role": "state",
         "displayName": "Warn (light)",
-        "canonical": "#c2410c",
+        "canonical": "#C2410C",
         "tonalRamp": [
           "#3a1e13",
           "#672f18",
@@ -319,19 +139,214 @@
           "#f7f0ed"
         ]
       },
-      "state-bad-light": {
-        "role": "state",
-        "displayName": "Bad (light)",
-        "canonical": "#b91c1c",
+      "board-ink": {
+        "role": "neutral",
+        "displayName": "Board Ink",
+        "canonical": "#0B0D10",
         "tonalRamp": [
-          "#371616",
-          "#611f1f",
-          "#8f2323",
-          "#c22323",
-          "#db4d4d",
-          "#dd8888",
-          "#e6bcbc",
-          "#f7eeee"
+          "#22252a",
+          "#38404d",
+          "#4d5b70",
+          "#647691",
+          "#8393aa",
+          "#a4b0c1",
+          "#cad0d8",
+          "#f1f2f4"
+        ]
+      },
+      "slate-panel": {
+        "role": "neutral",
+        "displayName": "Slate Panel",
+        "canonical": "#121419",
+        "tonalRamp": [
+          "#23252a",
+          "#393e4b",
+          "#4f586e",
+          "#66728e",
+          "#858fa7",
+          "#a6adbf",
+          "#cbced7",
+          "#f1f2f3"
+        ]
+      },
+      "card-slate": {
+        "role": "neutral",
+        "displayName": "Card Slate",
+        "canonical": "#191C22",
+        "tonalRamp": [
+          "#232529",
+          "#3a3f4b",
+          "#505a6d",
+          "#68748d",
+          "#8791a6",
+          "#a7afbe",
+          "#cbcfd7",
+          "#f1f2f3"
+        ]
+      },
+      "raised-slate": {
+        "role": "neutral",
+        "displayName": "Raised Slate",
+        "canonical": "#1C2127",
+        "tonalRamp": [
+          "#23262a",
+          "#39414c",
+          "#4f5d6e",
+          "#66798e",
+          "#8595a8",
+          "#a6b1bf",
+          "#cbd1d8",
+          "#f1f2f3"
+        ]
+      },
+      "pass-slate": {
+        "role": "neutral",
+        "displayName": "Pass Slate",
+        "canonical": "#20242B",
+        "tonalRamp": [
+          "#232529",
+          "#3a404b",
+          "#515b6c",
+          "#68768c",
+          "#8792a6",
+          "#a7afbe",
+          "#cbd0d7",
+          "#f1f2f3"
+        ]
+      },
+      "flap-tile": {
+        "role": "neutral",
+        "displayName": "Flap Tile",
+        "canonical": "#262B33",
+        "tonalRamp": [
+          "#232629",
+          "#3a404b",
+          "#515b6c",
+          "#69768c",
+          "#8793a6",
+          "#a7b0be",
+          "#cbd0d7",
+          "#f1f2f3"
+        ]
+      },
+      "flap-white": {
+        "role": "neutral",
+        "displayName": "Flap White",
+        "canonical": "#F2F2EE",
+        "tonalRamp": [
+          "#292923",
+          "#4a4a3b",
+          "#6b6b52",
+          "#8b8b6a",
+          "#a4a489",
+          "#bdbda8",
+          "#d6d6cc",
+          "#f3f3f1"
+        ]
+      },
+      "steel": {
+        "role": "neutral",
+        "displayName": "Steel",
+        "canonical": "#8A9098",
+        "tonalRamp": [
+          "#252628",
+          "#3f4246",
+          "#585d64",
+          "#737982",
+          "#90959d",
+          "#aeb2b7",
+          "#cfd1d4",
+          "#f2f2f3"
+        ]
+      },
+      "sign-black": {
+        "role": "neutral",
+        "displayName": "Sign Black (ink on yellow)",
+        "canonical": "#111214",
+        "tonalRamp": [
+          "#252628",
+          "#3e4147",
+          "#575c66",
+          "#707784",
+          "#8e949f",
+          "#acb0b9",
+          "#ced0d4",
+          "#f2f2f3"
+        ]
+      },
+      "day-ground": {
+        "role": "neutral",
+        "displayName": "Day Ground",
+        "canonical": "#F2F3F1",
+        "tonalRamp": [
+          "#262825",
+          "#42473e",
+          "#5e6657",
+          "#7a8471",
+          "#969e8e",
+          "#b2b8ad",
+          "#d1d4ce",
+          "#f2f3f2"
+        ]
+      },
+      "day-panel": {
+        "role": "neutral",
+        "displayName": "Day Panel",
+        "canonical": "#FAFAF9",
+        "tonalRamp": [
+          "#282824",
+          "#47473d",
+          "#676756",
+          "#86866f",
+          "#a0a08d",
+          "#b9b9ac",
+          "#d5d5ce",
+          "#f3f3f2"
+        ]
+      },
+      "day-card": {
+        "role": "neutral",
+        "displayName": "Day Card",
+        "canonical": "#FFFFFF",
+        "tonalRamp": [
+          "#262626",
+          "#424242",
+          "#5e5e5e",
+          "#7a7a7a",
+          "#969696",
+          "#b2b2b2",
+          "#d1d1d1",
+          "#f2f2f2"
+        ]
+      },
+      "day-flap-tile": {
+        "role": "neutral",
+        "displayName": "Day Flap Tile",
+        "canonical": "#E9EBEE",
+        "tonalRamp": [
+          "#242629",
+          "#3b414a",
+          "#525c6a",
+          "#6b778a",
+          "#8994a4",
+          "#a9b1bc",
+          "#ccd0d6",
+          "#f1f2f3"
+        ]
+      },
+      "steel-light": {
+        "role": "neutral",
+        "displayName": "Steel (light)",
+        "canonical": "#5C626A",
+        "tonalRamp": [
+          "#252628",
+          "#3e4246",
+          "#585d65",
+          "#727983",
+          "#8f959e",
+          "#adb2b8",
+          "#ced1d4",
+          "#f2f2f3"
         ]
       },
       "member-ken": {
@@ -456,25 +471,33 @@
       }
     },
     "typographyMeta": {
-      "display": {
-        "displayName": "Display",
-        "purpose": "KR tile numerals."
+      "flap-display": {
+        "displayName": "Flap Display",
+        "purpose": "Big completion figure on the verdict card."
       },
-      "greeting": {
-        "displayName": "Greeting",
-        "purpose": "Greeting banner headline in accent ink."
+      "flap-stat": {
+        "displayName": "Flap Stat",
+        "purpose": "Stat-card figures."
+      },
+      "flap-code": {
+        "displayName": "Flap Code",
+        "purpose": "Module codes on board rows."
+      },
+      "flap-date": {
+        "displayName": "Flap Date",
+        "purpose": "Forecast dates and pending counts on board rows."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "KR verdict sentence, coloured by state."
+        "purpose": "Verdict sentence, coloured by state."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Section labels and chart-card titles."
+        "purpose": "Section labels and card titles."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Explanatory copy and verdict sub-lines."
+        "purpose": "Verdict sub-lines, greeting line, notes."
       },
       "nav": {
         "displayName": "Nav",
@@ -482,26 +505,80 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Tile labels, meta, controls; 14px floor on the landing page."
+        "purpose": "Stat labels, meta, controls; 14px floor on the landing page."
+      },
+      "board-head": {
+        "displayName": "Board Head",
+        "purpose": "Departure-board column heads in steel."
       }
     },
     "shadows": [
       {
-        "name": "light-card-lift",
+        "name": "hover-lift",
+        "value": "0 12px 28px rgba(0,0,0,0.35)",
+        "purpose": "Stat cards and boarding passes on hover (dark), with translateY(-3px)."
+      },
+      {
+        "name": "hover-lift-light",
+        "value": "0 12px 28px rgba(11,13,16,0.10)",
+        "purpose": "Same lift in light theme."
+      },
+      {
+        "name": "light-card-ambient",
         "value": "0 1px 2px rgba(24,24,27,0.04), 0 4px 16px rgba(24,24,27,0.04)",
-        "purpose": "Cards on the white panel, light theme only. Dark theme has no shadows."
+        "purpose": "Chart, OKR, gate and flow cards, light theme only."
+      },
+      {
+        "name": "changed-ring",
+        "value": "inset 0 0 0 1px color-mix(in srgb, var(--alert) 45%, transparent)",
+        "purpose": "Full ring on a changed board row."
       }
     ],
     "motion": [
       {
+        "name": "ease",
+        "value": "cubic-bezier(.2,.7,.2,1)",
+        "purpose": "Default easing for hover, lift and nudge."
+      },
+      {
         "name": "state",
-        "value": "180ms ease-out",
-        "purpose": "Hover/active colour changes and sidebar collapse; removed under prefers-reduced-motion."
+        "value": "180ms",
+        "purpose": "Nav, rows, buttons: colour, background, transform."
+      },
+      {
+        "name": "lift",
+        "value": "200ms; translateY(-3px)",
+        "purpose": "Stat cards and boarding passes on hover."
+      },
+      {
+        "name": "nudge",
+        "value": "180ms; translateX(3px)",
+        "purpose": "Board rows and sidebar items on hover."
+      },
+      {
+        "name": "press",
+        "value": "scale(0.97) buttons, scale(0.98) nav",
+        "purpose": "Active state."
+      },
+      {
+        "name": "flap-flip",
+        "value": "240ms steps(2, end), once",
+        "purpose": "Only the flap characters whose value changed."
+      },
+      {
+        "name": "changed-pulse",
+        "value": "1.8s ease-in-out alternate, 6 iterations",
+        "purpose": "The 有變動 pill on a changed row."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "none",
+        "purpose": "Under prefers-reduced-motion: no flips, no pulse, no hover transforms, no sidebar width transition."
       }
     ],
     "breakpoints": [
       {
-        "name": "compact-banner",
+        "name": "compact",
         "value": "1100px"
       },
       {
@@ -515,143 +592,182 @@
     ],
     "themes": {
       "dark": {
-        "bg": "#111214",
-        "panel": "#1b1c1f",
-        "text": "#f4f4f2",
+        "bg": "#0B0D10",
+        "panel": "#121419",
+        "card": "#191C22",
+        "raised": "#1C2127",
+        "pass": "#20242B",
+        "text": "#F2F2EE",
+        "steel": "#8A9098",
         "accentInk": "#FFEA41",
+        "flapBg": "#262B33",
+        "flapInk": "#FFEA41",
+        "alert": "#FF5A36",
+        "warn": "#FF8A4C",
+        "good": "#4ade80",
         "chartAccent": "#FFEA41",
-        "chartAccent2": "#F59E0B",
-        "banner": "color-mix(in srgb, #FFEA41 7%, #1b1c1f)",
-        "activePill": "color-mix(in srgb, #FFEA41 14%, var(--panel))"
+        "fgRgb": "255,255,255"
       },
       "light": {
-        "bg": "#f3f2ee",
-        "panel": "#ffffff",
-        "text": "#18181b",
-        "accentInk": "#735e00",
+        "bg": "#F2F3F1",
+        "panel": "#FAFAF9",
+        "card": "#FFFFFF",
+        "raised": "#FFFFFF",
+        "pass": "#F2F3F1",
+        "text": "#0B0D10",
+        "steel": "#5C626A",
+        "accentInk": "#6E5A00",
+        "flapBg": "#E9EBEE",
+        "flapInk": "#0B0D10",
+        "alert": "#D93A16",
+        "warn": "#C2410C",
+        "good": "#15803d",
         "chartAccent": "#A68600",
-        "chartAccent2": "#b45309",
-        "banner": "color-mix(in srgb, #FFEA41 26%, #ffffff)",
-        "activePill": "color-mix(in srgb, #FFEA41 32%, #ffffff)"
+        "fgRgb": "24,24,27"
       }
     }
   },
   "components": [
     {
+      "name": "Split-Flap Characters",
+      "kind": "custom",
+      "refersTo": "flap-tile",
+      "description": "One mono character per graphite tile with a hinge line; flips two frames only when the value changes.",
+      "html": "<div style=\"font-size:56px\"><span class=\"ds-flap\"><i>3</i><i>6</i><i>.</i><i>1</i><i>%</i></span></div><div style=\"font-size:22px;margin-top:12px\"><span class=\"ds-flap\"><i>T</i><i>A</i><i>4</i></span> <span class=\"ds-flap\"><i>1</i><i>1</i><i>/</i><i>2</i><i>5</i></span></div>",
+      "css": ".ds-flap { display:inline-flex; gap:0.09em; font-family:\"Martian Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; font-stretch:75%; font-weight:600; font-variant-numeric:tabular-nums; } .ds-flap i { display:inline-flex; align-items:center; justify-content:center; min-width:0.78em; padding:0.06em 0.05em; font-style:normal; line-height:1.15; color:#FFEA41; border-radius:0.14em; background:linear-gradient(to bottom, #262B33 calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% + 0.5px), #262B33 calc(50% + 0.5px)); } .ds-flap i.sp { min-width:0.32em; background:none; } .ds-flap i.flip { animation:ds-flip .24s steps(2,end) 1; } @keyframes ds-flip { 50% { transform:rotateX(-88deg); opacity:.4; } } @media (prefers-reduced-motion: reduce) { .ds-flap i.flip { animation:none; } }"
+    },
+    {
+      "name": "Departure Board",
+      "kind": "custom",
+      "refersTo": "board-row",
+      "description": "Ruled rows under a 2px yellow header rule; late rows set date flaps in alert ink; changed rows are ringed and tinted with a 有變動 pill until clicked.",
+      "html": "<div class=\"ds-board\"><div class=\"ds-row ds-hd\"><span>模組</span><span>名稱・完成度</span><span>預計完工</span><span>目前 Gate</span><span>2027/1/31 前</span></div><div class=\"ds-row ds-changed\" tabindex=\"0\"><span style=\"font-size:22px\"><span class=\"ds-flap\"><i>C</i><i>5</i></span></span><span><b>從問題到解決方案</b><small>80%・剩餘可貢獻 +0.9%</small></span><span class=\"ds-late\" style=\"font-size:17px\"><span class=\"ds-flap\"><i>1</i><i>1</i><i>/</i><i>0</i><i>9</i></span></span><span><span class=\"ds-segs\"><i class=\"d\"></i><i class=\"d\"></i><i class=\"c\"></i><i></i><i></i></span><small>Gate 3・課程素材產出</small></span><span class=\"ds-st late\">已逾預計完工<em class=\"ds-new\">有變動</em></span></div><div class=\"ds-row\" tabindex=\"0\"><span style=\"font-size:22px\"><span class=\"ds-flap\"><i>T</i><i>A</i><i>4</i></span></span><span><b>任務的管理與建立</b><small>80%・剩餘可貢獻 +0.9%</small></span><span style=\"font-size:17px\"><span class=\"ds-flap\"><i>1</i><i>1</i><i>/</i><i>2</i><i>5</i></span></span><span><span class=\"ds-segs\"><i class=\"d\"></i><i class=\"d\"></i><i class=\"c\"></i><i></i><i></i></span><small>Gate 3・課程素材產出</small></span><span class=\"ds-st ok\">KR 期限前完成</span></div></div>",
+      "css": ".ds-flap { display:inline-flex; gap:0.09em; font-family:\"Martian Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; font-stretch:75%; font-weight:600; font-variant-numeric:tabular-nums; } .ds-flap i { display:inline-flex; align-items:center; justify-content:center; min-width:0.78em; padding:0.06em 0.05em; font-style:normal; line-height:1.15; color:#FFEA41; border-radius:0.14em; background:linear-gradient(to bottom, #262B33 calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% + 0.5px), #262B33 calc(50% + 0.5px)); } .ds-flap i.sp { min-width:0.32em; background:none; } .ds-board { background:#191C22; padding:20px; border-radius:20px; color:#F2F2EE; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-row { display:grid; grid-template-columns:80px minmax(0,2fr) 104px minmax(0,1.2fr) 140px; gap:18px; align-items:center; padding:14px 16px; border-bottom:1px solid rgba(255,255,255,0.07); transition:background-color .18s cubic-bezier(.2,.7,.2,1), transform .18s cubic-bezier(.2,.7,.2,1); } .ds-row:not(.ds-hd):hover { background:rgba(255,255,255,0.045); transform:translateX(3px); } .ds-row:focus-visible { outline:2px solid #FFEA41; outline-offset:-2px; } .ds-hd { padding-top:10px; padding-bottom:8px; font-size:13px; font-weight:700; color:#8A9098; border-top:2px solid #FFEA41; border-bottom-color:rgba(255,255,255,0.12); } .ds-row b { display:block; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ds-row small { display:block; margin-top:4px; font-size:13px; color:#8A9098; } .ds-segs { display:grid; grid-template-columns:repeat(5,1fr); gap:4px; max-width:190px; } .ds-segs i { height:8px; border-radius:4px; background:rgba(255,255,255,0.1); } .ds-segs i.d { background:#F2F2EE; } .ds-segs i.c { background:#FFEA41; } .ds-st { font-size:15px; font-weight:700; } .ds-st.ok { color:#4ade80; } .ds-st.late, .ds-late .ds-flap i { color:#FF5A36; } .ds-changed { cursor:pointer; border-radius:12px; background:color-mix(in srgb, #FF5A36 11%, transparent); box-shadow:inset 0 0 0 1px color-mix(in srgb, #FF5A36 45%, transparent); } .ds-changed:hover { background:color-mix(in srgb, #FF5A36 16%, transparent) !important; } .ds-new { display:inline-block; margin-left:8px; padding:1px 8px; font-size:12px; font-style:normal; color:#fff; background:#FF5A36; border-radius:999px; }"
+    },
+    {
+      "name": "Verdict Card",
+      "kind": "card",
+      "refersTo": "verdict-card",
+      "description": "State-coloured verdict sentence left, big flap completion figure right.",
+      "html": "<div class=\"ds-verdict\"><div><div class=\"ds-v-main\">預計達標・超前 6.6 個百分點</div><p class=\"ds-v-sub\">照目前速度，2027/1/31 預計達 <b>80.7%</b>，目標 55%。</p></div><div class=\"ds-big\"><div style=\"font-size:56px\"><span class=\"ds-flap\"><i>3</i><i>6</i><i>.</i><i>1</i><i>%</i></span></div><div class=\"ds-big-l\">目前完成度</div></div></div>",
+      "css": ".ds-flap { display:inline-flex; gap:0.09em; font-family:\"Martian Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; font-stretch:75%; font-weight:600; font-variant-numeric:tabular-nums; } .ds-flap i { display:inline-flex; align-items:center; justify-content:center; min-width:0.78em; padding:0.06em 0.05em; font-style:normal; line-height:1.15; color:#FFEA41; border-radius:0.14em; background:linear-gradient(to bottom, #262B33 calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% + 0.5px), #262B33 calc(50% + 0.5px)); } .ds-flap i.sp { min-width:0.32em; background:none; } .ds-verdict { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:32px; align-items:center; padding:22px 30px; background:#191C22; border:1px solid rgba(255,255,255,0.06); border-radius:24px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#F2F2EE; } .ds-v-main { font-size:36px; font-weight:700; line-height:1.15; letter-spacing:-0.02em; color:#4ade80; } .ds-v-sub { margin:8px 0 0; font-size:16px; line-height:1.6; color:rgba(255,255,255,0.8); } .ds-v-sub b { color:#F2F2EE; } .ds-big { text-align:right; } .ds-big-l { margin-top:8px; font-size:14px; color:#8A9098; }"
+    },
+    {
+      "name": "Stat Card",
+      "kind": "card",
+      "refersTo": "stat-card",
+      "description": "Rounded stat card with steel label, flap figure and sub-line; lifts on hover; state-tinted border.",
+      "html": "<div class=\"ds-stat ok\" tabindex=\"0\"><div class=\"ds-stat-l\">照目前速度 2027/1/31 預計</div><div class=\"ds-stat-v\"><span class=\"ds-flap\"><i>8</i><i>0</i><i>.</i><i>7</i><i>%</i></span></div><div class=\"ds-stat-s\">本頁的正式預測 <span class=\"ds-chip\">預計達標</span></div></div>",
+      "css": ".ds-flap { display:inline-flex; gap:0.09em; font-family:\"Martian Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; font-stretch:75%; font-weight:600; font-variant-numeric:tabular-nums; } .ds-flap i { display:inline-flex; align-items:center; justify-content:center; min-width:0.78em; padding:0.06em 0.05em; font-style:normal; line-height:1.15; color:#FFEA41; border-radius:0.14em; background:linear-gradient(to bottom, #262B33 calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% - 0.5px), rgba(0,0,0,0.38) calc(50% + 0.5px), #262B33 calc(50% + 0.5px)); } .ds-flap i.sp { min-width:0.32em; background:none; } .ds-stat { width:240px; padding:16px 20px; color:#F2F2EE; background:#191C22; border:1px solid rgba(255,255,255,0.06); border-radius:20px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s cubic-bezier(.2,.7,.2,1); } .ds-stat.ok { border-color:color-mix(in srgb, #4ade80 40%, transparent); } .ds-stat:hover, .ds-stat:focus-visible { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,0.35); outline:none; } .ds-stat-l { font-size:14px; font-weight:700; color:#8A9098; } .ds-stat-v { margin:10px 0 8px; font-size:28px; line-height:1; } .ds-stat-s { font-size:14px; line-height:1.5; color:rgba(255,255,255,0.7); } .ds-chip { display:inline-block; margin-left:4px; padding:1px 9px; font-size:13px; font-weight:700; border-radius:999px; color:#4ade80; background:color-mix(in srgb, #4ade80 14%, transparent); }"
+    },
+    {
+      "name": "Boarding Pass",
+      "kind": "card",
+      "refersTo": "boarding-pass",
+      "description": "Bottleneck task: stub with mono count, dashed perforation with notches, details.",
+      "html": "<div class=\"ds-pass\" tabindex=\"0\"><div class=\"ds-stub\"><b>17</b><span>個小節待處理</span></div><div class=\"ds-pass-main\"><div class=\"ds-pass-t\">學習目標、成果、時間摘要</div><div class=\"ds-pass-m\">舊流程・Gate 4・上架執行</div></div></div>",
+      "css": ".ds-pass { display:grid; grid-template-columns:118px minmax(0,1fr); width:340px; background:#20242B; border:1px solid color-mix(in srgb, #FFEA41 55%, transparent); border-radius:18px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#F2F2EE; transition:transform .2s cubic-bezier(.2,.7,.2,1), box-shadow .2s cubic-bezier(.2,.7,.2,1); } .ds-pass:hover, .ds-pass:focus-visible { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,0.35); outline:none; } .ds-stub { position:relative; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 10px; text-align:center; border-right:2px dashed rgba(255,255,255,0.16); } .ds-stub::before, .ds-stub::after { content:''; position:absolute; right:-10px; width:18px; height:18px; border-radius:50%; background:#191C22; } .ds-stub::before { top:-10px; } .ds-stub::after { bottom:-10px; } .ds-stub b { font-family:\"Martian Mono\", ui-monospace, \"SF Mono\", Menlo, monospace; font-stretch:75%; font-size:44px; font-weight:600; color:#FFEA41; } .ds-stub span { font-size:13px; color:#8A9098; } .ds-pass-main { padding:18px 20px; } .ds-pass-t { font-size:16px; font-weight:700; } .ds-pass-m { margin-top:6px; font-size:14px; color:#8A9098; }"
+    },
+    {
       "name": "Sidebar Navigation",
       "kind": "nav",
       "refersTo": "nav-item",
-      "description": "Sidebar pill list; active item gets a yellow-tinted pill and a yellow icon.",
-      "html": "<nav class=\"ds-sb\"><div class=\"ds-sb-group\">BB6</div><a class=\"ds-sb-item active\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"1.5\"/></svg><span>專案概況</span></a><a class=\"ds-sb-item\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/></svg><span>OKR</span></a></nav>",
-      "css": ".ds-sb { display:flex; flex-direction:column; gap:4px; width:248px; padding:20px 14px; background:#111214; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-sb-group { padding:16px 12px 6px; font-size:13px; font-weight:700; color:#9599A4; } .ds-sb-item { display:flex; align-items:center; gap:12px; min-height:46px; padding:0 12px; font-size:16px; font-weight:600; color:rgba(255,255,255,0.75); text-decoration:none; border-radius:12px; transition:background-color .18s, color .18s; } .ds-sb-item:hover { color:#f4f4f2; background:rgba(255,255,255,0.06); } .ds-sb-item.active { color:#f4f4f2; background:color-mix(in srgb, #FFEA41 14%, #1b1c1f); } .ds-sb-item.active svg { color:#FFEA41; } .ds-sb-item:focus-visible { outline:2px solid #FFEA41; outline-offset:-2px; }"
-    },
-    {
-      "name": "KR Tile",
-      "kind": "custom",
-      "refersTo": "kr-tile",
-      "description": "Signature solid-yellow tile with black ink, heavy numeral, status chip and one soft circle.",
-      "html": "<div class=\"ds-tile\"><div class=\"ds-tile-label\">目前完成度</div><div class=\"ds-tile-val\">36.1%</div><div class=\"ds-tile-sub\">目標 55%，還差 18.9 個百分點</div><span class=\"ds-tile-chip\">預計達標</span></div>",
-      "css": ".ds-tile { position:relative; overflow:hidden; display:flex; flex-direction:column; width:260px; min-height:200px; padding:26px 28px; background:#FFEA41; color:#111214; border-radius:24px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-tile::after { content:''; position:absolute; top:-70px; right:-60px; width:190px; height:190px; border-radius:50%; background:rgba(17,18,20,0.06); } .ds-tile > * { position:relative; z-index:1; } .ds-tile-label { font-size:15px; font-weight:700; color:rgba(17,18,20,0.7); } .ds-tile-val { margin:14px 0 10px; font-size:56px; font-weight:800; line-height:1; letter-spacing:-0.035em; font-variant-numeric:tabular-nums; } .ds-tile-sub { font-size:15px; line-height:1.5; color:rgba(17,18,20,0.75); } .ds-tile-chip { align-self:flex-start; margin-top:16px; padding:4px 12px; font-size:13px; font-weight:700; border-radius:999px; color:#4ade80; background:#111214; }"
-    },
-    {
-      "name": "Greeting Banner",
-      "kind": "card",
-      "refersTo": "content-panel",
-      "description": "Yellow-washed banner: greeting in accent ink, pending load, verdict behind a hairline.",
-      "html": "<div class=\"ds-greet\"><div><div class=\"ds-greet-title\">午安，Ken</div><p class=\"ds-greet-line\">你目前有 <b>2</b> 個小節待處理。</p></div><div class=\"ds-verdict\">預計達標・超前 6.6 個百分點</div></div>",
-      "css": ".ds-greet { display:grid; grid-template-columns:minmax(0,.85fr) minmax(0,1.6fr); gap:36px; align-items:center; padding:34px 40px; background:color-mix(in srgb, #FFEA41 7%, #1b1c1f); border-radius:24px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; } .ds-greet-title { font-size:34px; font-weight:800; line-height:1.2; letter-spacing:-0.02em; color:#FFEA41; } .ds-greet-line { margin-top:10px; font-size:16px; line-height:1.6; color:rgba(255,255,255,0.75); } .ds-greet-line b { color:#f4f4f2; } .ds-verdict { padding-left:36px; border-left:1px solid rgba(255,255,255,0.1); font-size:34px; font-weight:700; line-height:1.15; letter-spacing:-0.02em; color:#4ade80; }"
-    },
-    {
-      "name": "Chart Card",
-      "kind": "card",
-      "refersTo": "chart-card",
-      "description": "Full-width card for charts and tables inside the panel.",
-      "html": "<div class=\"ds-card\"><div class=\"ds-card-title\">KR 進度與預測</div><div class=\"ds-card-sub\">實際進度、依時程的應達線，以及預測</div></div>",
-      "css": ".ds-card { padding:28px 32px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:20px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; } .ds-card-title { font-size:20px; font-weight:700; letter-spacing:-0.01em; margin-bottom:6px; } .ds-card-sub { font-size:14px; color:rgba(255,255,255,0.65); }"
+      "description": "Pill list; hover nudges 3px right; active takes the card colour and a yellow icon.",
+      "html": "<nav class=\"ds-sb\"><div class=\"ds-sb-brand\">BB6 課程製作</div><div class=\"ds-sb-group\">BB6</div><a class=\"ds-sb-item active\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1.5\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1.5\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1.5\"/></svg><span>專案概況</span></a><a class=\"ds-sb-item\" href=\"#\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/><circle cx=\"12\" cy=\"12\" r=\"1.2\"/></svg><span>OKR</span></a></nav>",
+      "css": ".ds-sb { display:flex; flex-direction:column; gap:4px; width:248px; padding:20px 14px; background:#0B0D10; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; } .ds-sb-brand { padding:4px 10px 12px; font-size:17px; font-weight:700; color:#FFEA41; } .ds-sb-group { padding:16px 12px 6px; font-size:13px; font-weight:700; color:#8A9098; } .ds-sb-item { display:flex; align-items:center; gap:12px; min-height:46px; padding:0 12px; font-size:16px; font-weight:600; color:rgba(255,255,255,0.75); text-decoration:none; border-radius:12px; transition:background-color .18s cubic-bezier(.2,.7,.2,1), color .18s cubic-bezier(.2,.7,.2,1), transform .18s cubic-bezier(.2,.7,.2,1); } .ds-sb-item:hover { color:#F2F2EE; background:rgba(255,255,255,0.06); transform:translateX(3px); } .ds-sb-item:active { transform:scale(0.98); } .ds-sb-item.active { color:#F2F2EE; background:#191C22; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06); } .ds-sb-item.active svg { color:#FFEA41; } .ds-sb-item:focus-visible { outline:2px solid #FFEA41; outline-offset:-2px; }"
     },
     {
       "name": "Quiet Button",
       "kind": "button",
       "refersTo": "button-quiet",
-      "description": "Outlined utility control (settings, expand).",
+      "description": "Outlined utility control.",
       "html": "<button class=\"ds-btn\">完工預測設定</button>",
-      "css": ".ds-btn { display:inline-flex; align-items:center; gap:8px; padding:8px 14px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:14px; font-weight:700; color:rgba(255,255,255,0.75); background:transparent; border:1px solid rgba(255,255,255,0.15); border-radius:10px; cursor:pointer; transition:color .15s, border-color .15s; } .ds-btn:hover { color:#f4f4f2; border-color:rgba(255,255,255,0.35); } .ds-btn:focus-visible { outline:2px solid #FFEA41; outline-offset:3px; }"
+      "css": ".ds-btn { padding:8px 14px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:14px; font-weight:700; color:rgba(255,255,255,0.75); background:transparent; border:1px solid rgba(255,255,255,0.15); border-radius:10px; cursor:pointer; transition:color .18s, border-color .18s, transform .18s cubic-bezier(.2,.7,.2,1); } .ds-btn:hover { color:#F2F2EE; border-color:rgba(255,255,255,0.35); transform:translateY(-1px); } .ds-btn:active { transform:scale(0.97); } .ds-btn:focus-visible { outline:2px solid #FFEA41; outline-offset:3px; }"
+    },
+    {
+      "name": "Alert Button",
+      "kind": "button",
+      "refersTo": "button-alert",
+      "description": "Clears changed rows; the only button in alert orange.",
+      "html": "<button class=\"ds-btn-alert\">全部標為已看過</button>",
+      "css": ".ds-btn-alert { padding:7px 14px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:14px; font-weight:700; color:#FF5A36; background:color-mix(in srgb, #FF5A36 10%, transparent); border:1px solid color-mix(in srgb, #FF5A36 40%, transparent); border-radius:10px; cursor:pointer; transition:transform .18s cubic-bezier(.2,.7,.2,1), background-color .18s; } .ds-btn-alert:hover { transform:translateY(-1px); background:color-mix(in srgb, #FF5A36 16%, transparent); } .ds-btn-alert:active { transform:scale(0.97); } .ds-btn-alert:focus-visible { outline:2px solid #FFEA41; outline-offset:3px; }"
     },
     {
       "name": "Member Chips",
       "kind": "chip",
       "refersTo": "member-chip",
-      "description": "Fixed member identity chips on a 20% wash with the member ink.",
-      "html": "<span class=\"ds-chip ken\">Ken</span> <span class=\"ds-chip daniel\">Daniel</span> <span class=\"ds-chip ellen\">Ellen</span>",
-      "css": ".ds-chip { display:inline-block; padding:3px 10px; border-radius:999px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:13px; font-weight:700; } .ds-chip.ken { background:rgba(37,99,235,0.2); color:#7BAEFF; } .ds-chip.daniel { background:rgba(22,163,74,0.2); color:#6EE7A0; } .ds-chip.ellen { background:rgba(234,88,12,0.2); color:#FDBA74; }"
-    },
-    {
-      "name": "Gate Card",
-      "kind": "card",
-      "refersTo": "chart-card",
-      "description": "Gate identity as a full 45% tinted border, never an edge bar.",
-      "html": "<div class=\"ds-gate\"><div class=\"ds-gate-num\">Gate 3・字幕＋逐字稿</div><div class=\"ds-gate-meta\">可開始 11・進行中 0</div></div>",
-      "css": ".ds-gate { --g:#7C3AED; padding:20px; border:1px solid color-mix(in srgb, var(--g) 45%, transparent); border-radius:16px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; color:#f4f4f2; background:#1b1c1f; } .ds-gate-num { font-size:18px; font-weight:700; letter-spacing:-0.01em; color:#A78BFA; } .ds-gate-meta { margin-top:6px; font-size:14px; color:rgba(255,255,255,0.65); }"
+      "description": "Fixed member identity chips (off the board; board owner chips are neutral).",
+      "html": "<span class=\"ds-mchip ken\">Ken</span> <span class=\"ds-mchip daniel\">Daniel</span> <span class=\"ds-mchip ellen\">Ellen</span> <span class=\"ds-mchip board\">Ellen</span>",
+      "css": ".ds-mchip { display:inline-block; padding:3px 10px; border-radius:999px; font-family:-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"PingFang TC\", \"Noto Sans TC\", \"Microsoft JhengHei\", \"Segoe UI\", sans-serif; font-size:13px; font-weight:700; } .ds-mchip.ken { background:rgba(37,99,235,0.2); color:#6B9BF2; } .ds-mchip.daniel { background:rgba(22,163,74,0.2); color:#6EE7A0; } .ds-mchip.ellen { background:rgba(234,88,12,0.2); color:#FDBA74; } .ds-mchip.board { border-radius:4px; padding:2px 7px; color:#F2F2EE; background:rgba(255,255,255,0.08); }"
     }
   ],
   "narrative": {
-    "northStar": "The Department Desk",
-    "overview": "BB6 lives inside the company's internal-tool family: a quiet sidebar on a charcoal ground, one big rounded content panel floating beside it, a greeting banner that names who is looking and what is waiting on them, and a row of solid yellow tiles that carry the four KR numbers. It should sit next to the sibling department tool and read as the same house, while keeping the company's binding pairing of signal yellow on near-black.\n\nDensity is moderate and legible from a projector: heavy numerals, a 14px floor on the landing page, and one strong colour field (the yellow tile row) per screen. Everything else is tonal graphite in dark and warm paper in light, with gate and member hues reserved for identification, never decoration. The old top-tab bar with a yellow rule and flat square cards is retired.\n\nTwo themes ship as equals. Dark is the default; light mirrors the structure on a warm paper ground with a white panel and darker inks so every hue holds contrast on white. Switching themes happens in place, and charts re-colour without a reload.",
+    "northStar": "The Gate Board",
+    "overview": "BB6 reads as an airport departure board. Modules are departures, ranked by forecast completion; Gates 1 to 5 are the boarding sequence; codes, dates and figures are set as yellow split-flap characters on dark tiles, so the numbers that answer the KR question look like they were posted by the board itself. Late departures show their date in alert orange; a row whose gate or status changed since this browser last looked stays lit until someone clicks it. The bottleneck tasks are printed as boarding passes, stub and details either side of a perforation.\n\nThe world sits inside the shell the team already knows and kept on purpose: a 248px sidebar that collapses to an 80px rail, and one inset rounded panel holding rounded cards. The board world replaced the previous yellow-tile world; the solid yellow colour tiles, their decorative circles and the greeting banner are gone. Yellow is now carried by characters and one header rule, not by large fills.\n\nTwo themes ship as equals. Dark is the night board: board ink ground, slate panel and cards, yellow flap characters on graphite tiles. Light is the daytime board: pale grey ground, near-white panel, white cards, ink characters on light grey tiles, and a darker gold for yellow-family text. Density is moderate and projector-legible.",
     "keyCharacteristics": [
-      "Sidebar (248px, collapsible to an 80px icon rail) + one rounded content panel (24px radius).",
-      "Signal yellow as fill, not as line: tiles, active pills, chart series.",
-      "Black ink on yellow, always; yellow text only where it holds contrast (dark theme) or via the dark-gold ink in light.",
-      "Line icons at 1.75 stroke, 20px.",
-      "System sans with heavy (800) tabular numerals.",
-      "Motion limited to 180ms state transitions."
+      "Sidebar (248px, 80px rail collapsed) + one inset rounded panel (24px).",
+      "Split-flap mono characters for codes, dates and figures; system sans for Chinese.",
+      "Yellow as characters and as the board's header rule; orange only for late and changed.",
+      "Ruled board rows inside cards; boarding passes with a dashed perforation and notches.",
+      "Hover answers with lift (cards, passes) or a 3px nudge (rows, nav), 160 to 200ms.",
+      "Flaps flip once, two frames, only when their value changes."
     ],
     "rules": [
       {
-        "name": "The Yellow-Is-A-Fill Rule",
-        "body": "Signal yellow appears as a surface (tile, pill tint, banner wash, chart bar) with black ink on it. It is never a rule line under a header.",
+        "name": "The Characters-Not-Fills Rule",
+        "body": "Yellow appears as flap characters, one 2px rule over the board's column heads, the current-gate segment, chart series and small active marks. It is never a large surface fill behind content.",
+        "section": "colors"
+      },
+      {
+        "name": "The Alarm Rule",
+        "body": "Alert orange means late or changed and nothing else. If a row is neither, it carries no orange.",
         "section": "colors"
       },
       {
         "name": "The Two-Ink Rule",
-        "body": "Every hue used as text has a dark-theme ink and a light-theme ink. Never set the base #FFEA41, member or gate colour as text on white.",
+        "body": "Every hue used as text has a dark-theme ink and a light-theme ink. Never set #FFEA41, a member or a gate base colour as text on the light panel.",
         "section": "colors"
       },
       {
         "name": "The Fixed Identity Rule",
-        "body": "Member and gate colours mean one person or one gate everywhere; never reuse them as decoration or as a status.",
+        "body": "Member and gate colours mean one person or one gate everywhere; never reuse them as decoration or status.",
         "section": "colors"
       },
       {
+        "name": "The Flap Rule",
+        "body": "A value the board posts (module code, date, figure that answers the KR) is rendered through `flap()`, one character per tile. Chinese text is never flapped.",
+        "section": "typography"
+      },
+      {
         "name": "The Projector Floor Rule",
-        "body": "Nothing on the landing page goes below 14px except chips and pills.",
+        "body": "Nothing on the landing page goes below 14px except chips, pills and the 13px column heads and sub-meta.",
         "section": "typography"
       },
       {
-        "name": "The Heavy Numeral Rule",
-        "body": "Every number that answers the KR question is weight 800 with `tabular-nums`.",
-        "section": "typography"
-      },
-      {
-        "name": "The Flat-In-The-Dark Rule",
-        "body": "Dark theme uses no shadows; separate surfaces by tone and hairline.",
+        "name": "The Lift-On-Hover Rule",
+        "body": "Surfaces are flat at rest in dark; a shadow appears only with hover, and goes with a lift.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** put black ink (#111214) on every yellow surface, in both themes.",
-      "**Do** use the theme's accent ink for yellow-family text: #FFEA41 in dark, #735e00 in light.",
-      "**Do** keep KR numbers at weight 800 with tabular figures, and the landing page at a 14px floor.",
-      "**Do** draw line icons at 20px with a 1.75 stroke, round caps and joins.",
+      "**Do** render board values (codes, dates, KR figures) through `flap()` in Martian Mono at 75% width with tabular figures.",
+      "**Do** use the theme's accent ink for yellow-family text: #FFEA41 in dark, #6E5A00 in light.",
+      "**Do** keep alert orange for late and changed only, and keep a changed row lit until it is clicked.",
+      "**Do** put black ink (#111214) on any yellow fill.",
+      "**Do** keep owner chips on the board neutral; let member colour carry identity elsewhere.",
       "**Do** carry gate or member identity as a full 45% tinted 1px border or a 20% wash chip.",
-      "**Do** keep motion to 180ms colour and layout transitions, and drop them under reduced motion.",
-      "**Do** re-colour charts from the theme tokens when the theme changes."
+      "**Do** keep motion to 160 to 200ms transitions with `cubic-bezier(.2,.7,.2,1)`: lift `translateY(-3px)` for cards and passes, nudge `translateX(3px)` for rows and nav, flap flips only on value change; drop all of it under reduced motion.",
+      "**Do** open external tools in a new tab, marked with the small arrow.",
+      "**Do** re-colour charts from theme tokens when the theme changes."
     ],
     "donts": [
-      "**Don't** bring back the top tab bar with a yellow rule under the header.",
+      "**Don't** bring back solid yellow colour tiles, their decorative circles, or the yellow-washed greeting banner.",
+      "**Don't** bring back the top tab bar; navigation lives in the sidebar.",
       "**Don't** set #FFEA41, member or gate base colours as text on the light panel.",
+      "**Don't** use alert orange for decoration, emphasis or the top bottleneck; the top pass is marked in accent ink.",
       "**Don't** mark gate or member identity with a coloured bar on one edge of a card.",
-      "**Don't** add shadows in dark theme.",
-      "**Don't** reuse member or gate hues for status or decoration."
+      "**Don't** add resting shadows in dark theme; shadow arrives only with a hover lift.",
+      "**Don't** flap Chinese text or animate flaps that did not change."
     ]
   }
 }
