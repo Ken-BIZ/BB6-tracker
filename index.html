@@ -2386,6 +2386,8 @@ function updateScore(taskId, val) {
     .then(function() {
       // Force full prereq re-evaluation after write
       refreshAll();
+      setSyncStatus('ok', '已儲存・即時同步中');
+      updateLastSynced('last-saved');
     })
     .catch(function(e) {
       setSyncStatus('error', '寫入失敗，請重試');
@@ -4757,7 +4759,8 @@ initSupabase().then(function() {
     renderOverviewTabs();
     populateSectionSelect();
     updateReporterHeader();
-    setSyncStatus('syncing', '連線中...');
+    // The landing page may already have subscribed every module; only show 連線中 while this one is still pending
+    if (!moduleListeners[currentModule]) setSyncStatus('syncing', '連線中...');
     subscribeModule(currentModule);
     renderGates();
     renderMembers();
