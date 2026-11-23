@@ -804,7 +804,8 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .kr-card { margin-bottom: 20px; }
 .kr-tiles { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; }
 .kr-tile { min-width: 0; padding: 16px 18px; background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; }
-.kr-tile.warn { border-color: rgba(251,146,60,0.45); }
+.kr-tile.ok { border-color: rgba(74,222,128,0.45); }
+.kr-tile.warn, .kr-tile.behind { border-color: rgba(251,146,60,0.45); }
 .kr-tile-label { font-size: 13px; font-weight: 700; color: var(--grey-dark); }
 .kr-tile-val { margin: 8px 0 6px; font-size: 30px; font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--white); }
 .kr-tile-sub { font-size: 12px; line-height: 1.5; color: rgba(255,255,255,0.6); }
@@ -824,6 +825,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .contrib-why { color: rgba(255,255,255,0.6); }
 .kr-verdict { margin-bottom: 20px; }
 .kr-verdict-main { font-weight: 700; }
+.kr-verdict-main span { display: inline-block; }
 .kr-verdict.ok .kr-verdict-main { color: #4ade80; }
 .kr-verdict.behind .kr-verdict-main { color: #FB923C; }
 .kr-verdict.done .kr-verdict-main { color: var(--yellow); }
@@ -995,20 +997,20 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .ov-section-pill.blocked{ background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); }
 
 /* ── BASELINE SETTINGS BAR ──────────────────────────────── */
-.baseline-bar { background: rgba(139,92,246,0.06); border-bottom: 1px solid rgba(139,92,246,0.18); padding: 0 48px; }
+.baseline-bar { background: rgba(255,255,255,0.02); border-top: 1px solid rgba(255,255,255,0.08); padding: 0 48px; scroll-margin-top: 96px; }
 .baseline-bar-top { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
-.baseline-title { font-size: 14px; font-weight: 700; color: #C4B5FD; }
+.baseline-title { font-size: 14px; font-weight: 700; color: var(--white); }
 .baseline-sub { font-size: 13px; color: rgba(255,255,255,0.6); flex: 1; }
-.baseline-toggle { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: #C4B5FD; font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.baseline-toggle:hover { background: rgba(139,92,246,0.25); }
-.baseline-body { padding: 20px 0 24px; border-top: 1px solid rgba(139,92,246,0.12); }
+.baseline-toggle { background: transparent; border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.baseline-toggle:hover { color: var(--white); border-color: rgba(255,255,255,0.35); }
+.baseline-body { padding: 20px 0 24px; border-top: 1px solid rgba(255,255,255,0.06); }
 .baseline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .baseline-section-title { font-size: 12px; font-weight: 700; color: rgba(255,255,255,0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
 .baseline-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
 .baseline-row-label { font-size: 14px; color: rgba(255,255,255,0.7); flex: 1; }
 .baseline-row-sub { font-size: 12px; color: rgba(255,255,255,0.5); }
 .baseline-input { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 4px; color: var(--white); font-size: 14px; font-weight: 600; padding: 6px 10px; font-family: inherit; width: 80px; text-align: right; }
-.baseline-input:focus { outline: none; border-color: #8B5CF6; }
+.baseline-input:focus { outline: none; border-color: var(--yellow); }
 .baseline-input-date { width: 140px; text-align: left; }
 .baseline-input-text { width: 220px; text-align: left; }
 .baseline-check { width: 18px; height: 18px; accent-color: var(--yellow); cursor: pointer; }
@@ -1264,9 +1266,9 @@ input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px
 @media (max-width: 640px) {
   /* Header: one scrollable row of page tabs instead of letters stacked vertically */
   header { padding: 12px 16px; }
-  .page-tabs { order: 3; width: 100%; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; flex-wrap: nowrap; }
+  .page-tabs { order: 3; width: 100%; justify-content: flex-start; flex-wrap: wrap; }
   .page-tabs::-webkit-scrollbar { display: none; }
-  .page-tab { flex-shrink: 0; white-space: nowrap; padding: 10px 14px; }
+  .page-tab { flex: 1 1 auto; justify-content: center; white-space: nowrap; padding: 10px 12px; }
   #flow-nav { display: none !important; }
   /* Module pickers: a single swipeable row, picker controls below */
   .reporter-module-bar { flex-wrap: wrap; gap: 8px; padding: 0 16px 10px; }
@@ -3714,8 +3716,8 @@ function renderKRPanel() {
   if (verdict) {
     verdict.className = 'kr-verdict ' + status[0];
     verdict.innerHTML =
-      '<div class="kr-verdict-main">' + status[1] +
-        (reach ? '' : '・' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點') + '</div>' +
+      '<div class="kr-verdict-main"><span>' + status[1] + '</span>' +
+        (reach ? '' : '<span>・' + (paceOk ? '超前' : '落後') + ' ' + paceGap + ' 個百分點</span>') + '</div>' +
       '<div class="kr-verdict-sub">' + (reach
         ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
         : '照目前速度（近 4 週平均每週 ' + signed(s.rate) + '%），' + dueFull + ' 預計達 <b>' + fmtNum(s.projected) + '%</b>，目標 ' + fmtNum(s.k.target) + '%' +
@@ -3768,6 +3770,7 @@ function renderKRBurnup(s) {
   if (c <= k.start) c = new Date(c.getTime() + WEEK_MS);
   for (; c < endLast; c = new Date(c.getTime() + WEEK_MS)) pts.push({ t: c, label: mdLabel(c) });
   pts.push({ t: endLast, label: mdLabel(endLast) });
+  var weekTicks = pts.map(function(p){ return p.t.getTime(); });   // quarter start, Wednesday cutoffs, quarter end
   if (now > k.start && now < endLast) pts.push({ t: now, label: '今天', isNow: true });
   krMilestones(k.kr).forEach(function(m) {
     var same = pts.filter(function(p){ return !p.isNow && calKey(p.t) === m.date.replace(/-/g,''); })[0];
@@ -3779,7 +3782,7 @@ function renderKRBurnup(s) {
   var replay = replayProject(lastLogData, past.map(function(p){ return p.t; }));
   past.forEach(function(p, i){ p.actual = replay[i].project; });
   var data = pts.map(function(p) {
-    var row = { label: p.label, pace: Math.round(krPaceAt(k.kr, p.t) * 10) / 10 };
+    var row = { t: p.t.getTime(), label: p.label, pace: Math.round(krPaceAt(k.kr, p.t) * 10) / 10 };
     if (p.ms !== undefined) row.ms = p.ms;
     if (p.isNow) { row.actual = s.cur; row.forecast = s.cur; }
     else if (p.t <= now) row.actual = p.actual;
@@ -3788,15 +3791,17 @@ function renderKRBurnup(s) {
     return row;
   });
   var names = { actual: '實際', pace: '應達', forecast: '預測', ms: '里程碑' };
+  // A time axis, so 今天 and milestones sit at their real distance from the Wednesday cutoffs
+  function fullDate(v) { var d = new Date(v); return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate(); }
   root.render(
     h(Recharts.ResponsiveContainer, { width: '100%', height: 280 },
       h(Recharts.LineChart, { data: data, margin: { top: 20, right: 24, left: 0, bottom: 0 } },
         h(Recharts.CartesianGrid, { strokeDasharray: '4 4', stroke: 'rgba(255,255,255,0.06)', vertical: false }),
-        h(Recharts.XAxis, { dataKey: 'label', tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false, interval: 'preserveStartEnd' }),
+        h(Recharts.XAxis, { dataKey: 't', type: 'number', scale: 'time', domain: [k.start.getTime(), endLast.getTime()], ticks: weekTicks, tickFormatter: function(v){ return mdLabel(new Date(v)); }, tick: CHART_AXIS_TICK, axisLine: { stroke: 'rgba(255,255,255,0.08)' }, tickLine: false, interval: 'preserveStartEnd', minTickGap: 12 }),
         h(Recharts.YAxis, { tick: CHART_AXIS_TICK, axisLine: false, tickLine: false, unit: '%', domain: [0, 100], ticks: [0, 20, 40, 60, 80, 100] }),
-        h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, formatter: function(v, n){ return [v + '%', names[n] || n]; } }),
+        h(Recharts.Tooltip, { contentStyle: CHART_TOOLTIP_STYLE, labelFormatter: fullDate, formatter: function(v, n){ return [v + '%', names[n] || n]; } }),
         h(Recharts.ReferenceLine, { y: k.target, stroke: 'rgba(255,255,255,0.55)', strokeWidth: 1, label: { value: '目標 ' + fmtNum(k.target) + '%', position: 'insideTopRight', fill: 'rgba(255,255,255,0.75)', fontSize: 13 } }),
-        h(Recharts.ReferenceLine, { x: '今天', stroke: 'rgba(255,255,255,0.2)', strokeDasharray: '2 3' }),
+        now < endLast ? h(Recharts.ReferenceLine, { x: now.getTime(), stroke: 'rgba(255,255,255,0.35)', strokeDasharray: '2 3', label: { value: '今天', position: 'top', fill: 'rgba(255,255,255,0.8)', fontSize: 13 } }) : null,
         h(Recharts.Line, { dataKey: 'pace', stroke: 'rgba(255,255,255,0.45)', strokeWidth: 2, strokeDasharray: '6 4', dot: false, isAnimationActive: false }),
         h(Recharts.Line, { dataKey: 'forecast', stroke: '#FFEA41', strokeOpacity: 0.7, strokeWidth: 2, strokeDasharray: '2 4', dot: false, connectNulls: true, isAnimationActive: false }),
         h(Recharts.Line, { dataKey: 'actual', stroke: '#FFEA41', strokeWidth: 2, dot: { r: 4, fill: '#FFEA41', stroke: '#16181b', strokeWidth: 2 }, activeDot: { r: 5 }, connectNulls: true, isAnimationActive: false }),
