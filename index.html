@@ -21,7 +21,7 @@
   --surface: rgba(255,255,255,0.03); --border: rgba(255,255,255,0.07);
 }
 html { scroll-behavior: smooth; }
-body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
+body { background: var(--bg); color: var(--text); line-height: 1.6; letter-spacing: -0.005em; font-size: 16px; }
 
 /* ── PAGE SWITCHING ──────────────────────────────────────── */
 .page { display: none; }
@@ -94,7 +94,7 @@ nav a:hover { color: var(--accent-ink); background: rgba(255,234,65,0.08); }
   }
 
   html { scroll-behavior: smooth; }
-  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
+  body { background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
 
   header { background: var(--bg); border-bottom: 2px solid var(--yellow); padding: 28px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .logo-area { display: flex; align-items: center; gap: 16px; }
@@ -325,7 +325,7 @@ nav a:hover { color: var(--accent-ink); background: rgba(255,234,65,0.08); }
 }
 
 html { scroll-behavior: smooth; }
-body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
+body { background: var(--bg); color: var(--text); line-height: 1.5; letter-spacing: -0.01em; }
 
 /* HEADER */
 header { background: var(--bg); border-bottom: 2px solid var(--yellow); padding: 20px 48px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 200; }
@@ -1722,6 +1722,81 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
   #page-weekly .kr-verdict-main { font-size: 24px; }
   .board.no-who .board-row { grid-template-columns: auto minmax(0,1fr); }
 }
+
+/* ═══ Critique round 4 (2026-11-24): layout bugs at real viewports, board rules on every page ═══ */
+/* Boarding passes: the stub spans the full pass so the perforation and both punch holes sit on the edges */
+#page-weekly .bn-top-item { align-items: stretch; }
+/* Short laptop screens: the sidebar footer (theme, collapse) stays in view */
+@media (min-width: 901px) and (max-height: 820px) {
+  .sidebar { gap: 2px; padding-top: 14px; padding-bottom: 14px; }
+  .sb-brand { padding-bottom: 8px; min-height: 44px; }
+  .sb-group { padding-top: 10px; padding-bottom: 4px; }
+  .sidebar .sb-item { min-height: 38px; }
+  .sidebar .sb-list, .sidebar .page-tabs { gap: 2px; }
+  .sidebar .login-chip { padding-top: 4px; padding-bottom: 4px; }
+}
+/* Module pickers: one line of codes, swipe if the panel is narrower than the set */
+.overview-filter, .reporter-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: 2px; }
+.overview-filter::-webkit-scrollbar, .reporter-tabs::-webkit-scrollbar { display: none; }
+.ov-tab, .reporter-tab { flex-shrink: 0; min-width: 40px; padding: 0 8px; }
+#panel .overview-filter { padding: 12px 40px; }
+.reporter-module-bar { flex-wrap: wrap; column-gap: 20px; padding: 0 40px 10px; }
+.reporter-module-bar .reporter-tabs { flex: 1 1 100%; padding-bottom: 6px; }
+.reporter-module-bar .section-picker { margin: 0; }
+.reporter-module-bar .tracker-csv { margin-left: auto; padding: 7px 14px; border-radius: 10px; }
+.reporter-module-bar .sync-status { order: 0; }
+/* Board names may take two lines before truncating on narrower panels */
+@media (max-width: 1400px) {
+  .board-name b { white-space: normal; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-height: 1.35; }
+}
+/* 流程分工: owners drop under the task name instead of splitting a word */
+.fx-task { flex-wrap: wrap; row-gap: 4px; }
+.fx-name { flex: 1 1 calc(100% - 56px); word-break: keep-all; }
+#page-flow .hero h1 span { color: inherit; }
+/* Break Chinese phrases at 、・ and spaces, not inside a word */
+.bn-top-task, .bn-top-meta, .board-name b, .board-gate small, .gate-name, .task-row-name, .mtask-name { word-break: keep-all; overflow-wrap: anywhere; }
+/* Chinese lines: no one- or two-character orphans */
+#page-weekly .kr-verdict-sub, .scen-note, .bn-top-task, .bn-top-meta, .gate-name, .task-row-name, .fx-name, .board-name small, .okr-kr-title { text-wrap: pretty; }
+/* Scenario tiles stay a row of three on desktop */
+@media (min-width: 901px) { .scen-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+/* AI is a participant, not Gate 4: neutral steel identity */
+:root, :root[data-theme="dark"] { --ai: #9AA3AD; }
+:root[data-theme="light"] { --ai: #4B5563; }
+#page-weekly .owner-chip.chip-ai::before { background: var(--ai); }
+.member-card.ai { background: transparent; }
+/* 進度填報 member cards: identity in the name and bars, not a coloured wash; zero is calm */
+#panel .member-card, #panel .member-card.ken, #panel .member-card.daniel, #panel .member-card.ellen, #panel .member-card.ai { background: var(--card); border-color: rgba(var(--fg-rgb),0.1); }
+#panel .member-card .member-head { background: transparent; border-bottom: 1px solid rgba(var(--fg-rgb),0.08); }
+.member-name { display: flex; align-items: center; gap: 8px; }
+.member-name::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.stat-muted { color: rgba(var(--fg-rgb),0.6); }
+/* View-only: disabled score buttons read as a record, the current state stays legible */
+.score-btn[disabled] { cursor: default; }
+.score-btn[disabled][aria-pressed="false"] { opacity: 0.45; }
+.reporter-lock-badge[hidden] { display: none; }
+/* 整體專案進度: not-started modules dim like the board's idle rows; bars are ink, yellow stays on characters */
+.ov-module-total-fill { background: rgba(var(--fg-rgb),0.7); }
+.ov-module-sub { min-width: 8em; font-variant-numeric: tabular-nums; }
+.ov-module-card.idle .ov-module-pct, .ov-module-card.idle .ov-module-name .flap i { color: rgba(var(--fg-rgb),0.55); }
+.ov-module-card.idle .ov-module-name .flap i { background: rgba(var(--fg-rgb),0.05); }
+/* OKR figures are posted values: board flaps */
+.okr-score-val .flap { font-size: 40px; }
+.okr-kr-cur .flap { font-size: 30px; }
+.okr-kr-cur .flap i { color: var(--text); }
+/* Landing: the objective's other KRs, one quiet line under the bottleneck */
+.kr-others { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 10px; font-size: 15px; color: rgba(var(--fg-rgb),0.8); }
+.kr-others:empty { display: none; }
+.kr-other { display: inline-flex; align-items: baseline; flex-wrap: wrap; gap: 4px 8px; }
+.kr-other-num { font-family: var(--mono); font-stretch: 75%; font-weight: 600; color: var(--grey-dark); }
+.kr-other-cur { font-family: var(--mono); font-stretch: 75%; font-size: 18px; color: var(--text); }
+.kr-other-st { font-size: 14px; font-weight: 700; color: var(--grey-dark); }
+.kr-other-st.behind { color: var(--alert-text); }
+.kr-other-st.ok, .kr-other-st.done { color: var(--good); }
+.kr-others .kr-stuck-link { margin-left: 0; }
+@media (max-width: 900px) {
+  #panel .overview-filter { padding: 10px 16px; }
+  .reporter-module-bar { padding: 0 16px 10px; }
+}
 </style>
 
 <body>
@@ -1809,9 +1884,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
       <a href="#outputs">交付成果</a>
     </nav>
     <div id="overview-nav" style="display:none"></div>
-    <div class="tracker-actions" id="tracker-nav" style="display:none">
-      <button class="btn btn-ghost" onclick="exportCSV()">匯出 CSV</button>
-    </div>
+    <div class="tracker-actions" id="tracker-nav" style="display:none"></div>
   </div>
 
 <div class="page" id="page-flow">
@@ -2008,7 +2081,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 
   <footer>
     <div class="footer-brand">商明國際 BizCivilization</div>
-    <div class="footer-note">BB6 課程製作流程與工作分配 · Your Navigator for Structured Growth</div>
+    <div class="footer-note">BB6 課程製作流程與工作分配</div>
   </footer>
 </div>
 
@@ -2071,13 +2144,14 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
       <!-- Dynamically populated by renderReporterTabs() -->
     </div>
     <div class="section-picker">
-      <label>小節</label>
+      <label for="section-select">小節</label>
       <select class="section-select" id="section-select" onchange="switchSection(this.value)"></select>
     </div>
     <div class="sync-status" id="sync-status">
       <span class="sync-dot" id="sync-dot"></span>
       <span id="sync-text">連線中...</span>
     </div>
+    <button type="button" class="btn btn-ghost tracker-csv" onclick="exportCSV()">匯出 CSV</button>
   </div>
 
   <!-- Gates grid -->
@@ -2098,7 +2172,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 
   <footer>
     <div class="footer-brand">商明國際 BizCivilization</div>
-    <div class="footer-note">BB6 進度填報 · Your Navigator for Structured Growth</div>
+    <div class="footer-note">BB6 進度填報</div>
     <div class="last-saved" id="last-saved">尚未同步</div>
   </footer>
 </div>
@@ -2121,6 +2195,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
       <div class="board-head-main">
         <div id="kr-verdict"></div>
         <div class="kr-stuck" id="kr-stuck"></div>
+        <div class="kr-others" id="kr-others"></div>
         <div class="greet-hello" id="weekly-greeting"></div>
       </div>
       <div class="kr-big" id="kr-big"></div>
@@ -2138,7 +2213,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
     <!-- ── 關卡瓶頸 ── -->
     <div class="chart-card kr-card" id="bottleneck-card" tabindex="-1">
       <div class="chart-card-title">關卡瓶頸</div>
-      <div class="chart-card-sub">待處理小節最多的 3 項任務。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
+      <div class="chart-card-sub">待處理小節最多的 3 項<b>任務</b>（上方「卡最多的關卡」是整個 Gate 所有任務的合計）。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
       <div id="bottleneck"></div>
     </div>
 
@@ -2227,13 +2302,13 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 <div class="trend-drilldown-overlay" id="trend-drilldown-overlay" style="display:none" onclick="closeTrendDrilldown()"></div>
 
 <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.2/dist/umd/supabase.js"></script>
 
 <!-- React + Recharts CDN (used for the Ting 主管視角 trend charts) -->
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/prop-types@15/prop-types.min.js"></script>
-<script src="https://unpkg.com/recharts@2/umd/Recharts.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
+<script src="https://unpkg.com/recharts@2.15.4/umd/Recharts.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
@@ -2687,7 +2762,7 @@ function switchPage(page) {
   document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
   document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
   document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
-  document.getElementById('panel-top').style.display    = (page==='flow' || page==='overview' || page==='tracker') ? 'flex' : 'none';
+  document.getElementById('panel-top').style.display    = page==='flow' ? 'flex' : 'none';
   closeSidebarMenu();
   window.scrollTo({ top:0, behavior:'smooth' });
   if (page === 'overview') {
@@ -2787,6 +2862,8 @@ function updateReporterHeader() {
   if (tag)   tag.textContent   = currentModule + ' · ' + currentSection;
   var name  = (baseline.moduleNames[currentModule] || '').trim();
   if (title) title.textContent = (name ? name + '｜' : '') + currentSection + ' 任務進度填報';
+  var badge = document.getElementById('reporter-my-badge');
+  if (badge) badge.hidden = !currentMember;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -2880,7 +2957,7 @@ function renderGates() {
         var bg = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
         var border = isActive || isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
         var btnStyle = 'flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+(isActive?'var(--black)':isPassed?'var(--text)':'rgba(var(--fg-rgb),0.6)')+';font-family:inherit;';
-        return '<button class="score-btn" style="'+btnStyle+'"' +
+        return '<button class="score-btn" aria-pressed="'+isActive+'" style="'+btnStyle+'"' +
           (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
           '>'+nodeLabels[i]+'</button>';
       }).join('');
@@ -2949,7 +3026,7 @@ function renderMembers() {
       '<div class="member-body">' +
         '<div class="member-stat-row">' +
           '<div class="member-stat"><div class="member-stat-label">完成度</div><div class="member-stat-val stat-yellow">'+myPct+'%</div></div>' +
-          '<div class="member-stat"><div class="member-stat-label">可開始</div><div class="member-stat-val '+(ready.length>0?'stat-green':'stat-red')+'">'+ready.length+'</div></div>' +
+          '<div class="member-stat"><div class="member-stat-label">可開始</div><div class="member-stat-val '+(ready.length>0?'stat-green':'stat-muted')+'">'+ready.length+'</div></div>' +
           '<div class="member-stat"><div class="member-stat-label">待解鎖</div><div class="member-stat-val" style="color:rgba(var(--fg-rgb),0.6)">'+blocked.length+'</div></div>' +
         '</div>' +
         '<div class="bottleneck-box '+bClass+'">'+bText+'</div>' +
@@ -3007,7 +3084,7 @@ function refreshAll() {
         var bg     = isActive ? gateColor : isPassed ? gateColor+'66' : 'transparent';
         var border = isActive||isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
         var col    = isActive ? 'var(--black)' : isPassed ? 'var(--text)' : 'rgba(var(--fg-rgb),0.4)';
-        return '<button class="score-btn" style="flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+col+';font-family:inherit;"' +
+        return '<button class="score-btn" aria-pressed="'+isActive+'" style="flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+col+';font-family:inherit;"' +
           (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
           '>'+nodeLabels[i]+'</button>';
       }).join('');
@@ -3108,13 +3185,13 @@ function renderOverview() {
         '<span class="ov-section-pill '+status+'">'+label+'</span>' +
       '</div>';
     }).join('');
-    return '<div class="ov-module-card'+(isOpen?' open':'')+'" id="ov-card-'+mod+'">' +
+    return '<div class="ov-module-card'+(isOpen?' open':'')+(pct===0?' idle':'')+'" id="ov-card-'+mod+'">' +
       '<div class="ov-module-head" onclick="toggleOvModule(\''+mod+'\')">' +
         '<div class="ov-module-name">'+flap(mod)+'</div>' +
         '<div class="ov-module-title"></div>' +
         '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
         '<div class="ov-module-pct">'+pct+'%</div>' +
-        '<div class="ov-module-sub">'+doneSecs+'/'+secCount+' 小節</div>' +
+        '<div class="ov-module-sub" title="全部 Gate 都完成的小節數">完成 '+doneSecs+'/'+secCount+' 小節</div>' +
         '<span class="ov-module-chevron"><svg class=\"chev\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></span>' +
       '</div>' +
       '<div class="ov-module-body">' +
@@ -3342,7 +3419,7 @@ function renderObjective(o) {
         '<div class="okr-obj-meta"><span class="okr-o-badge">O</span>' + formatDay(o.start_date) + ' – ' + formatDay(o.end_date) + '・' + timeText + '</div>' +
         '<div class="okr-obj-title">' + escHtml(o.title) + '</div>' +
       '</div>' +
-      '<div class="okr-score"><div class="okr-score-val">' + score.toFixed(2) + '</div><div class="okr-score-label">OKR 分數</div></div>' +
+      '<div class="okr-score"><div class="okr-score-val">' + flap(score.toFixed(2)) + '</div><div class="okr-score-label">OKR 分數</div></div>' +
     '</div>' +
     '<div class="okr-time"><span>本季時間已過 ' + Math.round(elapsed * 100) + '%</span>' +
       '<div class="okr-time-track"><div class="okr-time-fill" style="width:' + (elapsed * 100) + '%"></div></div></div>' +
@@ -3389,7 +3466,7 @@ function renderKR(kr, i, elapsed) {
       (canEditOKR(currentMember) ? '<button class="okr-edit" onclick="openKRForm(' + kr.id + ')">編輯</button>' : '') +
     '</div>' +
     '<div class="okr-kr-nums">' +
-      '<span class="okr-kr-cur">' + fmtNum(cur) + '%</span>' +
+      '<span class="okr-kr-cur">' + flap(fmtNum(cur) + '%') + '</span>' +
       '<span class="okr-kr-target">目標 ' + fmtNum(target) + '%</span>' +
       '<span class="okr-kr-ratio">達成率 ' + ratio.toFixed(2) + '</span>' +
     '</div>' +
@@ -3848,7 +3925,7 @@ function closeSidebarMenu() {
   if (b) b.setAttribute('aria-expanded', 'false');
 }
 applyTheme(document.documentElement.getAttribute('data-theme') || 'dark');
-applySidebar(storeGet('bb6-sidebar') === 'collapsed');
+(function(){ var pref = storeGet('bb6-sidebar'); applySidebar(pref ? pref === 'collapsed' : window.innerWidth <= 1200); })();
 
 // The gear next to the KR title: open the settings at the bottom of the page and go there
 function openBaseline() {
@@ -4199,7 +4276,7 @@ function scenChip(label, val, target, note, key, belowNote) {
   var tight = val !== null && !below && val - target < 5;
   return '<span class="scen' + (below ? ' below' : '') + (tight ? ' tight' : '') + '"><span class="scen-label">' + label + '</span>' +
     '<span class="scen-val">' + (val === null ? '—' : flap(fmtNum(val) + '%', key)) + '</span>' +
-    (val === null ? '' : '<span class="scen-note">' + (below ? (belowNote || '低於目標') : tight ? '只高 ' + fmtNum(val - target) + ' 個百分點' : note) + '</span>') + '</span>';
+    (val === null ? '' : '<span class="scen-note">' + (below ? (belowNote || '低於目標') : tight ? '<span class="nw">只高 ' + fmtNum(val - target) + '</span> <span class="nw">個百分點</span>' : note) + '</span>') + '</span>';
 }
 function renderScenarioRow() {
   var el = document.getElementById('kr-scen');
@@ -4266,7 +4343,7 @@ function renderKRPanel() {
         ? '目前 ' + fmtNum(s.cur) + '%，已達到 ' + s.k.label + ' 目標 ' + fmtNum(s.k.target) + '%。'
         : '照近 4 週速度（每週 ' + signed(s.rate) + '%）推估，' + dueFull + ' 達 <b>' + fmtNum(s.projected) + '%</b>（目標 ' + fmtNum(s.k.target) + '%）' +
           (s.spikes.length && s.calmRate !== null
-            ? '；保守估計（不計暴衝）<b>' + fmtNum(s.calmProjected) + '%</b>，' + (s.calmProjected >= s.k.target ? '只高 ' + fmtNum(s.calmProjected - s.k.target) + ' 個百分點。' : '會少 ' + fmtNum(s.k.target - s.calmProjected) + ' 個百分點。')
+            ? '；保守估計（不計暴衝）<b>' + fmtNum(s.calmProjected) + '%</b>，' + (s.calmProjected >= s.k.target ? '<span class="nw">只高 ' + fmtNum(s.calmProjected - s.k.target) + ' 個百分點。</span>' : '<span class="nw">會少 ' + fmtNum(s.k.target - s.calmProjected) + ' 個百分點。</span>')
             : '。')) +
       '</div>' +
       (reach ? '' : '<div id="kr-scen"></div>');
@@ -4402,13 +4479,29 @@ function memberPending(member) {
   var top = Object.keys(byTask).sort(function(a, b){ return byTask[b] - byTask[a]; })[0] || null;
   return { total: total, top: top, topCount: top ? byTask[top] : 0 };
 }
+// The objective's other KRs, so the weekly meeting never ends on KR1 alone
+function renderOtherKRs() {
+  var el = document.getElementById('kr-others');
+  if (!el) return;
+  var a = activeProjectKR();
+  var others = a ? okr.krs.filter(function(k){ return k.objective_id === a.o.id; }) : [];
+  var rows = others.map(function(k, i) {
+    if (k.id === a.kr.id) return '';
+    var st = krStatus(k);
+    return '<span class="kr-other"><span class="kr-other-num">KR' + (i + 1) + '</span>' + escHtml(k.title) +
+      ' <b class="kr-other-cur">' + fmtNum(krCurrent(k)) + '%</b><span class="kr-other-st ' + st[0] + '">' + st[1] + '</span></span>';
+  }).join('');
+  el.innerHTML = rows ? rows + '<button type="button" class="kr-stuck-link" onclick="switchPage(\'okr\')">看 OKR</button>' : '';
+}
+
 function renderWeeklyGreeting() {
+  renderOtherKRs();
   var el = document.getElementById('weekly-greeting');
   if (!el) return;
   var hr = new Date().getHours();
   var hello = hr < 11 ? '早安' : hr < 18 ? '午安' : '晚安';
-  if (!currentMember) {
-    el.innerHTML = '<div class="greet-title">' + hello + '</div><div class="greet-line">BB6 教材在地化進度一覽</div>';
+  if (!currentMember) {   // viewers (e.g. the projector) get the board, not a greeting
+    el.innerHTML = '';
     return;
   }
   var p = memberPending(currentMember);
@@ -4517,7 +4610,7 @@ function renderBottleneck() {
         var load = p.c.ready + p.c.doing;
         var where = Object.keys(p.perMod).map(function(m){ return m + ' ' + p.perMod[m]; }).join('、');
         return '<li class="bn-top-item">' +
-          '<div class="bn-top-num"><b>' + load + '</b><span>個小節待處理</span></div>' +
+          '<div class="bn-top-num"><b>' + load + '</b><span>小節待處理</span></div>' +
           '<div class="bn-top-main">' +
             '<div class="bn-top-task">' + escHtml(p.t.name) +
               p.t.owners.map(function(o){ return '<span class="owner-chip ' + CHIP_CLASS[o] + '">' + o + '</span>'; }).join('') + '</div>' +
@@ -4540,7 +4633,7 @@ function renderBottleneck() {
 function renderKRViews() {
   var wk = document.getElementById('page-weekly');
   if (wk && wk.classList.contains('active')) {
-    renderKRPanel(); renderForecastCards();
+    renderKRPanel(); renderForecastCards(); renderOtherKRs();
     if (trendModule === '__project__' && lastLogData) renderWeeklyChart(lastLogData);
     if (trendTab === 'all') renderAllModulesChart();
   }
@@ -4653,7 +4746,7 @@ function renderDepartureBoard(open, idle, done, share, k) {
   var oneWho = whos.length > 1 && whos.every(function(w){ return w === whos[0]; }) ? whos[0] : null;
   var html = (oneWho ? '<div class="board-owner-note">各製作中模組待處理最多的都是 <span class="owner-chip ' + CHIP_CLASS[oneWho] + '">' + oneWho + '</span>，所以看板不另列負責人。</div>' : '') +
     '<div class="board' + (oneWho ? ' no-who' : '') + '" role="table" aria-label="出發看板">' +
-    '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate（1–5）</span><span role="columnheader">待處理最多</span><span role="columnheader">狀態' + (k ? '（' + formatDay(k.dueStr) + ' 前）' : '') + '</span></div>' +
+    '<div class="board-row board-hd" role="row"><span role="columnheader">模組</span><span role="columnheader">名稱・完成度</span><span role="columnheader">預計完工</span><span role="columnheader">目前 Gate</span><span role="columnheader">待處理最多</span><span role="columnheader">狀態' + (k ? '（' + formatDay(k.dueStr) + ' 前）' : '') + '</span></div>' +
     rows.map(function(r) {
       var f = r.f, gates = getGates(r.mod), cur = moduleCurrentGate(r.mod);
       var changed = seen[r.mod] !== undefined && seen[r.mod] !== boardSig(r);
