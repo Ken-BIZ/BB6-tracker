@@ -24,7 +24,9 @@ async function callScript(res, promise, url) {
     const text = await r.text();
     let data;
     try { data = JSON.parse(text); } catch (e) {
-      return res.status(502).json({ ok: false, error: diagnose(url, r, text) });
+      // Google's error page text (no secrets in it) helps tell setup problems apart
+      const detail = text.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, ' ').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 300);
+      return res.status(502).json({ ok: false, error: diagnose(url, r, text), status: r.status, detail: detail });
     }
     if (data && data.error === 'unauthorized') {
       return res.status(502).json({ ok: false, error: '試算表的 BB6_TOKEN 和 Vercel 的 SHEET_TOKEN 不一致' });
