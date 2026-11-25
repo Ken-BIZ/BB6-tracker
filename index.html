@@ -1921,18 +1921,17 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 .sheet-input { padding: 9px 12px; font-family: inherit; font-weight: 600; font-size: 15px; line-height: 1.3; color: var(--text); background: var(--raised-2); border: 1px solid rgba(var(--fg-rgb),0.15); border-radius: 10px; }
 .sheet-input:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 1px; }
 .sheet-count { margin-left: auto; font-size: 14px; color: var(--grey-dark); font-variant-numeric: tabular-nums; }
-.sheet-table-wrap { max-height: 72vh; overflow: auto; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.1); border-radius: 16px; overscroll-behavior: contain; }
+.sheet-table-wrap { max-height: 72vh; overflow: auto; background: var(--panel); border: 1px solid rgba(var(--fg-rgb),0.1); border-radius: 16px; overscroll-behavior: contain; }
 .sheet-table { border-collapse: separate; border-spacing: 0; min-width: 100%; font-size: 14px; line-height: 1.5; }
 .sheet-table thead th { position: sticky; top: 0; z-index: 2; padding: 10px 12px; font-size: 13px; font-weight: 700; color: var(--grey-dark); text-align: left; white-space: nowrap; background: var(--raised); border-bottom: 1px solid rgba(var(--fg-rgb),0.12); }
 .sheet-table th.wide, .sheet-table td.wide { min-width: 280px; max-width: 420px; }
 .sheet-table td, .sheet-table tbody th { padding: 0; vertical-align: top; border-bottom: 1px solid rgba(var(--fg-rgb),0.06); }
-.sc-rn { position: sticky; left: 0; z-index: 1; min-width: 44px; padding: 10px 8px !important; font-family: var(--mono); font-stretch: 75%; font-size: 13px; font-weight: 600; color: var(--grey-dark); text-align: right; background: var(--raised); }
-thead .sc-rn { z-index: 3; }
+.sc-rn { position: sticky; left: 0; z-index: 1; width: 52px; min-width: 52px; box-sizing: border-box; padding: 10px 8px !important; font-family: var(--mono); font-stretch: 75%; font-size: 13px; font-weight: 600; color: var(--grey-dark); text-align: right; background: var(--panel); }
+thead .sc-rn { z-index: 3; background: var(--raised); }
 td.sc { min-width: 136px; max-width: 280px; cursor: text; }
 td.sc:hover { background: rgba(var(--fg-rgb),0.04); }
 td.sc:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
-.sc-v { padding: 10px 12px; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; }
-.sc-v.carry { color: rgba(var(--fg-rgb),0.4); }
+.sc-v { padding: 10px 12px 0; margin-bottom: 10px; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; line-clamp: 4; overflow: hidden; }
 td.sc.locked { cursor: not-allowed; color: var(--grey-dark); }
 td.sc.recent { background: color-mix(in srgb, var(--accent-ink) 9%, transparent); }
 td.sc.saving .sc-v { opacity: .55; }
@@ -1959,6 +1958,57 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
   .sheet-count { margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) { td.sc.saved, td.sc.flash { animation: none; } }
+/* Sheet pages: structure-aware table */
+.sheet-table th.key, .sheet-table td.key { position: sticky; left: 52px; z-index: 1; min-width: 168px; background: var(--panel); box-shadow: 1px 0 0 rgba(var(--fg-rgb),0.08); }
+.sheet-table thead th.key { z-index: 3; background: var(--raised); }
+.sheet-table td.key .sc-v { font-weight: 600; }
+.sheet-table td.key.recent { background: color-mix(in srgb, var(--accent-ink) 9%, var(--panel)); }
+.sheet-table tr.grp td { padding: 0; border-bottom: 1px solid rgba(var(--fg-rgb),0.08); }
+.sheet-table tr.grp.lvl-0 td { background: rgba(var(--fg-rgb),0.05); border-top: 1px solid rgba(var(--fg-rgb),0.1); }
+.sheet-table-wrap { container-type: inline-size; }
+.grp-in { position: sticky; left: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; max-width: 100cqw; padding: 10px 14px; box-sizing: border-box; }
+.lvl-1 .grp-in, .lvl-2 .grp-in { padding-left: 50px; }
+.grp-parts { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 4px; min-width: 0; }
+.grp-part { border-radius: 8px; cursor: text; }
+.grp-part:hover { background: rgba(var(--fg-rgb),0.06); }
+.grp-part:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 0; }
+.grp-part .sc-v { padding: 3px 8px 0; margin-bottom: 3px; -webkit-line-clamp: 2; line-clamp: 2; }
+.lvl-0 .grp-part .sc-v { font-size: 16px; font-weight: 700; }
+.lvl-0 .grp-part.sub .sc-v { font-weight: 600; }
+.lvl-1 .grp-part .sc-v, .lvl-2 .grp-part .sc-v { font-size: 15px; font-weight: 600; color: rgba(var(--fg-rgb),0.85); }
+.grp-part.sub:not(.editing)::before { content: '·'; margin: 0 2px 0 -2px; color: var(--grey-dark); }
+.grp-part.sub:not(.editing) { display: flex; align-items: baseline; }
+.grp-part.editing { flex: 1 1 360px; min-width: 300px; padding: 8px; background: var(--raised-2); }
+.grp-part.recent { background: color-mix(in srgb, var(--accent-ink) 12%, transparent); }
+.grp-fold { display: inline-grid; place-items: center; width: 28px; height: 28px; padding: 0; color: var(--grey-dark); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 8px; cursor: pointer; }
+.grp-fold:hover { color: var(--text); border-color: rgba(var(--fg-rgb),0.35); }
+.grp-fold svg { transition: transform .18s var(--ease); }
+.grp-fold[aria-expanded="false"] svg { transform: rotate(-90deg); }
+.grp-stats { margin-left: auto; font-size: 14px; color: var(--grey-dark); font-variant-numeric: tabular-nums; }
+.grp-stats b { font-family: var(--mono); font-stretch: 75%; font-weight: 600; color: var(--text); }
+.sheet-table tr.grp-empty td { padding: 0; border-bottom: 1px solid rgba(var(--fg-rgb),0.06); }
+.grp-empty .grp-in { padding: 8px 14px 8px 66px; }
+.grp-empty .sheet-more { margin-top: 0; }
+.grp-empty-names { font-size: 14px; color: var(--grey-dark); }
+.sheet-table tr.is-empty .sc-v { color: var(--grey-dark); }
+.sc-v.hint { font-weight: 500 !important; color: var(--grey-dark); }
+.sc-links { display: flex; flex-wrap: wrap; gap: 4px 10px; padding: 0 12px 10px; margin-top: -4px; }
+.sc-link { display: inline-flex; align-items: center; gap: 3px; font-size: 13px; font-weight: 700; color: var(--accent-ink); text-decoration: none; }
+.sc-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+.sheet-colmenu { position: relative; }
+.sheet-colmenu > summary { list-style: none; }
+.sheet-colmenu > summary::-webkit-details-marker { display: none; }
+.sheet-colmenu-pop { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; display: flex; flex-direction: column; gap: 2px; width: 280px; max-height: 380px; overflow: auto; padding: 10px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.28); }
+.sheet-colopt { display: flex; align-items: center; gap: 10px; padding: 7px 6px; font-size: 14px; color: var(--text); border-radius: 8px; cursor: pointer; }
+.sheet-colopt:hover { background: rgba(var(--fg-rgb),0.05); }
+.sheet-colopt input { width: 16px; height: 16px; accent-color: var(--accent-ink); }
+.sheet-colopt small { margin-left: auto; font-size: 12px; color: var(--grey-dark); }
+.sheet-filters .weekly-settings-btn { align-self: flex-end; }
+@media (prefers-reduced-motion: reduce) { .grp-fold svg { transition: none; } }
+@media (max-width: 640px) {
+  .sheet-table th.key, .sheet-table td.key { min-width: 128px; }
+  .grp-stats { margin-left: 0; flex-basis: 100%; }
+}
 </style>
 
 <body>
@@ -5585,40 +5635,74 @@ function sheetReloadChanges(src) {
 }
 
 /* ── Shape: header row, visible columns, group label carried down column A ── */
+var SHEET_SUMMARY_RE = /總數|總時長|合計|總計|小計/;
 function prepareSheetData(d) {
-  return {
-    title: d.title, url: d.url,
-    sheets: d.sheets.map(function(sh) {
-      var grid = sh.rows || [];
-      var width = grid.reduce(function(m, r){ return Math.max(m, r.length); }, 0);
-      var hr = 0, best = -1;
-      grid.slice(0, 5).forEach(function(row, i) {
-        var n = row.filter(function(v){ return String(v).trim() !== ''; }).length;
-        if (n > best) { best = n; hr = i; }
-      });
-      var header = grid[hr] || [];
-      var cols = [];
-      for (var c = 0; c < width; c++) {
-        var name = String(header[c] || '').trim();
-        var filled = 0, len = 0;
-        for (var r = hr + 1; r < grid.length; r++) {
-          var v = String(grid[r][c] || '');
-          if (v.trim()) { filled++; len += v.length; }
-        }
-        if (name || filled) cols.push({ c: c + 1, name: name || '第 ' + sheetColLetter(c + 1) + ' 欄', wide: filled && len / filled > 18 });
+  return { title: d.title, url: d.url, version: d.version || 1, sheets: d.sheets.map(prepareOneSheet) };
+}
+/* Turn a raw sheet into something readable:
+   - leading sparse columns (模組、章節…) become group headings instead of table columns
+   - 總數／總時長 rows fold into their group heading as stats
+   - rows with nothing but an item number are 尚未填寫 placeholders, folded per group */
+function prepareOneSheet(sh) {
+  var grid = sh.rows || [];
+  var width = grid.reduce(function(m, r){ return Math.max(m, r.length); }, 0);
+  var hr = 0, best = -1;
+  grid.slice(0, 5).forEach(function(row, i) {
+    var n = row.filter(function(v){ return String(v).trim() !== ''; }).length;
+    if (n > best) { best = n; hr = i; }
+  });
+  var header = grid[hr] || [];
+  var body = [];
+  for (var i = hr + 1; i < grid.length; i++) {
+    if (grid[i].some(function(v){ return String(v).trim() !== ''; })) body.push(i);
+  }
+  function has(i, c) { return String((grid[i] || [])[c] || '').trim() !== ''; }
+  var fill = [];
+  for (var c = 0; c < width; c++) fill[c] = body.filter(function(i){ return has(i, c); }).length / Math.max(1, body.length);
+  var hier = [];
+  if (body.length >= 6) for (var h = 0; h < Math.min(3, width - 1); h++) { if (fill[h] > 0 && fill[h] < 0.25) hier.push(h); else break; }
+  var cols = [];
+  for (var c2 = 0; c2 < width; c2++) {
+    if (hier.indexOf(c2) >= 0) continue;
+    var name = String(header[c2] || '').trim();
+    var filled = 0, len = 0;
+    body.forEach(function(i){ var v = String(grid[i][c2] || ''); if (v.trim()) { filled++; len += v.length; } });
+    if (name || filled) cols.push({ c: c2 + 1, name: name || '第 ' + sheetColLetter(c2 + 1) + ' 欄', wide: filled && len / filled > 18, filled: filled });
+  }
+  var formulas = {};
+  (sh.formulas || []).forEach(function(rc){ formulas[rc[0] + ',' + rc[1]] = true; });
+  var links = {};
+  (sh.links || []).forEach(function(x) {
+    var urls = (x[2] || []).filter(function(u){ return /^https?:\/\//i.test(u); });
+    if (urls.length) links[x[0] + ',' + x[1]] = urls;
+  });
+  var items = [], groups = [], gid = 0, lastTop = null;
+  body.forEach(function(i) {
+    var r = i + 1, row = grid[i];
+    var parts = hier.filter(function(c){ return has(i, c); }).map(function(c){ return { c: c + 1, v: String(row[c]) }; });
+    var dataCount = cols.filter(function(col){ return has(i, col.c - 1); }).length;
+    if (parts.length && lastTop && SHEET_SUMMARY_RE.test(parts.map(function(p){ return p.v; }).join(' '))) {
+      lastTop.stats.push({ label: parts.map(function(p){ return p.v; }).join(' ').replace(/\s+/g, ' ').trim(),
+        value: cols.filter(function(col){ return has(i, col.c - 1); }).map(function(col){ return String(row[col.c - 1]).trim(); }).join('、') });
+      return;
+    }
+    if (parts.length) {
+      var level = hier.indexOf(parts[0].c - 1);
+      var head = { type: 'head', r: r, level: level, parts: parts, stats: [] };
+      if (level === 0) {
+        gid = r; lastTop = head;
+        groups.push({ gid: r, label: parts.map(function(p){ return p.v.split('\n')[0].trim(); }).join(' · ') });
       }
-      var formulas = {};
-      (sh.formulas || []).forEach(function(rc){ formulas[rc[0] + ',' + rc[1]] = true; });
-      var rows = [], groups = [], group = '';
-      for (var i = hr + 1; i < grid.length; i++) {
-        var first = String(grid[i][0] || '').trim();
-        if (first) { group = first; if (groups.indexOf(first) < 0) groups.push(first); }
-        if (!grid[i].some(function(v){ return String(v).trim() !== ''; })) continue;
-        rows.push({ r: i + 1, group: group });
-      }
-      return { id: sh.id, name: sh.name, grid: grid, headerRow: hr + 1, cols: cols, rows: rows, groups: groups, formulas: formulas };
-    })
-  };
+      head.gid = gid;
+      items.push(head);
+      if (!dataCount) return;
+    }
+    // A heading row that also carries data (e.g. a chapter's 上架內容) keeps its heading as the row's label
+    items.push({ type: 'row', r: r, gid: gid, placeholder: dataCount <= 1 && !parts.length,
+      headLabel: parts.length ? parts.map(function(p){ return p.v.split('\n')[0].trim(); }).join(' ') : '' });
+  });
+  return { id: sh.id, name: sh.name, grid: grid, headerRow: hr + 1, hier: hier, cols: cols, items: items, groups: groups, formulas: formulas, links: links,
+    rows: items.filter(function(x){ return x.type === 'row'; }) };
 }
 function sheetColLetter(n) {
   var s = '';
@@ -5681,6 +5765,7 @@ function renderSheetStatus(src) {
   if (st.loading && !st.data) { el.textContent = '讀取試算表中…'; return; }
   var t = st.loadedAt ? String(st.loadedAt.getHours()).padStart(2, '0') + ':' + String(st.loadedAt.getMinutes()).padStart(2, '0') : '';
   el.textContent = (st.error ? st.error + '・' : '') + '與 Google 試算表同步' + (t ? '・資料截至 ' + t + '（每分鐘自動更新）' : '');
+  if (st.data && st.data.version < 2) el.textContent += '・試算表的同步腳本需要更新到新版（才會保留檔案連結）';
 }
 
 /* ── 最近更新: what changed in the last week, which columns, and the edits themselves ── */
@@ -5743,24 +5828,86 @@ function renderSheetFeed(src) {
 function sheetFilterCol(src, col) { var st = sheetState[src]; st.changeCol = col; st.feedAll = false; renderSheetFeed(src); }
 function sheetToggleFeed(src) { var st = sheetState[src]; st.feedAll = !st.feedAll; renderSheetFeed(src); }
 
-/* ── Table controls: tabs, group, search ── */
-function renderSheetControls(src) {
+/* ── Table controls: tabs, group, search, columns, fold ── */
+function sheetPrefKey(kind, src, sheet) { return 'bb6-sheet-' + kind + '-' + src + '-' + sheet.name; }
+function sheetHiddenCols(src, sheet) {
+  var saved = null;
+  try { saved = JSON.parse(storeGet(sheetPrefKey('cols', src, sheet))); } catch (e) {}
+  // Columns nobody has filled yet start hidden; the 欄位 menu brings them back
+  return Array.isArray(saved) ? saved : sheet.cols.filter(function(c){ return !c.filled; }).map(function(c){ return c.c; });
+}
+function sheetVisibleCols(src, sheet) {
+  var hidden = sheetHiddenCols(src, sheet), force = sheetState[src].forceCol;
+  return sheet.cols.filter(function(c){ return hidden.indexOf(c.c) < 0 || c.c === force; });
+}
+function sheetSetCol(src, c, show) {
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  var hidden = sheetHiddenCols(src, sheet).filter(function(x){ return x !== c; });
+  if (!show) hidden.push(c);
+  if (st.forceCol === c) st.forceCol = null;
+  storeSet(sheetPrefKey('cols', src, sheet), JSON.stringify(hidden));
+  renderSheetControls(src, true); renderSheetTable(src);
+}
+function sheetResetCols(src) {
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  try { localStorage.removeItem(sheetPrefKey('cols', src, sheet)); } catch (e) {}
+  st.forceCol = null;
+  renderSheetControls(src, true); renderSheetTable(src);
+}
+function sheetFolded(src, sheet) {
+  var saved = null;
+  try { saved = JSON.parse(storeGet(sheetPrefKey('fold', src, sheet))); } catch (e) {}
+  return Array.isArray(saved) ? saved : [];
+}
+function sheetToggleFold(src, gid) {
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  var f = sheetFolded(src, sheet), i = f.indexOf(gid);
+  if (i >= 0) f.splice(i, 1); else f.push(gid);
+  storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(f));
+  renderSheetTable(src);
+}
+function sheetFoldAll(src, fold) {
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(fold ? sheet.groups.map(function(g){ return g.gid; }) : []));
+  renderSheetTable(src);
+}
+function sheetToggleEmpty(src, gid) {
+  var st = sheetState[src];
+  st.showEmpty = st.showEmpty || {};
+  st.showEmpty[gid] = !st.showEmpty[gid];
+  renderSheetTable(src);
+}
+
+function renderSheetControls(src, keepMenu) {
   var el = document.getElementById('sheet-controls-' + src);
   if (!el) return;
   var st = sheetState[src], sheets = st.data.sheets, sheet = sheets[st.tab];
+  var menuOpen = keepMenu && el.querySelector('.sheet-colmenu[open]');
+  var hidden = sheetHiddenCols(src, sheet);
+  var shownCount = sheet.cols.filter(function(c){ return hidden.indexOf(c.c) < 0; }).length;
+  var hierName = sheet.hier.length ? String((sheet.grid[sheet.headerRow - 1] || [])[sheet.hier[0]] || '').trim() : '';
   el.innerHTML =
     (sheets.length > 1 ? '<div class="sheet-tabs" role="group" aria-label="工作表">' + sheets.map(function(sh, i) {
       return '<button type="button" class="reporter-tab' + (i === st.tab ? ' active' : '') + '" aria-pressed="' + (i === st.tab) + '" onclick="sheetSetTab(\'' + src + '\',' + i + ')">' + escHtml(sh.name) + '</button>';
     }).join('') + '</div>' : '') +
     '<div class="sheet-filters">' +
-      (sheet.groups.length > 1 && sheet.groups.length <= 80 ? '<label class="sheet-field"><span>' + escHtml(sheet.cols[0] && sheet.cols[0].c === 1 && !/^第 /.test(sheet.cols[0].name) ? sheet.cols[0].name : '分組') + '</span>' +
+      (sheet.groups.length > 1 ? '<label class="sheet-field"><span>' + escHtml(hierName || '分組') + '</span>' +
         '<select class="section-select" onchange="sheetSetGroup(\'' + src + '\', this.value)"><option value="">全部</option>' +
-        sheet.groups.map(function(g){ return '<option' + (g === st.group ? ' selected' : '') + '>' + escHtml(g) + '</option>'; }).join('') + '</select></label>' : '') +
+        sheet.groups.map(function(g){ return '<option value="' + g.gid + '"' + (String(g.gid) === String(st.group) ? ' selected' : '') + '>' + escHtml(g.label) + '</option>'; }).join('') + '</select></label>' : '') +
       '<label class="sheet-field sheet-search"><span>搜尋</span><input type="search" class="sheet-input" value="' + escHtml(st.q) + '" placeholder="任何欄位的文字" oninput="sheetSetQuery(\'' + src + '\', this.value)"></label>' +
+      '<details class="sheet-colmenu"' + (menuOpen ? ' open' : '') + '><summary class="weekly-settings-btn">欄位 ' + shownCount + '/' + sheet.cols.length + '</summary>' +
+        '<div class="sheet-colmenu-pop">' + sheet.cols.map(function(c) {
+          var on = hidden.indexOf(c.c) < 0;
+          return '<label class="sheet-colopt"><input type="checkbox"' + (on ? ' checked' : '') + ' onchange="sheetSetCol(\'' + src + '\',' + c.c + ',this.checked)"><span>' + escHtml(c.name) + '</span>' +
+            (c.filled ? '' : '<small>空白</small>') + '</label>';
+        }).join('') +
+        '<button type="button" class="sheet-more" onclick="sheetResetCols(\'' + src + '\')">恢復預設（藏起空白欄位）</button></div></details>' +
+      (sheet.groups.length > 1 ? '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', true)">全部收合</button>' +
+        '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', false)">全部展開</button>' : '') +
       '<span class="sheet-count" id="sheet-count-' + src + '"></span>' +
     '</div>';
 }
-function sheetSetTab(src, i) { var st = sheetState[src]; st.tab = i; st.group = ''; renderSheetControls(src); renderSheetTable(src); }
+function sheetSetTab(src, i) { var st = sheetState[src]; st.tab = i; st.group = ''; st.forceRow = st.forceCol = null; renderSheetControls(src); renderSheetTable(src); }
 function sheetSetGroup(src, g) { sheetState[src].group = g; renderSheetTable(src); }
 var sheetQueryTimer = null;
 function sheetSetQuery(src, q) {
@@ -5768,37 +5915,118 @@ function sheetSetQuery(src, q) {
   sheetQueryTimer = setTimeout(function(){ sheetState[src].q = q; renderSheetTable(src); }, 200);
 }
 
-/* ── Table: every cell editable unless it is a formula ── */
+/* ── Table: group headings, folded empty rows, every cell editable unless it is a formula ── */
 function renderSheetTable(src) {
   var el = document.getElementById('sheet-table-' + src);
   if (!el) return;
   if (sheetEditing && sheetEditing.src === src) sheetEditing = null;
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  var cols = sheetVisibleCols(src, sheet);
+  var span = cols.length + 1;
   var q = st.q.trim().toLowerCase();
-  var rows = sheet.rows.filter(function(row) {
-    if (st.group && row.group !== st.group) return false;
+  var filtering = !!q || !!st.group;
+  var folded = filtering ? [] : sheetFolded(src, sheet);
+  var showEmpty = st.showEmpty || {};
+  function rowMatches(it) {
+    if (st.group && String(it.gid) !== String(st.group)) return false;
     if (!q) return true;
-    return (sheet.grid[row.r - 1] || []).some(function(v){ return String(v).toLowerCase().indexOf(q) >= 0; });
+    return (sheet.grid[it.r - 1] || []).some(function(v){ return String(v).toLowerCase().indexOf(q) >= 0; });
+  }
+  var items = sheet.items;
+  var visible = items.map(function(it){ return it.type === 'row' && rowMatches(it); });
+  // A heading shows when something under it is visible (or, unfiltered, always)
+  items.forEach(function(it, k) {
+    if (it.type !== 'head') return;
+    if (!filtering) { visible[k] = !(st.group && String(it.gid) !== String(st.group)); return; }
+    for (var j = k + 1; j < items.length; j++) {
+      if (items[j].type === 'head' && items[j].level <= it.level) break;
+      if (visible[j]) { visible[k] = true; return; }
+    }
+    visible[k] = false;
   });
+  var forceGid = null;
+  if (st.forceRow) { var fr = items.find(function(x){ return x.r === st.forceRow; }); if (fr) forceGid = fr.gid; }
+  function rowCountIn(gid) { return items.filter(function(x){ return x.type === 'row' && x.gid === gid && !x.placeholder; }).length; }
+
+  var html = [], shownRows = 0, pending = [];
+  function flushEmpty(gid) {
+    if (!pending.length) return;
+    var open = showEmpty[gid] || filtering;
+    if (open) pending.forEach(function(it){ html.push(sheetRowHTML(src, sheet, it, cols, true)); });
+    if (!filtering) {
+      var key = cols[0];
+      var names = pending.map(function(it){ return String(sheetCellValue(sheet, it.r, key ? key.c : 1) || it.r).trim(); }).slice(0, 8);
+      html.push('<tr class="grp-empty"><td colspan="' + span + '"><div class="grp-in">' +
+        '<button type="button" class="sheet-more" aria-expanded="' + !!open + '" onclick="sheetToggleEmpty(\'' + src + '\',' + gid + ')">' +
+          (open ? '收起 ' + pending.length + ' 個尚未填寫的列' : '另有 ' + pending.length + ' 個尚未填寫的列') + '</button>' +
+        (open ? '' : '<span class="grp-empty-names">' + escHtml(names.join('、')) + (pending.length > names.length ? '…' : '') + '</span>') +
+      '</div></td></tr>');
+    }
+    pending = [];
+  }
+  var curGid = null;
+  items.forEach(function(it, k) {
+    if (!visible[k]) return;
+    if (it.gid !== curGid) { flushEmpty(curGid); curGid = it.gid; }
+    var isFolded = folded.indexOf(it.gid) >= 0 && it.gid !== forceGid;
+    if (it.type === 'head') {
+      if (it.level > 0 && isFolded) return;
+      flushEmpty(it.gid);
+      html.push(sheetHeadHTML(src, sheet, it, span, isFolded, rowCountIn(it.gid)));
+      return;
+    }
+    if (isFolded) return;
+    shownRows++;
+    if (it.placeholder && !(filtering) && !(st.forceRow === it.r)) { pending.push(it); return; }
+    html.push(sheetRowHTML(src, sheet, it, cols, it.placeholder));
+  });
+  flushEmpty(curGid);
+
   var count = document.getElementById('sheet-count-' + src);
-  if (count) count.textContent = rows.length + ' / ' + sheet.rows.length + ' 列';
-  if (!rows.length) { el.innerHTML = '<p class="sheet-empty">沒有符合的列。</p>'; return; }
+  var total = sheet.rows.length;
+  if (count) count.textContent = (filtering ? visible.filter(function(v, k){ return v && items[k].type === 'row'; }).length + ' / ' : '') + total + ' 列';
+  if (!html.length) { el.innerHTML = '<p class="sheet-empty">沒有符合的列。</p>'; return; }
   el.innerHTML = '<table class="sheet-table"><thead><tr><th scope="col" class="sc-rn">列</th>' +
-    sheet.cols.map(function(col){ return '<th scope="col"' + (col.wide ? ' class="wide"' : '') + '>' + escHtml(col.name) + '</th>'; }).join('') +
-    '</tr></thead><tbody>' + rows.map(function(row) {
-      return '<tr><th scope="row" class="sc-rn">' + row.r + '</th>' + sheet.cols.map(function(col) {
-        return sheetCellHTML(src, sheet, row, col);
-      }).join('') + '</tr>';
-    }).join('') + '</tbody></table>';
+    cols.map(function(col, i){ return '<th scope="col" class="' + (col.wide ? 'wide' : '') + (i === 0 ? ' key' : '') + '">' + escHtml(col.name) + '</th>'; }).join('') +
+    '</tr></thead><tbody>' + html.join('') + '</tbody></table>';
   markRecentCells(src);
 }
-function sheetCellHTML(src, sheet, row, col) {
-  var v = sheetCellValue(sheet, row.r, col.c);
-  var locked = sheet.formulas[row.r + ',' + col.c];
-  var carry = !v && col.c === 1 && row.group;   // show which group a row belongs to, dimmed, without writing it
-  return '<td class="sc' + (col.wide ? ' wide' : '') + (locked ? ' locked' : '') + '" tabindex="0" data-src="' + src + '" data-r="' + row.r + '" data-c="' + col.c + '"' +
-    ' data-a1="' + sheetColLetter(col.c) + row.r + '"' + (locked ? ' title="公式欄位，請在試算表修改"' : '') + '>' +
-    '<div class="sc-v' + (carry ? ' carry' : '') + '">' + escHtml(carry ? row.group : v) + '</div></td>';
+function sheetHeadHTML(src, sheet, it, span, isFolded, n) {
+  var top = it.level === 0;
+  return '<tr class="grp lvl-' + it.level + '"><td colspan="' + span + '"><div class="grp-in">' +
+    (top ? '<button type="button" class="grp-fold" aria-expanded="' + !isFolded + '" aria-label="' + (isFolded ? '展開' : '收合') + '" onclick="sheetToggleFold(\'' + src + '\',' + it.gid + ')">' +
+      '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>' : '') +
+    '<div class="grp-parts">' + it.parts.map(function(p, i) {
+      return sheetCellHTML(src, sheet, it.r, { c: p.c, name: '' }, false, 'div', 'grp-part' + (i ? ' sub' : ''));
+    }).join('') + '</div>' +
+    (top ? '<span class="grp-stats">' + (it.stats.length ? it.stats.map(function(s) {
+      // 影片總數（支） 5 → 5 支; the full label stays in the tooltip
+      var unit = /（([^）]+)）\s*$/.exec(s.label);
+      return '<span title="' + escHtml(s.label) + '"><b>' + escHtml(s.value) + '</b>' + (unit ? ' ' + escHtml(unit[1]) : ' ' + escHtml(s.label)) + '</span>';
+    }).join('・') : n + ' 列') + '</span>' : '') +
+  '</div></td></tr>';
+}
+function sheetRowHTML(src, sheet, it, cols, empty) {
+  return '<tr class="' + (empty ? 'is-empty' : '') + '"><th scope="row" class="sc-rn">' + it.r + '</th>' + cols.map(function(col, i) {
+    return sheetCellHTML(src, sheet, it.r, col, i === 0, null, null, i === 0 ? it.headLabel : '');
+  }).join('') + '</tr>';
+}
+function sheetCellHTML(src, sheet, r, col, isKey, tag, extra, hint) {
+  tag = tag || 'td';
+  var v = sheetCellValue(sheet, r, col.c);
+  var urls = sheet.links[r + ',' + col.c] || [];
+  var formula = sheet.formulas[r + ',' + col.c];
+  var locked = formula ? '公式欄位，請在試算表修改' : urls.length > 1 ? '這格有多個連結，請在試算表修改' : '';
+  return '<' + tag + ' class="sc' + (extra ? ' ' + extra : '') + (col.wide ? ' wide' : '') + (isKey ? ' key' : '') + (locked ? ' locked' : '') + '" tabindex="0"' +
+    ' data-src="' + src + '" data-r="' + r + '" data-c="' + col.c + '" data-a1="' + sheetColLetter(col.c) + r + '"' +
+    (locked ? ' data-lock="' + escHtml(locked) + '" title="' + escHtml(locked) + '"' : '') + '>' +
+    (!v && hint ? '<div class="sc-v hint">' + escHtml(hint) + '</div>' : '<div class="sc-v">' + escHtml(v) + '</div>') +
+    (urls.length ? '<div class="sc-links">' + urls.map(function(u, i) {
+      return '<a class="sc-link" href="' + escHtml(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>' +
+        (urls.length > 1 ? '開啟 ' + (i + 1) : '開啟') + '</a>';
+    }).join('') + '</div>' : '') +
+  '</' + tag + '>';
 }
 function markRecentCells(src) {
   var st = sheetState[src];
@@ -5806,55 +6034,64 @@ function markRecentCells(src) {
   var sheet = st.data.sheets[st.tab];
   var recent = {};
   (st.changes || []).forEach(function(x){ if (x.sheet === sheet.name) recent[String(x.cell).split(':')[0]] = x; });
-  document.querySelectorAll('#sheet-table-' + src + ' td.sc').forEach(function(td) {
-    var x = recent[td.dataset.a1];
-    td.classList.toggle('recent', !!x);
-    if (x) td.title = sheetWho(x.by) + '・' + sheetWhen(x.at) + ' 修改';
+  document.querySelectorAll('#sheet-table-' + src + ' .sc').forEach(function(el) {
+    var x = recent[el.dataset.a1];
+    el.classList.toggle('recent', !!x);
+    if (x && !el.dataset.lock) el.title = sheetWho(x.by) + '・' + sheetWhen(x.at) + ' 修改';
   });
 }
 
-/* ── Jump from an edit in the feed to its cell ── */
+/* ── Jump from an edit in the feed to its cell: unfold its group, show its row and column ── */
 function sheetJump(src, sheetName, a1) {
   var st = sheetState[src];
   var i = st.data.sheets.findIndex(function(sh){ return sh.name === sheetName; });
   var pos = sheetParseA1(a1);
   if (i < 0 || !pos) { showToast('這筆修改的工作表已不在了'); return; }
   st.tab = i; st.group = ''; st.q = '';
+  st.forceRow = pos.r; st.forceCol = pos.c;
   renderSheetControls(src); renderSheetTable(src);
-  var td = document.querySelector('#sheet-table-' + src + ' td[data-r="' + pos.r + '"][data-c="' + pos.c + '"]');
-  if (!td) { showToast('這一列目前是空白的'); return; }
-  td.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-  td.classList.remove('flash'); void td.offsetWidth; td.classList.add('flash');
-  td.focus({ preventScroll: true });
+  var el = sheetFindCell(src, pos.r, pos.c);
+  if (!el) { showToast('這一列目前是空白的'); return; }
+  el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash');
+  el.focus({ preventScroll: true });
 }
+function sheetFindCell(src, r, c) { return document.querySelector('#sheet-table-' + src + ' .sc[data-r="' + r + '"][data-c="' + c + '"]'); }
 
-/* ── Edit one cell ── */
+/* ── Edit one cell (table cells and heading parts alike) ── */
 document.addEventListener('click', function(e) {
-  var td = e.target.closest && e.target.closest('td.sc');
-  if (td && !td.classList.contains('editing')) sheetEdit(td);
+  if (e.target.closest && e.target.closest('a')) return;
+  var el = e.target.closest && e.target.closest('.sheet-table .sc');
+  if (el && !el.classList.contains('editing')) sheetEdit(el);
 });
 document.addEventListener('keydown', function(e) {
-  var td = e.target.closest && e.target.closest('td.sc');
-  if (td && e.target === td && (e.key === 'Enter' || e.key === 'F2')) { e.preventDefault(); sheetEdit(td); }
+  var el = e.target.closest && e.target.closest('.sheet-table .sc');
+  if (el && e.target === el && (e.key === 'Enter' || e.key === 'F2')) { e.preventDefault(); sheetEdit(el); }
 });
-function sheetEdit(td, draft, notice) {
-  if (td.classList.contains('locked')) { showToast('這格是公式，請在試算表修改'); return; }
+function sheetEdit(el, draft, notice) {
+  if (el.dataset.lock) { showToast(el.dataset.lock); return; }
   if (!currentMember) { showToast('先選擇你的名字，才能修改試算表'); showLogin(); return; }
   // Moving to another cell keeps what was typed in the last one
-  if (sheetEditing) { var prev = sheetEditing.td.querySelector('textarea'); if (prev && prev.value !== sheetEditing.before) sheetSave(); else sheetCancel(); }
-  var src = td.dataset.src, r = Number(td.dataset.r), c = Number(td.dataset.c);
+  if (sheetEditing) {
+    var prev = sheetEditing.el.querySelector('textarea');
+    var target = { r: el.dataset.r, c: el.dataset.c };
+    if (prev && prev.value !== sheetEditing.before) sheetSave(); else sheetCancel();
+    el = sheetFindCell(el.dataset.src || sheetActive, target.r, target.c) || el;
+  }
+  var src = el.dataset.src, r = Number(el.dataset.r), c = Number(el.dataset.c);
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
   var before = sheetCellValue(sheet, r, c);
   var col = sheet.cols.find(function(x){ return x.c === c; });
-  sheetEditing = { src: src, td: td, r: r, c: c, before: before, sheetId: sheet.id };
-  td.classList.add('editing');
-  td.innerHTML =
+  var label = col ? col.name : String((sheet.grid[sheet.headerRow - 1] || [])[c - 1] || '').trim();
+  sheetEditing = { src: src, el: el, r: r, c: c, before: before, sheetId: sheet.id };
+  el.classList.add('editing');
+  el.innerHTML =
     (notice !== undefined ? '<div class="sc-conflict" role="alert">試算表上剛被改成：「' + escHtml(notice || '（空白）') + '」。要用你的內容覆蓋，再按一次儲存。</div>' : '') +
-    '<textarea class="sc-input" aria-label="' + escHtml((col ? col.name : '') + '，第 ' + r + ' 列') + '">' + escHtml(draft !== undefined ? draft : before) + '</textarea>' +
+    '<textarea class="sc-input" aria-label="' + escHtml((label || sheetColLetter(c) + ' 欄') + '，第 ' + r + ' 列') + '">' + escHtml(draft !== undefined ? draft : before) + '</textarea>' +
     '<div class="sc-bar"><span class="sc-hint">⌘ / Ctrl + Enter 儲存・Esc 取消</span>' +
       '<button type="button" class="sc-btn ghost" onclick="event.stopPropagation();sheetCancel()">取消</button>' +
       '<button type="button" class="sc-btn" onclick="event.stopPropagation();sheetSave()">儲存</button></div>';
-  var ta = td.querySelector('textarea');
+  var ta = el.querySelector('textarea');
   function fit() { ta.style.height = 'auto'; ta.style.height = Math.min(360, ta.scrollHeight + 2) + 'px'; }
   ta.addEventListener('input', fit);
   ta.addEventListener('keydown', function(e) {
@@ -5865,59 +6102,59 @@ function sheetEdit(td, draft, notice) {
   ta.focus();
   ta.setSelectionRange(ta.value.length, ta.value.length);
 }
-function sheetPaint(td, value) {
-  var src = td.dataset.src, st = sheetState[src], sheet = st.data.sheets[st.tab];
-  var row = sheet.rows.find(function(x){ return x.r === Number(td.dataset.r); }) || { r: Number(td.dataset.r), group: '' };
-  var col = sheet.cols.find(function(x){ return x.c === Number(td.dataset.c); });
+// Redraw one cell in place; heading parts sit inside a heading row, so those redraw the table
+function sheetPaint(el) {
+  var src = el.dataset.src, r = Number(el.dataset.r), c = Number(el.dataset.c);
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  if (el.tagName !== 'TD') { renderSheetTable(src); return sheetFindCell(src, r, c); }
+  var col = sheet.cols.find(function(x){ return x.c === c; }) || { c: c, name: '' };
   var tmp = document.createElement('tbody');
-  tmp.innerHTML = '<tr>' + sheetCellHTML(src, sheet, row, col) + '</tr>';
+  var item = sheet.items.find(function(x){ return x.type === 'row' && x.r === r; });
+  tmp.innerHTML = '<tr>' + sheetCellHTML(src, sheet, r, col, el.classList.contains('key'), null, null, el.classList.contains('key') && item ? item.headLabel : '') + '</tr>';
   var fresh = tmp.querySelector('td');
-  td.replaceWith(fresh);
+  el.replaceWith(fresh);
   return fresh;
 }
 function sheetCancel() {
   var e = sheetEditing;
   if (!e) return;
   sheetEditing = null;
-  var td = sheetPaint(e.td);
+  var el = sheetPaint(e.el);
   markRecentCells(e.src);
-  td.focus({ preventScroll: true });
+  if (el) el.focus({ preventScroll: true });
 }
 function sheetSave() {
   var e = sheetEditing;
   if (!e) return;
-  var value = e.td.querySelector('textarea').value;
+  var value = e.el.querySelector('textarea').value;
   sheetEditing = null;
   var st = sheetState[e.src], sheet = st.data.sheets[st.tab];
-  if (value === e.before) { sheetPaint(e.td); return; }
+  if (value === e.before) { sheetPaint(e.el); return; }
   // Show the new text right away; put the old one back if the sheet refuses it
   sheet.grid[e.r - 1] = sheet.grid[e.r - 1] || [];
   sheet.grid[e.r - 1][e.c - 1] = value;
-  var td = sheetPaint(e.td);
-  td.classList.add('saving');
+  var el = sheetPaint(e.el);
+  if (el) el.classList.add('saving');
+  function settle(v, cls) {
+    sheet.grid[e.r - 1][e.c - 1] = v;
+    var cur = sheetFindCell(e.src, e.r, e.c);
+    if (cur && !cur.classList.contains('editing')) { cur = sheetPaint(cur); if (cur && cls) cur.classList.add(cls); }
+    return cur;
+  }
   sheetFetch(e.src, '', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ sheetId: e.sheetId, row: e.r, col: e.c, value: value, expected: e.before, by: currentMember })
   }).then(function(d) {
-    var cur = document.querySelector('#sheet-table-' + e.src + ' td[data-r="' + e.r + '"][data-c="' + e.c + '"]');
-    if (d.ok) {
-      sheet.grid[e.r - 1][e.c - 1] = d.value;
-      if (cur) { cur = sheetPaint(cur); cur.classList.add('saved'); }
-      sheetReloadChanges(e.src);
-      return;
-    }
+    if (d.ok) { settle(d.value, 'saved'); sheetReloadChanges(e.src); return; }
     if (d.conflict) {
-      sheet.grid[e.r - 1][e.c - 1] = d.current;
-      if (cur) { cur = sheetPaint(cur); sheetEdit(cur, value, d.current); sheetEditing.before = d.current; }
+      var cur = settle(d.current);
+      if (cur) sheetEdit(cur, value, d.current);
       return;
     }
-    sheet.grid[e.r - 1][e.c - 1] = e.before;
-    if (cur) sheetPaint(cur);
+    settle(e.before);
     showToast('沒有存到試算表：' + (d.error || '請再試一次'));
   }).catch(function() {
-    sheet.grid[e.r - 1][e.c - 1] = e.before;
-    var cur = document.querySelector('#sheet-table-' + e.src + ' td[data-r="' + e.r + '"][data-c="' + e.c + '"]');
-    if (cur) sheetPaint(cur);
+    settle(e.before);
     showToast('沒有存到試算表，請檢查網路後再試');
   });
 }

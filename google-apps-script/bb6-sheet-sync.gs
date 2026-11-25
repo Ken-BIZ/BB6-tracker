@@ -17,6 +17,7 @@
 var LOG_SHEET = 'BB6 變更紀錄';
 var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列', '欄位', '原內容', '新內容'];
 var LOG_MAX_ROWS = 5000;
+var SCRIPT_VERSION = 2;   // 2: reads cell links and keeps a cell's link when BB6 edits its text
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
@@ -63,9 +64,27 @@ function readAll_() {
     range.getFormulas().forEach(function (row, r) {
       row.forEach(function (f, c) { if (f) formulas.push([r + 1, c + 1]); });
     });
-    return { id: sh.getSheetId(), name: sh.getName(), rows: range.getDisplayValues(), formulas: formulas };
+    var links = [];
+    range.getRichTextValues().forEach(function (row, r) {
+      row.forEach(function (rt, c) {
+        var urls = linkUrls_(rt);
+        if (urls.length) links.push([r + 1, c + 1, urls]);
+      });
+    });
+    return { id: sh.getSheetId(), name: sh.getName(), rows: range.getDisplayValues(), formulas: formulas, links: links };
   });
-  return { ok: true, title: ss.getName(), url: ss.getUrl(), timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets };
+  return { ok: true, version: SCRIPT_VERSION, title: ss.getName(), url: ss.getUrl(), timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets };
+}
+
+// Every distinct link in a cell's text (a cell can link different words to different files)
+function linkUrls_(rt) {
+  var urls = [];
+  if (!rt) return urls;
+  rt.getRuns().forEach(function (run) {
+    var u = run.getLinkUrl();
+    if (u && urls.indexOf(u) < 0) urls.push(u);
+  });
+  return urls;
 }
 
 /* ── 寫入一格：先確認沒被別人改過，再寫、再記錄 ── */
@@ -86,7 +105,14 @@ function write_(b) {
     }
     var value = String(b.value == null ? '' : b.value);
     if (value === current) return { ok: true, value: current, unchanged: true };
-    cell.setValue(value);
+    // Keep the file link: a plain setValue would drop it
+    var urls = linkUrls_(cell.getRichTextValue());
+    if (urls.length > 1) return { ok: false, error: '這格有多個連結，請在試算表修改' };
+    if (urls.length === 1 && value) {
+      cell.setRichTextValue(SpreadsheetApp.newRichTextValue().setText(value).setLinkUrl(urls[0]).build());
+    } else {
+      cell.setValue(value);
+    }
     SpreadsheetApp.flush();
     var shown = cell.getDisplayValue();
     log_(sh, row, col, b.by || 'BB6', 'BB6', current, shown);
