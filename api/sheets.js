@@ -8,13 +8,23 @@ const SOURCES = {
   material: 'SHEET_MATERIAL_URL'
 };
 
-async function callScript(res, promise) {
+// When Apps Script answers with an HTML page instead of JSON, say which setup step is off
+function diagnose(url, r, text) {
+  if (!/\/exec(\?|$)/.test(url)) return '網址要用「網頁應用程式」那個 /exec 結尾的網址（不是 /dev，也不是編輯器網址）';
+  if (/accounts\.google\.com|ServiceLogin/.test(r.url + text)) return 'Apps Script 部署的「誰可以存取」要選「所有人」';
+  if (/doGet|doPost/.test(text)) return 'Apps Script 找不到 doGet／doPost：程式碼要貼上、儲存，再部署「新版本」';
+  if (r.status === 404) return '找不到這個 Apps Script 部署，請確認網址完整、部署沒有被封存';
+  if (/authoriz|授權/i.test(text)) return 'Apps Script 還沒授權：在編輯器按一次「執行」或重新部署並允許權限';
+  return '試算表沒有回傳資料（HTTP ' + r.status + '），請確認 Apps Script 已部署為網頁應用程式';
+}
+
+async function callScript(res, promise, url) {
   try {
     const r = await promise;
     const text = await r.text();
     let data;
     try { data = JSON.parse(text); } catch (e) {
-      return res.status(502).json({ ok: false, error: '試算表沒有回傳資料，請確認 Apps Script 已部署為「所有人」可存取' });
+      return res.status(502).json({ ok: false, error: diagnose(url, r, text) });
     }
     if (data && data.error === 'unauthorized') {
       return res.status(502).json({ ok: false, error: '試算表的 BB6_TOKEN 和 Vercel 的 SHEET_TOKEN 不一致' });
@@ -37,7 +47,7 @@ module.exports = async function handler(req, res) {
     const action = req.query.action === 'changes' ? 'changes' : 'read';
     const days = Math.min(60, Math.max(1, Number(req.query.days) || 14));
     const q = '?action=' + action + '&days=' + days + '&token=' + encodeURIComponent(token);
-    return callScript(res, fetch(url + q, { redirect: 'follow' }));
+    return callScript(res, fetch(url + q, { redirect: 'follow' }), url);
   }
 
   if (req.method === 'POST') {
@@ -60,7 +70,7 @@ module.exports = async function handler(req, res) {
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(payload),
       redirect: 'follow'
-    }));
+    }), url);
   }
 
   res.setHeader('Allow', 'GET, POST');
