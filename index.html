@@ -55,7 +55,7 @@ header {
 .btn-ghost { background: transparent; border: 1px solid rgba(var(--fg-rgb),0.15); color: var(--grey-dark); }
 .btn-ghost:hover { border-color: rgba(var(--fg-rgb),0.35); color: var(--text); }
 .btn-yellow { background: var(--yellow); color: var(--on-accent); }
-.btn-yellow:hover { background: #ffe100; }
+.btn-yellow:hover { filter: brightness(1.06); }
 
 /* tracker-only header-actions hidden on flow page */
 .tracker-actions { display: flex; gap: 8px; }
@@ -338,7 +338,7 @@ header { background: var(--bg); border-bottom: 2px solid var(--yellow); padding:
 .btn-ghost { background: transparent; border: 1px solid rgba(var(--fg-rgb),0.15); color: var(--grey-dark); }
 .btn-ghost:hover { border-color: rgba(var(--fg-rgb),0.35); color: var(--text); }
 .btn-yellow { background: var(--yellow); color: var(--on-accent); }
-.btn-yellow:hover { background: #ffe100; }
+.btn-yellow:hover { filter: brightness(1.06); }
 nav { display: flex; gap: 4px; }
 nav a { font-size: 13px; font-weight: 600; color: var(--grey-dark); text-decoration: none; padding: 5px 12px; border-radius: 2px; transition: all 0.2s; }
 nav a:hover { color: var(--accent-ink); }
@@ -353,7 +353,6 @@ nav a:hover { color: var(--accent-ink); }
 .hero-sub { font-size: 14px; color: var(--grey-dark); font-weight: 500; }
 .hero-stats { display: flex; gap: 24px; flex-shrink: 0; }
 .hero-stat { text-align: right; }
-.hero-stat-val { font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
 .hero-stat-label { font-size: 12px; font-weight: 600; color: var(--grey-dark); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 4px; }
 
 /* OVERALL PROGRESS BAR */
@@ -411,7 +410,7 @@ section { padding: 56px 48px; border-bottom: 1px solid rgba(var(--fg-rgb),0.06);
 .task-row-top { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .task-id-badge { font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 2px; flex-shrink: 0; }
 .task-row-name { font-size: 14px; font-weight: 600; flex: 1; line-height: 1.3; }
-.owner-chip { font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 2px; flex-shrink: 0; }
+.owner-chip { font-size: 13px; font-weight: 700; padding: 2px 9px; border-radius: 999px; flex-shrink: 0; }
 .chip-ken { background: rgba(37,99,235,0.2); color: var(--ink-blue); }
 .chip-daniel { background: rgba(22,163,74,0.2); color: var(--ink-green); }
 .chip-ellen { background: rgba(234,88,12,0.2); color: var(--ink-orange); }
@@ -567,7 +566,7 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 
 /* ── LOGIN OVERLAY ───────────────────── */
 .login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(8px); z-index: 500; display: flex; align-items: center; justify-content: center; }
-.login-box { background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.1); border-top: 3px solid var(--yellow); border-radius: 8px; padding: 48px; width: 460px; }
+.login-box { background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.1); border-top: 3px solid var(--yellow); border-radius: 24px; padding: 48px; width: 460px; }
 .login-logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
 .login-logo-mark { height: 28px; width: auto; }
 .login-logo-text { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: 0; text-transform: none; }
@@ -746,7 +745,6 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .node-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid; background: var(--panel); cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
 .node-dot:hover { transform: scale(1.3); }
 .node-dot.active { background: currentColor; transform: scale(1.2); }
-.node-labels { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 4px; opacity: 0.5; }
 .node-label { flex: 0 0 auto; }
 .node-label.active { opacity: 1; }
 .node-status-badge { font-size: 13px; font-weight: 700; padding: 2px 8px; border-radius: 3px; white-space: nowrap; flex-shrink: 0; }
@@ -755,7 +753,6 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .node-status-badge.s10 { background: rgba(74,222,128,0.12); color: var(--good); }
 
 /* ── TING / OBSERVER ────────────────────────────────────── */
-.chip-ting { background: rgba(139,92,246,0.2); color: var(--ink-violet); }
 .member-select-btn.ting { border-color: rgba(139,92,246,0.4); }
 .member-select-btn.ting:hover { border-color: #8B5CF6; background: rgba(139,92,246,0.12); }
 .member-select-btn.ting .msb-initial { color: var(--ink-violet); }
@@ -1838,6 +1835,38 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 #panel .task-row-name { flex: 1 1 9em; }
 .ov-project-one { grid-column: 1 / -1; }
 @media (min-width: 641px) and (max-width: 1280px) { #page-tracker .gates-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
+/* ═══ Critique round 6 (2026-11-25): one pressed segment, names that fit the projector, no claims before data ═══ */
+/* Status control: a true segmented control. Only the current state is filled; gate identity sits on its border */
+.score-row .score-btn { flex: 1; min-width: 0; padding: 9px 4px; font: 700 14px/1.2 inherit; color: rgba(var(--fg-rgb),0.72); background: transparent; border: 1.5px solid rgba(var(--fg-rgb),0.16); border-radius: 8px; cursor: pointer; }
+.score-row .score-btn:not([disabled]):hover { border-color: rgba(var(--fg-rgb),0.45); color: var(--text); }
+.score-row .score-btn[aria-pressed="true"] { color: var(--bg); background: var(--text); border-color: var(--gate-c, var(--text)); box-shadow: 0 0 0 1.5px var(--gate-c, transparent); }
+.score-row .score-btn[disabled] { cursor: default; }
+.score-row .score-btn[disabled][aria-pressed="false"] { opacity: 1; color: rgba(var(--fg-rgb),0.38); border-style: dashed; border-color: rgba(var(--fg-rgb),0.14); }
+.score-row .score-btn[disabled][aria-pressed="true"] { background: rgba(var(--fg-rgb),0.55); border-color: transparent; box-shadow: none; }
+.score-btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.score-lock { margin-top: 8px; font-size: 13px; color: var(--grey-dark); }
+.prereq-hint[hidden] { display: none; }
+/* Bottleneck passes: the task name gets its own line (two at most); owners sit underneath */
+.bn-task-head { flex-wrap: wrap; align-items: flex-start; row-gap: 4px; }
+.bn-task-name { flex: 1 1 100%; white-space: normal; text-overflow: clip; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; word-break: keep-all; overflow-wrap: anywhere; line-height: 1.35; }
+/* 整體專案進度: long module names wrap instead of hiding */
+.ov-module-title { white-space: normal; text-overflow: clip; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
+/* 本小節組員狀態: wide enough that labels never stack a character per line */
+#members .members-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.member-stat-row { flex-wrap: wrap; }
+.member-stat { min-width: 76px; }
+.member-stat-label { white-space: nowrap; }
+/* 進度填報 gates: never leave Gate 5 alone on a second row */
+@media (min-width: 641px) and (max-width: 1280px) { #panel #tracker .gates-grid, #page-tracker .gates-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } #panel #tracker .gates-grid > *, #page-tracker .gates-grid > * { grid-column: span 2; } #panel #tracker .gates-grid > :nth-child(4):nth-last-child(2), #page-tracker .gates-grid > :nth-child(4):nth-last-child(2) { grid-column: 1 / span 3; } #panel #tracker .gates-grid > :nth-child(5):last-child, #page-tracker .gates-grid > :nth-child(5):last-child { grid-column: 4 / span 3; } #page-tracker .gates-grid > :first-child:nth-last-child(4), #page-tracker .gates-grid > :first-child:nth-last-child(4) ~ * { grid-column: span 3; } }
+/* Loading: a quiet board skeleton instead of 0% rows */
+.board-loading { display: grid; gap: 10px; }
+.board-skel { display: block; height: 52px; border-radius: 10px; background: rgba(var(--fg-rgb),0.05); animation: skel 1.4s var(--ease) infinite alternate; }
+@keyframes skel { from { opacity: 1; } to { opacity: .45; } }
+@media (prefers-reduced-motion: reduce) { .board-skel { animation: none; } }
+/* Projector floor: pass detail text */
+#page-weekly .bn-top-meta, #page-weekly .bn-top-task { font-size: 14px; }
+/* Mobile: KR title wraps above its rule instead of stranding it */
+@media (max-width: 640px) { .weekly-topbar .sec-label::after { display: none; } }
 </style>
 
 <body>
@@ -2005,7 +2034,7 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
     <div class="fx-gate g4">
       <div class="fx-gate-head">
         <div class="fx-gate-num">Gate 4</div>
-        <div class="fx-gate-name">上架與成品 QC</div>
+        <div class="fx-gate-name">WU 上架與成品 QC</div>
       </div>
       <div class="fx-tasks">
         <div class="fx-sub">同時進行</div>
@@ -2573,7 +2602,7 @@ function subscribeModule(mod) {
       if (res.error) { setSyncStatus('error', '連線失敗：' + res.error.message); return; }
       moduleLoaded[mod] = true;
       applyScoreRows(mod, res.data);
-      if (boardDataReady()) renderForecastCards();
+      if (boardDataReady()) { renderForecastCards(); renderBottleneck(); }
       setSyncStatus('ok', '即時同步中');
       updateLastSynced('last-saved');
       updateLastSynced('ov-last-synced');
@@ -2986,7 +3015,7 @@ function renderGates() {
       const canEdit  = (isOwner || hasFullEditAccess(currentMember)) && !isBlocked;
 
       const prereqText = !hasP ? '' : prereqOk
-        ? '<div class="prereq-hint ok">✓ 前置任務有產出，可進行</div>'
+        ? '<div class="prereq-hint ok"'+(score===10?' hidden':'')+'>✓ 前置任務有產出，可進行</div>'
         : '<div class="prereq-hint blocked">⬡ 等待前置：'+task.prereqs.join('、')+'（目前 '+ppct+'%）</div>';
 
       const chips = task.owners.map(function(o){
@@ -3001,19 +3030,7 @@ function renderGates() {
       const statusKey = score===0?'s0':score===5?'s5':'s10';
       const statusTxt = score===0?'未開始':score===5?'進行中':'完成';
 
-      // Three explicit buttons — no range slider ambiguity
-      var nodeVals   = [0, 5, 10];
-      var nodeLabels = ['未開始', '進行中', '完成'];
-      var nodeBtns   = nodeVals.map(function(v, i) {
-        var isActive = score === v;
-        var isPassed = score > v;
-        var bg = isActive ? 'var(--text)' : isPassed ? 'rgba(var(--fg-rgb),0.1)' : 'transparent';
-        var border = isActive || isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
-        var btnStyle = 'flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+(isActive?'var(--bg)':isPassed?'var(--text)':'rgba(var(--fg-rgb),0.6)')+';font-family:inherit;';
-        return '<button class="score-btn" aria-pressed="'+isActive+'" style="'+btnStyle+'"' +
-          (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
-          '>'+nodeLabels[i]+'</button>';
-      }).join('');
+      var nodeBtns = scoreBtnsHTML(task, score, canEdit);
 
       row.innerHTML =
         '<div class="task-row-top" style="margin-bottom:10px">' +
@@ -3023,6 +3040,8 @@ function renderGates() {
         '<div class="score-row" style="align-items:stretch;gap:6px" id="nodebtn-'+task.id.replace('-','_')+'">' +
           nodeBtns +
         '</div>' +
+        (currentMember && !isOwner && !hasFullEditAccess(currentMember)
+          ? '<div class="score-lock">不是你的任務，由 '+task.owners.join('、')+' 填報</div>' : '') +
         prereqText;
 
       taskWrap.appendChild(row);
@@ -3030,6 +3049,15 @@ function renderGates() {
     col.appendChild(taskWrap);
     container.appendChild(col);
   });
+}
+
+// One filled segment = the current state; the others stay outline-only. Gate colour lives on the pressed border.
+function scoreBtnsHTML(task, sc, canEdit) {
+  var vals = [0, 5, 10], labels = ['未開始', '進行中', '完成'];
+  return vals.map(function(v, i) {
+    return '<button type="button" class="score-btn" aria-pressed="' + (sc === v) + '" style="--gate-c:' + GATE_COLORS[task.gate] + '"' +
+      (canEdit ? ' onclick="updateScore(\'' + task.id + '\',' + v + ')"' : ' disabled') + '>' + labels[i] + '</button>';
+  }).join('');
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -3141,13 +3169,13 @@ function renderMembers() {
           '<div class="member-stat"><div class="member-stat-label">待解鎖</div><div class="member-stat-val" style="color:rgba(var(--fg-rgb),0.6)">'+blocked.length+'</div></div>' +
         '</div>' +
         '<div class="bottleneck-box '+bClass+'">'+bText+'</div>' +
-        '<div class="member-tasks-label">任務詳情</div>' +
-        taskRows +
         (done===myTasks.length ? '' :   // the 全部完成 box above already says it
         '<div class="capacity-box">' +
           '<div class="capacity-label">本週排程建議</div>' +
           '<div class="capacity-text">'+capText+'</div>' +
         '</div>') +
+        '<div class="member-tasks-label">任務詳情</div>' +
+        taskRows +
       '</div>';
     container.appendChild(card);
   });
@@ -3181,6 +3209,7 @@ function refreshAll() {
     if (hint) {
       if (prereqOk) { hint.className='prereq-hint ok'; hint.textContent='✓ 前置任務有產出，可進行'; }
       else { hint.className='prereq-hint blocked'; hint.textContent='⬡ 等待前置：'+task.prereqs.join('、')+'（'+prereqPct(task.id,mod,sec)+'%）'; }
+      hint.hidden = prereqOk && getScore(task.id, mod, sec) === 10;
     }
     const sc        = getScore(task.id, mod, sec);
     const canEdit   = (isOwner || hasFullEditAccess(currentMember)) && !(hasP && !prereqOk);
@@ -3188,18 +3217,7 @@ function refreshAll() {
     // Rebuild node buttons in place (fast — just 3 buttons)
     var btnRow = document.getElementById('nodebtn-'+task.id.replace('-','_'));
     if (btnRow) {
-      var nodeVals   = [0,5,10];
-      var nodeLabels = ['未開始','進行中','完成'];
-      btnRow.innerHTML = nodeVals.map(function(v,i) {
-        var isActive = sc === v;
-        var isPassed = sc > v;
-        var bg     = isActive ? 'var(--text)' : isPassed ? 'rgba(var(--fg-rgb),0.1)' : 'transparent';
-        var border = isActive||isPassed ? gateColor : 'rgba(var(--fg-rgb),0.15)';
-        var col    = isActive ? 'var(--bg)' : isPassed ? 'var(--text)' : 'rgba(var(--fg-rgb),0.4)';
-        return '<button class="score-btn" aria-pressed="'+isActive+'" style="flex:1;padding:8px 4px;border-radius:8px;border:1.5px solid '+border+';background:'+bg+';cursor:'+(canEdit?'pointer':'default')+';font-size:12px;font-weight:700;color:'+col+';font-family:inherit;"' +
-          (canEdit ? ' onclick="updateScore(\''+task.id+'\','+v+')"' : ' disabled') +
-          '>'+nodeLabels[i]+'</button>';
-      }).join('');
+      btnRow.innerHTML = scoreBtnsHTML(task, sc, canEdit);
     }
   });
   renderMembers();
@@ -3308,7 +3326,7 @@ function renderOverview() {
         '<div class="ov-module-title"></div>' +
         '<div class="ov-module-total-track"><div class="ov-module-total-fill" style="width:'+pct+'%"></div></div>' +
         '<div class="ov-module-pct">'+pct+'%</div>' +
-        '<div class="ov-module-sub" title="全部 Gate 都完成的小節數">完成 '+doneSecs+'/'+secCount+' 小節</div>' +
+        '<div class="ov-module-sub" title="百分比算的是每個 Gate 的進度；這裡只數 5 個 Gate 都走完的小節">走完全部 Gate 的小節 '+doneSecs+'/'+secCount+'</div>' +
         '<span class="ov-module-chevron"><svg class=\"chev\" width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m6 9 6 6 6-6\"/></svg></span>' +
       '</div>' +
       '<div class="ov-module-body">' +
@@ -3528,7 +3546,7 @@ function renderObjective(o) {
   var score   = krs.length ? krs.reduce(function(s,k){ return s + krRatio(k); }, 0) / krs.length : 0;
   var end     = parseDay(o.end_date);
   var daysLeft = Math.ceil((end - new Date()) / 86400000) + 1;
-  var timeText = elapsed <= 0 ? '尚未開始' : elapsed >= 1 ? '已結束' : '剩 ' + daysLeft + ' 天';
+  var timeText = elapsed <= 0 ? '尚未開始' : elapsed >= 1 ? '已結束' : '剩 ' + daysLeft + ' 天（約 ' + fmtNum(daysLeft / 7) + ' 週）';
   var canEdit  = canEditOKR(currentMember);
   return '<div class="okr-obj">' +
     '<div class="okr-obj-head">' +
@@ -4181,7 +4199,8 @@ var holidayCal      = {};   // 'YYYYMMDD' → true when it is a day off (weekend
 
 function loadHolidayCalendar() {
   var y = new Date().getFullYear();
-  return Promise.all([y-1, y, y+1, y+2].map(function(year) {
+  // Next year is published around the middle of this one; asking for y+2 only logs a 404
+  return Promise.all([y-1, y, y+1].map(function(year) {
     return fetch(HOLIDAY_CAL_URL + year + '.json')
       .then(function(res){ return res.ok ? res.json() : []; })
       .then(function(list) {
@@ -4410,12 +4429,12 @@ function renderScenarioRow() {
   var wasOpen = el.querySelector('details') && el.querySelector('details').open;
   el.innerHTML = '<div class="scen-row">' +
       scenChip('速度預測', s.projected, t, '標題依據', 'sc-v') +
-      (hasSpike ? scenChip('保守估計（不計暴衝）', s.calmProjected, t, '仍達標', 'sc-c') : '') +
+      (hasSpike ? scenChip('保守估計（扣掉特別高的週）', s.calmProjected, t, '仍達標', 'sc-c') : '') +
       scenChip('只計已排程模組', sch ? sch.pct : null, t, '可達標', 'sc-s', sch && sch.noForecast ? '低於目標・' + sch.noForecast + ' 個模組未設預測' : '') +
     '</div>' +
     '<details class="kr-why"' + (wasOpen ? ' open' : '') + '><summary>這幾個數字怎麼來的？</summary><div class="kr-why-body">' +
       '<p><b>速度預測</b>：用近 4 週全團隊的實際產出推估到 ' + formatDay(s.k.dueStr) + '，是本頁的結論。</p>' +
-      (hasSpike ? '<p><b>保守估計（不計暴衝）</b>：近 4 週中 ' + s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
+      (hasSpike ? '<p><b>保守估計（扣掉特別高的週）</b>：近 4 週中 ' + s.spikes.map(function(wk){ return mdLabel(wk.end) + ' 那週（' + signed(fmtNum(wk.delta)) + '%）'; }).join('、') +
         ' 增量特別大；不計' + (s.spikes.length > 1 ? '這幾週' : '這一週') + '，週速度約 ' + signed(fmtNum(s.calmRate)) + '%。</p>' : '') +
       (sch ? '<p><b>只計已排程模組</b>：只有設定了完工預測的模組會前進' + (sch.noForecast ? '，其餘 ' + sch.noForecast + ' 個模組只算目前進度' : '') + '。設定更多模組的預測，這個數字就會更接近實際。</p>' : '') +
     '</div></details>';
@@ -4473,7 +4492,7 @@ function renderKRPanel() {
     '<div class="kr-tiles">' +
       krTile('目標 ' + dueFull, fmtNum(s.k.target) + '%', '還差 <span class="nw">' + fmtNum(s.gap) + ' 個百分點</span>・<span class="nw">約 ' + fmtNum(s.modulesEq) + ' 個模組</span>', '', 'kr-target') +
       krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '離期限剩 <span class="nw">' + fmtNum(s.weeksLeft) + ' 週</span>，每週需這麼多', '', 'kr-req') +
-      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）' + (s.spikes.length ? '，含 ' + s.spikes.length + ' 週暴衝' : ''), s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
+      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）' + (s.spikes.length ? '，含 ' + s.spikes.length + ' 週特別高' : ''), s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
     '</div>';
   var noteEl = document.getElementById('kr-note');
   if (noteEl) noteEl.innerHTML =
@@ -4488,7 +4507,7 @@ function renderKRPanel() {
     '<span><i class="kr-key actual"></i>實際（每週三 18:30）</span>' +
     '<span><i class="kr-key pace"></i>應達線</span>' +
     '<span><i class="kr-key forecast"></i>速度預測（近 4 週）</span>' +
-    (s.calmRate !== null ? '<span><i class="kr-key calm"></i>保守估計（不計暴衝）</span>' : '') +
+    (s.calmRate !== null ? '<span><i class="kr-key calm"></i>保守估計（扣掉特別高的週）</span>' : '') +
     '<span><i class="kr-key target"></i>目標 ' + fmtNum(s.k.target) + '%</span>' +
     (krMilestones(s.k.kr).length ? '<span><i class="kr-key ms"></i>里程碑</span>' : '');
 }
@@ -4636,6 +4655,10 @@ function renderWeeklyGreeting() {
     el.innerHTML = '';
     return;
   }
+  if (!boardDataReady()) {   // counting before the scores arrive would say 0 pending
+    el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>';
+    return;
+  }
   var p = memberPending(currentMember);
   if (krTopOwner === currentMember) {   // the 目前卡最多 line above already speaks to this person
     el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>';
@@ -4651,6 +4674,7 @@ var krTopOwner = null;   // who carries the most pending sections, set by render
 function renderBottleneck() {
   var el = document.getElementById('bottleneck');
   if (!el) return;
+  if (!boardDataReady()) { el.innerHTML = ''; renderWeeklyGreeting(); return; }
   var mods = bottleneckModules();
   if (!mods.length) { el.innerHTML = '<div class="okr-empty">目前沒有製作中的模組</div>'; return; }
   var html = '';
@@ -4779,6 +4803,14 @@ function renderForecastCards() {
   var container = document.getElementById('forecast-cards');
   if (!container) return;
   var summary = document.getElementById('contrib-summary');
+  // Until every module's scores and the settings are in, a row would show 0% / 未命名 as if it were true
+  if (!boardDataReady()) {
+    if (summary) summary.innerHTML = '';
+    container.innerHTML = '<div class="board-loading" role="status">' +
+      [0, 1, 2, 3].map(function(){ return '<i class="board-skel"></i>'; }).join('') +
+      '<span class="sr-only">看板資料載入中</span></div>';
+    return;
+  }
   var k = activeProjectKR();
   var N = MODULES.length;
   var share = 100 / N;
