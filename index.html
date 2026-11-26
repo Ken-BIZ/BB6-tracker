@@ -2283,6 +2283,13 @@ body { background: var(--frame, var(--bg)); }
   .cheer-line { font-size: 16px; }
   .cheer-quote { font-size: 14.5px; }
 }
+.login-google { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; min-height: 52px; padding: 0 20px; font-family: inherit; font-size: 16px; font-weight: 700; color: #1f1f1f; background: #FFFFFF; border: 1px solid #DADCE0; border-radius: 12px; cursor: pointer; transition: box-shadow .15s var(--ease), background-color .15s; }
+.login-google:hover { background: #F8F9FA; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.login-google:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 3px; }
+.login-google:disabled { cursor: progress; opacity: 0.75; }
+.login-box h1.login-box-title { margin: 0 0 6px; }
+.login-box-sub b { color: var(--text); }
+.login-error { margin: -14px 0 18px; padding: 10px 12px; font-size: 14px; line-height: 1.55; color: var(--alert-text); background: color-mix(in srgb, var(--alert-text) 10%, transparent); border-radius: 10px; }
 </style>
 
 <body>
@@ -2814,12 +2821,82 @@ body { background: var(--frame, var(--bg)); }
    from environment variables (.env locally, Vercel dashboard in prod).
 ═══════════════════════════════════════════════════════════ */
 let db;
+var AUTH_DOMAIN = '';   // company domain from Vercel; empty = no sign-in (old name picker)
 function initSupabase() {
   return fetch('/api/config')
     .then(function(res) { return res.json(); })
     .then(function(cfg) {
+      AUTH_DOMAIN = cfg.authDomain || '';
       db = window.supabase.createClient(cfg.url, cfg.anonKey);
     });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE SIGN-IN (only when AUTH_DOMAIN is set)
+   Any Google account on the company domain can view; the email decides which member it is
+   (table bb6_members), and only members can change anything. Supabase's row rules enforce the same.
+═══════════════════════════════════════════════════════════ */
+var authToken = null, authEmail = null, authResolve = null;
+var GOOGLE_G = '<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.6 13.2l7.8 6.1C12.3 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17.5z"/><path fill="#FBBC05" d="M10.4 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.9-4.7l-7.8-6.1A24 24 0 0 0 0 24c0 3.9.9 7.5 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.9 2.3-8.4 2.3-6.3 0-11.7-4.1-13.6-9.8l-7.8 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+function authStart() {
+  document.querySelector('#login-overlay .login-box').innerHTML =
+    '<div class="login-logo-row"><img class="login-logo-mark" src="logo-mark.png" alt="BizCivilization"><div class="login-logo-text">BB6 課程製作</div></div>' +
+    '<div class="login-box-sub" role="status">確認登入狀態中…</div>';
+  return new Promise(function(resolve) {
+    authResolve = resolve;
+    db.auth.onAuthStateChange(function(event, session) {
+      authToken = session ? session.access_token : null;
+      // Signed out from another tab, or the session ended: start over at the sign-in screen
+      if (event === 'SIGNED_OUT' && authEmail) location.reload();
+    });
+    db.auth.getSession().then(function(r) { authUse(r.data && r.data.session); });
+  });
+}
+function authUse(session) {
+  if (!session) { showSignIn(); return; }
+  var user = session.user || {};
+  var email = String(user.email || '').toLowerCase();
+  var provider = user.app_metadata && user.app_metadata.provider;
+  if (provider !== 'google' || email.slice(-(AUTH_DOMAIN.length + 1)) !== '@' + AUTH_DOMAIN) {
+    db.auth.signOut();
+    showSignIn('「' + email + '」不是 @' + AUTH_DOMAIN + ' 的帳號，請改用公司帳號登入。');
+    return;
+  }
+  authToken = session.access_token;
+  authEmail = email;
+  db.from('bb6_members').select('name').eq('email', email).maybeSingle().then(function(res) {
+    var name = res && res.data && res.data.name;
+    document.getElementById('login-overlay').style.display = 'none';
+    if (name && MEMBERS.indexOf(name) >= 0) selectMember(name, MEMBER_COLORS[name]);
+    else enterViewOnly();
+    if (authResolve) { authResolve(); authResolve = null; }
+  });
+}
+function showSignIn(message) {
+  var box = document.querySelector('#login-overlay .login-box');
+  box.innerHTML =
+    '<div class="login-logo-row"><img class="login-logo-mark" src="logo-mark.png" alt="BizCivilization"><div class="login-logo-text">BB6 課程製作</div></div>' +
+    '<h1 class="login-box-title">登入 BB6</h1>' +
+    '<div class="login-box-sub">請用 <b>@' + escHtml(AUTH_DOMAIN) + '</b> 的公司 Google 帳號登入。登入後會依信箱自動對應你的身分。</div>' +
+    (message ? '<div class="login-error" role="alert">' + escHtml(message) + '</div>' : '') +
+    '<button type="button" class="login-google" onclick="authSignIn()">' + GOOGLE_G + '<span>使用 Google 帳號登入</span></button>';
+  document.getElementById('login-overlay').style.display = 'flex';
+  var b = box.querySelector('.login-google');
+  if (b) b.focus();
+}
+function authSignIn() {
+  var b = document.querySelector('.login-google');
+  if (b) { b.disabled = true; b.querySelector('span').textContent = '前往 Google…'; }
+  db.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: location.origin + location.pathname, queryParams: { hd: AUTH_DOMAIN, prompt: 'select_account' } }
+  }).then(function(res) {
+    if (res && res.error) showSignIn('沒辦法開始登入：' + res.error.message);
+  });
+}
+function authSignOut() {
+  authEmail = null;
+  db.auth.signOut().then(function(){ location.reload(); });
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -3168,6 +3245,11 @@ function isGateDone(n, mod, sec) {
 ═══════════════════════════════════════════════════════════ */
 var VIEW_ONLY_KEY = '__viewer__';   // stored in bb6-member when this browser only views (e.g. the projector)
 function showLogin() {
+  if (AUTH_DOMAIN) {
+    if (authEmail) showToast('你的帳號（' + authEmail + '）目前只能檢視；需要填報權限請找 Ken 設定');
+    else showSignIn();
+    return;
+  }
   document.getElementById('login-overlay').style.display = 'flex';
 }
 function loginIsOpen() { return document.getElementById('login-overlay').style.display !== 'none'; }
@@ -3175,12 +3257,13 @@ function loginIsOpen() { return document.getElementById('login-overlay').style.d
 function enterViewOnly() {
   currentMember = null;
   _lastRenderKey = '';
-  try { localStorage.setItem('bb6-member', VIEW_ONLY_KEY); } catch (e) {}
+  if (!AUTH_DOMAIN) { try { localStorage.setItem('bb6-member', VIEW_ONLY_KEY); } catch (e) {} }
   var av = document.getElementById('login-avatar');
   av.textContent = '–';
   av.style.background = 'rgba(var(--fg-rgb),0.12)';
   av.style.color = 'var(--white)';
   document.getElementById('login-name').textContent   = '只檢視';
+  if (authEmail) document.getElementById('login-chip').title = authEmail + '（只能檢視）';
   document.getElementById('login-chip').style.display  = 'flex';
   document.getElementById('login-overlay').style.display = 'none';
   applyBaselineAccess();
@@ -3191,14 +3274,15 @@ function enterViewOnly() {
   if (okr.loaded) renderOKR();
 }
 document.addEventListener('keydown', function(e) {
-  if (e.key !== 'Escape' || !loginIsOpen()) return;
+  if (e.key !== 'Escape' || !loginIsOpen() || AUTH_DOMAIN) return;
   if (currentMember) document.getElementById('login-overlay').style.display = 'none';
   else enterViewOnly();
 });
 function selectMember(name, color) {
   currentMember = name;
   _lastRenderKey = '';
-  localStorage.setItem('bb6-member', name);
+  if (!AUTH_DOMAIN) localStorage.setItem('bb6-member', name);
+  if (authEmail) document.getElementById('login-chip').title = authEmail;
   document.getElementById('login-avatar').textContent      = name[0];
   document.getElementById('login-avatar').style.background = color;
   document.getElementById('login-avatar').style.color      = name === 'Ken' ? '#fff' : 'var(--black)';
@@ -3518,7 +3602,9 @@ function renderTrackerAssist() {
   var el = document.getElementById('tracker-assist');
   if (!el) return;
   if (!currentMember) {
-    el.innerHTML = '<div class="viewonly-banner">目前只檢視，選你的名字才能填報 <button type="button" class="kr-stuck-link" onclick="showLogin()">選擇身分</button></div>';
+    el.innerHTML = AUTH_DOMAIN
+      ? '<div class="viewonly-banner">你的帳號目前只能檢視；需要填報權限請找 Ken 設定</div>'
+      : '<div class="viewonly-banner">目前只檢視，選你的名字才能填報 <button type="button" class="kr-stuck-link" onclick="showLogin()">選擇身分</button></div>';
     return;
   }
   var open = memberOpenTasks(currentMember);
@@ -5903,6 +5989,7 @@ window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;
+window.authSignIn = authSignIn; window.authSignOut = authSignOut;
 window.renderReporterTabs = renderReporterTabs;
 window.renderOverviewTabs = renderOverviewTabs;
 window.saveBaseline      = saveBaseline;
@@ -5943,7 +6030,9 @@ var sheetActive = null, sheetTimer = null;
 var sheetEditing = null;  // { src, td, r, c, before }
 
 function sheetFetch(src, params, opts) {
-  return fetch('/api/sheets?src=' + src + (params || ''), Object.assign({ cache: 'no-store' }, opts || {}))
+  opts = Object.assign({ cache: 'no-store' }, opts || {});
+  if (authToken) opts.headers = Object.assign({}, opts.headers || {}, { Authorization: 'Bearer ' + authToken });
+  return fetch('/api/sheets?src=' + src + (params || ''), opts)
     .then(function(r){ return r.json(); });
 }
 
@@ -7318,6 +7407,12 @@ function cheerHide(page) { cheerState[page].hidden = true; renderCheer(page); }
 /* ── INIT ── */
 loadHolidayCalendar();
 initSupabase().then(function() {
+  if (AUTH_DOMAIN) {
+    // Sign-in mode: nothing loads until a company account is signed in (the data itself requires it)
+    var sw = document.querySelector('.login-switch');
+    if (sw) { sw.textContent = '登出'; sw.setAttribute('onclick', 'authSignOut()'); sw.title = '登出 Google 帳號'; }
+    return authStart();
+  }
   var _savedMember = localStorage.getItem('bb6-member');
   if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
     selectMember(_savedMember, MEMBER_COLORS[_savedMember]);
@@ -7326,6 +7421,7 @@ initSupabase().then(function() {
   } else {
     showLogin();
   }
+}).then(function() {
   switchPage('weekly');   // 專案概況 is the landing page
   // Load baseline first so section counts are correct for all users
   db.from('settings_baseline').select('*').eq('id', 1).maybeSingle().then(function(res) {

@@ -4,6 +4,8 @@
 //   GET  /api/sheets?src=video|material&action=changes&days=14
 //   POST /api/sheets?src=video|material   { sheetId, row, col, value, expected, by }
 //   POST /api/sheets?src=video|material   { action: 'flag', sheetId, row, col, note, auto, text, by } | { action: 'resolve', id, by }
+const { companyUser } = require('./_auth');
+
 const SOURCES = {
   video: 'SHEET_VIDEO_URL',
   material: 'SHEET_MATERIAL_URL'
@@ -46,6 +48,15 @@ module.exports = async function handler(req, res) {
   const token = process.env.SHEET_TOKEN;
   if (!url || !token) return res.status(200).json({ ok: false, setup: true });
 
+  // With AUTH_DOMAIN set: company Google accounts can read; only BB6 members can change anything
+  const who = await companyUser(req);
+  if (!who.ok) return res.status(who.status).json({ ok: false, auth: true, error: who.error });
+  if (req.method === 'POST' && !who.open && !who.name) {
+    return res.status(403).json({ ok: false, error: '你的帳號目前只能檢視，不能修改' });
+  }
+  // Edits are recorded under the signed-in member, not whatever name the page sends
+  const by = (b) => String(who.name || (b && b.by) || 'BB6').slice(0, 40);
+
   if (req.method === 'GET') {
     const action = req.query.action === 'changes' ? 'changes' : 'read';
     const days = Math.min(60, Math.max(1, Number(req.query.days) || 14));
@@ -69,7 +80,7 @@ module.exports = async function handler(req, res) {
     }), url);
     // 待討論: mark a cell for discussion, or mark a flag as handled
     if (b.action === 'resolve') {
-      return post({ action: 'resolve', id: String(b.id || '').slice(0, 40), by: String(b.by || 'BB6').slice(0, 40) });
+      return post({ action: 'resolve', id: String(b.id || '').slice(0, 40), by: by(b) });
     }
     const row = Number(b.row), col = Number(b.col), sheetId = Number(b.sheetId);
     if (!Number.isInteger(row) || !Number.isInteger(col) || row < 1 || col < 1 || !Number.isInteger(sheetId)) {
@@ -77,14 +88,14 @@ module.exports = async function handler(req, res) {
     }
     if (b.action === 'flag') {
       return post({ action: 'flag', sheetId, row, col, auto: !!b.auto,
-        note: String(b.note || '').slice(0, 500), text: String(b.text || '').slice(0, 2000), by: String(b.by || 'BB6').slice(0, 40) });
+        note: String(b.note || '').slice(0, 500), text: String(b.text || '').slice(0, 2000), by: by(b) });
     }
     const payload = {
       action: 'write', token,
       sheetId, row, col,
       value: String(b.value == null ? '' : b.value).slice(0, 50000),
       expected: typeof b.expected === 'string' ? b.expected : undefined,
-      by: String(b.by || 'BB6').slice(0, 40)
+      by: by(b)
     };
     // Apps Script answers a POST with a redirect to the result; fetch follows it as a GET
     return callScript(res, fetch(url, {
