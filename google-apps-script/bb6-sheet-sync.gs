@@ -18,7 +18,8 @@
 var LOG_SHEET = 'BB6 變更紀錄';
 var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列', '欄位', '原內容', '新內容'];
 var LOG_MAX_ROWS = 5000;
-var SCRIPT_VERSION = 3;   // 2: cell links, kept on edit; 3: file chips (smart chips) via the Sheets API service
+var SCRIPT_VERSION = 4;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips
+var URL_LINE = /^https?:\/\/\S+$/i;
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
@@ -46,6 +47,7 @@ function doPost(e) {
     var body = JSON.parse(e.postData.contents);
     checkToken_(body.token);
     if (body.action === 'write') return json_(write_(body));
+    if (body.action === 'selftest') return json_(selftest_());
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message || err) });
@@ -141,7 +143,8 @@ function linkUrls_(rt) {
   return urls;
 }
 
-/* ── 寫入一格：先確認沒被別人改過，再寫、再記錄 ── */
+/* ── 寫入一格：先確認沒被別人改過，再寫、再記錄 ──
+   內容全是網址（每行一個）時，寫成檔案晶片（智慧型方塊）；Google 不接受時，退回一般連結並回報原因。 */
 function write_(b) {
   var lock = LockService.getScriptLock();
   lock.waitLock(10000);
@@ -153,27 +156,86 @@ function write_(b) {
     if (!(row >= 1 && col >= 1)) return { ok: false, error: '儲存格位置不正確' };
     var cell = sh.getRange(row, col);
     if (cell.getFormula()) return { ok: false, error: '這格是公式，請在試算表修改' };
-    if (hasChip_(ss, sh, row, col)) return { ok: false, error: '這格是檔案連結（智慧型方塊），請在試算表修改' };
+    var value = String(b.value == null ? '' : b.value);
+    var lines = value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+    var allUrls = lines.length > 0 && lines.every(function (l) { return URL_LINE.test(l); });
+    var wasChip = hasChip_(ss, sh, row, col);
+    if (wasChip && !allUrls) return { ok: false, error: '這格是檔案晶片：貼上雲端硬碟網址可以更換檔案，其他文字請在試算表修改' };
     var current = cell.getDisplayValue();
     if (typeof b.expected === 'string' && current !== b.expected) {
       return { ok: false, conflict: true, current: current };
     }
-    var value = String(b.value == null ? '' : b.value);
     if (value === current) return { ok: true, value: current, unchanged: true };
-    // Keep the file link: a plain setValue would drop it
-    var urls = linkUrls_(cell.getRichTextValue());
-    if (urls.length > 1) return { ok: false, error: '這格有多個連結，請在試算表修改' };
-    if (urls.length === 1 && value) {
-      cell.setRichTextValue(SpreadsheetApp.newRichTextValue().setText(value).setLinkUrl(urls[0]).build());
+
+    var chipError = '';
+    if (allUrls && typeof Sheets !== 'undefined') {
+      try {
+        writeChips_(ss, sh, row, col, lines);
+        SpreadsheetApp.flush();
+        if (hasChip_(ss, sh, row, col)) {
+          var shownChip = cell.getDisplayValue();
+          log_(sh, row, col, b.by || 'BB6', 'BB6', current, shownChip);
+          return { ok: true, value: shownChip, chip: true, urls: lines };
+        }
+        chipError = 'Google 沒有把這個網址變成晶片（通常只有雲端硬碟的檔案或資料夾可以）';
+      } catch (err) {
+        chipError = String(err && err.message || err);
+      }
+    } else if (allUrls) {
+      chipError = 'Apps Script 還沒加入 Google Sheets API 服務';
+    }
+    // Never downgrade an existing chip to plain text
+    if (wasChip) return { ok: false, error: '沒能更換檔案晶片：' + chipError };
+
+    if (allUrls && lines.length === 1) {
+      cell.setRichTextValue(SpreadsheetApp.newRichTextValue().setText(lines[0]).setLinkUrl(lines[0]).build());
     } else {
-      cell.setValue(value);
+      // Keep the file link: a plain setValue would drop it
+      var urls = linkUrls_(cell.getRichTextValue());
+      if (urls.length > 1) return { ok: false, error: '這格有多個連結，請在試算表修改' };
+      if (urls.length === 1 && value) {
+        cell.setRichTextValue(SpreadsheetApp.newRichTextValue().setText(value).setLinkUrl(urls[0]).build());
+      } else {
+        cell.setValue(value);
+      }
     }
     SpreadsheetApp.flush();
     var shown = cell.getDisplayValue();
     log_(sh, row, col, b.by || 'BB6', 'BB6', current, shown);
-    return { ok: true, value: shown };
+    return { ok: true, value: shown, chipError: chipError || undefined, urls: allUrls ? lines : undefined };
   } finally {
     lock.releaseLock();
+  }
+}
+
+// One chip per URL; the cell text holds an '@' placeholder for each chip, one per line
+function writeChips_(ss, sh, row, col, urls) {
+  Sheets.Spreadsheets.batchUpdate({ requests: [{ updateCells: {
+    range: { sheetId: sh.getSheetId(), startRowIndex: row - 1, endRowIndex: row, startColumnIndex: col - 1, endColumnIndex: col },
+    rows: [{ values: [{
+      userEnteredValue: { stringValue: urls.map(function () { return '@'; }).join('\n') },
+      chipRuns: urls.map(function (u, i) { return { startIndex: i * 2, chip: { richLinkProperties: { uri: u } } }; })
+    }] }],
+    fields: 'userEnteredValue,chipRuns'
+  } }] }, ss.getId());
+}
+
+// Try writing a chip on a throwaway sheet, using a file link that already exists in this spreadsheet
+function selftest_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (typeof Sheets === 'undefined') return { ok: false, error: 'Apps Script 還沒加入 Google Sheets API 服務' };
+  var url = null, api = apiLinks_(ss);
+  Object.keys(api).some(function (id) { return api[id].some(function (x) { if (x[3]) { url = x[2][0]; return true; } return false; }); });
+  if (!url) return { ok: false, error: '試算表裡找不到現成的檔案晶片可以拿來測' };
+  var tmp = ss.insertSheet('BB6 晶片測試（會自動刪除）');
+  try {
+    writeChips_(ss, tmp, 1, 1, [url]);
+    SpreadsheetApp.flush();
+    return { ok: true, chip: hasChip_(ss, tmp, 1, 1), shown: tmp.getRange(1, 1).getDisplayValue() };
+  } catch (err) {
+    return { ok: false, error: String(err && err.message || err) };
+  } finally {
+    ss.deleteSheet(tmp);
   }
 }
 

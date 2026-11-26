@@ -55,6 +55,13 @@ module.exports = async function handler(req, res) {
   if (req.method === 'POST') {
     let b = req.body || {};
     if (typeof b === 'string') { try { b = JSON.parse(b); } catch (e) { b = {}; } }
+    // Self test: writes a file chip on a throwaway sheet in the spreadsheet and deletes it again
+    if (b.action === 'selftest') {
+      return callScript(res, fetch(url, {
+        method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: 'selftest', token }), redirect: 'follow'
+      }), url);
+    }
     const row = Number(b.row), col = Number(b.col), sheetId = Number(b.sheetId);
     if (!Number.isInteger(row) || !Number.isInteger(col) || row < 1 || col < 1 || !Number.isInteger(sheetId)) {
       return res.status(400).json({ ok: false, error: '儲存格位置不正確' });
