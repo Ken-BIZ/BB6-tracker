@@ -5665,7 +5665,10 @@ function sheetReloadChanges(src) {
 var SHEET_SUMMARY_RE = /總數|總時長|合計|總計|小計/;
 function prepareSheetData(d) {
   var sheets = d.sheets.map(prepareOneSheet);
-  sheets.forEach(function(sh){ sh.chipWrite = (d.version || 1) >= 4 && !!d.chipsSupported; });
+  sheets.forEach(function(sh){
+    sh.chipWrite = (d.version || 1) >= 4 && !!d.chipsSupported;
+    sh.chipClear = sh.chipWrite && (d.version || 1) >= 5;
+  });
   return { title: d.title, url: d.url, version: d.version || 1, chipsSupported: !!d.chipsSupported, sheets: sheets };
 }
 /* Turn a raw sheet into something readable:
@@ -5796,7 +5799,7 @@ function renderSheetStatus(src) {
   if (st.loading && !st.data) { el.textContent = '讀取試算表中…'; return; }
   var t = st.loadedAt ? String(st.loadedAt.getHours()).padStart(2, '0') + ':' + String(st.loadedAt.getMinutes()).padStart(2, '0') : '';
   el.textContent = (st.error ? st.error + '・' : '') + '與 Google 試算表同步' + (t ? '・資料截至 ' + t + '（每分鐘自動更新）' : '');
-  if (st.data && st.data.version < 4) el.textContent += '・試算表的同步腳本有新版（可以從 BB6 加入檔案晶片）';
+  if (st.data && st.data.version < 5) el.textContent += '・試算表的同步腳本有新版（可以從 BB6 加入、移除檔案晶片）';
   else if (st.data && !st.data.chipsSupported) el.textContent += '・Apps Script 要加入「Google Sheets API」服務，才讀得到檔案晶片的連結';
 }
 
@@ -6245,7 +6248,7 @@ function sheetEdit(el, draft, notice) {
   el.innerHTML =
     (notice !== undefined ? '<div class="sc-conflict" role="alert">試算表上剛被改成：「' + escHtml(notice || '（空白）') + '」。要用你的內容覆蓋，再按一次儲存。</div>' : '') +
     '<textarea class="sc-input" aria-label="' + escHtml((label || sheetColLetter(c) + ' 欄') + '，第 ' + r + ' 列') + '">' + escHtml(draft !== undefined ? draft : start) + '</textarea>' +
-    (sheet.chipWrite ? '<div class="sc-chiphint">' + (isChipCell ? '貼上雲端硬碟網址可更換檔案，一行一個。' : '只貼雲端硬碟網址（一行一個）會變成檔案晶片。') + '</div>' : '') +
+    (sheet.chipWrite ? '<div class="sc-chiphint">' + (isChipCell ? (sheet.chipClear ? '一行一個網址：貼上新網址可更換檔案，刪掉一行就移除那個晶片，全部清空就移除整格。' : '貼上雲端硬碟網址可更換檔案，一行一個。') : '只貼雲端硬碟網址（一行一個）會變成檔案晶片。') + '</div>' : '') +
     '<div class="sc-bar"><span class="sc-hint">⌘ / Ctrl + Enter 儲存・Esc 取消</span>' +
       '<button type="button" class="sc-btn ghost" onclick="event.stopPropagation();sheetCancel()">取消</button>' +
       '<button type="button" class="sc-btn" onclick="event.stopPropagation();sheetSave()">儲存</button></div>';
@@ -6307,6 +6310,7 @@ function sheetSave() {
       var key = e.r + ',' + e.c;
       if (d.chip) { sheet.chips[key] = true; sheet.links[key] = d.urls; }
       else if (d.urls) { delete sheet.chips[key]; sheet.links[key] = d.urls; }
+      else if (d.cleared) { delete sheet.chips[key]; delete sheet.links[key]; }
       settle(d.value, 'saved');
       if (d.chipError) showToast('已存成一般連結，沒能變成檔案晶片：' + d.chipError);
       sheetReloadChanges(e.src);

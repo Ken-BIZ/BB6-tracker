@@ -27,7 +27,7 @@
 var LOG_SHEET = 'BB6 變更紀錄';
 var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列', '欄位', '原內容', '新內容'];
 var LOG_MAX_ROWS = 5000;
-var SCRIPT_VERSION = 4;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips
+var SCRIPT_VERSION = 5;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips; 5: emptying a chip cell removes it
 var URL_LINE = /^https?:\/\/\S+$/i;
 
 // Run this once from the editor after changing permissions, so Google asks for them.
@@ -185,6 +185,15 @@ function write_(b) {
     var lines = value.split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
     var allUrls = lines.length > 0 && lines.every(function (l) { return URL_LINE.test(l); });
     var wasChip = hasChip_(ss, sh, row, col);
+    if (wasChip && !lines.length) {
+      // Emptying a chip cell removes its chips
+      var was = cell.getDisplayValue();
+      if (typeof b.expected === 'string' && was !== b.expected) return { ok: false, conflict: true, current: was };
+      cell.clearContent();
+      SpreadsheetApp.flush();
+      log_(sh, row, col, b.by || 'BB6', 'BB6', was, '');
+      return { ok: true, value: '', cleared: true };
+    }
     if (wasChip && !allUrls) return { ok: false, error: '這格是檔案晶片：貼上雲端硬碟網址可以更換檔案，其他文字請在試算表修改' };
     var current = cell.getDisplayValue();
     if (typeof b.expected === 'string' && current !== b.expected) {
