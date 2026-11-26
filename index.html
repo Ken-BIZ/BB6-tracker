@@ -2252,6 +2252,28 @@ body { background: var(--frame, var(--bg)); }
   .tour-pop { width: calc(100vw - 24px); border-radius: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .tour-ring, .tour-fab, .tour-q { transition: none; } }
+.cheer-slot:empty { display: none; }
+.cheer { position: relative; display: flex; align-items: center; gap: 22px; margin: 0 0 24px; padding: 12px 52px 12px 14px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 18px; }
+.cheer-art { flex-shrink: 0; width: 156px; }
+.cheer-art svg { display: block; width: 100%; height: auto; }
+.cheer-text { min-width: 0; }
+.cheer-kind { margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--accent-ink); }
+.cheer-line { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--text); text-wrap: pretty; }
+.cheer-ans { margin: 4px 0 0; font-size: 16px; line-height: 1.5; color: rgba(var(--fg-rgb),0.8); animation: cheer-in .3s var(--ease); }
+.cheer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.cheer-btn { padding: 6px 12px; font-family: inherit; font-size: 13px; font-weight: 700; line-height: 1.2; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 999px; cursor: pointer; }
+.cheer-btn:hover { border-color: rgba(var(--fg-rgb),0.4); }
+.cheer-btn.on { color: var(--on-accent); background: var(--yellow); border-color: var(--yellow); }
+.cheer-btn:focus-visible, .cheer-x:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.cheer-x { position: absolute; top: 10px; right: 10px; display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; color: var(--grey-dark); background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.cheer-x:hover { color: var(--text); background: rgba(var(--fg-rgb),0.07); }
+@keyframes cheer-in { from { opacity: 0; transform: translateY(4px); } }
+@media (max-width: 640px) {
+  .cheer { gap: 12px; padding: 10px 44px 12px 10px; }
+  .cheer-art { width: 96px; }
+  .cheer-line { font-size: 15px; }
+}
+@media (prefers-reduced-motion: reduce) { .cheer-ans { animation: none; } }
 </style>
 
 <body>
@@ -2353,6 +2375,7 @@ body { background: var(--frame, var(--bg)); }
 
 <!-- SECTION 1: FLOW CHART -->
 <section id="phases">
+  <div class="cheer-slot" data-cheer="flow"></div>
   <div class="section-header">
     <div>
       <div class="section-title">製作流程圖</div>
@@ -2545,6 +2568,7 @@ body { background: var(--frame, var(--bg)); }
 <!-- ── PAGE: OKR ──────────────────────────────────── -->
 <div class="page" id="page-okr">
   <section>
+    <div class="cheer-slot" data-cheer="okr"></div>
     <div class="okr-top">
       <div>
         <div class="section-title" style="margin-bottom:0">OKR</div>
@@ -2574,6 +2598,7 @@ body { background: var(--frame, var(--bg)); }
   </div>
 
   <section>
+    <div class="cheer-slot" data-cheer="overview"></div>
     <div class="section-title">各模組完成狀況</div>
 
     <!-- Whole-project completion (average of module completion) -->
@@ -2611,6 +2636,7 @@ body { background: var(--frame, var(--bg)); }
 
   <!-- Gates grid -->
   <section style="padding-top:28px">
+    <div class="cheer-slot" data-cheer="tracker"></div>
     <div class="tracker-assist" id="tracker-assist"></div>
     <div class="reporter-title-row">
       <div class="section-title" id="reporter-section-title">1.1 任務進度填報</div>
@@ -2641,6 +2667,7 @@ body { background: var(--frame, var(--bg)); }
 <div class="page active" id="page-weekly">
 
   <section>
+    <div class="cheer-slot" data-cheer="weekly"></div>
     <div class="weekly-topbar">
       <h2 class="sec-label" id="kr-panel-title">KR 達成追蹤</h2>
       <span class="last-saved" id="weekly-last-synced">載入中...</span>
@@ -5872,6 +5899,7 @@ window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
 window.togglePalettePicker = togglePalettePicker;
 window.startTour = startTour;
+window.cheerNext = cheerNext; window.cheerReveal = cheerReveal; window.cheerHide = cheerHide;
 window.markBoardSeen     = markBoardSeen;
 window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
@@ -6104,7 +6132,7 @@ function renderSheetPage(src) {
           '<a class="weekly-settings-btn" href="' + meta.url + '" target="_blank" rel="noopener">在試算表開啟' +
             '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>' +
         '</div>' +
-      '</div>' + body +
+      '</div>' + '<div class="cheer-slot" data-cheer="' + src + '">' + cheerHTML(src) + '</div>' + body +
     '</section>' +
     '<footer><div class="footer-brand">商明國際 BizCivilization</div><div class="footer-note">BB6 ' + meta.title + '</div></footer>';
   renderSheetStatus(src);
@@ -7163,6 +7191,124 @@ document.addEventListener('keydown', function(e) {
   else if (e.key === 'ArrowRight' && !e.target.closest('input, textarea, select')) { e.preventDefault(); tourGo(1); }
   else if (e.key === 'ArrowLeft' && !e.target.closest('input, textarea, select')) { e.preventDefault(); tourGo(-1); }
 });
+
+/* ═══ 每頁的小插圖＋提振精神的小語或冷笑話（每天換一則，可以按「換一則」） ═══ */
+var CHEER_LINES = [
+  { q: '慢慢來，比較快。' },
+  { q: '今天完成一小節，也是一小節的進步。' },
+  { q: '進度條不會自己長大，但你每按一次「完成」，它就長一點。' },
+  { q: '卡住的時候，先喝杯水，再回來看一次關卡瓶頸。' },
+  { q: '先完成，再完美：上架之後還能優化。' },
+  { q: '你今天的努力，會變成學員明天的「原來如此」。' },
+  { q: '好課程是一節一節疊出來的，今天也疊一節吧。' },
+  { q: '休息不是偷懶，是為了跑得更遠。' },
+  { q: '把大事拆小，小事做完，就是好的一天。' },
+  { q: '有疑問就標記「待討論」，不用一個人扛。' },
+  { q: '今天也辛苦了，記得站起來伸個懶腰。' },
+  { q: '每一個填好的格子，都值得被看見。' },
+  { j: '為什麼會議一定要「開」？', a: '因為它一直都是關著的。' },
+  { j: '影片為什麼一定要剪？', a: '不剪的話，它會一直長下去。' },
+  { j: '字幕跟影片吵架，字幕說了什麼？', a: '「你走慢一點，我跟不上啦！」' },
+  { j: '進度條最怕什麼？', a: '卡在 99%。' },
+  { j: '哪個數字最勤勞？', a: '二，因為「一不做、二不休」。' },
+  { j: '鉛筆姓什麼？', a: '姓蕭（削）。' },
+  { j: '布和紙各怕什麼？', a: '布怕一萬，紙怕萬一。' },
+  { j: '為什麼企鵝只有肚子是白的？', a: '因為手太短，只洗得到肚子。' },
+  { j: '熊貓這輩子最大的願望是什麼？', a: '拍一張彩色照片。' },
+  { j: '什麼東西越洗越髒？', a: '水。' },
+  { j: '電腦為什麼不會感冒？', a: '因為它有 Windows……但還是會中毒。' },
+  { j: '截止日最常對大家說哪句話？', a: '「我快到了喔。」' },
+  { j: '螞蟻走到一半突然停下來，為什麼？', a: '牠在等其他螞蟻開會對焦。' }
+];
+// Original flat scenes: pastel fills, soft dark outline, one per page
+var CHEER_ART = (function() {
+  var L = 'stroke="#1E1E22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  var G = '#8FD3A0', G2 = '#CDEBD5', B = '#8EC5F5', B2 = '#CFE6FB', P = '#F2A27E', Y = '#F6D27A', W = '#FFFFFF', C = '#8A8A92';
+  var ground = '<path d="M10 118H190" stroke="' + B + '" stroke-width="2" stroke-linecap="round"/>';
+  var cloud = function(x, y) { return '<path d="M' + x + ' ' + y + 'c0-7 9-9 13-4 3-7 15-7 17 1 6-1 9 7 3 9H' + (x + 4) + 'c-4 0-6-6-4-6z" fill="' + W + '" ' + L + '/>'; };
+  var tulip = function(x) { return '<path d="M' + x + ' 118V92" stroke="' + B + '" stroke-width="2"/><path d="M' + x + ' 104c-8-2-12-8-12-14 6 2 10 6 12 14zM' + x + ' 108c8-3 12-9 12-15-6 2-10 7-12 15z" fill="' + G + '" ' + L + '/><path d="M' + (x - 7) + ' 84c0-6 3-10 7-10s7 4 7 10c0 5-3 8-7 8s-7-3-7-8z" fill="' + P + '" ' + L + '/>'; };
+  var cat = function(x, y) { return '<path d="M' + (x + 10) + ' ' + (y + 22) + 'c10 0 16-6 14-14" fill="none" stroke="' + C + '" stroke-width="4" stroke-linecap="round"/>' +
+    '<ellipse cx="' + x + '" cy="' + (y + 12) + '" rx="11" ry="13" fill="' + C + '" ' + L + '/>' +
+    '<path d="M' + (x - 8) + ' ' + (y - 6) + 'l-1-14 9 8zM' + (x + 8) + ' ' + (y - 6) + 'l1-14-9 8z" fill="' + C + '" ' + L + '/>' +
+    '<circle cx="' + x + '" cy="' + (y - 4) + '" r="9" fill="' + C + '" ' + L + '/>' +
+    '<path d="M' + (x - 3) + ' ' + (y - 5) + 'v1M' + (x + 3) + ' ' + (y - 5) + 'v1" stroke="#1E1E22" stroke-width="2.4" stroke-linecap="round"/>'; };
+  var svg = function(inner) { return '<svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' + inner + '</svg>'; };
+  return {
+    weekly: svg(ground + cloud(26, 38) + '<circle cx="164" cy="30" r="12" fill="' + Y + '" ' + L + '/>' +
+      '<path d="M18 118c18-32 50-38 76 0z" fill="' + G2 + '" ' + L + '/><path d="M78 118c24-48 70-50 100 0z" fill="' + G + '" ' + L + '/>' +
+      '<path d="M132 74V52" ' + L + '/><path d="M132 52l15 5-15 5z" fill="' + P + '" ' + L + '/>' +
+      '<path d="M22 84c14-7 26-2 40-12" fill="none" stroke="' + B + '" stroke-width="2" stroke-dasharray="4 5" stroke-linecap="round"/>' +
+      '<path d="M66 64l58-22-30 36-4-12z" fill="' + W + '" ' + L + '/><path d="M124 42 90 66" ' + L + '/>'),
+    okr: svg(ground + '<path d="M14 118c0-20 12-30 26-30s24 12 24 30z" fill="' + G2 + '" ' + L + '/>' +
+      '<path d="M98 104l-5 14M124 104l5 14" ' + L + '/>' +
+      '<circle cx="110" cy="70" r="34" fill="' + W + '" ' + L + '/><circle cx="110" cy="70" r="23" fill="' + P + '" ' + L + '/><circle cx="110" cy="70" r="13" fill="' + W + '" ' + L + '/><circle cx="110" cy="70" r="5" fill="' + P + '" ' + L + '/>' +
+      '<path d="M162 34 112 68" ' + L + '/><path d="M162 34l10-2-4 9zM158 30l8-6 0 8z" fill="' + Y + '" ' + L + '/>' +
+      '<ellipse cx="38" cy="82" rx="10" ry="8" fill="' + Y + '" ' + L + '/><path d="M47 80l7 2-7 3" fill="' + P + '" ' + L + '/><path d="M29 80l-7-4 2 8" fill="' + Y + '" ' + L + '/><circle cx="42" cy="79" r="1.4" fill="#1E1E22"/>' +
+      tulip(170)),
+    overview: svg(ground +
+      '<path d="M30 96h28l-4 22H34z" fill="' + P + '" ' + L + '/><path d="M44 96V86" ' + L + '/><path d="M44 90c-8 0-12-5-12-10 6 0 11 4 12 10zM44 88c7-1 11-6 11-11-6 1-10 5-11 11z" fill="' + G + '" ' + L + '/>' +
+      '<path d="M86 96h28l-4 22H90z" fill="' + B + '" ' + L + '/><path d="M100 96V64" ' + L + '/><path d="M100 84c-10-1-14-8-13-14 7 1 12 6 13 14zM100 74c9-2 13-9 12-15-7 2-11 7-12 15zM100 92c8-1 12-6 12-11-6 0-11 4-12 11z" fill="' + G + '" ' + L + '/>' +
+      '<path d="M142 96h28l-4 22h-20z" fill="' + Y + '" ' + L + '/><path d="M156 96V44" ' + L + '/><path d="M156 86c-10-1-15-8-14-15 8 1 13 7 14 15zM156 70c10-2 14-9 13-16-8 2-12 8-13 16zM156 58c-8-1-12-7-11-12 6 1 10 5 11 12z" fill="' + G + '" ' + L + '/>' +
+      '<circle cx="156" cy="36" r="7" fill="' + P + '" ' + L + '/><circle cx="156" cy="36" r="2.5" fill="' + Y + '"/>' +
+      '<path d="M180 30v8M176 34h8M128 26v6M125 29h6" stroke="' + Y + '" stroke-width="2" stroke-linecap="round"/>'),
+    tracker: svg(ground + '<path d="M20 118c0-16 8-26 18-26s16 10 16 26z" fill="' + G2 + '" ' + L + '/>' +
+      '<rect x="66" y="22" width="68" height="92" rx="7" fill="' + W + '" ' + L + '/><rect x="84" y="15" width="32" height="13" rx="4" fill="' + B + '" ' + L + '/>' +
+      '<rect x="76" y="42" width="11" height="11" rx="2" fill="' + G + '" ' + L + '/><path d="M78.5 47.5l2.5 2.5 4-5" ' + L + '/><path d="M94 47.5h30" stroke="' + C + '" stroke-width="2" stroke-linecap="round"/>' +
+      '<rect x="76" y="62" width="11" height="11" rx="2" fill="' + G + '" ' + L + '/><path d="M78.5 67.5l2.5 2.5 4-5" ' + L + '/><path d="M94 67.5h24" stroke="' + C + '" stroke-width="2" stroke-linecap="round"/>' +
+      '<rect x="76" y="82" width="11" height="11" rx="2" fill="' + W + '" ' + L + '/><path d="M94 87.5h28" stroke="' + C + '" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M148 40l16 16-34 34-20 4 4-20z" fill="' + Y + '" ' + L + '/><path d="M114 94l4-20 16 16z" fill="' + P + '" ' + L + '/><path d="M144 44l16 16" ' + L + '/>' +
+      tulip(176)),
+    flow: svg('<path d="M10 108c20-6 40 6 60 0s40-6 60 0 40 6 60 0v10H10z" fill="' + B2 + '" stroke="' + B + '" stroke-width="2"/>' +
+      '<ellipse cx="34" cy="108" rx="16" ry="6" fill="' + W + '" ' + L + '/><ellipse cx="72" cy="104" rx="16" ry="6" fill="' + W + '" ' + L + '/><ellipse cx="110" cy="108" rx="16" ry="6" fill="' + W + '" ' + L + '/><ellipse cx="148" cy="104" rx="16" ry="6" fill="' + W + '" ' + L + '/>' +
+      '<text x="34" y="111" text-anchor="middle" font-size="9" font-weight="700" fill="#1E1E22">1</text><text x="72" y="107" text-anchor="middle" font-size="9" font-weight="700" fill="#1E1E22">2</text><text x="110" y="111" text-anchor="middle" font-size="9" font-weight="700" fill="#1E1E22">3</text><text x="148" y="107" text-anchor="middle" font-size="9" font-weight="700" fill="#1E1E22">4</text>' +
+      '<ellipse cx="110" cy="92" rx="10" ry="8" fill="' + P + '" ' + L + '/><path d="M119 90l7 2-7 3" fill="' + Y + '" ' + L + '/><path d="M101 90l-7-4 2 8" fill="' + P + '" ' + L + '/><circle cx="114" cy="89" r="1.4" fill="#1E1E22"/>' +
+      '<path d="M84 66c6-10 14-10 20-4" fill="none" stroke="' + C + '" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>' +
+      '<path d="M176 100V62" stroke="' + B + '" stroke-width="2"/><ellipse cx="176" cy="48" rx="18" ry="16" fill="' + G + '" ' + L + '/>' + cloud(30, 30)),
+    video: svg(ground + '<path d="M84 106l-10 12M118 106l10 12M101 106v12" ' + L + '/>' +
+      '<rect x="62" y="62" width="76" height="44" rx="7" fill="' + B + '" ' + L + '/><path d="M138 74l22-10v40l-22-10z" fill="' + W + '" ' + L + '/>' +
+      '<circle cx="82" cy="44" r="17" fill="' + W + '" ' + L + '/><circle cx="82" cy="44" r="4" fill="' + Y + '" ' + L + '/><circle cx="82" cy="34" r="3" fill="' + B2 + '"/><circle cx="91" cy="47" r="3" fill="' + B2 + '"/><circle cx="73" cy="47" r="3" fill="' + B2 + '"/>' +
+      '<circle cx="118" cy="42" r="19" fill="' + W + '" ' + L + '/><circle cx="118" cy="42" r="4.5" fill="' + P + '" ' + L + '/><circle cx="118" cy="31" r="3.2" fill="' + B2 + '"/><circle cx="128" cy="46" r="3.2" fill="' + B2 + '"/><circle cx="108" cy="46" r="3.2" fill="' + B2 + '"/>' +
+      '<circle cx="76" cy="76" r="3.5" fill="' + P + '"/>' + tulip(30) + '<path d="M176 34v8M172 38h8" stroke="' + Y + '" stroke-width="2" stroke-linecap="round"/>'),
+    material: svg(ground + '<rect x="56" y="98" width="76" height="20" rx="3" fill="' + G + '" ' + L + '/><rect x="62" y="80" width="68" height="18" rx="3" fill="' + P + '" ' + L + '/><rect x="58" y="64" width="64" height="16" rx="3" fill="' + B + '" ' + L + '/>' +
+      '<path d="M66 108h56M70 89h50M66 72h46" stroke="#1E1E22" stroke-width="1.4" stroke-linecap="round" opacity="0.5"/>' + cat(92, 34) +
+      '<path d="M148 88h22v24a6 6 0 0 1-6 6h-10a6 6 0 0 1-6-6z" fill="' + W + '" ' + L + '/><path d="M170 94h4a6 6 0 0 1 0 12h-4" fill="none" ' + L + '/>' +
+      '<path d="M154 80c-3-4 3-6 0-10M164 80c-3-4 3-6 0-10" fill="none" stroke="' + B + '" stroke-width="2" stroke-linecap="round"/>' +
+      '<path d="M18 118c0-14 8-22 16-22s14 8 14 22z" fill="' + G2 + '" ' + L + '/>')
+  };
+})();
+var cheerState = {};  // page → { shift, open }
+function cheerToday() { var d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); }
+function cheerPick(page) {
+  var key = cheerToday() + page, h = 0;
+  for (var i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+  var st = cheerState[page] || (cheerState[page] = { shift: 0, open: false });
+  return CHEER_LINES[(h + st.shift) % CHEER_LINES.length];
+}
+function cheerHTML(page) {
+  if (!CHEER_ART[page] || storeGet('bb6-cheer-off-' + page) === cheerToday()) return '';
+  var line = cheerPick(page), st = cheerState[page];
+  return '<div class="cheer">' +
+    '<div class="cheer-art">' + CHEER_ART[page] + '</div>' +
+    '<div class="cheer-text" aria-live="polite">' +
+      (line.j
+        ? '<div class="cheer-kind">今日冷笑話</div><p class="cheer-line">' + escHtml(line.j) + '</p>' +
+          (st.open ? '<p class="cheer-ans">' + escHtml(line.a) + '</p>' : '')
+        : '<div class="cheer-kind">今日小語</div><p class="cheer-line">' + escHtml(line.q) + '</p>') +
+      '<div class="cheer-actions">' +
+        (line.j && !st.open ? '<button type="button" class="cheer-btn on" onclick="cheerReveal(\'' + page + '\')">看答案</button>' : '') +
+        '<button type="button" class="cheer-btn" onclick="cheerNext(\'' + page + '\')">換一則</button>' +
+      '</div>' +
+    '</div>' +
+    '<button type="button" class="cheer-x" onclick="cheerHide(\'' + page + '\')" aria-label="今天先收起" title="今天先收起"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
+  '</div>';
+}
+function renderCheer(page) {
+  document.querySelectorAll('[data-cheer="' + page + '"]').forEach(function(el){ el.innerHTML = cheerHTML(page); });
+}
+function cheerNext(page) { var st = cheerState[page]; st.shift++; st.open = false; renderCheer(page); }
+function cheerReveal(page) { cheerState[page].open = true; renderCheer(page); }
+function cheerHide(page) { storeSet('bb6-cheer-off-' + page, cheerToday()); renderCheer(page); }
+['weekly', 'okr', 'overview', 'tracker', 'flow'].forEach(renderCheer);
 
 /* ── INIT ── */
 loadHolidayCalendar();
