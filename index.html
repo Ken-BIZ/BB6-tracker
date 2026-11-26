@@ -1378,7 +1378,6 @@ html[data-theme="light"] #panel .chart-card { box-shadow: 0 1px 2px rgba(24,24,2
   .panel { margin: 0 8px 8px; border-radius: 20px; }
   #panel .page section { padding-left: 16px; padding-right: 16px; }
   .panel-top { padding: 16px 16px 0; }
-  .greet-title { font-size: 26px; }
   #panel .chart-card { padding: 20px; border-radius: 16px; }
 }
 @media (max-width: 640px) {
@@ -1467,7 +1466,6 @@ html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--
 #page-weekly .weekly-topbar .sec-label { margin: 0; }
 .board-head { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 32px; align-items: center; padding: 30px 36px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.06); border-radius: 24px; }
 .greet-hello { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-bottom: 10px; font-size: 15px; }
-.greet-title { font-size: 15px; font-weight: 700; color: var(--accent-ink); }
 .greet-line { margin: 0; font-size: 15px; color: rgba(var(--fg-rgb),0.72); }
 .kr-big { text-align: right; }
 .kr-big-label { margin-top: 8px; font-size: 14px; color: var(--grey-dark); }
@@ -1560,7 +1558,6 @@ html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--
 #page-weekly .board-card { padding-top: 22px; }
 #page-weekly .board-card .chart-card-sub { margin-bottom: 12px; }
 .greet-hello { margin: 10px 0 0; }
-.greet-title { color: var(--text); }
 .greet-line { color: rgba(var(--fg-rgb),0.72); }
 #page-weekly .kr-verdict-warn { color: rgba(var(--fg-rgb),0.62); }
 #page-weekly .kr-verdict-warn b { color: var(--text); }
@@ -2257,23 +2254,20 @@ body { background: var(--frame, var(--bg)); }
 .cheer-art { flex-shrink: 0; width: 156px; }
 .cheer-art svg { display: block; width: 100%; height: auto; }
 .cheer-text { min-width: 0; }
-.cheer-kind { margin-bottom: 4px; font-size: 12px; font-weight: 700; color: var(--accent-ink); }
-.cheer-line { margin: 0; font-size: 17px; font-weight: 700; line-height: 1.5; color: var(--text); text-wrap: pretty; }
-.cheer-ans { margin: 4px 0 0; font-size: 16px; line-height: 1.5; color: rgba(var(--fg-rgb),0.8); animation: cheer-in .3s var(--ease); }
+.cheer-line { margin: 0; font-size: 18px; font-weight: 700; line-height: 1.5; color: var(--text); text-wrap: pretty; }
+.cheer-quote { margin: 4px 0 0; font-size: 16px; line-height: 1.6; color: rgba(var(--fg-rgb),0.78); text-wrap: pretty; }
 .cheer-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .cheer-btn { padding: 6px 12px; font-family: inherit; font-size: 13px; font-weight: 700; line-height: 1.2; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 999px; cursor: pointer; }
 .cheer-btn:hover { border-color: rgba(var(--fg-rgb),0.4); }
-.cheer-btn.on { color: var(--on-accent); background: var(--yellow); border-color: var(--yellow); }
 .cheer-btn:focus-visible, .cheer-x:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
 .cheer-x { position: absolute; top: 10px; right: 10px; display: inline-grid; place-items: center; width: 30px; height: 30px; padding: 0; color: var(--grey-dark); background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
 .cheer-x:hover { color: var(--text); background: rgba(var(--fg-rgb),0.07); }
-@keyframes cheer-in { from { opacity: 0; transform: translateY(4px); } }
 @media (max-width: 640px) {
   .cheer { gap: 12px; padding: 10px 44px 12px 10px; }
   .cheer-art { width: 96px; }
-  .cheer-line { font-size: 15px; }
+  .cheer-line { font-size: 16px; }
+  .cheer-quote { font-size: 14.5px; }
 }
-@media (prefers-reduced-motion: reduce) { .cheer-ans { animation: none; } }
 </style>
 
 <body>
@@ -3178,6 +3172,7 @@ function enterViewOnly() {
   renderGates();
   renderMembers();
   renderWeeklyGreeting();
+  renderCheers();
   if (okr.loaded) renderOKR();
 }
 document.addEventListener('keydown', function(e) {
@@ -3199,6 +3194,7 @@ function selectMember(name, color) {
   renderGates();
   renderMembers();
   renderWeeklyGreeting();
+  renderCheers();
   if (okr.loaded) renderOKR();
 }
 
@@ -5150,25 +5146,12 @@ function renderWeeklyGreeting() {
   renderOtherKRs();
   var el = document.getElementById('weekly-greeting');
   if (!el) return;
-  var hr = new Date().getHours();
-  var hello = hr < 11 ? '早安' : hr < 18 ? '午安' : '晚安';
-  if (!currentMember) {   // viewers (e.g. the projector) get the board, not a greeting
-    el.innerHTML = '';
-    return;
-  }
-  if (!boardDataReady()) {   // counting before the scores arrive would say 0 pending
-    el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>';
-    return;
-  }
+  // The hello itself is in the header card; here only what is waiting for this person
+  if (!currentMember || !boardDataReady() || krTopOwner === currentMember) { el.innerHTML = ''; return; }
   var p = memberPending(currentMember);
-  if (krTopOwner === currentMember) {   // the 目前卡最多 line above already speaks to this person
-    el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>';
-    return;
-  }
-  el.innerHTML = '<div class="greet-title">' + hello + '，' + escHtml(currentMember) + '</div>' +
-    '<div class="greet-line">' + (p.total
-      ? '你目前有 <b>' + p.total + '</b> 個小節待處理，最多的是「' + escHtml(p.top) + '」（' + p.topCount + ' 個）。'
-      : '你目前沒有等著處理的小節。') + '</div>';
+  el.innerHTML = '<div class="greet-line">' + escHtml(currentMember) + '，' + (p.total
+    ? '你目前有 <b>' + p.total + '</b> 個小節待處理，最多的是「' + escHtml(p.top) + '」（' + p.topCount + ' 個）。'
+    : '你目前沒有等著處理的小節。') + '</div>';
 }
 
 var krTopOwner = null;   // who carries the most pending sections, set by renderBottleneck
@@ -5899,7 +5882,7 @@ window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
 window.togglePalettePicker = togglePalettePicker;
 window.startTour = startTour;
-window.cheerNext = cheerNext; window.cheerReveal = cheerReveal; window.cheerHide = cheerHide;
+window.cheerNext = cheerNext; window.cheerHide = cheerHide;
 window.markBoardSeen     = markBoardSeen;
 window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
@@ -7192,34 +7175,45 @@ document.addEventListener('keydown', function(e) {
   else if (e.key === 'ArrowLeft' && !e.target.closest('input, textarea, select')) { e.preventDefault(); tourGo(-1); }
 });
 
-/* ═══ 每頁的小插圖＋提振精神的小語或冷笑話（每天換一則，可以按「換一則」） ═══ */
+/* ═══ 每頁的小插圖＋打招呼＋一句精神小語（每天換一句，可以按「換一句」） ═══ */
 var CHEER_LINES = [
-  { q: '慢慢來，比較快。' },
-  { q: '今天完成一小節，也是一小節的進步。' },
-  { q: '進度條不會自己長大，但你每按一次「完成」，它就長一點。' },
-  { q: '卡住的時候，先喝杯水，再回來看一次關卡瓶頸。' },
-  { q: '先完成，再完美：上架之後還能優化。' },
-  { q: '你今天的努力，會變成學員明天的「原來如此」。' },
-  { q: '好課程是一節一節疊出來的，今天也疊一節吧。' },
-  { q: '休息不是偷懶，是為了跑得更遠。' },
-  { q: '把大事拆小，小事做完，就是好的一天。' },
-  { q: '有疑問就標記「待討論」，不用一個人扛。' },
-  { q: '今天也辛苦了，記得站起來伸個懶腰。' },
-  { q: '每一個填好的格子，都值得被看見。' },
-  { j: '為什麼會議一定要「開」？', a: '因為它一直都是關著的。' },
-  { j: '影片為什麼一定要剪？', a: '不剪的話，它會一直長下去。' },
-  { j: '字幕跟影片吵架，字幕說了什麼？', a: '「你走慢一點，我跟不上啦！」' },
-  { j: '進度條最怕什麼？', a: '卡在 99%。' },
-  { j: '哪個數字最勤勞？', a: '二，因為「一不做、二不休」。' },
-  { j: '鉛筆姓什麼？', a: '姓蕭（削）。' },
-  { j: '布和紙各怕什麼？', a: '布怕一萬，紙怕萬一。' },
-  { j: '為什麼企鵝只有肚子是白的？', a: '因為手太短，只洗得到肚子。' },
-  { j: '熊貓這輩子最大的願望是什麼？', a: '拍一張彩色照片。' },
-  { j: '什麼東西越洗越髒？', a: '水。' },
-  { j: '電腦為什麼不會感冒？', a: '因為它有 Windows……但還是會中毒。' },
-  { j: '截止日最常對大家說哪句話？', a: '「我快到了喔。」' },
-  { j: '螞蟻走到一半突然停下來，為什麼？', a: '牠在等其他螞蟻開會對焦。' }
+  '慢慢來，比較快。',
+  '今天完成一小節，也是一小節的進步。',
+  '進度條不會自己長大，但你每按一次「完成」，它就長一點。',
+  '卡住的時候，先喝杯水，再回來看一次。',
+  '先完成，再完美：上架之後還能優化。',
+  '你今天的努力，會變成學員明天的「原來如此」。',
+  '好課程是一節一節疊出來的。',
+  '休息不是偷懶，是為了走得更遠。',
+  '把大事拆小，小事做完，就是好的一天。',
+  '有疑問就標記「待討論」，不用一個人扛。',
+  '記得站起來伸個懶腰，眼睛也休息一下。',
+  '每一個填好的格子，都值得被看見。',
+  '做得慢沒關係，只要沒有停下來。',
+  '今天的你，比昨天多會了一點點。',
+  '專注眼前這一步，下一步自然會清楚。',
+  '團隊的力量，是每個人都把自己那一格顧好。',
+  '遇到難題，代表你正在做有價值的事。',
+  '別忘了為自己完成的事情鼓掌。',
+  '一次只做一件事，反而做得最快。',
+  '累了就深呼吸三次，再繼續。',
+  '小小的進度，累積起來就是大大的成果。',
+  '願意問問題的人，學得最快。',
+  '你的細心，學員都感受得到。',
+  '今天也謝謝你的認真。',
+  '不必一次做到最好，只要比上次好一點。',
+  '喝口水吧，你已經很努力了。',
+  '每一個完成，都是下一個開始的底氣。',
+  '偶爾停下來，看看已經走了多遠。'
 ];
+// Hello by time of day, with the name picked on this browser, and a word for the start and end of the week
+function cheerGreeting() {
+  var d = new Date(), h = d.getHours(), day = d.getDay();
+  var hello = h < 5 ? '夜深了' : h < 11 ? '早安' : h < 14 ? '午安' : h < 18 ? '下午好' : '晚安';
+  var who = currentMember ? hello + '，' + currentMember + '！' : '大家' + hello + '！';
+  var week = day === 1 ? '新的一週，慢慢暖機就好。' : day === 5 ? '週五了，再撐一下就週末。' : day === 0 || day === 6 ? '週末還在忙，辛苦了。' : '';
+  return who + week;
+}
 // Original flat scenes: pastel fills, soft dark outline, one per page
 var CHEER_ART = (function() {
   var L = 'stroke="#1E1E22" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
@@ -7281,32 +7275,27 @@ function cheerToday() { var d = new Date(); return d.getFullYear() + '-' + (d.ge
 function cheerPick(page) {
   var key = cheerToday() + page, h = 0;
   for (var i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
-  var st = cheerState[page] || (cheerState[page] = { shift: 0, open: false });
+  var st = cheerState[page] || (cheerState[page] = { shift: 0, hidden: false });
   return CHEER_LINES[(h + st.shift) % CHEER_LINES.length];
 }
 function cheerHTML(page) {
   if (!CHEER_ART[page] || (cheerState[page] && cheerState[page].hidden)) return '';
-  var line = cheerPick(page), st = cheerState[page];
+  var line = cheerPick(page);
   return '<div class="cheer">' +
     '<div class="cheer-art">' + CHEER_ART[page] + '</div>' +
     '<div class="cheer-text" aria-live="polite">' +
-      (line.j
-        ? '<div class="cheer-kind">今日冷笑話</div><p class="cheer-line">' + escHtml(line.j) + '</p>' +
-          (st.open ? '<p class="cheer-ans">' + escHtml(line.a) + '</p>' : '')
-        : '<div class="cheer-kind">今日小語</div><p class="cheer-line">' + escHtml(line.q) + '</p>') +
-      '<div class="cheer-actions">' +
-        (line.j && !st.open ? '<button type="button" class="cheer-btn on" onclick="cheerReveal(\'' + page + '\')">看答案</button>' : '') +
-        '<button type="button" class="cheer-btn" onclick="cheerNext(\'' + page + '\')">換一則</button>' +
-      '</div>' +
+      '<p class="cheer-line">' + escHtml(cheerGreeting()) + '</p>' +
+      '<p class="cheer-quote">' + escHtml(line) + '</p>' +
+      '<div class="cheer-actions"><button type="button" class="cheer-btn" onclick="cheerNext(\'' + page + '\')">換一句</button></div>' +
     '</div>' +
     '<button type="button" class="cheer-x" onclick="cheerHide(\'' + page + '\')" aria-label="先收起（重新整理後再出現）" title="先收起（重新整理後再出現）"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
   '</div>';
 }
+function renderCheers() { Object.keys(CHEER_ART).forEach(renderCheer); }
 function renderCheer(page) {
   document.querySelectorAll('[data-cheer="' + page + '"]').forEach(function(el){ el.innerHTML = cheerHTML(page); });
 }
-function cheerNext(page) { var st = cheerState[page]; st.shift++; st.open = false; renderCheer(page); }
-function cheerReveal(page) { cheerState[page].open = true; renderCheer(page); }
+function cheerNext(page) { cheerState[page].shift++; renderCheer(page); }
 // Hidden until the page is reloaded
 function cheerHide(page) { cheerState[page].hidden = true; renderCheer(page); }
 ['weekly', 'okr', 'overview', 'tracker', 'flow'].forEach(renderCheer);
