@@ -7,7 +7,7 @@
 <link rel="icon" type="image/png" href="favicon.png">
 <script>(function () {
   // 配色: each palette sits on the dark or light base; older saves only stored light / dark
-  var light = { light: 1, milktea: 1, lavender: 1, matcha: 1, mist: 1, sakura: 1 }, dark = { dark: 1, dusk: 1, cocoa: 1 };
+  var light = { light: 1, milktea: 1, lavender: 1, matcha: 1, mist: 1, sakura: 1 }, dark = { dark: 1, dusk: 1, cocoa: 1, ocean: 1, forest: 1, wine: 1 };
   var p = 'dark';
   try { p = localStorage.getItem('bb6-palette') || (localStorage.getItem('bb6-theme') === 'light' ? 'light' : 'dark'); } catch (e) {}
   if (!light[p] && !dark[p]) p = 'dark';
@@ -2152,6 +2152,24 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
   --yellow: #E0B48A; --accent-ink: #E8C29C; --on-accent: #24170E; --chart-accent: #D9A577; --chart-accent-2: #B9C48A;
   --flap-bg: #33291F; --flap-ink: #E8C29C;
 }
+:root[data-palette="ocean"] {
+  --bg: #0C1418; --panel: #111C21; --card: #17252B; --raised: #1A2A31; --raised-2: #21333B; --pass: #1D2E35;
+  --text: #E8F1F2; --grey-dark: #8FA3A8;
+  --yellow: #5CC8C0; --accent-ink: #7FDCD4; --on-accent: #06201E; --chart-accent: #5CC8C0; --chart-accent-2: #E6B85C;
+  --flap-bg: #1F3239; --flap-ink: #7FDCD4;
+}
+:root[data-palette="forest"] {
+  --bg: #0F140F; --panel: #151C15; --card: #1C251C; --raised: #202A20; --raised-2: #273327; --pass: #222C22;
+  --text: #EAF0E4; --grey-dark: #98A590;
+  --yellow: #A8C97F; --accent-ink: #BFDB98; --on-accent: #172210; --chart-accent: #A8C97F; --chart-accent-2: #E3B76B;
+  --flap-bg: #263126; --flap-ink: #BFDB98;
+}
+:root[data-palette="wine"] {
+  --bg: #170F12; --panel: #1F1418; --card: #281A1F; --raised: #2C1D23; --raised-2: #35232A; --pass: #301F25;
+  --text: #F4E8EB; --grey-dark: #AC959C;
+  --yellow: #E08A9E; --accent-ink: #F0A9B9; --on-accent: #2A0E15; --chart-accent: #E08A9E; --chart-accent-2: #D9B26C;
+  --flap-bg: #36232A; --flap-ink: #F0A9B9;
+}
 /* 配色 picker */
 .palette-pop { position: fixed; z-index: 80; width: 300px; padding: 14px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
 .palette-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 2px 10px; font-size: 15px; font-weight: 700; color: var(--text); }
@@ -2167,6 +2185,36 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
 .palette-sw i { position: absolute; left: 8px; right: 8px; bottom: 0; height: 22px; border-radius: 6px 6px 0 0; box-shadow: 0 0 0 1px rgba(128,128,128,0.18); }
 .palette-sw b { position: absolute; top: 6px; right: 7px; width: 12px; height: 12px; border-radius: 50%; }
 @media (prefers-reduced-motion: reduce) { .palette-opt { transition: none; } }
+/* 使用說明導覽 */
+.tour-fab { position: fixed; right: 24px; bottom: 24px; z-index: 70; display: inline-flex; align-items: center; gap: 6px; height: 42px; padding: 0 16px 0 12px; font-family: inherit; font-size: 14px; font-weight: 700; color: var(--on-accent); background: var(--yellow); border: 0; border-radius: 999px; box-shadow: 0 6px 18px rgba(0,0,0,0.25); cursor: pointer; transition: transform .18s var(--ease); }
+.tour-fab:hover { transform: translateY(-2px); }
+.tour-fab:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.tour-fab[hidden], body.tour-on .tour-fab { display: none; }
+.toast { bottom: 80px; }
+.tour-q { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 8px; padding: 0; vertical-align: middle; color: var(--grey-dark); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.22); border-radius: 50%; cursor: pointer; transition: color .15s, border-color .15s, background-color .15s; }
+.tour-q:hover { color: var(--on-accent); background: var(--yellow); border-color: var(--yellow); }
+.tour-q:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.sec-label .tour-q, .section-title .tour-q { position: relative; top: -2px; }
+.tour-ring { position: fixed; z-index: 90; border: 2.5px solid var(--yellow); border-radius: 18px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5); pointer-events: none; transition: left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease); }
+.tour-pop { position: fixed; z-index: 91; width: min(400px, calc(100vw - 24px)); padding: 16px 18px 16px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 16px; box-shadow: 0 18px 44px rgba(0,0,0,0.4); }
+.tour-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
+.tour-count { font-size: 12px; font-weight: 700; color: var(--grey-dark); font-variant-numeric: tabular-nums; }
+.tour-x { display: inline-grid; place-items: center; width: 30px; height: 30px; margin: -6px -8px 0 0; padding: 0; color: var(--grey-dark); background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.tour-x:hover { color: var(--text); background: rgba(var(--fg-rgb),0.07); }
+.tour-x:focus-visible { outline: 2px solid var(--accent-ink); }
+.tour-title { margin: 0 0 6px; font-size: 17px; font-weight: 700; color: var(--text); }
+.tour-body { margin: 0; font-size: 14.5px; line-height: 1.7; color: rgba(var(--fg-rgb),0.86); }
+.tour-dots { display: flex; gap: 5px; margin: 14px 0 0; }
+.tour-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(var(--fg-rgb),0.2); }
+.tour-dots i.on { width: 18px; border-radius: 3px; background: var(--accent-ink); }
+.tour-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: -10px; }
+.tour-actions .sc-btn { padding: 8px 16px; font-size: 14px; }
+.tour-actions .sc-btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+@media (max-width: 640px) {
+  .tour-fab { right: 16px; bottom: 16px; height: 40px; }
+  .tour-pop { width: calc(100vw - 24px); border-radius: 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .tour-ring, .tour-fab, .tour-q { transition: none; } }
 </style>
 
 <body>
@@ -2673,6 +2721,7 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
 </div>
 
 <div class="toast" id="toast"></div>
+<button type="button" class="tour-fab" id="tour-fab" onclick="startTour()" aria-label="使用說明" title="使用說明" hidden><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><path d="M12 18h.01"/></svg><span>說明</span></button>
 
 <div class="trend-drilldown-overlay" id="trend-drilldown-overlay" style="display:none" onclick="closeTrendDrilldown()"></div>
 
@@ -3146,6 +3195,8 @@ function switchPage(page) {
   document.querySelectorAll('.sidebar .sb-item[id^="tab-"]').forEach(function(t){ t.removeAttribute('aria-current'); });
   document.getElementById('tab-' + page).setAttribute('aria-current', 'page');
   closeSidebarMenu();
+  endTour(true);
+  tourMarkSoon();
   if (page === 'tracker') openTrackerOnMyWork();
   if (page === 'video' || page === 'material') sheetOpen(page); else sheetClose();
   window.scrollTo({ top:0, behavior:'smooth' });
@@ -4338,7 +4389,10 @@ var PALETTES = [
   { id: 'mist',     name: '霧藍',   base: 'light', sw: ['#E5EBF1', '#FFFFFF', '#8FB3D9'] },
   { id: 'sakura',   name: '櫻花',   base: 'light', sw: ['#F4E8E8', '#FFFFFF', '#E3A3AE'] },
   { id: 'dusk',     name: '夜紫',   base: 'dark',  sw: ['#15131C', '#23202E', '#B8A6F0'] },
-  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#17120F', '#27201B', '#E0B48A'] }
+  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#17120F', '#27201B', '#E0B48A'] },
+  { id: 'ocean',    name: '深海',   base: 'dark',  sw: ['#0C1418', '#17252B', '#5CC8C0'] },
+  { id: 'forest',   name: '森林',   base: 'dark',  sw: ['#0F140F', '#1C251C', '#A8C97F'] },
+  { id: 'wine',     name: '酒紅',   base: 'dark',  sw: ['#170F12', '#281A1F', '#E08A9E'] }
 ];
 function currentPalette() {
   var id = document.documentElement.getAttribute('data-palette');
@@ -5780,6 +5834,7 @@ window.toggleBaseline    = toggleBaseline;
 window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
 window.togglePalettePicker = togglePalettePicker;
+window.startTour = startTour;
 window.markBoardSeen     = markBoardSeen;
 window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
@@ -6832,6 +6887,244 @@ function sheetSave() {
 }
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden && sheetActive && !sheetEditing) sheetLoad(sheetActive, true);
+});
+
+/* ═══ 使用說明：每頁的「？」導覽，一次框出一個區塊，按「下一步」往下看 ═══
+   sel  = the block to outline (inside #page-<id>); steps whose block is missing or hidden are skipped
+   head = heading inside the block that gets its own small「？」, which opens the guide at that step */
+var SHEET_TOUR = [
+  { sel: '.sheet-top', title: '和試算表同步',
+    body: '這一頁和 Google 試算表雙向同步，每分鐘自動更新。在這裡改的內容會直接寫回試算表；按「在試算表開啟」可以回到原本的表。' },
+  { sel: '.focus-changes', head: '.focus-head h4', title: '有變化',
+    body: '一張卡是一列，合併這段時間對那一列的所有修改：哪一欄、改成什麼、原本是什麼。用「今天／近 3 天／近 7 天」切換範圍；點卡片會跳到表格裡那一格。' },
+  { sel: '.focus-discuss', head: '.focus-head h4', title: '待討論',
+    body: '開會要討論的項目。點表格任一格，可以「標記待討論」並寫下原因；討論完按「已處理」。備註欄出現「待確認」「？」等字眼的格子會自動列進來，不需要的按「略過」。' },
+  { sel: '.focus-missing', head: '.focus-head h4', title: '還缺資料',
+    body: '大部分列都有填的欄位，空著就算缺（備註類欄位不算）。依章節列出缺幾格、缺哪幾欄；點一下會切到表格，只留有缺的列，空格用橘框標出。' },
+  { sel: '.sheet-controls', title: '篩選表格',
+    body: '切換工作表、選章節、搜尋任何文字。「欄位」可以隱藏或顯示欄位；「只看缺資料」只留下有空格的列。' },
+  { sel: '.sheet-table-wrap', title: '查看與編輯',
+    body: '點一格會先跳出完整內容和連結；按「編輯這一格」，或雙擊、按 F2 直接修改，⌘／Ctrl＋Enter 儲存。檔案晶片貼上雲端硬碟網址就能更換檔案；公式格要回試算表改。淡色底是 7 天內改過的格子，左側橘線是待討論。' }
+];
+var TOURS = {
+  weekly: [
+    { sel: '.weekly-topbar', head: '.sec-label', title: '這頁在看什麼',
+      body: '專案概況回答一件事：照目前的速度，KR 能不能如期達標。右側「資料截至」是最後同步時間；「完工預測設定」可以調整各模組的起算日和每小節任務時數，預測會跟著重算（Ken、Daniel 可以修改）。' },
+    { sel: '.board-head', title: '結論與目前完成度',
+      body: '大標是照近 4 週速度推估的結論。下面三格是速度預測、保守估計（扣掉特別高的週）和只計已排程模組，三個都達標才算穩。右邊的翻牌數字是目前完成度；再往下會點出卡最多的關卡和逾期的模組，旁邊的按鈕可以直接跳過去。' },
+    { sel: '#kr-tiles', title: '目標與速度',
+      body: '比較「需要的週速度」和「近 4 週實際速度」：實際速度比需要的高，就能如期完成；比較低，就要討論加人力或調整範圍。' },
+    { sel: '.board-card', head: '.chart-card-title', title: '出發看板',
+      body: '每個模組一列，依預計完工日排序。Gate 或狀態有變動的模組會亮起，點一下就算看過；對焦前按「全部標為已看過」，下次就只會亮新的變動。' },
+    { sel: '#bottleneck-card', head: '.chart-card-title', title: '關卡瓶頸',
+      body: '列出待處理小節最多的 3 項任務。待處理＝前置已完成、可以開始的，加上進行中的。數字最大的就是目前卡住整體進度的地方，對焦時優先處理。' },
+    { sel: '.chart-card:has(#kr-burnup-chart)', head: '.chart-card-title', title: 'KR 進度與預測',
+      body: '實際進度、依時程應達的進度，以及照近 4 週速度的預測畫在同一張圖。實際線在應達線下方代表落後；預測線在截止日前碰到目標，就能如期達標。' },
+    { sel: '.charts-stack', head: '.chart-card-title', title: '模組完成度趨勢',
+      body: '右上切換「進度趨勢」（整體或單一模組）和「各模組總覽」，下拉選單選模組。點任一長條，可以看那週是哪些小節完成。最下面的「單日完成度增量」平常收合，要看逐日細節再展開。' }
+  ],
+  okr: [
+    { sel: '.okr-top', head: '.section-title', title: '選季度',
+      body: '右上的下拉選單切換季度。Daniel 可以新增或編輯目標與 KR。' },
+    { sel: '.okr-obj-head', title: '目標與 OKR 分數',
+      body: '每個目標（O）都有期間和剩餘天數。右邊的 OKR 分數是底下各 KR 達成率的平均，1.00 代表全部達成。下方時間條是本季已經過了多少，可以和 KR 的進度對照。' },
+    { sel: '.okr-kr', title: '每一個 KR',
+      body: '翻牌數字是目前值。進度條上的兩個標記，一個是目標，一個是「依時程今天應達」；進度沒有超過今天應達，狀態就會顯示落後。下方是里程碑與截止日，Ken、Daniel 可以按「時程」調整。' },
+    { sel: '.okr-update', title: '填報進度',
+      body: '手動填報的 KR，被指定的人會在這裡看到輸入框：填目前的百分比和一句近況，按「更新進度」。自動計算的 KR 會從進度填報的資料算出來，不用手填。' },
+    { sel: '.okr-rule', title: '怎麼計算',
+      body: '達成率、OKR 分數和「依時程應達」的計算方式都寫在這裡。' }
+  ],
+  overview: [
+    { sel: '#overview-filter', title: '切換模組',
+      body: '看全部模組，或點某個模組只看它。' },
+    { sel: '#ov-project', title: '整體完成度',
+      body: '整個專案的完成度，是各模組完成度的平均。' },
+    { sel: '#ov-module-cards', title: '模組卡片',
+      body: '每張卡是一個模組的完成狀況。點卡片展開，可以看到各 Gate 和每個小節的進度。這頁只能看，要更新進度請到「進度填報」。' }
+  ],
+  tracker: [
+    { sel: '.reporter-module-bar', title: '選模組與小節',
+      body: '上排選模組，「小節」下拉選單選小節。右邊的綠點代表即時同步中，別人填報時這裡會馬上更新；「匯出 CSV」可以下載全部進度。' },
+    { sel: '#tracker-assist', title: '我的待處理',
+      body: '選了身分之後，這裡會列出你手上可以開始或進行中的任務，按一下就跳到那個小節。還沒選身分時只能檢視，按「選擇身分」登入。' },
+    { sel: '#gates-grid', title: '填報進度',
+      body: '每個 Gate 一欄，列出這個小節的任務和負責人。按「未開始／進行中／完成」回報。只有負責人能填自己的任務，別人的會顯示由誰填報；前置任務還沒完成時，會提示要等哪一項。' },
+    { sel: '#members', head: '.section-title', title: '組員狀態',
+      body: '每個人在這個小節的任務完成情況，一眼看出誰還有任務沒做完。' }
+  ],
+  flow: [
+    { sel: '#phases', head: '.section-title', title: '製作流程圖',
+      body: '課程從取得原檔到上架 QC 分成 4 個 Gate，每項任務用顏色標出負責人（看右上的圖例）。前一個 Gate 完成，後面的任務才能開始。' },
+    { sel: '#team', head: '.section-title', title: '負責人與交接',
+      body: '每個人負責哪些任務，以及做完要交給誰。' },
+    { sel: '#outputs', head: '.section-title', title: '最終交付項目',
+      body: '每個模組最後要交出的成品清單。' }
+  ],
+  video: SHEET_TOUR,
+  material: SHEET_TOUR
+};
+var TOUR_PAGE_NAMES = { weekly: '專案概況', okr: 'OKR', overview: '整體專案進度', tracker: '進度填報', flow: '流程分工', video: '影片清單', material: '教材總表' };
+var TOUR_Q = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 2.5-3 4.5"/><path d="M12 18h.01"/></svg>';
+
+function activePageId() {
+  var p = document.querySelector('.page.active');
+  return p ? p.id.replace(/^page-/, '') : '';
+}
+function tourBlock(page, step) {
+  var root = document.getElementById('page-' + page);
+  var el = root && root.querySelector(step.sel);
+  if (!el) return null;
+  var r = el.getBoundingClientRect();
+  return r.width && r.height ? el : null;
+}
+
+// Small「？」next to each section heading; added again whenever a page re-renders
+function tourMarkHeads(page) {
+  var steps = TOURS[page];
+  if (!steps) return;
+  steps.forEach(function(step, i) {
+    if (!step.head) return;
+    var block = tourBlock(page, step);
+    var h = block && block.querySelector(step.head);
+    if (!h || h.querySelector('.tour-q')) return;
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tour-q';
+    b.setAttribute('aria-label', '「' + step.title + '」怎麼用');
+    b.title = '「' + step.title + '」怎麼用';
+    b.innerHTML = TOUR_Q;
+    b.addEventListener('click', function(e) { e.stopPropagation(); e.preventDefault(); startTour(page, step); });
+    h.appendChild(b);
+  });
+}
+var tourMarkTimer = null;
+function tourMarkSoon() {
+  clearTimeout(tourMarkTimer);
+  tourMarkTimer = setTimeout(function() {
+    var page = activePageId();
+    tourMarkHeads(page);
+    var fab = document.getElementById('tour-fab');
+    if (fab) {
+      fab.hidden = !TOURS[page];
+      fab.setAttribute('aria-label', (TOUR_PAGE_NAMES[page] || '這一頁') + '使用說明');
+      fab.title = (TOUR_PAGE_NAMES[page] || '這一頁') + '使用說明';
+    }
+  }, 250);
+}
+if (window.MutationObserver) {
+  new MutationObserver(function(list) {
+    // Ignore the guide's own buttons
+    if (list.every(function(m){ return [].every.call(m.addedNodes, function(n){ return n.classList && n.classList.contains('tour-q'); }) && !m.removedNodes.length; })) return;
+    tourMarkSoon();
+  }).observe(document.getElementById('panel'), { childList: true, subtree: true });
+}
+
+var tour = null;  // { page, steps, i, ring, pop, lastFocus }
+function startTour(page, fromStep) {
+  page = page || activePageId();
+  var steps = (TOURS[page] || []).filter(function(s){ return tourBlock(page, s); });
+  if (!steps.length) { showToast('這一頁還在載入，稍後再看說明'); return; }
+  endTour(true);
+  closeSidebarMenu();
+  var ring = document.createElement('div');
+  ring.className = 'tour-ring';
+  ring.setAttribute('aria-hidden', 'true');
+  var pop = document.createElement('div');
+  pop.className = 'tour-pop';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-modal', 'false');
+  pop.setAttribute('aria-labelledby', 'tour-title');
+  document.body.appendChild(ring);
+  document.body.appendChild(pop);
+  tour = { page: page, steps: steps, i: Math.max(0, steps.indexOf(fromStep)), ring: ring, pop: pop, lastFocus: document.activeElement };
+  document.body.classList.add('tour-on');
+  pop.addEventListener('click', function(e) {
+    var b = e.target.closest('[data-tour]');
+    if (!b) return;
+    if (b.dataset.tour === 'next') tourGo(1);
+    else if (b.dataset.tour === 'prev') tourGo(-1);
+    else endTour();
+  });
+  tourShow();
+}
+function tourGo(d) {
+  if (!tour) return;
+  var n = tour.i + d;
+  if (n >= tour.steps.length) { endTour(); return; }
+  if (n < 0) return;
+  tour.i = n;
+  tourShow();
+}
+function tourShow() {
+  var t = tour, step = t.steps[t.i];
+  var el = tourBlock(t.page, step);
+  if (!el) {  // the block went away (page re-rendered differently): skip it
+    t.steps.splice(t.i, 1);
+    if (!t.steps.length) { endTour(); return; }
+    if (t.i >= t.steps.length) t.i = t.steps.length - 1;
+    tourShow(); return;
+  }
+  t.el = el;
+  var last = t.i === t.steps.length - 1;
+  t.pop.innerHTML =
+    '<div class="tour-top"><span class="tour-count">' + (TOUR_PAGE_NAMES[t.page] || '') + '・' + (t.i + 1) + ' / ' + t.steps.length + '</span>' +
+      '<button type="button" class="tour-x" data-tour="close" aria-label="關閉說明"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>' +
+    '<h3 class="tour-title" id="tour-title">' + escHtml(step.title) + '</h3>' +
+    '<p class="tour-body">' + escHtml(step.body) + '</p>' +
+    '<div class="tour-dots" aria-hidden="true">' + t.steps.map(function(s, k){ return '<i' + (k === t.i ? ' class="on"' : '') + '></i>'; }).join('') + '</div>' +
+    '<div class="tour-actions">' +
+      (t.i > 0 ? '<button type="button" class="sc-btn ghost" data-tour="prev">上一步</button>' : '') +
+      '<button type="button" class="sc-btn" data-tour="next">' + (last ? '看完了' : '下一步') + '</button>' +
+    '</div>';
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var r = el.getBoundingClientRect();
+  el.style.scrollMarginTop = innerWidth <= 900 ? '96px' : '24px';
+  el.style.scrollMarginBottom = innerWidth <= 640 ? '280px' : '24px';
+  el.scrollIntoView({ block: r.height > innerHeight * 0.55 ? 'start' : 'center', behavior: reduce ? 'auto' : 'smooth' });
+  tourPlace();
+  // Smooth scrolling moves the block for a moment; follow it, then settle
+  clearTimeout(t.settle);
+  t.settle = setTimeout(tourPlace, reduce ? 0 : 450);
+  var next = t.pop.querySelector('[data-tour="next"]');
+  if (next) next.focus({ preventScroll: true });
+}
+function tourPlace() {
+  if (!tour || !tour.el) return;
+  var r = tour.el.getBoundingClientRect(), pad = 6;
+  var topBar = innerWidth <= 900 ? 76 : 8;
+  var top = Math.max(topBar, r.top - pad), bottom = Math.min(innerHeight - 8, r.bottom + pad);
+  var ring = tour.ring;
+  ring.style.left = (r.left - pad) + 'px';
+  ring.style.top = top + 'px';
+  ring.style.width = (r.width + pad * 2) + 'px';
+  ring.style.height = Math.max(0, bottom - top) + 'px';
+  var pop = tour.pop, w = pop.offsetWidth, h = pop.offsetHeight;
+  if (innerWidth <= 640) { pop.style.left = '12px'; pop.style.top = (innerHeight - h - 12) + 'px'; return; }
+  var left = Math.max(16, Math.min(r.left, innerWidth - w - 16));
+  var y;
+  if (r.bottom + 14 + h <= innerHeight - 16) y = r.bottom + 14;
+  else if (r.top - 14 - h >= 16) y = r.top - 14 - h;
+  else { y = innerHeight - h - 20; left = Math.max(16, Math.min(r.right - w - 20, innerWidth - w - 16)); }
+  pop.style.left = left + 'px';
+  pop.style.top = y + 'px';
+}
+function endTour(silent) {
+  if (!tour) return;
+  clearTimeout(tour.settle);
+  tour.ring.remove(); tour.pop.remove();
+  document.body.classList.remove('tour-on');
+  var back = tour.lastFocus;
+  tour = null;
+  if (!silent && back && document.contains(back)) back.focus({ preventScroll: true });
+}
+window.addEventListener('scroll', function(){ if (tour) tourPlace(); }, true);
+window.addEventListener('resize', function(){ if (tour) tourPlace(); });
+document.addEventListener('keydown', function(e) {
+  if (!tour) return;
+  if (e.key === 'Escape') { e.preventDefault(); endTour(); }
+  else if (e.key === 'ArrowRight' && !e.target.closest('input, textarea, select')) { e.preventDefault(); tourGo(1); }
+  else if (e.key === 'ArrowLeft' && !e.target.closest('input, textarea, select')) { e.preventDefault(); tourGo(-1); }
 });
 
 /* ── INIT ── */
