@@ -2009,6 +2009,22 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
   .sheet-table th.key, .sheet-table td.key { min-width: 128px; }
   .grp-stats { margin-left: 0; flex-basis: 100%; }
 }
+/* Sheet pages: cell popup and header links */
+.th-link { display: inline-grid; place-items: center; width: 22px; height: 22px; margin-left: 4px; vertical-align: middle; color: var(--accent-ink); border-radius: 6px; }
+.th-link:hover { background: rgba(var(--fg-rgb),0.08); }
+.th-link:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 1px; }
+.sheet-table .sc { cursor: pointer; }
+.sheet-table .sc.peeking { box-shadow: inset 0 0 0 2px var(--accent-ink); }
+.sheet-peek { position: fixed; z-index: 60; width: min(440px, calc(100vw - 32px)); padding: 16px 18px 14px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 14px; box-shadow: 0 16px 40px rgba(0,0,0,0.32); }
+.peek-where { display: flex; flex-wrap: wrap; gap: 4px 10px; font-size: 13px; font-weight: 700; color: var(--grey-dark); }
+.peek-where span { font-family: var(--mono); font-stretch: 75%; font-weight: 600; }
+.peek-val { max-height: 260px; overflow: auto; margin: 8px 0 14px; font-size: 15px; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
+.peek-val.empty { color: var(--grey-dark); }
+.peek-note { margin: -6px 0 12px; font-size: 13px; color: var(--grey-dark); }
+.peek-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.peek-actions .sc-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; font-size: 14px; text-decoration: none; }
+.peek-actions .sc-btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.peek-tip { margin-top: 10px; font-size: 12px; color: var(--grey-dark); }
 </style>
 
 <body>
@@ -5599,7 +5615,7 @@ function sheetOpen(src) {
   sheetLoad(src);
   clearInterval(sheetTimer);
   sheetTimer = setInterval(function() {
-    if (sheetActive && !document.hidden && !sheetEditing) sheetLoad(sheetActive, true);
+    if (sheetActive && !document.hidden && !sheetEditing && !sheetPeekEl) sheetLoad(sheetActive, true);
   }, SHEET_POLL_MS);
 }
 function sheetClose() { sheetActive = null; clearInterval(sheetTimer); }
@@ -5920,6 +5936,7 @@ function renderSheetTable(src) {
   var el = document.getElementById('sheet-table-' + src);
   if (!el) return;
   if (sheetEditing && sheetEditing.src === src) sheetEditing = null;
+  sheetPeekClose(true);
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
   var cols = sheetVisibleCols(src, sheet);
   var span = cols.length + 1;
@@ -5987,7 +6004,14 @@ function renderSheetTable(src) {
   if (count) count.textContent = (filtering ? visible.filter(function(v, k){ return v && items[k].type === 'row'; }).length + ' / ' : '') + total + ' 列';
   if (!html.length) { el.innerHTML = '<p class="sheet-empty">沒有符合的列。</p>'; return; }
   el.innerHTML = '<table class="sheet-table"><thead><tr><th scope="col" class="sc-rn">列</th>' +
-    cols.map(function(col, i){ return '<th scope="col" class="' + (col.wide ? 'wide' : '') + (i === 0 ? ' key' : '') + '">' + escHtml(col.name) + '</th>'; }).join('') +
+    cols.map(function(col, i) {
+      // Column titles in these sheets often link to the Drive folder for that column
+      var hl = sheet.links[sheet.headerRow + ',' + col.c] || [];
+      return '<th scope="col" class="' + (col.wide ? 'wide' : '') + (i === 0 ? ' key' : '') + '">' + escHtml(col.name) +
+        hl.map(function(u) {
+          return '<a class="th-link" href="' + escHtml(u) + '" target="_blank" rel="noopener" title="開啟「' + escHtml(col.name) + '」的連結" aria-label="開啟「' + escHtml(col.name) + '」的連結"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>';
+        }).join('') + '</th>';
+    }).join('') +
     '</tr></thead><tbody>' + html.join('') + '</tbody></table>';
   markRecentCells(src);
 }
@@ -6008,7 +6032,7 @@ function sheetHeadHTML(src, sheet, it, span, isFolded, n) {
 }
 function sheetRowHTML(src, sheet, it, cols, empty) {
   return '<tr class="' + (empty ? 'is-empty' : '') + '"><th scope="row" class="sc-rn">' + it.r + '</th>' + cols.map(function(col, i) {
-    return sheetCellHTML(src, sheet, it.r, col, i === 0, null, null, i === 0 ? it.headLabel : '');
+    return sheetCellHTML(src, sheet, it.r, col, i === 0, null, null, i === 0 && it.headLabel ? '本章資料' : '');
   }).join('') + '</tr>';
 }
 function sheetCellHTML(src, sheet, r, col, isKey, tag, extra, hint) {
@@ -6059,15 +6083,97 @@ function sheetJump(src, sheetName, a1) {
 function sheetFindCell(src, r, c) { return document.querySelector('#sheet-table-' + src + ' .sc[data-r="' + r + '"][data-c="' + c + '"]'); }
 
 /* ── Edit one cell (table cells and heading parts alike) ── */
+// A click shows the cell first (full text, links, 編輯); a double-click or F2 goes straight to editing
 document.addEventListener('click', function(e) {
   if (e.target.closest && e.target.closest('a')) return;
   var el = e.target.closest && e.target.closest('.sheet-table .sc');
-  if (el && !el.classList.contains('editing')) sheetEdit(el);
+  if (el && !el.classList.contains('editing')) sheetPeek(el);
+});
+document.addEventListener('dblclick', function(e) {
+  if (e.target.closest && e.target.closest('a')) return;
+  var el = e.target.closest && e.target.closest('.sheet-table .sc');
+  if (el && !el.classList.contains('editing')) { sheetPeekClose(true); sheetEdit(el); }
 });
 document.addEventListener('keydown', function(e) {
   var el = e.target.closest && e.target.closest('.sheet-table .sc');
-  if (el && e.target === el && (e.key === 'Enter' || e.key === 'F2')) { e.preventDefault(); sheetEdit(el); }
+  if (!el || e.target !== el) return;
+  if (e.key === 'Enter') { e.preventDefault(); sheetPeek(el); }
+  else if (e.key === 'F2') { e.preventDefault(); sheetPeekClose(true); sheetEdit(el); }
 });
+
+var sheetPeekEl = null, sheetPeekCell = null;
+function sheetPeekClose(silent) {
+  if (!sheetPeekEl) return;
+  sheetPeekEl.remove();
+  sheetPeekEl = null;
+  if (sheetPeekCell) {
+    sheetPeekCell.classList.remove('peeking');
+    if (!silent && document.contains(sheetPeekCell)) sheetPeekCell.focus({ preventScroll: true });
+  }
+  sheetPeekCell = null;
+}
+function sheetPeek(el) {
+  if (sheetPeekCell === el) { sheetPeekClose(); return; }
+  sheetPeekClose(true);
+  var src = el.dataset.src, r = Number(el.dataset.r), c = Number(el.dataset.c);
+  var st = sheetState[src], sheet = st.data.sheets[st.tab];
+  var v = sheetCellValue(sheet, r, c);
+  var col = sheet.cols.find(function(x){ return x.c === c; });
+  var colName = col ? col.name : '';
+  var key = sheetVisibleCols(src, sheet)[0];
+  var item = sheet.items.find(function(x){ return x.type === 'row' && x.r === r; });
+  var keyV = key && key.c !== c ? (String(sheetCellValue(sheet, r, key.c)).split('\n')[0].trim() || (item && item.headLabel) || '') : '';
+  var where = [keyV, colName].filter(Boolean).join(' · ');
+  var urls = sheet.links[r + ',' + c] || [];
+  var lock = el.dataset.lock;
+  var pop = document.createElement('div');
+  pop.className = 'sheet-peek';
+  pop.setAttribute('role', 'dialog');
+  pop.setAttribute('aria-label', (where || '儲存格') + '，第 ' + r + ' 列');
+  pop.innerHTML =
+    '<div class="peek-where">' + escHtml(where || sheetColLetter(c) + ' 欄') + '<span>第 ' + r + ' 列</span></div>' +
+    '<div class="peek-val' + (v ? '' : ' empty') + '">' + escHtml(v || '（空白）') + '</div>' +
+    (lock ? '<div class="peek-note">' + escHtml(lock) + '</div>' : '') +
+    '<div class="peek-actions">' +
+      (lock ? '' : '<button type="button" class="sc-btn" data-act="edit">' + (currentMember ? '編輯這一格' : '選擇身分後編輯') + '</button>') +
+      urls.map(function(u, i) {
+        return '<a class="sc-btn ghost" href="' + escHtml(u) + '" target="_blank" rel="noopener">開啟連結' + (urls.length > 1 ? ' ' + (i + 1) : '') + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>';
+      }).join('') +
+      '<button type="button" class="sc-btn ghost" data-act="close">關閉</button>' +
+    '</div>' +
+    (lock ? '' : '<div class="peek-tip">雙擊格子或按 F2 可直接編輯</div>');
+  document.body.appendChild(pop);
+  sheetPeekEl = pop; sheetPeekCell = el;
+  el.classList.add('peeking');
+  sheetPeekPlace();
+  pop.addEventListener('click', function(e) {
+    var b = e.target.closest('[data-act]');
+    if (!b) return;
+    if (b.dataset.act === 'close') sheetPeekClose();
+    else if (b.dataset.act === 'edit') { sheetPeekClose(true); sheetEdit(el); }
+  });
+  pop.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { e.preventDefault(); sheetPeekClose(); }
+  });
+  (pop.querySelector('[data-act="edit"]') || pop.querySelector('a, button')).focus({ preventScroll: true });
+}
+// Pin the popup under its cell (or above it near the bottom); it follows the cell when anything scrolls
+function sheetPeekPlace() {
+  if (!sheetPeekEl || !sheetPeekCell) return;
+  var rc = sheetPeekCell.getBoundingClientRect(), pop = sheetPeekEl;
+  if (rc.bottom < 0 || rc.top > innerHeight || !document.contains(sheetPeekCell)) { sheetPeekClose(true); return; }
+  var left = Math.max(16, Math.min(rc.left, innerWidth - pop.offsetWidth - 16));
+  var top = rc.bottom + 6;
+  if (top + pop.offsetHeight > innerHeight - 16) top = Math.max(16, rc.top - pop.offsetHeight - 6);
+  pop.style.left = left + 'px'; pop.style.top = top + 'px';
+}
+document.addEventListener('mousedown', function(e) {
+  if (sheetPeekEl && !sheetPeekEl.contains(e.target) && !(sheetPeekCell && sheetPeekCell.contains(e.target))) sheetPeekClose(true);
+});
+window.addEventListener('scroll', function(e) {
+  if (sheetPeekEl && !(e.target && e.target.nodeType === 1 && sheetPeekEl.contains(e.target))) sheetPeekPlace();
+}, true);
+window.addEventListener('resize', sheetPeekPlace);
 function sheetEdit(el, draft, notice) {
   if (el.dataset.lock) { showToast(el.dataset.lock); return; }
   if (!currentMember) { showToast('先選擇你的名字，才能修改試算表'); showLogin(); return; }
@@ -6110,7 +6216,7 @@ function sheetPaint(el) {
   var col = sheet.cols.find(function(x){ return x.c === c; }) || { c: c, name: '' };
   var tmp = document.createElement('tbody');
   var item = sheet.items.find(function(x){ return x.type === 'row' && x.r === r; });
-  tmp.innerHTML = '<tr>' + sheetCellHTML(src, sheet, r, col, el.classList.contains('key'), null, null, el.classList.contains('key') && item ? item.headLabel : '') + '</tr>';
+  tmp.innerHTML = '<tr>' + sheetCellHTML(src, sheet, r, col, el.classList.contains('key'), null, null, el.classList.contains('key') && item && item.headLabel ? '本章資料' : '') + '</tr>';
   var fresh = tmp.querySelector('td');
   el.replaceWith(fresh);
   return fresh;
