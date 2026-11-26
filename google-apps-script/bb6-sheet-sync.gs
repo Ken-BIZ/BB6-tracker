@@ -6,6 +6,7 @@
  * 2. 左側齒輪「專案設定」→ 指令碼屬性 → 新增 BB6_TOKEN，值和 Vercel 的 SHEET_TOKEN 相同。
  * 3. 右上「部署」→ 新增部署作業 → 類型選「網頁應用程式」
  *    執行身分：我；誰可以存取：所有人 → 部署，依提示授權。
+ *    另外在左側「服務」按 ＋，加入「Google Sheets API」：讀取檔案晶片（智慧型方塊）的連結需要它。
  * 4. 複製網頁應用程式網址，貼到 Vercel 環境變數：
  *    影片清單 → SHEET_VIDEO_URL，教材總表 → SHEET_MATERIAL_URL。
  *
@@ -17,7 +18,7 @@
 var LOG_SHEET = 'BB6 變更紀錄';
 var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列', '欄位', '原內容', '新內容'];
 var LOG_MAX_ROWS = 5000;
-var SCRIPT_VERSION = 2;   // 2: reads cell links and keeps a cell's link when BB6 edits its text
+var SCRIPT_VERSION = 3;   // 2: cell links, kept on edit; 3: file chips (smart chips) via the Sheets API service
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
@@ -54,26 +55,79 @@ function doPost(e) {
 /* ── 讀取：每個可見工作表的顯示值，加上哪些格是公式 ── */
 function readAll_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var api = null, apiError = '';
+  try { api = apiLinks_(ss); } catch (err) { apiError = String(err && err.message || err); }
   var sheets = ss.getSheets().filter(function (sh) {
     return sh.getName() !== LOG_SHEET && !sh.isSheetHidden();
   }).map(function (sh) {
     var lastRow = sh.getLastRow(), lastCol = sh.getLastColumn();
-    if (!lastRow || !lastCol) return { id: sh.getSheetId(), name: sh.getName(), rows: [], formulas: [] };
+    if (!lastRow || !lastCol) return { id: sh.getSheetId(), name: sh.getName(), rows: [], formulas: [], links: [], chips: [] };
     var range = sh.getRange(1, 1, lastRow, lastCol);
     var formulas = [];
     range.getFormulas().forEach(function (row, r) {
       row.forEach(function (f, c) { if (f) formulas.push([r + 1, c + 1]); });
     });
-    var links = [];
-    range.getRichTextValues().forEach(function (row, r) {
-      row.forEach(function (rt, c) {
-        var urls = linkUrls_(rt);
-        if (urls.length) links.push([r + 1, c + 1, urls]);
+    var links = [], chips = [];
+    var fromApi = api && api[sh.getSheetId()];
+    if (fromApi) {
+      fromApi.forEach(function (x) {
+        links.push([x[0], x[1], x[2]]);
+        if (x[3]) chips.push([x[0], x[1]]);
+      });
+    } else {
+      range.getRichTextValues().forEach(function (row, r) {
+        row.forEach(function (rt, c) {
+          var urls = linkUrls_(rt);
+          if (urls.length) links.push([r + 1, c + 1, urls]);
+        });
+      });
+    }
+    return { id: sh.getSheetId(), name: sh.getName(), rows: range.getDisplayValues(), formulas: formulas, links: links, chips: chips };
+  });
+  return { ok: true, version: SCRIPT_VERSION, chipsSupported: !!api, chipsError: apiError, title: ss.getName(), url: ss.getUrl(),
+    timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets };
+}
+
+// File chips (smart chips), cell hyperlinks and linked text, read through the Sheets API advanced service.
+// Returns { sheetId: [[row, col, [urls], isChip]] }, or null when the service has not been added.
+function apiLinks_(ss) {
+  if (typeof Sheets === 'undefined') return null;
+  var res = Sheets.Spreadsheets.get(ss.getId(), {
+    fields: 'sheets(properties.sheetId,data(startRow,startColumn,rowData.values(hyperlink,chipRuns.chip.richLinkProperties.uri,textFormatRuns.format.link.uri)))'
+  });
+  var out = {};
+  (res.sheets || []).forEach(function (sh) {
+    var list = out[sh.properties.sheetId] = [];
+    (sh.data || []).forEach(function (grid) {
+      var r0 = grid.startRow || 0, c0 = grid.startColumn || 0;
+      (grid.rowData || []).forEach(function (row, ri) {
+        (row.values || []).forEach(function (v, ci) {
+          var urls = [], chip = false;
+          (v.chipRuns || []).forEach(function (run) {
+            var u = run.chip && run.chip.richLinkProperties && run.chip.richLinkProperties.uri;
+            if (u) { chip = true; if (urls.indexOf(u) < 0) urls.push(u); }
+          });
+          (v.textFormatRuns || []).forEach(function (run) {
+            var u = run.format && run.format.link && run.format.link.uri;
+            if (u && urls.indexOf(u) < 0) urls.push(u);
+          });
+          if (v.hyperlink && urls.indexOf(v.hyperlink) < 0) urls.push(v.hyperlink);
+          if (urls.length) list.push([r0 + ri + 1, c0 + ci + 1, urls, chip]);
+        });
       });
     });
-    return { id: sh.getSheetId(), name: sh.getName(), rows: range.getDisplayValues(), formulas: formulas, links: links };
   });
-  return { ok: true, version: SCRIPT_VERSION, title: ss.getName(), url: ss.getUrl(), timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets };
+  return out;
+}
+
+// A file chip would turn into plain text if its cell were overwritten
+function hasChip_(ss, sh, row, col) {
+  if (typeof Sheets === 'undefined') return false;
+  var a1 = "'" + sh.getName().replace(/'/g, "''") + "'!" + sh.getRange(row, col).getA1Notation();
+  var res = Sheets.Spreadsheets.get(ss.getId(), { ranges: [a1], fields: 'sheets.data.rowData.values.chipRuns' });
+  var v = res.sheets && res.sheets[0] && res.sheets[0].data && res.sheets[0].data[0] && res.sheets[0].data[0].rowData &&
+    res.sheets[0].data[0].rowData[0] && res.sheets[0].data[0].rowData[0].values && res.sheets[0].data[0].rowData[0].values[0];
+  return !!(v && v.chipRuns && v.chipRuns.length);
 }
 
 // Every distinct link in a cell's text (a cell can link different words to different files)
@@ -99,6 +153,7 @@ function write_(b) {
     if (!(row >= 1 && col >= 1)) return { ok: false, error: '儲存格位置不正確' };
     var cell = sh.getRange(row, col);
     if (cell.getFormula()) return { ok: false, error: '這格是公式，請在試算表修改' };
+    if (hasChip_(ss, sh, row, col)) return { ok: false, error: '這格是檔案連結（智慧型方塊），請在試算表修改' };
     var current = cell.getDisplayValue();
     if (typeof b.expected === 'string' && current !== b.expected) {
       return { ok: false, conflict: true, current: current };

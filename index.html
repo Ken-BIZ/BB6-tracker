@@ -2025,6 +2025,14 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
 .peek-actions .sc-btn { display: inline-flex; align-items: center; gap: 4px; padding: 8px 14px; font-size: 14px; text-decoration: none; }
 .peek-actions .sc-btn:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
 .peek-tip { margin-top: 10px; font-size: 12px; color: var(--grey-dark); }
+/* Sheet pages: file chips */
+.sc-chips { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 8px 10px 10px; }
+.sc-chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; padding: 4px 10px; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--text); text-decoration: none; background: rgba(var(--fg-rgb),0.07); border: 1px solid rgba(var(--fg-rgb),0.1); border-radius: 999px; }
+.sc-chip svg { flex-shrink: 0; color: var(--accent-ink); }
+.sc-chip span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-chip:hover { border-color: var(--accent-ink); }
+.sc-chip:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.sheet-table td.sc.locked { cursor: pointer; color: inherit; }
 </style>
 
 <body>
@@ -5653,7 +5661,7 @@ function sheetReloadChanges(src) {
 /* ── Shape: header row, visible columns, group label carried down column A ── */
 var SHEET_SUMMARY_RE = /總數|總時長|合計|總計|小計/;
 function prepareSheetData(d) {
-  return { title: d.title, url: d.url, version: d.version || 1, sheets: d.sheets.map(prepareOneSheet) };
+  return { title: d.title, url: d.url, version: d.version || 1, chipsSupported: !!d.chipsSupported, sheets: d.sheets.map(prepareOneSheet) };
 }
 /* Turn a raw sheet into something readable:
    - leading sparse columns (模組、章節…) become group headings instead of table columns
@@ -5692,6 +5700,8 @@ function prepareOneSheet(sh) {
     var urls = (x[2] || []).filter(function(u){ return /^https?:\/\//i.test(u); });
     if (urls.length) links[x[0] + ',' + x[1]] = urls;
   });
+  var chips = {};
+  (sh.chips || []).forEach(function(rc){ chips[rc[0] + ',' + rc[1]] = true; });
   var items = [], groups = [], gid = 0, lastTop = null;
   body.forEach(function(i) {
     var r = i + 1, row = grid[i];
@@ -5717,7 +5727,7 @@ function prepareOneSheet(sh) {
     items.push({ type: 'row', r: r, gid: gid, placeholder: dataCount <= 1 && !parts.length,
       headLabel: parts.length ? parts.map(function(p){ return p.v.split('\n')[0].trim(); }).join(' ') : '' });
   });
-  return { id: sh.id, name: sh.name, grid: grid, headerRow: hr + 1, hier: hier, cols: cols, items: items, groups: groups, formulas: formulas, links: links,
+  return { id: sh.id, name: sh.name, grid: grid, headerRow: hr + 1, hier: hier, cols: cols, items: items, groups: groups, formulas: formulas, links: links, chips: chips,
     rows: items.filter(function(x){ return x.type === 'row'; }) };
 }
 function sheetColLetter(n) {
@@ -5781,7 +5791,8 @@ function renderSheetStatus(src) {
   if (st.loading && !st.data) { el.textContent = '讀取試算表中…'; return; }
   var t = st.loadedAt ? String(st.loadedAt.getHours()).padStart(2, '0') + ':' + String(st.loadedAt.getMinutes()).padStart(2, '0') : '';
   el.textContent = (st.error ? st.error + '・' : '') + '與 Google 試算表同步' + (t ? '・資料截至 ' + t + '（每分鐘自動更新）' : '');
-  if (st.data && st.data.version < 2) el.textContent += '・試算表的同步腳本需要更新到新版（才會保留檔案連結）';
+  if (st.data && st.data.version < 3) el.textContent += '・試算表的同步腳本需要更新到新版（才讀得到檔案連結）';
+  else if (st.data && !st.data.chipsSupported) el.textContent += '・Apps Script 要加入「Google Sheets API」服務，才讀得到檔案晶片的連結';
 }
 
 /* ── 最近更新: what changed in the last week, which columns, and the edits themselves ── */
@@ -6040,17 +6051,34 @@ function sheetCellHTML(src, sheet, r, col, isKey, tag, extra, hint) {
   var v = sheetCellValue(sheet, r, col.c);
   var urls = sheet.links[r + ',' + col.c] || [];
   var formula = sheet.formulas[r + ',' + col.c];
-  var locked = formula ? '公式欄位，請在試算表修改' : urls.length > 1 ? '這格有多個連結，請在試算表修改' : '';
+  var chip = sheet.chips && sheet.chips[r + ',' + col.c];
+  var locked = formula ? '公式欄位，請在試算表修改' : chip ? '這格是檔案連結（智慧型方塊），請在試算表修改' : urls.length > 1 ? '這格有多個連結，請在試算表修改' : '';
   return '<' + tag + ' class="sc' + (extra ? ' ' + extra : '') + (col.wide ? ' wide' : '') + (isKey ? ' key' : '') + (locked ? ' locked' : '') + '" tabindex="0"' +
     ' data-src="' + src + '" data-r="' + r + '" data-c="' + col.c + '" data-a1="' + sheetColLetter(col.c) + r + '"' +
     (locked ? ' data-lock="' + escHtml(locked) + '" title="' + escHtml(locked) + '"' : '') + '>' +
-    (!v && hint ? '<div class="sc-v hint">' + escHtml(hint) + '</div>' : '<div class="sc-v">' + escHtml(v) + '</div>') +
-    (urls.length ? '<div class="sc-links">' + urls.map(function(u, i) {
+    (chip ? sheetChipsHTML(v, urls) :
+    (!v && hint ? '<div class="sc-v hint">' + escHtml(hint) + '</div>' : '<div class="sc-v">' + escHtml(v) + '</div>')) +
+    (urls.length && !chip ? '<div class="sc-links">' + urls.map(function(u, i) {
       return '<a class="sc-link" href="' + escHtml(u) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">' +
         '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>' +
         (urls.length > 1 ? '開啟 ' + (i + 1) : '開啟') + '</a>';
     }).join('') + '</div>' : '') +
   '</' + tag + '>';
+}
+// File chips read like they do in Sheets: each file name is the link to that file
+function sheetChipLabels(v, urls) {
+  var lines = String(v || '').split('\n').map(function(x){ return x.trim(); }).filter(Boolean);
+  return urls.map(function(u, i) {
+    return lines.length === urls.length ? lines[i] : urls.length === 1 && lines.length ? lines.join(' ') : '檔案 ' + (i + 1);
+  });
+}
+function sheetChipsHTML(v, urls) {
+  var labels = sheetChipLabels(v, urls);
+  return '<div class="sc-chips">' + urls.map(function(u, i) {
+    return '<a class="sc-chip" href="' + escHtml(u) + '" target="_blank" rel="noopener" title="開啟「' + escHtml(labels[i]) + '」">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8Z"/><path d="M14 3v5h5"/></svg>' +
+      '<span>' + escHtml(labels[i]) + '</span></a>';
+  }).join('') + '</div>';
 }
 function markRecentCells(src) {
   var st = sheetState[src];
@@ -6137,7 +6165,9 @@ function sheetPeek(el) {
     '<div class="peek-actions">' +
       (lock ? '' : '<button type="button" class="sc-btn" data-act="edit">' + (currentMember ? '編輯這一格' : '選擇身分後編輯') + '</button>') +
       urls.map(function(u, i) {
-        return '<a class="sc-btn ghost" href="' + escHtml(u) + '" target="_blank" rel="noopener">開啟連結' + (urls.length > 1 ? ' ' + (i + 1) : '') + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>';
+        var isChip = sheet.chips && sheet.chips[r + ',' + c];
+        var label = isChip ? '開啟「' + sheetChipLabels(v, urls)[i] + '」' : '開啟連結' + (urls.length > 1 ? ' ' + (i + 1) : '');
+        return '<a class="sc-btn ghost" href="' + escHtml(u) + '" target="_blank" rel="noopener">' + escHtml(label) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>';
       }).join('') +
       '<button type="button" class="sc-btn ghost" data-act="close">關閉</button>' +
     '</div>' +
