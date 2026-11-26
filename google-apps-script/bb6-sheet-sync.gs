@@ -30,9 +30,13 @@ var LOG_MAX_ROWS = 5000;
 var SCRIPT_VERSION = 4;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips
 var URL_LINE = /^https?:\/\/\S+$/i;
 
-// Run this once from the editor after changing permissions, so Google asks for them
+// Run this once from the editor after changing permissions, so Google asks for them.
+// Google's consent screen lets each permission be unticked; this asks again for any that are still missing.
 function authorizeBB6() {
-  return SpreadsheetApp.getActiveSpreadsheet().getName();
+  if (ScriptApp.requireAllScopes) ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  var status = String(ScriptApp.getAuthorizationInfo(ScriptApp.AuthMode.FULL).getAuthorizationStatus());
+  Logger.log(status === 'NOT_REQUIRED' ? '權限都已授權完成' : '還有權限沒授權：' + status);
+  return status;
 }
 
 // Run from the editor to try writing a file chip with the editor's own authorization; the result is in 執行記錄
