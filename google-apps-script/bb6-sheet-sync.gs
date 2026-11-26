@@ -35,6 +35,13 @@ function authorizeBB6() {
   return SpreadsheetApp.getActiveSpreadsheet().getName();
 }
 
+// Run from the editor to try writing a file chip with the editor's own authorization; the result is in 執行記錄
+function testChipBB6() {
+  var result = selftest_();
+  Logger.log(JSON.stringify(result));
+  return result;
+}
+
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
@@ -237,6 +244,13 @@ function writeChips_(ss, sh, row, col, urls) {
 // Try writing a chip on a throwaway sheet, using a file link that already exists in this spreadsheet
 function selftest_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var auth = '';
+  try { auth = String(ScriptApp.getAuthorizationInfo(ScriptApp.AuthMode.FULL).getAuthorizationStatus()); } catch (x) { auth = 'unknown: ' + x; }
+  var r = selftestRun_(ss);
+  r.authorization = auth;   // REQUIRED means the deployed web app still runs without the new permissions
+  return r;
+}
+function selftestRun_(ss) {
   if (typeof Sheets === 'undefined') return { ok: false, error: 'Apps Script 還沒加入 Google Sheets API 服務' };
   var url = null, api = apiLinks_(ss);
   Object.keys(api).some(function (id) { return api[id].some(function (x) { if (x[3]) { url = x[2][0]; return true; } return false; }); });
