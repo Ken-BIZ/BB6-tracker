@@ -7285,7 +7285,7 @@ function cheerPick(page) {
   return CHEER_LINES[(h + st.shift) % CHEER_LINES.length];
 }
 function cheerHTML(page) {
-  if (!CHEER_ART[page] || storeGet('bb6-cheer-off-' + page) === cheerToday()) return '';
+  if (!CHEER_ART[page] || (cheerState[page] && cheerState[page].hidden)) return '';
   var line = cheerPick(page), st = cheerState[page];
   return '<div class="cheer">' +
     '<div class="cheer-art">' + CHEER_ART[page] + '</div>' +
@@ -7299,7 +7299,7 @@ function cheerHTML(page) {
         '<button type="button" class="cheer-btn" onclick="cheerNext(\'' + page + '\')">換一則</button>' +
       '</div>' +
     '</div>' +
-    '<button type="button" class="cheer-x" onclick="cheerHide(\'' + page + '\')" aria-label="今天先收起" title="今天先收起"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
+    '<button type="button" class="cheer-x" onclick="cheerHide(\'' + page + '\')" aria-label="先收起（重新整理後再出現）" title="先收起（重新整理後再出現）"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
   '</div>';
 }
 function renderCheer(page) {
@@ -7307,7 +7307,8 @@ function renderCheer(page) {
 }
 function cheerNext(page) { var st = cheerState[page]; st.shift++; st.open = false; renderCheer(page); }
 function cheerReveal(page) { cheerState[page].open = true; renderCheer(page); }
-function cheerHide(page) { storeSet('bb6-cheer-off-' + page, cheerToday()); renderCheer(page); }
+// Hidden until the page is reloaded
+function cheerHide(page) { cheerState[page].hidden = true; renderCheer(page); }
 ['weekly', 'okr', 'overview', 'tracker', 'flow'].forEach(renderCheer);
 
 /* ── INIT ── */
