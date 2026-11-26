@@ -2164,45 +2164,60 @@ body { background: var(--frame, var(--bg)); }
   --grey-dark: #9DB8B4; --accent-ink: #F5A6B6;
 }
 :root[data-palette="dusk"] {
-  --frame: #110E18;
-  --bg: #17141F; --panel: #1C1925; --card: #24202F; --raised: #282336; --raised-2: #302A40; --pass: #2A2538;
-  --text: #EEEAF6; --grey-dark: #9C96AE;
+  --frame: #2A1B19;
+  --bg: #15132A; --panel: #1A1830; --card: #221F3C; --raised: #272347; --raised-2: #2F2A54; --pass: #2A2648;
+  --text: #ECEAF8; --fg-rgb: 236,234,248; --grey-dark: #A39FC0;
   --yellow: #F4A97A; --on-accent: #2A1408; --accent-ink: #C9BBFF; --chart-accent: #A994EE; --chart-accent-2: #F4A97A;
-  --flap-bg: #2C2840; --flap-ink: #F7B98B;
+  --flap-bg: #3A2722; --flap-ink: #F7B98B;
 }
-:root[data-palette="dusk"] .sidebar { --bg: #110E18; --panel: #110E18; --accent-ink: #F7B98B; }
+:root[data-palette="dusk"] .sidebar {
+  --bg: #2A1B19; --panel: #2A1B19; --card: #3A2622; --text: #F6E6DE; --fg-rgb: 246,230,222;
+  --grey-dark: #BFA49A; --accent-ink: #F7B98B;
+}
 :root[data-palette="cocoa"] {
-  --frame: #120E0B;
-  --bg: #17120F; --panel: #1F1915; --card: #27201B; --raised: #2B231D; --raised-2: #332A23; --pass: #2E251F;
-  --text: #F3EAE0; --grey-dark: #A8998D;
+  --frame: #0F2420;
+  --bg: #1A1410; --panel: #211A15; --card: #2A211B; --raised: #2E241D; --raised-2: #362B23; --pass: #31271F;
+  --text: #F3EAE0; --fg-rgb: 243,234,224; --grey-dark: #AE9E91;
   --yellow: #6FCFB8; --on-accent: #08241D; --accent-ink: #E8C29C; --chart-accent: #6FCFB8; --chart-accent-2: #E0A86E;
-  --flap-bg: #33291F; --flap-ink: #7FDCC4;
+  --flap-bg: #163631; --flap-ink: #7FDCC4;
 }
-:root[data-palette="cocoa"] .sidebar { --bg: #120E0B; --panel: #120E0B; --accent-ink: #7FDCC4; }
+:root[data-palette="cocoa"] .sidebar {
+  --bg: #0F2420; --panel: #0F2420; --card: #183530; --text: #E2F3EE; --fg-rgb: 226,243,238;
+  --grey-dark: #93B5AD; --accent-ink: #7FDCC4;
+}
 :root[data-palette="ocean"] {
-  --frame: #070E14;
-  --bg: #0A1219; --panel: #0F1A22; --card: #15242E; --raised: #192A35; --raised-2: #20333F; --pass: #1C2E39;
-  --text: #E8F1F4; --grey-dark: #8FA3AD;
+  --frame: #2A1612;
+  --bg: #0C1620; --panel: #101C27; --card: #162635; --raised: #1A2C3C; --raised-2: #213446; --pass: #1D3041;
+  --text: #E6F0F6; --fg-rgb: 230,240,246; --grey-dark: #93A8B8;
   --yellow: #FF8A6B; --on-accent: #2B0E05; --accent-ink: #7FDCD4; --chart-accent: #5CC8C0; --chart-accent-2: #FF8A6B;
-  --flap-bg: #1D303B; --flap-ink: #F2C879;
+  --flap-bg: #33211B; --flap-ink: #F2C879;
 }
-:root[data-palette="ocean"] .sidebar { --bg: #070E14; --panel: #070E14; --accent-ink: #F2C879; }
+:root[data-palette="ocean"] .sidebar {
+  --bg: #2A1612; --panel: #2A1612; --card: #3B211B; --text: #F7E7E0; --fg-rgb: 247,231,224;
+  --grey-dark: #C2A196; --accent-ink: #FF9C80;
+}
 :root[data-palette="forest"] {
-  --frame: #0A0F0B;
-  --bg: #0E140F; --panel: #141C15; --card: #1B251C; --raised: #1F2A20; --raised-2: #263327; --pass: #212C22;
-  --text: #EAF0E4; --grey-dark: #98A590;
+  --frame: #2A1E0D;
+  --bg: #0F1712; --panel: #131D17; --card: #1A271F; --raised: #1E2C23; --raised-2: #25352B; --pass: #213027;
+  --text: #E8F0E6; --fg-rgb: 232,240,230; --grey-dark: #9AAE9C;
   --yellow: #F2A65A; --on-accent: #2B1603; --accent-ink: #B5D88F; --chart-accent: #8FBF6A; --chart-accent-2: #F2A65A;
-  --flap-bg: #253025; --flap-ink: #F5B36E;
+  --flap-bg: #35290F; --flap-ink: #F5B36E;
 }
-:root[data-palette="forest"] .sidebar { --bg: #0A0F0B; --panel: #0A0F0B; --accent-ink: #F5B36E; }
+:root[data-palette="forest"] .sidebar {
+  --bg: #2A1E0D; --panel: #2A1E0D; --card: #3A2A13; --text: #F6ECDC; --fg-rgb: 246,236,220;
+  --grey-dark: #C2AD8C; --accent-ink: #F5B36E;
+}
 :root[data-palette="wine"] {
-  --frame: #110A0D;
-  --bg: #160E11; --panel: #1E1317; --card: #27191E; --raised: #2C1D23; --raised-2: #35232A; --pass: #301F25;
-  --text: #F4E8EB; --grey-dark: #AC959C;
+  --frame: #0B2423;
+  --bg: #1A0F13; --panel: #201318; --card: #2A1A20; --raised: #2F1D24; --raised-2: #38232B; --pass: #331F27;
+  --text: #F4E8EB; --fg-rgb: 244,232,235; --grey-dark: #B19AA1;
   --yellow: #4FC2B0; --on-accent: #04221D; --accent-ink: #F0A9B9; --chart-accent: #E0809A; --chart-accent-2: #4FC2B0;
-  --flap-bg: #36232A; --flap-ink: #6FD3C2;
+  --flap-bg: #0F3533; --flap-ink: #6FD3C2;
 }
-:root[data-palette="wine"] .sidebar { --bg: #110A0D; --panel: #110A0D; --accent-ink: #6FD3C2; }
+:root[data-palette="wine"] .sidebar {
+  --bg: #0B2423; --panel: #0B2423; --card: #133533; --text: #E0F4F1; --fg-rgb: 224,244,241;
+  --grey-dark: #8FB8B2; --accent-ink: #6FD3C2;
+}
 /* 配色 picker */
 .palette-pop { position: fixed; z-index: 80; width: 300px; padding: 14px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
 .palette-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 0 2px 10px; font-size: 15px; font-weight: 700; color: var(--text); }
@@ -4448,11 +4463,11 @@ var PALETTES = [
   { id: 'matcha',   name: '抹茶',   base: 'light', sw: ['#E9DFCC', '#FFFFFF', '#E07A45', '#3F6B2A'] },
   { id: 'mist',     name: '霧藍',   base: 'light', sw: ['#1B2A3E', '#FFFFFF', '#E9B23F', '#2F5F8F'] },
   { id: 'sakura',   name: '櫻花',   base: 'light', sw: ['#1F3B39', '#FFFFFF', '#E07890', '#1F6E68'] },
-  { id: 'dusk',     name: '夜紫',   base: 'dark',  sw: ['#110E18', '#24202F', '#F4A97A', '#C9BBFF'] },
-  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#120E0B', '#27201B', '#6FCFB8', '#E8C29C'] },
-  { id: 'ocean',    name: '深海',   base: 'dark',  sw: ['#070E14', '#15242E', '#FF8A6B', '#7FDCD4'] },
-  { id: 'forest',   name: '森林',   base: 'dark',  sw: ['#0A0F0B', '#1B251C', '#F2A65A', '#B5D88F'] },
-  { id: 'wine',     name: '酒紅',   base: 'dark',  sw: ['#110A0D', '#27191E', '#4FC2B0', '#F0A9B9'] }
+  { id: 'dusk',     name: '夜紫',   base: 'dark',  sw: ['#2A1B19', '#221F3C', '#F4A97A', '#C9BBFF'] },
+  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#0F2420', '#2A211B', '#6FCFB8', '#E8C29C'] },
+  { id: 'ocean',    name: '深海',   base: 'dark',  sw: ['#2A1612', '#162635', '#FF8A6B', '#7FDCD4'] },
+  { id: 'forest',   name: '森林',   base: 'dark',  sw: ['#2A1E0D', '#1A271F', '#F2A65A', '#B5D88F'] },
+  { id: 'wine',     name: '酒紅',   base: 'dark',  sw: ['#0B2423', '#2A1A20', '#4FC2B0', '#F0A9B9'] }
 ];
 function currentPalette() {
   var id = document.documentElement.getAttribute('data-palette');
