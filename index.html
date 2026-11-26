@@ -1883,29 +1883,17 @@ html[data-theme="light"] .kr-tile-chip.ok { color: #166534; }
 .sheet-h-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
 .sheet-h { margin: 0 0 14px; font-size: 18px; font-weight: 700; }
 .sheet-fresh { font-size: 14px; font-weight: 700; color: var(--accent-ink); }
-.sheet-feed { margin-bottom: 48px; }
-.sheet-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 18px; }
-.sheet-stat { padding: 16px 18px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 16px; }
-.sheet-stat-label { font-size: 14px; color: var(--grey-dark); margin-bottom: 8px; }
-.sheet-stat-val { display: flex; align-items: baseline; gap: 6px; }
-.sheet-stat-val .flap { font-size: 28px; }
-.sheet-stat-val small { font-size: 14px; color: var(--grey-dark); }
 .sheet-colchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .sheet-chip { padding: 6px 12px; font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1.2; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.16); border-radius: 999px; cursor: pointer; }
 .sheet-chip b { margin-left: 4px; font-family: var(--mono); font-stretch: 75%; color: var(--grey-dark); }
 .sheet-chip.on { background: var(--text); color: var(--bg); border-color: var(--text); }
 .sheet-chip.on b { color: inherit; }
-.sheet-changes { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(var(--fg-rgb),0.08); }
-.sheet-changes li { border-bottom: 1px solid rgba(var(--fg-rgb),0.08); }
-.chg { display: grid; grid-template-columns: 170px minmax(140px, 240px) minmax(0, 1fr); align-items: start; gap: 4px 20px; width: 100%; padding: 14px 8px; font: inherit; font-size: 15px; color: var(--text); text-align: left; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
-.chg:hover { background: rgba(var(--fg-rgb),0.04); }
 .chg-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; font-size: 14px; color: var(--grey-dark); }
 .chg-meta time { font-family: var(--mono); font-stretch: 75%; font-variant-numeric: tabular-nums; }
 .chg-who { font-weight: 700; color: var(--text); }
 .chg-src, .chg-new { padding: 1px 7px; font-size: 12px; font-weight: 700; border-radius: 999px; }
 .chg-src { color: var(--grey-dark); border: 1px solid rgba(var(--fg-rgb),0.18); }
 .chg-new { color: var(--on-accent); background: var(--accent-ink); }
-.chg-where { display: flex; flex-direction: column; gap: 2px; min-width: 0; font-weight: 600; word-break: keep-all; overflow-wrap: anywhere; }
 .chg-col { font-size: 14px; font-weight: 600; color: var(--accent-ink); }
 .chg-text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .chg-verb { font-size: 13px; font-weight: 700; color: var(--grey-dark); }
@@ -1948,10 +1936,6 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
 .sc-btn.ghost { color: var(--text); background: transparent; border-color: rgba(var(--fg-rgb),0.2); }
 .sc-conflict { margin-bottom: 8px; font-size: 13px; line-height: 1.5; color: var(--alert-text, var(--warn)); }
 @media (max-width: 900px) {
-  .chg { grid-template-columns: 1fr; }
-  .sheet-stats { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
-  .sheet-stat { padding: 12px; }
-  .sheet-stat-val .flap { font-size: 22px; }
 }
 @media (max-width: 640px) {
   .sheet-section { padding: 24px 16px; }
@@ -2036,6 +2020,87 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
 /* Sheet pages: plain-text links and the chip hint */
 .sc-url { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .sc-chiphint { margin-top: 6px; font-size: 12px; color: var(--grey-dark); }
+/* Sheet pages: 對焦看板 */
+.sheet-feed { margin-bottom: 48px; }
+.focus-board { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.focus-side { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.focus-panel { display: flex; flex-direction: column; min-width: 0; padding: 18px 20px 20px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 16px; }
+.focus-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 12px; }
+.focus-head h4 { margin: 0; font-size: 16px; font-weight: 700; }
+.focus-n { display: inline-flex; align-items: baseline; gap: 4px; }
+.focus-n .flap { font-size: 22px; }
+.focus-n small { font-size: 13px; color: var(--grey-dark); }
+.focus-range { display: inline-flex; margin-left: auto; padding: 3px; background: rgba(var(--fg-rgb),0.06); border-radius: 10px; }
+.focus-range button { padding: 6px 12px; font-family: inherit; font-weight: 600; font-size: 13px; line-height: 1.2; color: var(--grey-dark); background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.focus-range button:hover { color: var(--text); }
+.focus-range button.on { color: var(--bg); background: var(--text); }
+.focus-range button:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 1px; }
+.focus-sub { margin: -4px 0 12px; font-size: 13px; color: var(--grey-dark); }
+.focus-sub b { color: var(--accent-ink); }
+.focus-empty { margin: 0; padding: 4px 0; font-size: 14px; color: var(--grey-dark); }
+.focus-panel .sheet-colchips { gap: 6px; margin-bottom: 12px; }
+.focus-panel .sheet-chip { padding: 5px 10px; font-size: 13px; }
+/* Each list scrolls inside its panel, so the page keeps its length however busy the week was */
+.focus-list { list-style: none; margin: 0; padding: 0; overflow: auto; overscroll-behavior: contain; scrollbar-gutter: stable; border-top: 1px solid rgba(var(--fg-rgb),0.08); }
+.chg-list { max-height: 560px; }
+.focus-discuss .focus-list, .focus-missing .focus-list { max-height: 300px; }
+.focus-tab { padding: 1px 7px; font-size: 12px; font-weight: 700; color: var(--grey-dark); background: rgba(var(--fg-rgb),0.07); border-radius: 6px; }
+.chg-card { padding: 4px 0 8px; border-bottom: 1px solid rgba(var(--fg-rgb),0.08); }
+.chg-card.fresh { box-shadow: inset 3px 0 0 var(--accent-ink); }
+.chg-head, .chg-col-row, .flag-main, .miss-row { display: flex; width: 100%; font: inherit; color: var(--text); text-align: left; background: transparent; border: 0; border-radius: 8px; cursor: pointer; }
+.chg-head:hover, .chg-col-row:hover, .flag-main:hover, .miss-row:hover { background: rgba(var(--fg-rgb),0.04); }
+.chg-head:focus-visible, .chg-col-row:focus-visible, .flag-main:focus-visible, .miss-row:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
+.chg-head { flex-direction: column; gap: 4px; padding: 10px 10px 6px; }
+.chg-title { font-size: 15px; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+.chg-cols { list-style: none; margin: 0; padding: 0 0 0 10px; }
+.chg-col-row { display: grid; grid-template-columns: minmax(84px, 140px) minmax(0, 1fr); gap: 2px 14px; padding: 6px 10px; font-size: 14px; }
+.chg-col-row .chg-col { padding-top: 1px; overflow-wrap: anywhere; }
+.chg-to { font-size: 14px; -webkit-line-clamp: 2; line-clamp: 2; }
+.chg-from { font-size: 13px; }
+.flag-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(var(--fg-rgb),0.08); }
+.flag-main { flex: 1; min-width: 0; flex-direction: column; gap: 4px; padding: 8px 10px; }
+.flag-where { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.flag-where .chg-col { font-size: 13px; }
+.flag-note { font-size: 14px; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; line-clamp: 3; overflow: hidden; }
+.flag-note.muted { color: var(--grey-dark); }
+.flag-meta { font-size: 12px; color: var(--grey-dark); }
+.flag-item.auto .flag-note { color: rgba(var(--fg-rgb),0.8); }
+.flag-act { flex-shrink: 0; margin-top: 8px; }
+.flag-done { margin-top: 12px; font-size: 13px; color: var(--grey-dark); }
+.flag-done summary { cursor: pointer; font-weight: 600; }
+.flag-done ul { list-style: none; margin: 8px 0 0; padding: 0; }
+.flag-done li { display: flex; flex-direction: column; gap: 2px; padding: 8px 0; border-top: 1px solid rgba(var(--fg-rgb),0.06); }
+.flag-done .flag-where, .flag-done .flag-note { font-size: 13px; color: rgba(var(--fg-rgb),0.7); }
+.miss-sheet { display: flex; justify-content: space-between; padding: 12px 10px 4px; font-size: 13px; font-weight: 700; color: var(--grey-dark); }
+.miss-sheet span { font-family: var(--mono); font-stretch: 75%; font-weight: 600; }
+.miss-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 9px 10px; border-bottom: 1px solid rgba(var(--fg-rgb),0.06); }
+.miss-name { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.miss-n { display: inline-flex; align-items: center; gap: 4px; font-family: var(--mono); font-stretch: 75%; font-size: 14px; font-weight: 600; color: var(--warn); }
+.miss-n svg { color: var(--grey-dark); }
+.miss-cols { grid-column: 1 / -1; font-size: 13px; color: var(--grey-dark); }
+/* Cells: 待討論 marker and outlined gaps */
+.sheet-table .sc.flagged { box-shadow: inset 3px 0 0 var(--warn); }
+.sheet-table .sc.flagged.peeking { box-shadow: inset 0 0 0 2px var(--accent-ink), inset 5px 0 0 var(--warn); }
+.sheet-table td.sc.missing { background: color-mix(in srgb, var(--warn) 10%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--warn) 45%, transparent); }
+.sheet-table td.sc.missing.key { background: color-mix(in srgb, var(--warn) 10%, var(--panel)); }
+.sheet-misstoggle.on { color: var(--bg); background: var(--text); border-color: var(--text); }
+.peek-flag { display: flex; flex-direction: column; gap: 2px; margin: -4px 0 14px; padding: 8px 12px; font-size: 14px; line-height: 1.5; background: color-mix(in srgb, var(--warn) 12%, transparent); border-left: 3px solid var(--warn); border-radius: 0 8px 8px 0; }
+.peek-flag b { font-size: 12px; color: var(--warn); }
+.peek-flag span { font-size: 12px; color: var(--grey-dark); }
+.peek-flagform { display: flex; flex-direction: column; gap: 8px; }
+.peek-flagform[hidden], .peek-actions[hidden], .peek-tip[hidden] { display: none; }
+.peek-flagform label { font-size: 13px; font-weight: 700; color: var(--grey-dark); }
+.peek-flagform .sc-input { min-height: 56px; }
+@media (max-width: 1100px) {
+  .focus-board { grid-template-columns: minmax(0, 1fr); }
+  .chg-list { max-height: 440px; }
+}
+@media (max-width: 640px) {
+  .focus-panel { padding: 16px 14px; }
+  .focus-range { margin-left: 0; }
+  .chg-col-row { grid-template-columns: minmax(0, 1fr); }
+  .chg-cols { padding-left: 0; }
+}
 </style>
 
 <body>
@@ -5603,8 +5668,14 @@ var SHEET_META = {
   video:    { title: '影片清單', url: 'https://docs.google.com/spreadsheets/d/12gB32w-C7qW1Nz4v58F3VV2Mtwf7tWmat1uKMS0vw84/edit' },
   material: { title: '教材總表', url: 'https://docs.google.com/spreadsheets/d/1GunbUiAYKVnyQYEjV4sLAQaNjBiiOF0D75YVi7QY92Q/edit' }
 };
-var SHEET_DAYS = 7, SHEET_POLL_MS = 60000, SHEET_FEED_SHOWN = 8;
-var sheetState = {};      // src → { data, changes, tab, group, q, changeCol, feedAll, seenAt, loading, error, setup, loadedAt }
+var SHEET_DAYS = 7, SHEET_POLL_MS = 60000;
+// 對焦看板 time windows: today, the last 3 days (covers a weekend), the last 7 days
+var SHEET_RANGES = [{ d: 1, label: '今天' }, { d: 3, label: '近 3 天' }, { d: 7, label: '近 7 天' }];
+// Columns that hold notes: never counted as missing; scanned for things to discuss
+var SHEET_NOTE_COL_RE = /備註|紀錄|記錄|意見|回饋|問題|待補|note|comment|remark/i;
+var SHEET_NOT_REQUIRED_RE = /備註|紀錄|記錄|概述|說明|停頓|待補|剪掉|應用|意見|回饋|note|comment|remark/i;
+var SHEET_DISCUSS_RE = /討論|待確認|需確認|再確認|要確認|確認一下|待定|待決定|比對|[?？]/;
+var sheetState = {};      // src → { data, changes, tab, group, q, changeCol, range, missingOnly, seenAt, loading, error, setup, loadedAt }
 var sheetActive = null, sheetTimer = null;
 var sheetEditing = null;  // { src, td, r, c, before }
 
@@ -5617,7 +5688,8 @@ function sheetOpen(src) {
   sheetActive = src;
   var st = sheetState[src];
   if (!st) {
-    st = sheetState[src] = { tab: 0, group: '', q: '', changeCol: '', feedAll: false };
+    var range = Number(storeGet('bb6-sheet-range'));
+    st = sheetState[src] = { tab: 0, group: '', q: '', changeCol: '', range: [1, 3, 7].indexOf(range) >= 0 ? range : 3, missingOnly: false };
     // Edits newer than the last visit from this browser are marked 新
     st.seenAt = Number(storeGet('bb6-sheet-seen-' + src)) || 0;
     storeSet('bb6-sheet-seen-' + src, String(Date.now()));
@@ -5669,7 +5741,7 @@ function prepareSheetData(d) {
     sh.chipWrite = (d.version || 1) >= 4 && !!d.chipsSupported;
     sh.chipClear = sh.chipWrite && (d.version || 1) >= 5;
   });
-  return { title: d.title, url: d.url, version: d.version || 1, chipsSupported: !!d.chipsSupported, sheets: sheets };
+  return { title: d.title, url: d.url, version: d.version || 1, chipsSupported: !!d.chipsSupported, sheets: sheets, flags: d.flags || [] };
 }
 /* Turn a raw sheet into something readable:
    - leading sparse columns (模組、章節…) become group headings instead of table columns
@@ -5735,8 +5807,19 @@ function prepareOneSheet(sh) {
     items.push({ type: 'row', r: r, gid: gid, placeholder: dataCount <= 1 && !parts.length,
       headLabel: parts.length ? parts.map(function(p){ return p.v.split('\n')[0].trim(); }).join(' ') : '' });
   });
+  // 還缺資料: a column most real rows have filled is one every real row should have.
+  // Real rows leave out 尚未填寫 placeholders and chapter rows that carry a few chapter-level files.
+  var eligible = {};
+  items.forEach(function(it){ if (it.type === 'row' && !it.placeholder && !it.headLabel) eligible[it.r] = true; });
+  var elig = Object.keys(eligible).map(Number);
+  cols.forEach(function(col) {
+    col.note = SHEET_NOTE_COL_RE.test(col.name);
+    var n = elig.filter(function(r){ return has(r - 1, col.c - 1); }).length;
+    var f = elig.filter(function(r){ return formulas[r + ',' + col.c]; }).length;
+    col.required = elig.length >= 3 && n / elig.length >= 0.5 && f < elig.length / 2 && !SHEET_NOT_REQUIRED_RE.test(col.name);
+  });
   return { id: sh.id, name: sh.name, grid: grid, headerRow: hr + 1, hier: hier, cols: cols, items: items, groups: groups, formulas: formulas, links: links, chips: chips,
-    rows: items.filter(function(x){ return x.type === 'row'; }) };
+    rows: items.filter(function(x){ return x.type === 'row'; }), eligible: eligible };
 }
 function sheetColLetter(n) {
   var s = '';
@@ -5799,69 +5882,309 @@ function renderSheetStatus(src) {
   if (st.loading && !st.data) { el.textContent = '讀取試算表中…'; return; }
   var t = st.loadedAt ? String(st.loadedAt.getHours()).padStart(2, '0') + ':' + String(st.loadedAt.getMinutes()).padStart(2, '0') : '';
   el.textContent = (st.error ? st.error + '・' : '') + '與 Google 試算表同步' + (t ? '・資料截至 ' + t + '（每分鐘自動更新）' : '');
-  if (st.data && st.data.version < 5) el.textContent += '・試算表的同步腳本有新版（可以從 BB6 加入、移除檔案晶片）';
+  if (st.data && st.data.version < 6) el.textContent += '・試算表的同步腳本有新版（可以標記待討論）';
   else if (st.data && !st.data.chipsSupported) el.textContent += '・Apps Script 要加入「Google Sheets API」服務，才讀得到檔案晶片的連結';
 }
 
-/* ── 最近更新: what changed in the last week, which columns, and the edits themselves ── */
+/* ── 對焦看板: what changed (one card per row), what to discuss, what is still missing ── */
 function sheetWho(by) { by = String(by || ''); return by.indexOf('@') > 0 ? by.split('@')[0] : by || '試算表'; }
 function sheetWhen(iso) {
   var d = new Date(iso);
   return (d.getMonth() + 1) + '/' + String(d.getDate()).padStart(2, '0') + ' ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
+function sheetRangeStart(days) {
+  var d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - (days - 1));
+  return d.getTime();
+}
+var SHEET_ARROW = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+
+// Edits in the window, newest first, folded into one entry per row; each column keeps its first "before" and latest "after"
+function sheetChangeGroups(st, list) {
+  var groups = [], byKey = {};
+  list.forEach(function(x) {
+    var multi = String(x.cell).indexOf(':') >= 0, pos = sheetParseA1(x.cell);
+    var key = x.sheet + '!' + (multi || !pos ? x.cell : pos.r);
+    var g = byKey[key];
+    if (!g) {
+      g = byKey[key] = { sheet: x.sheet, cell: x.cell, label: x.row || (pos ? '第 ' + pos.r + ' 列' : x.cell), at: x.at, who: [], cols: [], colMap: {}, bb6: false, fresh: false };
+      groups.push(g);
+    }
+    var who = sheetWho(x.by);
+    if (g.who.indexOf(who) < 0) g.who.push(who);
+    if (x.source === 'BB6') g.bb6 = true;
+    if (st.seenAt && new Date(x.at).getTime() > st.seenAt) g.fresh = true;
+    var ck = x.column || x.cell, c = g.colMap[ck];
+    if (!c) { c = g.colMap[ck] = { column: x.column || x.cell, cell: x.cell, to: String(x.to), from: String(x.from), n: 0 }; g.cols.push(c); }
+    else c.from = String(x.from);
+    c.n++;
+  });
+  return groups;
+}
+
+// Empty cells in required columns of real rows, and placeholder rows, per sheet and group
+function sheetIsMissing(sheet, r, c) {
+  var col = sheet.cols.find(function(x){ return x.c === c; });
+  return !!(col && col.required && sheet.eligible[r] && !sheet.formulas[r + ',' + c] && !sheetCellValue(sheet, r, c).trim());
+}
+function sheetRowHasMissing(sheet, r) {
+  return sheet.eligible[r] && sheet.cols.some(function(col){ return sheetIsMissing(sheet, r, col.c); });
+}
+function sheetGroupLabel(sheet, gid) {
+  var g = sheet.groups.find(function(x){ return x.gid === gid; });
+  if (!g) return sheet.groups.length ? '（分組之前的列）' : sheet.name;
+  // A group numbered 6 reads as 「第 6 組」 (or 「模組 6」 when the column has a title)
+  if (/^\d+(\.\d+)*$/.test(g.label)) {
+    var hn = sheet.hier.length ? String((sheet.grid[sheet.headerRow - 1] || [])[sheet.hier[0]] || '').trim() : '';
+    return hn ? hn + ' ' + g.label : '第 ' + g.label + ' 組';
+  }
+  return g.label;
+}
+function sheetMissingSummary(st) {
+  var out = [];
+  st.data.sheets.forEach(function(sheet, ti) {
+    var req = sheet.cols.filter(function(c){ return c.required; });
+    var byG = {}, order = [];
+    function grp(gid) { if (!byG[gid]) { byG[gid] = { gid: gid, n: 0, empty: 0, cols: {} }; order.push(gid); } return byG[gid]; }
+    sheet.rows.forEach(function(it) {
+      if (it.placeholder) { grp(it.gid).empty++; return; }
+      if (!sheet.eligible[it.r]) return;
+      req.forEach(function(col) {
+        if (!sheetIsMissing(sheet, it.r, col.c)) return;
+        var g = grp(it.gid);
+        g.n++; g.cols[col.name] = (g.cols[col.name] || 0) + 1;
+      });
+    });
+    var groups = order.map(function(k){ return byG[k]; }).filter(function(g){ return g.n; });
+    var total = groups.reduce(function(a, g){ return a + g.n; }, 0);
+    if (total) out.push({ ti: ti, sheet: sheet, groups: groups, total: total });
+  });
+  return out;
+}
+
+// What to talk about: flags people set, plus note cells that ask a question (unless skipped while their text is unchanged)
+function sheetRowLabel(sheet, r) {
+  var it = sheet.rows.find(function(x){ return x.r === r; });
+  var key = sheet.cols[0];
+  var kv = key ? String(sheetCellValue(sheet, r, key.c)).split('\n')[0].trim() : '';
+  return [it ? sheetGroupLabel(sheet, it.gid) : '', kv || (it && it.headLabel) || ''].filter(Boolean).join(' ') || '第 ' + r + ' 列';
+}
+function sheetDiscussItems(st) {
+  var flags = st.data.flags || [];
+  var open = flags.filter(function(f){ return f.kind !== '自動' && f.status !== '已處理'; });
+  var done = flags.filter(function(f){ return f.kind !== '自動' && f.status === '已處理'; })
+    .sort(function(a, b){ return String(b.doneAt).localeCompare(String(a.doneAt)); });
+  var skipped = {};
+  flags.forEach(function(f){ if (f.kind === '自動') skipped[f.sheet + '!' + f.cell + '\n' + f.text] = true; });
+  var auto = [];
+  st.data.sheets.forEach(function(sheet) {
+    sheet.cols.forEach(function(col) {
+      if (!col.note) return;
+      sheet.rows.forEach(function(it) {
+        var v = sheetCellValue(sheet, it.r, col.c), m = SHEET_DISCUSS_RE.exec(v);
+        if (!m) return;
+        var a1 = sheetColLetter(col.c) + it.r;
+        if (skipped[sheet.name + '!' + a1 + '\n' + v]) return;
+        if (open.some(function(f){ return f.sheet === sheet.name && f.cell === a1; })) return;
+        auto.push({ sheet: sheet.name, sheetId: sheet.id, cell: a1, r: it.r, c: col.c, column: col.name, label: sheetRowLabel(sheet, it.r), text: v, hit: m[0] });
+      });
+    });
+  });
+  return { open: open, auto: auto, done: done };
+}
+function sheetOpenFlag(st, sheetName, a1) {
+  return (st.data.flags || []).find(function(f){ return f.kind !== '自動' && f.status !== '已處理' && f.sheet === sheetName && f.cell === a1; });
+}
+
 function renderSheetFeed(src) {
   var el = document.getElementById('sheet-feed-' + src);
   if (!el) return;
   var st = sheetState[src];
-  var all = st.changes || [];
-  var added = all.filter(function(x){ return !String(x.from).trim() && String(x.to).trim(); });
-  var byCol = {};
-  all.forEach(function(x){ var k = x.column || '（未命名欄位）'; byCol[k] = (byCol[k] || 0) + 1; });
-  var colList = Object.keys(byCol).sort(function(a, b){ return byCol[b] - byCol[a]; });
-  var rowsTouched = {};
-  all.forEach(function(x){ rowsTouched[x.sheet + '!' + x.row] = true; });
-  var list = st.changeCol ? all.filter(function(x){ return (x.column || '（未命名欄位）') === st.changeCol; }) : all;
-  var shown = st.feedAll ? list : list.slice(0, SHEET_FEED_SHOWN);
-  var fresh = all.filter(function(x){ return new Date(x.at).getTime() > st.seenAt; }).length;
+  // A refresh keeps where each list was scrolled to
+  var scrolls = {};
+  el.querySelectorAll('[data-scroll]').forEach(function(x){ scrolls[x.dataset.scroll] = x.scrollTop; });
+  var multiSheet = st.data.sheets.length > 1;
+  var tabTag = function(name){ return multiSheet ? '<span class="focus-tab">' + escHtml(name) + '</span>' : ''; };
 
-  var html =
-    '<div class="sheet-h-row"><h3 class="sheet-h">近 ' + SHEET_DAYS + ' 天更新</h3>' +
-      (fresh && st.seenAt ? '<span class="sheet-fresh">' + fresh + ' 筆是你上次來之後的</span>' : '') + '</div>' +
-    '<div class="sheet-stats">' +
-      '<div class="sheet-stat"><div class="sheet-stat-label">修改</div><div class="sheet-stat-val">' + flap(String(all.length)) + '<small>筆</small></div></div>' +
-      '<div class="sheet-stat"><div class="sheet-stat-label" title="原本空白的格子填了內容">新增內容</div><div class="sheet-stat-val">' + flap(String(added.length)) + '<small>筆</small></div></div>' +
-      '<div class="sheet-stat"><div class="sheet-stat-label">涉及</div><div class="sheet-stat-val">' + flap(String(Object.keys(rowsTouched).length)) + '<small>列</small></div></div>' +
-    '</div>';
-  if (!all.length) {
-    html += '<p class="sheet-empty">近 ' + SHEET_DAYS + ' 天沒有修改。從裝好同步腳本那天起，在試算表或 BB6 上的每次修改都會列在這裡。</p>';
-  } else {
-    html += '<div class="sheet-colchips" role="group" aria-label="依欄位篩選">' +
-      '<button type="button" class="sheet-chip' + (!st.changeCol ? ' on' : '') + '" aria-pressed="' + !st.changeCol + '" onclick="sheetFilterCol(\'' + src + '\', \'\')">全部欄位 <b>' + all.length + '</b></button>' +
-      colList.map(function(k) {
-        var on = st.changeCol === k;
-        return '<button type="button" class="sheet-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-col="' + escHtml(k) + '" onclick="sheetFilterCol(\'' + src + '\', this.dataset.col)">' + escHtml(k) + ' <b>' + byCol[k] + '</b></button>';
-      }).join('') + '</div>' +
-      '<ol class="sheet-changes">' + shown.map(function(x) {
-        var isNew = st.seenAt && new Date(x.at).getTime() > st.seenAt;
-        var wasEmpty = !String(x.from).trim();
-        return '<li><button type="button" class="chg" data-sheet="' + escHtml(x.sheet) + '" data-cell="' + escHtml(x.cell) + '" onclick="sheetJump(\'' + src + '\', this.dataset.sheet, this.dataset.cell)">' +
-          '<span class="chg-meta"><time datetime="' + escHtml(x.at) + '">' + sheetWhen(x.at) + '</time>' +
-            '<span class="chg-who">' + escHtml(sheetWho(x.by)) + '</span>' +
-            (x.source === 'BB6' ? '<span class="chg-src">BB6</span>' : '') +
-            (isNew ? '<span class="chg-new">新</span>' : '') + '</span>' +
-          '<span class="chg-where">' + escHtml(x.row || x.cell) + '<span class="chg-col">' + escHtml(x.column || x.cell) + '</span></span>' +
-          '<span class="chg-text"><span class="chg-verb">' + (wasEmpty ? '新增' : !String(x.to).trim() ? '清空' : '改為') + '</span>' +
-            (String(x.to).trim() ? '<span class="chg-to">' + escHtml(x.to) + '</span>' : '') +
-            (!wasEmpty ? '<span class="chg-from">原本：' + escHtml(x.from) + '</span>' : '') + '</span>' +
-        '</button></li>';
-      }).join('') + '</ol>' +
-      (list.length > SHEET_FEED_SHOWN ? '<button type="button" class="sheet-more" onclick="sheetToggleFeed(\'' + src + '\')">' +
-        (st.feedAll ? '只看最新 ' + SHEET_FEED_SHOWN + ' 筆' : '顯示全部 ' + list.length + ' 筆') + '</button>' : '');
-  }
-  el.innerHTML = html;
+  // 有變化
+  var start = sheetRangeStart(st.range);
+  var inRange = (st.changes || []).filter(function(x){ return new Date(x.at).getTime() >= start; });
+  var byCol = {};
+  inRange.forEach(function(x){ var k = x.column || '（未命名欄位）'; byCol[k] = (byCol[k] || 0) + 1; });
+  var colList = Object.keys(byCol).sort(function(a, b){ return byCol[b] - byCol[a]; });
+  if (st.changeCol && !byCol[st.changeCol]) st.changeCol = '';
+  var groups = sheetChangeGroups(st, st.changeCol ? inRange.filter(function(x){ return (x.column || '（未命名欄位）') === st.changeCol; }) : inRange);
+  var fresh = groups.filter(function(g){ return g.fresh; }).length;
+  var rangeLabel = SHEET_RANGES.find(function(x){ return x.d === st.range; }).label;
+
+  var changes =
+    '<section class="focus-panel focus-changes" aria-labelledby="focus-chg-' + src + '">' +
+      '<div class="focus-head">' +
+        '<h4 id="focus-chg-' + src + '">有變化</h4>' +
+        '<span class="focus-n">' + flap(String(groups.length)) + '<small>列</small></span>' +
+        '<div class="focus-range" role="group" aria-label="時間範圍">' + SHEET_RANGES.map(function(x) {
+          var on = x.d === st.range;
+          return '<button type="button" class="' + (on ? 'on' : '') + '" aria-pressed="' + on + '" onclick="sheetSetRange(\'' + src + '\',' + x.d + ')">' + x.label + '</button>';
+        }).join('') + '</div>' +
+      '</div>' +
+      (fresh && st.seenAt ? '<p class="focus-sub"><b>' + fresh + ' 列</b>是你上次來之後改的</p>' : '') +
+      (colList.length > 1 ? '<div class="sheet-colchips" role="group" aria-label="依欄位篩選">' +
+        '<button type="button" class="sheet-chip' + (!st.changeCol ? ' on' : '') + '" aria-pressed="' + !st.changeCol + '" onclick="sheetFilterCol(\'' + src + '\', \'\')">全部欄位</button>' +
+        colList.map(function(k) {
+          var on = st.changeCol === k;
+          return '<button type="button" class="sheet-chip' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-col="' + escHtml(k) + '" onclick="sheetFilterCol(\'' + src + '\', this.dataset.col)">' + escHtml(k) + ' <b>' + byCol[k] + '</b></button>';
+        }).join('') + '</div>' : '') +
+      (!groups.length ? '<p class="focus-empty">' + rangeLabel + '沒有修改。' + (st.range < 7 ? '可以切到「近 7 天」看看。' : '') + '</p>' :
+      '<ol class="focus-list chg-list" data-scroll="chg">' + groups.map(function(g) {
+        return '<li class="chg-card' + (g.fresh ? ' fresh' : '') + '">' +
+          '<button type="button" class="chg-head" data-sheet="' + escHtml(g.sheet) + '" data-cell="' + escHtml(g.cell) + '" onclick="sheetJump(\'' + src + '\', this.dataset.sheet, this.dataset.cell)">' +
+            '<span class="chg-title">' + escHtml(g.label) + '</span>' +
+            '<span class="chg-meta">' + tabTag(g.sheet) + '<time datetime="' + escHtml(g.at) + '">' + sheetWhen(g.at) + '</time>' +
+              '<span class="chg-who">' + escHtml(g.who.join('、')) + '</span>' +
+              (g.bb6 ? '<span class="chg-src">BB6</span>' : '') + (g.fresh && st.seenAt ? '<span class="chg-new">新</span>' : '') + '</span>' +
+          '</button>' +
+          '<ul class="chg-cols">' + g.cols.map(function(c) {
+            var wasEmpty = !c.from.trim(), nowEmpty = !c.to.trim();
+            return '<li><button type="button" class="chg-col-row" data-sheet="' + escHtml(g.sheet) + '" data-cell="' + escHtml(c.cell) + '" onclick="sheetJump(\'' + src + '\', this.dataset.sheet, this.dataset.cell)">' +
+              '<span class="chg-col">' + escHtml(c.column) + '</span>' +
+              '<span class="chg-text"><span class="chg-verb">' + (wasEmpty && nowEmpty ? '填了又清空' : wasEmpty ? '新增' : nowEmpty ? '清空' : '改為') + (c.n > 1 ? '・改了 ' + c.n + ' 次' : '') + '</span>' +
+                (!nowEmpty ? '<span class="chg-to">' + escHtml(c.to) + '</span>' : '') +
+                (!wasEmpty ? '<span class="chg-from">原本：' + escHtml(c.from) + '</span>' : '') + '</span>' +
+            '</button></li>';
+          }).join('') + '</ul></li>';
+      }).join('') + '</ol>') +
+    '</section>';
+
+  // 待討論
+  var canFlag = st.data.version >= 6;
+  var dis = sheetDiscussItems(st);
+  st.autoFlags = dis.auto;
+  var nDiscuss = dis.open.length + dis.auto.length;
+  var discuss =
+    '<section class="focus-panel focus-discuss" aria-labelledby="focus-dis-' + src + '">' +
+      '<div class="focus-head"><h4 id="focus-dis-' + src + '">待討論</h4><span class="focus-n">' + flap(String(nDiscuss)) + '<small>項</small></span></div>' +
+      (!nDiscuss ? '<p class="focus-empty">' + (canFlag ? '沒有待討論的項目。點表格裡任一格，可以「標記待討論」。' : '沒有待討論的項目。') + '</p>' :
+      '<ul class="focus-list" data-scroll="dis">' +
+        dis.open.map(function(f) {
+          return '<li class="flag-item">' +
+            '<button type="button" class="flag-main" data-sheet="' + escHtml(f.sheet) + '" data-cell="' + escHtml(f.cell) + '" onclick="sheetJump(\'' + src + '\', this.dataset.sheet, this.dataset.cell)">' +
+              '<span class="flag-where">' + tabTag(f.sheet) + escHtml(f.row || f.cell) + (f.column ? '<span class="chg-col">' + escHtml(f.column) + '</span>' : '') + '</span>' +
+              '<span class="flag-note' + (f.note ? '' : ' muted') + '">' + escHtml(f.note || '（沒寫要討論什麼）') + '</span>' +
+              '<span class="flag-meta">' + escHtml(sheetWho(f.by)) + ' 標記・' + sheetWhen(f.at) + '</span>' +
+            '</button>' +
+            '<button type="button" class="sc-btn ghost flag-act" data-id="' + escHtml(f.id) + '" onclick="sheetResolveFlag(\'' + src + '\', this.dataset.id)">已處理</button>' +
+          '</li>';
+        }).join('') +
+        dis.auto.map(function(a, i) {
+          return '<li class="flag-item auto">' +
+            '<button type="button" class="flag-main" data-sheet="' + escHtml(a.sheet) + '" data-cell="' + escHtml(a.cell) + '" onclick="sheetJump(\'' + src + '\', this.dataset.sheet, this.dataset.cell)">' +
+              '<span class="flag-where">' + tabTag(a.sheet) + escHtml(a.label) + '<span class="chg-col">' + escHtml(a.column) + '</span></span>' +
+              '<span class="flag-note">' + escHtml(a.text) + '</span>' +
+              '<span class="flag-meta">備註裡有「' + escHtml(a.hit) + '」，自動列入</span>' +
+            '</button>' +
+            (canFlag ? '<button type="button" class="sc-btn ghost flag-act" onclick="sheetSkipAuto(\'' + src + '\',' + i + ')">略過</button>' : '') +
+          '</li>';
+        }).join('') + '</ul>') +
+      (dis.done.length ? '<details class="flag-done"><summary>近 2 週處理完 ' + dis.done.length + ' 項</summary><ul>' + dis.done.map(function(f) {
+        return '<li><span class="flag-where">' + escHtml(f.row || f.cell) + (f.column ? '<span class="chg-col">' + escHtml(f.column) + '</span>' : '') + '</span>' +
+          (f.note ? '<span class="flag-note">' + escHtml(f.note) + '</span>' : '') +
+          '<span class="flag-meta">' + escHtml(sheetWho(f.doneBy)) + ' 處理・' + sheetWhen(f.doneAt) + '</span></li>';
+      }).join('') + '</ul></details>' : '') +
+    '</section>';
+
+  // 還缺資料
+  var miss = sheetMissingSummary(st);
+  var nMiss = miss.reduce(function(a, m){ return a + m.total; }, 0);
+  var missing =
+    '<section class="focus-panel focus-missing" aria-labelledby="focus-mis-' + src + '">' +
+      '<div class="focus-head"><h4 id="focus-mis-' + src + '">還缺資料</h4><span class="focus-n">' + flap(String(nMiss)) + '<small>格</small></span></div>' +
+      '<p class="focus-sub">大部分列都有填的欄位，空著就算缺；備註類欄位不算。</p>' +
+      (!nMiss ? '<p class="focus-empty">該填的欄位都填好了。</p>' :
+      '<ul class="focus-list" data-scroll="mis">' + miss.map(function(m) {
+        return (multiSheet ? '<li class="miss-sheet">' + escHtml(m.sheet.name) + '<span>' + m.total + ' 格</span></li>' : '') +
+          m.groups.map(function(g) {
+            var cols = Object.keys(g.cols).sort(function(a, b){ return g.cols[b] - g.cols[a]; });
+            return '<li><button type="button" class="miss-row" onclick="sheetShowMissing(\'' + src + '\',' + m.ti + ',' + g.gid + ')">' +
+              '<span class="miss-name">' + escHtml(sheetGroupLabel(m.sheet, g.gid)) + '</span>' +
+              '<span class="miss-n">' + g.n + ' 格' + SHEET_ARROW + '</span>' +
+              '<span class="miss-cols">' + cols.map(function(k){ return escHtml(k) + ' ' + g.cols[k]; }).join('・') +
+                (g.empty ? '・另有 ' + g.empty + ' 列整列未填' : '') + '</span>' +
+            '</button></li>';
+          }).join('');
+      }).join('') + '</ul>') +
+    '</section>';
+
+  el.innerHTML = '<h3 class="sheet-h">對焦看板</h3><div class="focus-board">' + changes + '<div class="focus-side">' + discuss + missing + '</div></div>';
+  el.querySelectorAll('[data-scroll]').forEach(function(x){ if (scrolls[x.dataset.scroll]) x.scrollTop = scrolls[x.dataset.scroll]; });
 }
-function sheetFilterCol(src, col) { var st = sheetState[src]; st.changeCol = col; st.feedAll = false; renderSheetFeed(src); }
-function sheetToggleFeed(src) { var st = sheetState[src]; st.feedAll = !st.feedAll; renderSheetFeed(src); }
+function sheetFilterCol(src, col) { sheetState[src].changeCol = col; renderSheetFeed(src); }
+function sheetSetRange(src, d) {
+  var st = sheetState[src];
+  st.range = d; st.changeCol = '';
+  storeSet('bb6-sheet-range', String(d));
+  renderSheetFeed(src);
+}
+// From a 還缺資料 line: open that sheet and group, showing only rows with gaps, gaps outlined
+function sheetShowMissing(src, ti, gid) {
+  var st = sheetState[src];
+  st.tab = ti; st.q = ''; st.forceRow = st.forceCol = null;
+  st.group = st.data.sheets[ti].groups.length > 1 && gid ? String(gid) : '';
+  st.missingOnly = true;
+  renderSheetControls(src); renderSheetTable(src);
+  var c = document.getElementById('sheet-controls-' + src);
+  if (c) c.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function sheetToggleMissing(src) {
+  var st = sheetState[src];
+  st.missingOnly = !st.missingOnly;
+  renderSheetControls(src); renderSheetTable(src);
+}
+
+/* ── 待討論: mark a cell, mark a flag handled, skip a keyword match ── */
+function sheetPostFlag(src, body) {
+  return sheetFetch(src, '', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+}
+function sheetAddFlag(src, sheet, r, c, note) {
+  var st = sheetState[src];
+  return sheetPostFlag(src, { action: 'flag', sheetId: sheet.id, row: r, col: c, note: note, by: currentMember }).then(function(d) {
+    if (!d.ok) { showToast('沒有標記成功：' + (d.error || '請再試一次')); return; }
+    st.data.flags.push(d.flag);
+    renderSheetFeed(src); markRecentCells(src);
+    showToast('已標記待討論');
+  }).catch(function(){ showToast('沒有標記成功，請檢查網路後再試'); });
+}
+function sheetResolveFlag(src, id) {
+  if (!currentMember) { showToast('先選擇你的名字，才能標記已處理'); showLogin(); return; }
+  var st = sheetState[src];
+  var f = (st.data.flags || []).find(function(x){ return x.id === id; });
+  if (!f) return;
+  var before = { status: f.status, doneBy: f.doneBy, doneAt: f.doneAt };
+  f.status = '已處理'; f.doneBy = currentMember; f.doneAt = new Date().toISOString();
+  renderSheetFeed(src); markRecentCells(src);
+  sheetPostFlag(src, { action: 'resolve', id: id, by: currentMember }).then(function(d) {
+    if (d.ok && d.flag) { Object.assign(f, d.flag); return; }
+    Object.assign(f, before); renderSheetFeed(src); markRecentCells(src);
+    showToast('沒有標記成功：' + (d.error || '請再試一次'));
+  }).catch(function() {
+    Object.assign(f, before); renderSheetFeed(src); markRecentCells(src);
+    showToast('沒有標記成功，請檢查網路後再試');
+  });
+}
+function sheetSkipAuto(src, i) {
+  if (!currentMember) { showToast('先選擇你的名字，才能略過'); showLogin(); return; }
+  var st = sheetState[src], a = st.autoFlags && st.autoFlags[i];
+  if (!a) return;
+  var temp = { id: 'tmp-' + Date.now(), kind: '自動', status: '已處理', sheet: a.sheet, cell: a.cell, text: a.text };
+  st.data.flags.push(temp);
+  renderSheetFeed(src);
+  sheetPostFlag(src, { action: 'flag', auto: true, sheetId: a.sheetId, row: a.r, col: a.c, text: a.text, by: currentMember }).then(function(d) {
+    if (d.ok && d.flag) { Object.assign(temp, d.flag); return; }
+    st.data.flags.splice(st.data.flags.indexOf(temp), 1); renderSheetFeed(src);
+    showToast('沒有略過成功：' + (d.error || '請再試一次'));
+  }).catch(function() {
+    st.data.flags.splice(st.data.flags.indexOf(temp), 1); renderSheetFeed(src);
+    showToast('沒有略過成功，請檢查網路後再試');
+  });
+}
 
 /* ── Table controls: tabs, group, search, columns, fold ── */
 function sheetPrefKey(kind, src, sheet) { return 'bb6-sheet-' + kind + '-' + src + '-' + sheet.name; }
@@ -5939,10 +6262,11 @@ function renderSheetControls(src, keepMenu) {
         '<button type="button" class="sheet-more" onclick="sheetResetCols(\'' + src + '\')">恢復預設（藏起空白欄位）</button></div></details>' +
       (sheet.groups.length > 1 ? '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', true)">全部收合</button>' +
         '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', false)">全部展開</button>' : '') +
+      (sheet.cols.some(function(c){ return c.required; }) ? '<button type="button" class="weekly-settings-btn sheet-misstoggle' + (st.missingOnly ? ' on' : '') + '" aria-pressed="' + !!st.missingOnly + '" onclick="sheetToggleMissing(\'' + src + '\')">只看缺資料</button>' : '') +
       '<span class="sheet-count" id="sheet-count-' + src + '"></span>' +
     '</div>';
 }
-function sheetSetTab(src, i) { var st = sheetState[src]; st.tab = i; st.group = ''; st.forceRow = st.forceCol = null; renderSheetControls(src); renderSheetTable(src); }
+function sheetSetTab(src, i) { var st = sheetState[src]; st.tab = i; st.group = ''; st.forceRow = st.forceCol = null; st.missingOnly = false; renderSheetControls(src); renderSheetTable(src); }
 function sheetSetGroup(src, g) { sheetState[src].group = g; renderSheetTable(src); }
 var sheetQueryTimer = null;
 function sheetSetQuery(src, q) {
@@ -5960,11 +6284,12 @@ function renderSheetTable(src) {
   var cols = sheetVisibleCols(src, sheet);
   var span = cols.length + 1;
   var q = st.q.trim().toLowerCase();
-  var filtering = !!q || !!st.group;
+  var filtering = !!q || !!st.group || !!st.missingOnly;
   var folded = filtering ? [] : sheetFolded(src, sheet);
   var showEmpty = st.showEmpty || {};
   function rowMatches(it) {
     if (st.group && String(it.gid) !== String(st.group)) return false;
+    if (st.missingOnly && !sheetRowHasMissing(sheet, it.r)) return false;
     if (!q) return true;
     return (sheet.grid[it.r - 1] || []).some(function(v){ return String(v).toLowerCase().indexOf(q) >= 0; });
   }
@@ -6021,7 +6346,7 @@ function renderSheetTable(src) {
   var count = document.getElementById('sheet-count-' + src);
   var total = sheet.rows.length;
   if (count) count.textContent = (filtering ? visible.filter(function(v, k){ return v && items[k].type === 'row'; }).length + ' / ' : '') + total + ' 列';
-  if (!html.length) { el.innerHTML = '<p class="sheet-empty">沒有符合的列。</p>'; return; }
+  if (!html.length) { el.innerHTML = '<p class="sheet-empty">' + (st.missingOnly ? '這裡該填的都填好了。' : '沒有符合的列。') + '</p>'; return; }
   el.innerHTML = '<table class="sheet-table"><thead><tr><th scope="col" class="sc-rn">列</th>' +
     cols.map(function(col, i) {
       // Column titles in these sheets often link to the Drive folder for that column
@@ -6061,7 +6386,8 @@ function sheetCellHTML(src, sheet, r, col, isKey, tag, extra, hint) {
   var formula = sheet.formulas[r + ',' + col.c];
   var chip = sheet.chips && sheet.chips[r + ',' + col.c];
   var locked = formula ? '公式欄位，請在試算表修改' : chip && !sheet.chipWrite ? '這格是檔案連結（智慧型方塊），請在試算表修改' : !chip && urls.length > 1 ? '這格有多個連結，請在試算表修改' : '';
-  return '<' + tag + ' class="sc' + (extra ? ' ' + extra : '') + (col.wide ? ' wide' : '') + (isKey ? ' key' : '') + (locked ? ' locked' : '') + '" tabindex="0"' +
+  var missing = sheetState[src].missingOnly && tag === 'td' && sheetIsMissing(sheet, r, col.c);
+  return '<' + tag + ' class="sc' + (extra ? ' ' + extra : '') + (col.wide ? ' wide' : '') + (isKey ? ' key' : '') + (locked ? ' locked' : '') + (missing ? ' missing' : '') + '" tabindex="0"' +
     ' data-src="' + src + '" data-r="' + r + '" data-c="' + col.c + '" data-a1="' + sheetColLetter(col.c) + r + '"' +
     (locked ? ' data-lock="' + escHtml(locked) + '" title="' + escHtml(locked) + '"' : '') + '>' +
     (chip ? sheetChipsHTML(v, urls) :
@@ -6108,8 +6434,11 @@ function markRecentCells(src) {
   (st.changes || []).forEach(function(x){ if (x.sheet === sheet.name) recent[String(x.cell).split(':')[0]] = x; });
   document.querySelectorAll('#sheet-table-' + src + ' .sc').forEach(function(el) {
     var x = recent[el.dataset.a1];
+    var f = sheetOpenFlag(st, sheet.name, el.dataset.a1);
     el.classList.toggle('recent', !!x);
-    if (x && !el.dataset.lock) el.title = sheetWho(x.by) + '・' + sheetWhen(x.at) + ' 修改';
+    el.classList.toggle('flagged', !!f);
+    if (el.dataset.lock) return;
+    el.title = f ? '待討論' + (f.note ? '：' + f.note : '') : x ? sheetWho(x.by) + '・' + sheetWhen(x.at) + ' 修改' : '';
   });
 }
 
@@ -6119,7 +6448,7 @@ function sheetJump(src, sheetName, a1) {
   var i = st.data.sheets.findIndex(function(sh){ return sh.name === sheetName; });
   var pos = sheetParseA1(a1);
   if (i < 0 || !pos) { showToast('這筆修改的工作表已不在了'); return; }
-  st.tab = i; st.group = ''; st.q = '';
+  st.tab = i; st.group = ''; st.q = ''; st.missingOnly = false;
   st.forceRow = pos.r; st.forceCol = pos.c;
   renderSheetControls(src); renderSheetTable(src);
   var el = sheetFindCell(src, pos.r, pos.c);
@@ -6176,6 +6505,8 @@ function sheetPeek(el) {
   sheetTextUrls(v).forEach(function(u){ if (urls.indexOf(u) < 0) urls.push(u); });
   var lock = el.dataset.lock;
   var isChipCell = sheet.chips && sheet.chips[r + ',' + c];
+  var canFlag = st.data.version >= 6;
+  var flag = canFlag && sheetOpenFlag(st, sheet.name, sheetColLetter(c) + r);
   var pop = document.createElement('div');
   pop.className = 'sheet-peek';
   pop.setAttribute('role', 'dialog');
@@ -6184,14 +6515,21 @@ function sheetPeek(el) {
     '<div class="peek-where">' + escHtml(where || sheetColLetter(c) + ' 欄') + '<span>第 ' + r + ' 列</span></div>' +
     '<div class="peek-val' + (v ? '' : ' empty') + '">' + escHtml(v || '（空白）') + '</div>' +
     (lock ? '<div class="peek-note">' + escHtml(lock) + '</div>' : '') +
+    (flag ? '<div class="peek-flag"><b>待討論</b>' + escHtml(flag.note || '（沒寫要討論什麼）') + '<span>' + escHtml(sheetWho(flag.by)) + ' 標記・' + sheetWhen(flag.at) + '</span></div>' : '') +
     '<div class="peek-actions">' +
       (lock ? '' : '<button type="button" class="sc-btn" data-act="edit">' + (!currentMember ? '選擇身分後編輯' : isChipCell ? '更換檔案' : '編輯這一格') + '</button>') +
       urls.map(function(u, i) {
         var label = isChipCell ? '開啟「' + sheetChipLabels(v, urls)[i] + '」' : '開啟連結' + (urls.length > 1 ? ' ' + (i + 1) : '');
         return '<a class="sc-btn ghost" href="' + escHtml(u) + '" target="_blank" rel="noopener">' + escHtml(label) + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg></a>';
       }).join('') +
+      (canFlag ? '<button type="button" class="sc-btn ghost" data-act="' + (flag ? 'resolve' : 'flag') + '">' + (flag ? '討論完了' : '標記待討論') + '</button>' : '') +
       '<button type="button" class="sc-btn ghost" data-act="close">關閉</button>' +
     '</div>' +
+    (canFlag && !flag ? '<form class="peek-flagform" hidden>' +
+      '<label for="peek-flag-note">要討論什麼？（可以不寫）</label>' +
+      '<textarea id="peek-flag-note" class="sc-input" rows="2" maxlength="500" placeholder="例如：這段剪輯要不要保留"></textarea>' +
+      '<div class="peek-actions"><button type="submit" class="sc-btn">標記</button><button type="button" class="sc-btn ghost" data-act="flag-cancel">取消</button></div>' +
+    '</form>' : '') +
     (lock ? '' : '<div class="peek-tip">雙擊格子或按 F2 可直接編輯</div>');
   document.body.appendChild(pop);
   sheetPeekEl = pop; sheetPeekCell = el;
@@ -6200,11 +6538,30 @@ function sheetPeek(el) {
   pop.addEventListener('click', function(e) {
     var b = e.target.closest('[data-act]');
     if (!b) return;
-    if (b.dataset.act === 'close') sheetPeekClose();
-    else if (b.dataset.act === 'edit') { sheetPeekClose(true); sheetEdit(el); }
+    var act = b.dataset.act;
+    if (act === 'close') sheetPeekClose();
+    else if (act === 'edit') { sheetPeekClose(true); sheetEdit(el); }
+    else if (act === 'flag') {
+      if (!currentMember) { sheetPeekClose(true); showToast('先選擇你的名字，才能標記待討論'); showLogin(); return; }
+      pop.querySelector('.peek-actions').hidden = true;
+      var tip = pop.querySelector('.peek-tip'); if (tip) tip.hidden = true;
+      pop.querySelector('.peek-flagform').hidden = false;
+      pop.querySelector('#peek-flag-note').focus();
+      sheetPeekPlace();
+    }
+    else if (act === 'flag-cancel') { sheetPeekClose(); }
+    else if (act === 'resolve') { sheetPeekClose(); sheetResolveFlag(src, flag.id); }
+  });
+  var form = pop.querySelector('.peek-flagform');
+  if (form) form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var note = form.querySelector('textarea').value.trim();
+    form.querySelector('[type="submit"]').disabled = true;
+    sheetAddFlag(src, sheet, r, c, note).then(function(){ sheetPeekClose(); });
   });
   pop.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') { e.preventDefault(); sheetPeekClose(); }
+    else if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && e.target.closest('.peek-flagform')) { e.preventDefault(); e.target.closest('form').requestSubmit(); }
   });
   (pop.querySelector('[data-act="edit"]') || pop.querySelector('a, button')).focus({ preventScroll: true });
 }

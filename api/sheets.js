@@ -3,6 +3,7 @@
 //   GET  /api/sheets?src=video|material&action=read
 //   GET  /api/sheets?src=video|material&action=changes&days=14
 //   POST /api/sheets?src=video|material   { sheetId, row, col, value, expected, by }
+//   POST /api/sheets?src=video|material   { action: 'flag', sheetId, row, col, note, auto, text, by } | { action: 'resolve', id, by }
 const SOURCES = {
   video: 'SHEET_VIDEO_URL',
   material: 'SHEET_MATERIAL_URL'
@@ -62,9 +63,21 @@ module.exports = async function handler(req, res) {
         body: JSON.stringify({ action: 'selftest', token }), redirect: 'follow'
       }), url);
     }
+    const post = (payload) => callScript(res, fetch(url, {
+      method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(Object.assign({ token }, payload)), redirect: 'follow'
+    }), url);
+    // 待討論: mark a cell for discussion, or mark a flag as handled
+    if (b.action === 'resolve') {
+      return post({ action: 'resolve', id: String(b.id || '').slice(0, 40), by: String(b.by || 'BB6').slice(0, 40) });
+    }
     const row = Number(b.row), col = Number(b.col), sheetId = Number(b.sheetId);
     if (!Number.isInteger(row) || !Number.isInteger(col) || row < 1 || col < 1 || !Number.isInteger(sheetId)) {
       return res.status(400).json({ ok: false, error: '儲存格位置不正確' });
+    }
+    if (b.action === 'flag') {
+      return post({ action: 'flag', sheetId, row, col, auto: !!b.auto,
+        note: String(b.note || '').slice(0, 500), text: String(b.text || '').slice(0, 2000), by: String(b.by || 'BB6').slice(0, 40) });
     }
     const payload = {
       action: 'write', token,

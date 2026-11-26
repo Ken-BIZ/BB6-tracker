@@ -22,12 +22,16 @@
  * 之後修改這份程式碼時：部署 → 管理部署作業 → 編輯 → 版本選「新版本」，網址不變。
  *
  * 修改紀錄寫在隱藏工作表「BB6 變更紀錄」：在試算表直接改（onEdit）和從 BB6 改（doPost）都會記。
+ * 在 BB6 標記的「待討論」寫在隱藏工作表「BB6 待討論」。
  */
 
 var LOG_SHEET = 'BB6 變更紀錄';
 var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列', '欄位', '原內容', '新內容'];
 var LOG_MAX_ROWS = 5000;
-var SCRIPT_VERSION = 5;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips; 5: emptying a chip cell removes it
+var FLAG_SHEET = 'BB6 待討論';
+var FLAG_HEAD = ['編號', '標記時間', '標記者', '工作表', '儲存格', '列', '欄位', '要討論什麼', '狀態', '處理者', '處理時間', '種類', '當時內容'];
+var FLAG_DONE_DAYS = 14;
+var SCRIPT_VERSION = 6;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips; 5: emptying a chip cell removes it; 6: 待討論 flags
 var URL_LINE = /^https?:\/\/\S+$/i;
 
 // Run this once from the editor after changing permissions, so Google asks for them.
@@ -73,6 +77,8 @@ function doPost(e) {
     checkToken_(body.token);
     if (body.action === 'write') return json_(write_(body));
     if (body.action === 'selftest') return json_(selftest_());
+    if (body.action === 'flag') return json_(flag_(body));
+    if (body.action === 'resolve') return json_(resolveFlag_(body));
     return json_({ ok: false, error: 'unknown action' });
   } catch (err) {
     return json_({ ok: false, error: String(err && err.message || err) });
@@ -85,7 +91,7 @@ function readAll_() {
   var api = null, apiError = '';
   try { api = apiLinks_(ss); } catch (err) { apiError = String(err && err.message || err); }
   var sheets = ss.getSheets().filter(function (sh) {
-    return sh.getName() !== LOG_SHEET && !sh.isSheetHidden();
+    return sh.getName() !== LOG_SHEET && sh.getName() !== FLAG_SHEET && !sh.isSheetHidden();
   }).map(function (sh) {
     var lastRow = sh.getLastRow(), lastCol = sh.getLastColumn();
     if (!lastRow || !lastCol) return { id: sh.getSheetId(), name: sh.getName(), rows: [], formulas: [], links: [], chips: [] };
@@ -112,7 +118,7 @@ function readAll_() {
     return { id: sh.getSheetId(), name: sh.getName(), rows: range.getDisplayValues(), formulas: formulas, links: links, chips: chips };
   });
   return { ok: true, version: SCRIPT_VERSION, chipsSupported: !!api, chipsError: apiError, title: ss.getName(), url: ss.getUrl(),
-    timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets };
+    timeZone: ss.getSpreadsheetTimeZone(), sheets: sheets, flags: readFlags_() };
 }
 
 // File chips (smart chips), cell hyperlinks and linked text, read through the Sheets API advanced service.
@@ -176,7 +182,7 @@ function write_(b) {
   try {
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sh = ss.getSheets().filter(function (s) { return s.getSheetId() === Number(b.sheetId); })[0];
-    if (!sh || sh.getName() === LOG_SHEET) return { ok: false, error: '找不到工作表' };
+    if (!sh || sh.getName() === LOG_SHEET || sh.getName() === FLAG_SHEET) return { ok: false, error: '找不到工作表' };
     var row = Number(b.row), col = Number(b.col);
     if (!(row >= 1 && col >= 1)) return { ok: false, error: '儲存格位置不正確' };
     var cell = sh.getRange(row, col);
@@ -284,7 +290,7 @@ function selftestRun_(ss) {
 function onEdit(e) {
   try {
     var sh = e.range.getSheet();
-    if (sh.getName() === LOG_SHEET) return;
+    if (sh.getName() === LOG_SHEET || sh.getName() === FLAG_SHEET) return;
     var who = '';
     try { who = Session.getActiveUser().getEmail(); } catch (x) {}
     var single = e.range.getNumRows() === 1 && e.range.getNumColumns() === 1;
@@ -312,6 +318,86 @@ function logSheet_() {
     log.hideSheet();
   }
   return log;
+}
+
+/* ── 待討論：在 BB6 標記某一格要在對焦時討論；處理完就標「已處理」 ──
+   種類「自動」是 BB6 從備註欄關鍵字找到、被按了「略過」的格子，記下當時內容，內容沒變就不再列出。 */
+function flagSheet_() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sh = ss.getSheetByName(FLAG_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(FLAG_SHEET);
+    sh.appendRow(FLAG_HEAD);
+    sh.setFrozenRows(1);
+    sh.hideSheet();
+  }
+  return sh;
+}
+
+function flagObj_(r) {
+  function iso(v) { return v instanceof Date ? v.toISOString() : String(v || ''); }
+  return { id: String(r[0]), at: iso(r[1]), by: String(r[2]), sheet: String(r[3]), cell: String(r[4]), row: String(r[5]),
+    column: String(r[6]), note: String(r[7]), status: String(r[8]), doneBy: String(r[9]), doneAt: iso(r[10]),
+    kind: String(r[11] || '手動'), text: String(r[12] || '') };
+}
+
+// Open flags, flags handled in the last two weeks, and every skipped keyword match
+function readFlags_() {
+  var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FLAG_SHEET);
+  if (!sh || sh.getLastRow() < 2) return [];
+  var start = Math.max(2, sh.getLastRow() - 1999);
+  var since = Date.now() - FLAG_DONE_DAYS * 86400000;
+  return sh.getRange(start, 1, sh.getLastRow() - start + 1, FLAG_HEAD.length).getValues()
+    .filter(function (r) {
+      if (!r[0]) return false;
+      if (String(r[8]) !== '已處理' || String(r[11]) === '自動') return true;
+      return r[10] instanceof Date && r[10].getTime() >= since;
+    })
+    .map(flagObj_);
+}
+
+function flag_(b) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sh = ss.getSheets().filter(function (s) { return s.getSheetId() === Number(b.sheetId); })[0];
+    if (!sh || sh.getName() === LOG_SHEET || sh.getName() === FLAG_SHEET) return { ok: false, error: '找不到工作表' };
+    var row = Number(b.row), col = Number(b.col);
+    if (!(row >= 1 && col >= 1)) return { ok: false, error: '儲存格位置不正確' };
+    var hr = headerRow_(sh);
+    var auto = !!b.auto, by = String(b.by || 'BB6').slice(0, 40), now = new Date();
+    var rec = [Utilities.getUuid().slice(0, 8), now, by, sh.getName(), sh.getRange(row, col).getA1Notation(),
+      row > hr ? rowLabel_(sh, row) : '', String(sh.getRange(hr, col).getDisplayValue()).trim(),
+      String(b.note || '').slice(0, 500), auto ? '已處理' : '待討論', auto ? by : '', auto ? now : '',
+      auto ? '自動' : '手動', auto ? String(b.text || '').slice(0, 2000) : ''];
+    flagSheet_().appendRow(rec);
+    return { ok: true, flag: flagObj_(rec) };
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function resolveFlag_(b) {
+  var lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    var sh = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(FLAG_SHEET);
+    if (!sh || sh.getLastRow() < 2) return { ok: false, error: '找不到這筆待討論' };
+    var ids = sh.getRange(2, 1, sh.getLastRow() - 1, 1).getValues();
+    for (var i = ids.length - 1; i >= 0; i--) {
+      if (String(ids[i][0]) !== String(b.id)) continue;
+      var rowN = i + 2;
+      if (String(sh.getRange(rowN, 9).getValue()) === '已處理') {
+        return { ok: true, flag: flagObj_(sh.getRange(rowN, 1, 1, FLAG_HEAD.length).getValues()[0]), already: true };
+      }
+      sh.getRange(rowN, 9, 1, 3).setValues([['已處理', String(b.by || 'BB6').slice(0, 40), new Date()]]);
+      return { ok: true, flag: flagObj_(sh.getRange(rowN, 1, 1, FLAG_HEAD.length).getValues()[0]) };
+    }
+    return { ok: false, error: '找不到這筆待討論' };
+  } finally {
+    lock.releaseLock();
+  }
 }
 
 function headerRow_(sh) {
