@@ -10,6 +10,15 @@
  * 4. 複製網頁應用程式網址，貼到 Vercel 環境變數：
  *    影片清單 → SHEET_VIDEO_URL，教材總表 → SHEET_MATERIAL_URL。
  *
+ * 5. 從 BB6 寫入檔案晶片需要「讀取雲端硬碟」權限（drive.readonly，只能讀、不能改或刪檔案）：
+ *    專案設定 → 勾選「在編輯器中顯示 appsscript.json 資訊清單檔案」，在 appsscript.json 加入 oauthScopes：
+ *      "oauthScopes": [
+ *        "https://www.googleapis.com/auth/spreadsheets",
+ *        "https://www.googleapis.com/auth/drive.readonly",
+ *        "https://www.googleapis.com/auth/userinfo.email"
+ *      ],
+ *    儲存後在上方函式選單選 authorizeBB6 → 執行 → 依提示授權。
+ *
  * 之後修改這份程式碼時：部署 → 管理部署作業 → 編輯 → 版本選「新版本」，網址不變。
  *
  * 修改紀錄寫在隱藏工作表「BB6 變更紀錄」：在試算表直接改（onEdit）和從 BB6 改（doPost）都會記。
@@ -20,6 +29,11 @@ var LOG_HEAD = ['時間', '修改者', '來源', '工作表', '儲存格', '列'
 var LOG_MAX_ROWS = 5000;
 var SCRIPT_VERSION = 4;   // 2: cell links, kept on edit; 3: reads file chips via the Sheets API service; 4: writes file chips
 var URL_LINE = /^https?:\/\/\S+$/i;
+
+// Run this once from the editor after changing permissions, so Google asks for them
+function authorizeBB6() {
+  return SpreadsheetApp.getActiveSpreadsheet().getName();
+}
 
 function json_(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
