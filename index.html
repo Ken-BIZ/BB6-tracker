@@ -6573,12 +6573,14 @@ function sheetToggleFold(src, gid) {
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
   var f = sheetFolded(src, sheet), i = f.indexOf(gid);
   if (i >= 0) f.splice(i, 1); else f.push(gid);
+  st.forceRow = null;
   storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(f));
   renderSheetTable(src);
 }
 function sheetFoldAll(src, fold) {
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
   storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(fold ? sheet.groups.map(function(g){ return g.gid; }) : []));
+  st.forceRow = null;
   renderSheetTable(src);
 }
 function sheetToggleEmpty(src, gid) {
@@ -6657,8 +6659,6 @@ function renderSheetTable(src) {
     }
     visible[k] = false;
   });
-  var forceGid = null;
-  if (st.forceRow) { var fr = items.find(function(x){ return x.r === st.forceRow; }); if (fr) forceGid = fr.gid; }
   function rowCountIn(gid) { return items.filter(function(x){ return x.type === 'row' && x.gid === gid && !x.placeholder; }).length; }
 
   var html = [], shownRows = 0, pending = [];
@@ -6681,7 +6681,7 @@ function renderSheetTable(src) {
   items.forEach(function(it, k) {
     if (!visible[k]) return;
     if (it.gid !== curGid) { flushEmpty(curGid); curGid = it.gid; }
-    var isFolded = folded.indexOf(it.gid) >= 0 && it.gid !== forceGid;
+    var isFolded = folded.indexOf(it.gid) >= 0;
     if (it.type === 'head') {
       if (it.level > 0 && isFolded) return;
       flushEmpty(it.gid);
@@ -6802,6 +6802,13 @@ function sheetJump(src, sheetName, a1) {
   if (i < 0 || !pos) { showToast('這筆修改的工作表已不在了'); return; }
   st.tab = i; st.group = ''; st.q = ''; st.missingOnly = false;
   st.forceRow = pos.r; st.forceCol = pos.c;
+  // Unfold the target's group the same way the fold button does, so it can be folded again afterwards
+  var target = st.data.sheets[i].items.find(function(x){ return x.r === pos.r; });
+  var folds = sheetFolded(src, st.data.sheets[i]);
+  if (target && folds.indexOf(target.gid) >= 0) {
+    folds.splice(folds.indexOf(target.gid), 1);
+    storeSet(sheetPrefKey('fold', src, st.data.sheets[i]), JSON.stringify(folds));
+  }
   renderSheetControls(src); renderSheetTable(src);
   var el = sheetFindCell(src, pos.r, pos.c);
   if (!el) { showToast('這一列目前是空白的'); return; }
