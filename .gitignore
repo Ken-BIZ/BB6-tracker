@@ -3,3 +3,6 @@
 .vercel
 node_modules
 .DS_Store
+
+# Data snapshots downloaded from BB6 (real team data, for local testing only)
+bb6-snapshot-*.json
