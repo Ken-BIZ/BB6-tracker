@@ -2342,6 +2342,8 @@ body.modal-open { overflow: hidden; }
 .members-details > summary::before { content: ''; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .18s var(--ease); }
 .members-details[open] > summary::before { transform: rotate(45deg); }
 .members-details[open] > summary { margin-bottom: 20px; }
+.sidebar .sb-item[hidden] { display: none; }
+.sidebar .sb-item:disabled { cursor: progress; opacity: 0.7; }
 </style>
 
 <body>
@@ -2424,6 +2426,7 @@ body.modal-open { overflow: hidden; }
       <span class="login-name sb-label" id="login-name">未登入</span>
       <button type="button" class="login-switch sb-label" onclick="showLogin()">切換</button>
     </div>
+    <button type="button" class="sb-item" id="snapshot-btn" onclick="downloadSnapshot()" hidden title="下載目前所有資料的快照（JSON），給本機測試用"><svg class="sb-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg><span class="sb-label">下載資料快照</span></button>
     <button type="button" class="sb-item" id="theme-toggle" onclick="togglePalettePicker()" aria-haspopup="dialog" aria-expanded="false"><svg class="sb-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22a10 10 0 1 1 10-10c0 2.8-2.2 4-4 4h-2.2a1.8 1.8 0 0 0-1.3 3.1A1.8 1.8 0 0 1 12 22Z"/><circle cx="7.5" cy="10.5" r="1.2" fill="currentColor"/><circle cx="12" cy="7" r="1.2" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1.2" fill="currentColor"/></svg><span class="sb-label" id="theme-toggle-label">配色</span></button>
     <button type="button" class="sb-item" id="sb-collapse" onclick="toggleSidebar()" aria-expanded="true"><svg class="sb-ico" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/><path d="m15 9-3 3 3 3"/></svg><span class="sb-label">收合側邊欄</span></button>
   </div>
@@ -3331,6 +3334,7 @@ function enterViewOnly() {
   renderMembers();
   renderWeeklyGreeting();
   renderCheers();
+  updateSnapshotButton();
   if (okr.loaded) renderOKR();
 }
 document.addEventListener('keydown', function(e) {
@@ -3354,6 +3358,7 @@ function selectMember(name, color) {
   renderMembers();
   renderWeeklyGreeting();
   renderCheers();
+  updateSnapshotButton();
   if (okr.loaded) renderOKR();
 }
 
@@ -6127,7 +6132,7 @@ window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;
-window.authSignIn = authSignIn; window.authSignOut = authSignOut;
+window.authSignIn = authSignIn; window.authSignOut = authSignOut; window.downloadSnapshot = downloadSnapshot;
 window.renderReporterTabs = renderReporterTabs;
 window.renderOverviewTabs = renderOverviewTabs;
 window.saveBaseline      = saveBaseline;
@@ -7551,6 +7556,58 @@ function cheerNext(page) { cheerState[page].shift++; renderCheer(page); }
 // Hidden until the page is reloaded
 function cheerHide(page) { cheerState[page].hidden = true; renderCheer(page); }
 ['weekly', 'okr', 'overview', 'tracker', 'flow'].forEach(renderCheer);
+
+/* ── 資料快照 (Ken only): every table plus both sheets in one JSON file, for testing changes locally on real data.
+   Member emails are left out. Supabase returns at most 1000 rows per request, so tables are read page by page. */
+function fetchAllRows(table, orderCols) {
+  var out = [];
+  function page(from) {
+    var q = db.from(table).select('*');
+    orderCols.forEach(function(c){ q = q.order(c); });
+    return q.range(from, from + 999).then(function(res) {
+      if (res.error) throw new Error(table + '：' + res.error.message);
+      var rows = res.data || [];
+      out = out.concat(rows);
+      return rows.length === 1000 ? page(from + 1000) : out;
+    });
+  }
+  return page(0);
+}
+function updateSnapshotButton() {
+  var b = document.getElementById('snapshot-btn');
+  if (b) b.hidden = !hasFullEditAccess(currentMember);
+}
+function downloadSnapshot() {
+  if (!hasFullEditAccess(currentMember)) return;
+  var btn = document.getElementById('snapshot-btn'), label = btn.querySelector('.sb-label');
+  btn.disabled = true; label.textContent = '打包中…';
+  var tables = {
+    scores: ['module', 'section', 'task_id'], log: ['id'], settings_baseline: ['id'],
+    okr_objectives: ['id'], okr_key_results: ['id'], okr_updates: ['id']
+  };
+  var names = Object.keys(tables);
+  var sheetPart = function(src) {
+    return Promise.all([sheetFetch(src, '&action=read'), sheetFetch(src, '&action=changes&days=60')])
+      .then(function(r){ return { read: r[0], changes: r[1] }; })
+      .catch(function(e){ return { error: String(e && e.message || e) }; });
+  };
+  Promise.all(names.map(function(t){ return fetchAllRows(t, tables[t]); }).concat([sheetPart('video'), sheetPart('material')]))
+    .then(function(res) {
+      var snap = { app: 'BB6', kind: 'snapshot', version: 1, exportedAt: new Date().toISOString(), exportedBy: currentMember, tables: {}, sheets: { video: res[names.length], material: res[names.length + 1] } };
+      names.forEach(function(t, i){ snap.tables[t] = res[i]; });
+      var blob = new Blob([JSON.stringify(snap)], { type: 'application/json' });
+      var d = new Date(), pad = function(n){ return String(n).padStart(2, '0'); };
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'bb6-snapshot-' + d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + '.json';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(a.href); }, 5000);
+      var counts = names.map(function(t){ return t + ' ' + snap.tables[t].length; }).join('、');
+      showToast('已下載資料快照（' + counts + '）');
+    })
+    .catch(function(e){ showToast('快照沒有下載成功：' + (e && e.message || e)); })
+    .then(function(){ btn.disabled = false; label.textContent = '下載資料快照'; });
+}
 
 /* ── INIT ── */
 loadHolidayCalendar();
