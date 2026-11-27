@@ -2290,6 +2290,43 @@ body { background: var(--frame, var(--bg)); }
 .login-box h1.login-box-title { margin: 0 0 6px; }
 .login-box-sub b { color: var(--text); }
 .login-error { margin: -14px 0 18px; padding: 10px 12px; font-size: 14px; line-height: 1.55; color: var(--alert-text); background: color-mix(in srgb, var(--alert-text) 10%, transparent); border-radius: 10px; }
+.tsum { margin: 0 0 24px; padding: 20px 24px 22px; background: var(--card); border: 1px solid rgba(var(--fg-rgb),0.08); border-radius: 18px; }
+.tsum-loading { min-height: 120px; }
+.tsum-head { display: flex; align-items: center; gap: 24px; }
+.tsum-main { flex: 1; min-width: 0; }
+.tsum-title { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
+.tsum-mod { padding: 2px 9px; font-family: var(--mono); font-stretch: 75%; font-size: 14px; font-weight: 700; color: var(--on-accent); background: var(--yellow); border-radius: 6px; }
+.tsum-sub { margin-top: 6px; font-size: 15px; color: rgba(var(--fg-rgb),0.78); }
+.tsum-sub b { color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+.tsum-bar, .tsum-gbar { height: 8px; margin-top: 12px; background: rgba(var(--fg-rgb),0.08); border-radius: 999px; overflow: hidden; }
+.tsum-bar i { display: block; height: 100%; background: var(--chart-accent); border-radius: inherit; }
+.tsum-pct { flex-shrink: 0; text-align: right; }
+.tsum-pct-val .flap { font-size: 40px; }
+.tsum-pct-label { margin-top: 4px; font-size: 13px; color: var(--grey-dark); }
+.tsum-gates { display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 12px; margin-top: 18px; }
+@media (max-width: 1180px) { .tsum-gates { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); } }
+.tsum-gate { padding: 14px 16px; background: var(--sunken); border: 1px solid rgba(var(--fg-rgb),0.07); border-top: 3px solid var(--gc); border-radius: 12px; }
+.tsum-gname { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 15px; font-weight: 700; }
+.tsum-gname span { color: var(--gt); }
+.tsum-gnum { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; font-size: 14px; color: rgba(var(--fg-rgb),0.78); }
+.tsum-gnum b { font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums; }
+.tsum-gpct { margin-left: auto; font-family: var(--mono); font-stretch: 75%; font-weight: 600; color: var(--gt); }
+.tsum-gbar { height: 6px; margin-top: 8px; }
+.tsum-gbar i { display: block; height: 100%; background: var(--gc); border-radius: inherit; }
+.tsum-gate.done { opacity: 0.7; }
+.tsum-secs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
+.tsum-sec { display: inline-flex; align-items: baseline; gap: 3px; min-height: 30px; padding: 4px 10px; font-family: var(--mono); font-stretch: 75%; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 999px; cursor: pointer; }
+.tsum-sec small { font-size: 11px; color: var(--grey-dark); }
+.tsum-sec:hover { border-color: var(--gc); }
+.tsum-sec.here { color: var(--on-accent); background: var(--yellow); border-color: var(--yellow); }
+.tsum-sec.here small { color: inherit; }
+.tsum-sec:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+.tsum-more { font-size: 12px; color: var(--grey-dark); }
+@media (max-width: 640px) {
+  .tsum { padding: 16px; }
+  .tsum-head { align-items: flex-start; gap: 12px; }
+  .tsum-pct-val .flap { font-size: 28px; }
+}
 </style>
 
 <body>
@@ -2661,6 +2698,7 @@ body { background: var(--frame, var(--bg)); }
   <!-- Gates grid -->
   <section style="padding-top:28px">
     <div class="cheer-slot" data-cheer="tracker"></div>
+    <div class="tracker-summary" id="tracker-summary"></div>
     <div class="tracker-assist" id="tracker-assist"></div>
     <div class="reporter-title-row">
       <div class="section-title" id="reporter-section-title">1.1 任務進度填報</div>
@@ -3647,7 +3685,71 @@ function openTrackerOnMyWork() {
   if (first) goToTask(first.mod, first.sec);
 }
 
+/* ── 進度填報: the chosen module at a glance — completion, and where nodes are still open per Gate ──
+   A node is one task in one 小節; module-level tasks count once. */
+function moduleOpenNodes(mod) {
+  var gates = getGates(mod).map(function(g){ return { g: g, left: 0, doing: 0, secs: [] }; });
+  var once = {};
+  getSections(mod).forEach(function(sec) {
+    getActiveTasks(sec, mod).forEach(function(t) {
+      if (t.moduleLevel) { if (once[t.id]) return; once[t.id] = true; }
+      var sc = getScore(t.id, mod, sec);
+      if (sc >= 10) return;
+      var row = gates.find(function(x){ return x.g.num === t.gate; });
+      if (!row) return;
+      row.left++;
+      if (sc > 0) row.doing++;
+      var e = row.secs.find(function(x){ return x.sec === sec; });
+      if (!e) { e = { sec: sec, n: 0 }; row.secs.push(e); }
+      e.n++;
+    });
+  });
+  return gates;
+}
+function renderModuleSummary() {
+  var el = document.getElementById('tracker-summary');
+  if (!el) return;
+  var mod = currentModule;
+  if (!moduleLoaded[mod] || !baselineReady) {
+    el.innerHTML = '<div class="tsum tsum-loading" role="status"><i class="board-skel"></i><span class="sr-only">讀取 ' + mod + ' 進度中</span></div>';
+    return;
+  }
+  var pct = modulePct(mod), gates = moduleOpenNodes(mod), secs = getSections(mod);
+  var left = gates.reduce(function(a, g){ return a + g.left; }, 0);
+  var doing = gates.reduce(function(a, g){ return a + g.doing; }, 0);
+  var name = (baseline.moduleNames[mod] || '').trim();
+  var SHOW = 8;
+  el.innerHTML = '<section class="tsum" aria-label="' + mod + ' 模組進度">' +
+    '<div class="tsum-head">' +
+      '<div class="tsum-main">' +
+        '<div class="tsum-title"><span class="tsum-mod">' + mod + '</span>' + escHtml(name || '模組進度') + '</div>' +
+        '<div class="tsum-sub">' + (left
+          ? '共 ' + secs.length + ' 個小節・還有 <b>' + left + '</b> 個節點待完成' + (doing ? '（進行中 ' + doing + '）' : '')
+          : '共 ' + secs.length + ' 個小節・全部節點都完成了') + '</div>' +
+        '<div class="tsum-bar" aria-hidden="true"><i style="width:' + Math.min(100, pct) + '%"></i></div>' +
+      '</div>' +
+      '<div class="tsum-pct"><div class="tsum-pct-val">' + flap(pct + '%') + '</div><div class="tsum-pct-label">模組完成度</div></div>' +
+    '</div>' +
+    '<div class="tsum-gates" style="--n:' + gates.length + '">' + gates.map(function(row) {
+      var g = row.g, gp = moduleGatePct(mod, g.num);
+      return '<div class="tsum-gate' + (row.left ? '' : ' done') + '" style="--gc:' + GATE_COLORS[g.num] + ';--gt:' + GATE_TEXT[g.num] + '">' +
+        '<div class="tsum-gname"><span>Gate ' + g.num + '</span>' + escHtml(g.name) + '</div>' +
+        '<div class="tsum-gnum">' + (row.left
+          ? '待完成 <b>' + row.left + '</b> 個節點' + (row.doing ? '・進行中 ' + row.doing : '')
+          : '這個 Gate 全部完成') + '<span class="tsum-gpct">' + gp + '%</span></div>' +
+        '<div class="tsum-gbar" aria-hidden="true"><i style="width:' + Math.min(100, gp) + '%"></i></div>' +
+        (row.secs.length ? '<div class="tsum-secs">' + row.secs.slice(0, SHOW).map(function(e) {
+          var here = e.sec === currentSection;
+          return '<button type="button" class="tsum-sec' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
+            ' title="' + e.sec + ' 還有 ' + e.n + ' 個節點" onclick="goToTask(\'' + mod + '\',\'' + e.sec + '\')">' + e.sec + (e.n > 1 ? '<small>×' + e.n + '</small>' : '') + '</button>';
+        }).join('') + (row.secs.length > SHOW ? '<span class="tsum-more">另有 ' + (row.secs.length - SHOW) + ' 個小節</span>' : '') + '</div>' : '') +
+      '</div>';
+    }).join('') + '</div>' +
+  '</section>';
+}
+
 function renderMembers() {
+  renderModuleSummary();
   renderTrackerAssist();
   const container = document.getElementById('members-grid');
   if (!container) return;
@@ -7115,6 +7217,8 @@ var TOURS = {
   tracker: [
     { sel: '.reporter-module-bar', title: '選模組與小節',
       body: '上排選模組，「小節」下拉選單選小節。右邊的綠點代表即時同步中，別人填報時這裡會馬上更新；「匯出 CSV」可以下載全部進度。' },
+    { sel: '.tsum', title: '模組進度',
+      body: '選中模組的完成度，以及每個 Gate 還有幾個節點待完成（一個節點＝一個小節裡的一項任務）。下方的小節編號是還沒完成的地方，×2 表示那一節還差兩項；點一下就跳到那個小節。' },
     { sel: '#tracker-assist', title: '我的待處理',
       body: '選了身分之後，這裡會列出你手上可以開始或進行中的任務，按一下就跳到那個小節。還沒選身分時只能檢視，按「選擇身分」登入。' },
     { sel: '#gates-grid', title: '填報進度',
