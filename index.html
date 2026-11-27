@@ -2363,6 +2363,42 @@ body.modal-open { overflow: hidden; }
 .tsum-gate:last-child .tsum-tip { left: auto; right: 0; transform: translate(0, 4px); }
 .tsum-gate:last-child .tsum-secwrap:hover .tsum-tip, .tsum-gate:last-child .tsum-sec:focus-visible + .tsum-tip { transform: none; }
 @media (prefers-reduced-motion: reduce) { .tsum-tip { transition: none; } #gates-grid.just-opened { animation: none; } }
+/* ═══ Affordance pass: anything clickable looks clickable at rest, and only it does ═══ */
+/* Navigation buttons: firmer outline and an arrow that says "this takes you somewhere" */
+.kr-stuck-link, .board-advice-btn { display: inline-flex; align-items: center; gap: 4px; border-color: rgba(var(--fg-rgb),0.28); }
+.kr-stuck-link::after, .board-advice-btn::after { content: '→'; font-weight: 700; color: var(--accent-ink); transition: transform .15s var(--ease); }
+.kr-stuck-link:hover, .board-advice-btn:hover { border-color: var(--accent-ink); background: rgba(var(--fg-rgb),0.05); }
+.kr-stuck-link:hover::after, .board-advice-btn:hover::after { transform: translateX(2px); }
+/* Disclosures read as links: accent colour, chevron, underline on hover */
+.kr-why > summary, .bn-all > summary, .flag-done > summary { color: var(--accent-ink); }
+.kr-why > summary:hover, .bn-all > summary:hover, .flag-done > summary:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 4px; }
+.flag-done > summary { display: inline-flex; align-items: center; gap: 8px; list-style: none; font-weight: 700; }
+.flag-done > summary::-webkit-details-marker { display: none; }
+.flag-done > summary::before { content: ''; width: 6px; height: 6px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .15s var(--ease); }
+.flag-done[open] > summary::before { transform: rotate(45deg); }
+/* Clickable cards in the 對焦看板: an arrow at rest, brighter on hover */
+.chg-head, .flag-main { position: relative; padding-right: 36px; }
+.chg-head::after, .flag-main::after { content: '→'; position: absolute; top: 10px; right: 12px; font-weight: 700; color: var(--grey-dark); transition: color .15s, transform .15s var(--ease); }
+.chg-head:hover::after, .flag-main:hover::after, .chg-head:focus-visible::after, .flag-main:focus-visible::after { color: var(--accent-ink); transform: translateX(2px); }
+.chg-col-row { position: relative; padding-right: 36px; }
+.chg-col-row::after { content: '→'; position: absolute; top: 6px; right: 12px; font-weight: 700; color: var(--accent-ink); opacity: 0; transition: opacity .15s; }
+.chg-col-row:hover::after, .chg-col-row:focus-visible::after { opacity: 1; }
+.chg-head:hover, .chg-col-row:hover, .flag-main:hover, .miss-row:hover { background: rgba(var(--fg-rgb),0.06); }
+/* Tabs: a resting fill so the row reads as buttons, not a line of text */
+.reporter-tab:not(.active), .trend-tab:not(.active) { background: rgba(var(--fg-rgb),0.06); color: rgba(var(--fg-rgb),0.78); }
+.reporter-tab:not(.active):hover, .trend-tab:not(.active):hover { background: rgba(var(--fg-rgb),0.12); color: var(--text); }
+.reporter-tabs, .sheet-tabs { gap: 6px; }
+.focus-range button:not(.on):hover { background: rgba(var(--fg-rgb),0.08); }
+/* Spreadsheet cells open a popup on click: show that on hover */
+.sheet-table td.sc:not(.editing):hover { background: rgba(var(--fg-rgb),0.05); }
+.sheet-table td.sc.key:not(.editing):hover { background: color-mix(in srgb, var(--text) 5%, var(--panel)); }
+.grp-part:not(.editing):hover { background: rgba(var(--fg-rgb),0.08); }
+/* Names in sentences are labels, not buttons: no pill */
+#page-weekly .kr-stuck .owner-chip, #page-weekly .bn-top .owner-chip, #page-weekly .greet-line .owner-chip { padding: 0; background: transparent; font-weight: 700; }
+/* Dropdowns: appearance:none hid the native arrow; draw one that follows the palette */
+.section-select { background-image: linear-gradient(45deg, transparent 50%, var(--grey-dark) 50%), linear-gradient(135deg, var(--grey-dark) 50%, transparent 50%); background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; }
+.section-select:hover { border-color: rgba(var(--fg-rgb),0.35); }
+@media (prefers-reduced-motion: reduce) { .kr-stuck-link::after, .board-advice-btn::after, .chg-head::after, .flag-main::after { transition: none; } }
 </style>
 
 <body>
