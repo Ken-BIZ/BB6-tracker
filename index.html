@@ -684,7 +684,6 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .section-select:focus { outline:none; border-color: var(--accent-ink); }
 .section-select option { background:var(--raised-2); color: var(--text); }
 .reporter-section-header { padding:28px 48px 0; display:flex; align-items:center; gap:16px; }
-.reporter-section-tag { font-size:14px; font-weight:700; color: var(--accent-ink); letter-spacing:0.08em; text-transform:uppercase; }
 .reporter-section-title { font-size:20px; font-weight:700; letter-spacing:-0.02em; }
 .reporter-lock-badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:3px; }
 .reporter-lock-badge.mine { background:color-mix(in srgb, var(--yellow) 15%, transparent); color: var(--accent-ink); }
@@ -918,7 +917,6 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 #page-weekly .section-title { font-size: 30px; }
 #page-weekly .baseline-title { font-size: 16px; }
 #page-weekly .baseline-sub { font-size: 15px; }
-#page-weekly .baseline-toggle { font-size: 14px; }
 #page-weekly .baseline-section-title { font-size: 13px; }
 #page-weekly .baseline-row-label { font-size: 15px; }
 #page-weekly .baseline-row-sub { font-size: 13px; }
@@ -1001,8 +999,6 @@ footer { padding: 28px 48px; border-top: 2px solid var(--yellow); display: flex;
 .baseline-bar-top { display: flex; align-items: center; gap: 16px; padding: 14px 0; }
 .baseline-title { font-size: 14px; font-weight: 700; color: var(--text); }
 .baseline-sub { font-size: 13px; color: rgba(var(--fg-rgb),0.6); flex: 1; }
-.baseline-toggle { background: transparent; border: 1px solid rgba(var(--fg-rgb),0.15); color: rgba(var(--fg-rgb),0.8); font-size: 13px; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-.baseline-toggle:hover { color: var(--text); border-color: rgba(var(--fg-rgb),0.35); }
 .baseline-body { padding: 20px 0 24px; border-top: 1px solid rgba(var(--fg-rgb),0.06); }
 .baseline-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
 .baseline-section-title { font-size: 12px; font-weight: 700; color: rgba(var(--fg-rgb),0.6); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
@@ -1401,7 +1397,6 @@ html[data-theme="light"] .sidebar .sb-item.active { background: color-mix(in srg
 html[data-theme="light"] #panel .okr-obj, html[data-theme="light"] #panel .gate-col, html[data-theme="light"] #panel .fx-gate, html[data-theme="light"] #panel .fx-person { box-shadow: 0 1px 2px rgba(24,24,27,0.04), 0 4px 16px rgba(24,24,27,0.04); }
 .reporter-title-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 14px; margin-bottom: 28px; }
 #page-tracker .reporter-title-row .section-title { margin-bottom: 0; }
-.reporter-section-tag { font-size: 14px; letter-spacing: 0; text-transform: none; padding: 3px 10px; border-radius: 999px; background: rgba(var(--fg-rgb),0.06); }
 .reporter-lock-badge { font-size: 13px; border-radius: 999px; padding: 3px 10px; }
 .fx-gate-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0 6px; }
 .fx-gate-num { font-size: 18px; letter-spacing: -0.01em; text-transform: none; }
@@ -1575,8 +1570,6 @@ html[data-theme="light"] .flap i { background: linear-gradient(to bottom, var(--
 /* Top bottleneck pass marked by yellow, not alert orange */
 #page-weekly .bn-top-item:first-child { border-color: color-mix(in srgb, var(--accent-ink) 55%, transparent); }
 #page-weekly .bn-top-item:first-child .bn-top-num b { color: var(--accent-ink); }
-.baseline-toggle { display: inline-flex; align-items: center; gap: 6px; }
-.baseline-toggle[aria-expanded="true"] .chev { transform: rotate(180deg); }
 .chev { transition: transform .18s var(--ease); }
 #page-weekly .kr-tile-sub { text-wrap: pretty; }
 .nw { white-space: nowrap; }
@@ -2308,18 +2301,17 @@ body { background: var(--frame, var(--bg)); }
 .tsum-gate { padding: 14px 16px; background: var(--sunken); border: 1px solid rgba(var(--fg-rgb),0.07); border-top: 3px solid var(--gc); border-radius: 12px; }
 .tsum-gname { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 15px; font-weight: 700; }
 .tsum-gname span { color: var(--gt); }
-.tsum-gnum { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; font-size: 14px; color: rgba(var(--fg-rgb),0.78); }
+.tsum-gnum { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 6px; font-size: 14px; color: rgba(var(--fg-rgb),0.78); }
+.tsum-gnum > span:first-child { min-width: 0; }
 .tsum-gnum b { font-size: 16px; color: var(--text); font-variant-numeric: tabular-nums; }
-.tsum-gpct { margin-left: auto; font-family: var(--mono); font-stretch: 75%; font-weight: 600; color: var(--gt); }
+.tsum-gpct { flex-shrink: 0; font-family: var(--mono); font-stretch: 75%; font-weight: 600; color: var(--gt); }
 .tsum-gbar { height: 6px; margin-top: 8px; }
 .tsum-gbar i { display: block; height: 100%; background: var(--gc); border-radius: inherit; }
 .tsum-gate.done { opacity: 0.7; }
 .tsum-secs { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 12px; }
 .tsum-sec { display: inline-flex; align-items: baseline; gap: 3px; min-height: 30px; padding: 4px 10px; font-family: var(--mono); font-stretch: 75%; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 999px; cursor: pointer; }
-.tsum-sec small { font-size: 11px; color: var(--grey-dark); }
 .tsum-sec:hover { border-color: var(--gc); }
 .tsum-sec.here { color: var(--on-accent); background: var(--yellow); border-color: var(--yellow); }
-.tsum-sec.here small { color: inherit; }
 .tsum-sec:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
 .tsum-more { font-size: 12px; color: var(--grey-dark); }
 @media (max-width: 640px) {
@@ -2327,6 +2319,29 @@ body { background: var(--frame, var(--bg)); }
   .tsum-head { align-items: flex-start; gap: 12px; }
   .tsum-pct-val .flap { font-size: 28px; }
 }
+/* 完工預測設定 as a modal */
+.baseline-bar[hidden] { display: none; }
+.baseline-bar { position: fixed; inset: 0; z-index: 400; display: grid; place-items: center; padding: 24px; background: rgba(0,0,0,0.55); border: 0; }
+.baseline-sheet { width: min(1080px, 100%); max-height: calc(100vh - 48px); overflow: auto; overscroll-behavior: contain; padding: 4px 28px 24px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.12); border-radius: 20px; box-shadow: 0 24px 60px rgba(0,0,0,0.45); }
+.baseline-sheet .baseline-bar-top { position: sticky; top: 0; z-index: 1; padding: 18px 0 14px; background: var(--raised); }
+.baseline-sheet .baseline-title { margin: 0; font-size: 18px; }
+.baseline-close { display: inline-grid; place-items: center; width: 36px; height: 36px; margin-left: auto; padding: 0; color: var(--grey-dark); background: transparent; border: 0; border-radius: 10px; cursor: pointer; }
+.baseline-close:hover { color: var(--text); background: rgba(var(--fg-rgb),0.07); }
+.baseline-close:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 1px; }
+body.modal-open { overflow: hidden; }
+.baseline-sheet #baseline-actions { position: sticky; bottom: -24px; margin: 16px -28px -24px !important; padding: 14px 28px; background: var(--raised); border-top: 1px solid rgba(var(--fg-rgb),0.08); }
+@media (max-width: 640px) { .baseline-sheet #baseline-actions { margin: 16px -16px -16px !important; padding: 12px 16px; bottom: -16px; } }
+@media (max-width: 640px) { .baseline-bar { padding: 8px; } .baseline-sheet { padding: 4px 16px 16px; max-height: calc(100vh - 16px); } }
+/* Simplified 進度填報 */
+.tsum-done { margin-top: 14px; font-size: 14px; color: var(--good); }
+.my-open-head { display: flex; align-items: baseline; gap: 6px; }
+.my-open-more { margin-left: auto; padding: 4px 10px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.18); border-radius: 999px; cursor: pointer; }
+.my-open-more:hover { border-color: rgba(var(--fg-rgb),0.4); }
+.members-details > summary { display: flex; align-items: center; gap: 10px; list-style: none; cursor: pointer; }
+.members-details > summary::-webkit-details-marker { display: none; }
+.members-details > summary::before { content: ''; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform .18s var(--ease); }
+.members-details[open] > summary::before { transform: rotate(45deg); }
+.members-details[open] > summary { margin-bottom: 20px; }
 </style>
 
 <body>
@@ -2421,8 +2436,6 @@ body { background: var(--frame, var(--bg)); }
       <a href="#team">團隊分工</a>
       <a href="#outputs">交付成果</a>
     </nav>
-    <div id="overview-nav" style="display:none"></div>
-    <div class="tracker-actions" id="tracker-nav" style="display:none"></div>
   </div>
 
 <div class="page" id="page-flow">
@@ -2653,10 +2666,6 @@ body { background: var(--frame, var(--bg)); }
 
 <!-- ── PAGE: 整體專案進度 ──────────────────────────── -->
 <div class="page" id="page-overview">
-  <div class="overview-filter" id="overview-filter">
-    <button class="ov-tab active" id="ovtab-all" onclick="switchOvTab('all')">全部模組</button>
-    <!-- Module tabs dynamically populated -->
-  </div>
 
   <section>
     <div class="cheer-slot" data-cheer="overview"></div>
@@ -2702,7 +2711,6 @@ body { background: var(--frame, var(--bg)); }
     <div class="tracker-assist" id="tracker-assist"></div>
     <div class="reporter-title-row">
       <div class="section-title" id="reporter-section-title">1.1 任務進度填報</div>
-      <div class="reporter-section-tag" id="reporter-section-tag">C1 · 1.1</div>
       <div class="reporter-lock-badge mine" id="reporter-my-badge">你的任務</div>
     </div>
     <div class="gates-grid reporter-gates" id="gates-grid"></div>
@@ -2710,8 +2718,10 @@ body { background: var(--frame, var(--bg)); }
 
   <!-- Members overview for this section -->
   <section id="members" class="reporter-members">
-    <div class="section-title">本小節組員狀態</div>
-    <div class="members-grid" id="members-grid"></div>
+    <details class="members-details">
+      <summary class="section-title">本小節組員狀態</summary>
+      <div class="members-grid" id="members-grid"></div>
+    </details>
   </section>
 
   <footer>
@@ -2733,7 +2743,7 @@ body { background: var(--frame, var(--bg)); }
     <div class="weekly-topbar">
       <h2 class="sec-label" id="kr-panel-title">KR 達成追蹤</h2>
       <span class="last-saved" id="weekly-last-synced">載入中...</span>
-      <button type="button" class="weekly-settings-btn" onclick="openBaseline()" aria-controls="baseline-bar">
+      <button type="button" class="weekly-settings-btn" onclick="openBaseline()" aria-controls="baseline-bar" aria-haspopup="dialog">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           完工預測設定
       </button>
@@ -2810,13 +2820,14 @@ body { background: var(--frame, var(--bg)); }
   </section>
 
   <!-- ── 完工預測設定（編輯工具，放在頁尾） ── -->
-  <div class="baseline-bar" id="baseline-bar">
+  <div class="baseline-bar" id="baseline-bar" hidden onclick="if (event.target === this) closeBaseline()">
+   <div class="baseline-sheet" role="dialog" aria-modal="true" aria-labelledby="baseline-title">
     <div class="baseline-bar-top">
-      <span class="baseline-title">完工預測設定</span>
+      <h2 class="baseline-title" id="baseline-title">完工預測設定</h2>
       <span class="baseline-sub">填入每小節各任務所需時數，系統自動計算預計完工日期</span>
-      <button class="baseline-toggle" onclick="toggleBaseline()" aria-expanded="false"><span>展開設定</span><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      <button type="button" class="baseline-close" onclick="closeBaseline()" aria-label="關閉完工預測設定"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </div>
-    <div class="baseline-body" id="baseline-body" style="display:none">
+    <div class="baseline-body" id="baseline-body">
       <div class="baseline-grid">
         <!-- Module start dates + avg video length -->
         <div class="baseline-section">
@@ -2835,6 +2846,7 @@ body { background: var(--frame, var(--bg)); }
         <button class="btn btn-yellow" onclick="saveBaseline()">儲存設定</button>
       </div>
     </div>
+   </div>
   </div>
 
   <footer>
@@ -3396,8 +3408,6 @@ function switchPage(page) {
   var tabRow = activeTab.parentNode;
   if (tabRow.scrollWidth > tabRow.clientWidth) tabRow.scrollLeft = activeTab.offsetLeft - (tabRow.clientWidth - activeTab.offsetWidth) / 2;
   document.getElementById('flow-nav').style.display     = page==='flow'     ? 'flex' : 'none';
-  document.getElementById('overview-nav').style.display = page==='overview' ? 'flex' : 'none';
-  document.getElementById('tracker-nav').style.display  = page==='tracker'  ? 'flex' : 'none';
   document.getElementById('panel-top').style.display    = page==='flow' ? 'flex' : 'none';
   document.querySelectorAll('.sidebar .sb-item[id^="tab-"]').forEach(function(t){ t.removeAttribute('aria-current'); });
   document.getElementById('tab-' + page).setAttribute('aria-current', 'page');
@@ -3505,8 +3515,7 @@ function updateReporterHeader() {
   var tag   = document.getElementById('reporter-section-tag');
   var title = document.getElementById('reporter-section-title');
   if (tag)   tag.textContent   = currentModule + ' · ' + currentSection;
-  var name  = (baseline.moduleNames[currentModule] || '').trim();
-  if (title) title.textContent = (name ? name + '｜' : '') + currentSection + ' 任務進度填報';
+  if (title) title.textContent = '小節 ' + currentSection + ' 任務進度填報';
   var badge = document.getElementById('reporter-my-badge');
   if (badge) badge.hidden = !currentMember;
 }
@@ -3646,6 +3655,7 @@ function goToTask(mod, sec) {
   if (mod !== currentModule) switchRModule(mod);
   if (sec !== currentSection) { currentSection = sec; document.getElementById('section-select').value = sec; switchSection(sec); }
 }
+var myOpenAll = false;
 function renderTrackerAssist() {
   var el = document.getElementById('tracker-assist');
   if (!el) return;
@@ -3666,8 +3676,13 @@ function renderTrackerAssist() {
     g.secs.push(o.sec);
     if (o.doing) g.doing++;
   });
-  el.innerHTML = '<div class="my-open"><div class="my-open-head">我的待處理 <b>' + open.length + '</b> 個小節</div><div class="my-open-list">' +
-    groups.map(function(g) {
+  // The current module's work first, then a handful; the rest behind 顯示全部
+  groups.sort(function(a, b){ return (b.mod === currentModule) - (a.mod === currentModule); });
+  var SHOW = 4, shown = myOpenAll ? groups : groups.slice(0, SHOW);
+  el.innerHTML = '<div class="my-open"><div class="my-open-head">我的待處理 <b>' + open.length + '</b> 個小節' +
+      (groups.length > SHOW ? '<button type="button" class="my-open-more" onclick="myOpenAll=!myOpenAll;renderTrackerAssist()">' + (myOpenAll ? '收起' : '顯示全部 ' + groups.length + ' 項') + '</button>' : '') +
+    '</div><div class="my-open-list">' +
+    shown.map(function(g) {
       var here = g.mod === currentModule && g.secs.indexOf(currentSection) >= 0;
       var next = here ? g.secs[(g.secs.indexOf(currentSection) + 1) % g.secs.length] : g.secs[0];
       return '<button type="button" class="my-open-item' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
@@ -3730,18 +3745,23 @@ function renderModuleSummary() {
       '</div>' +
       '<div class="tsum-pct"><div class="tsum-pct-val">' + flap(pct + '%') + '</div><div class="tsum-pct-label">模組完成度</div></div>' +
     '</div>' +
-    '<div class="tsum-gates" style="--n:' + gates.length + '">' + gates.map(function(row) {
+    (function(){
+      var done = gates.filter(function(r){ return !r.left; });
+      return done.length && done.length < gates.length
+        ? '<div class="tsum-done">✓ ' + done.map(function(r){ return 'Gate ' + r.g.num + ' ' + escHtml(r.g.name); }).join('、') + ' 已全部完成</div>' : '';
+    })() +
+    '<div class="tsum-gates" style="--n:' + Math.max(1, gates.filter(function(r){ return r.left; }).length || gates.length) + '">' + gates.filter(function(r){ return r.left || gates.every(function(x){ return !x.left; }); }).map(function(row) {
       var g = row.g, gp = moduleGatePct(mod, g.num);
       return '<div class="tsum-gate' + (row.left ? '' : ' done') + '" style="--gc:' + GATE_COLORS[g.num] + ';--gt:' + GATE_TEXT[g.num] + '">' +
         '<div class="tsum-gname"><span>Gate ' + g.num + '</span>' + escHtml(g.name) + '</div>' +
-        '<div class="tsum-gnum">' + (row.left
+        '<div class="tsum-gnum"><span>' + (row.left
           ? '待完成 <b>' + row.left + '</b> 個節點' + (row.doing ? '・進行中 ' + row.doing : '')
-          : '這個 Gate 全部完成') + '<span class="tsum-gpct">' + gp + '%</span></div>' +
+          : '這個 Gate 全部完成') + '</span><span class="tsum-gpct">' + gp + '%</span></div>' +
         '<div class="tsum-gbar" aria-hidden="true"><i style="width:' + Math.min(100, gp) + '%"></i></div>' +
         (row.secs.length ? '<div class="tsum-secs">' + row.secs.slice(0, SHOW).map(function(e) {
           var here = e.sec === currentSection;
           return '<button type="button" class="tsum-sec' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
-            ' title="' + e.sec + ' 還有 ' + e.n + ' 個節點" onclick="goToTask(\'' + mod + '\',\'' + e.sec + '\')">' + e.sec + (e.n > 1 ? '<small>×' + e.n + '</small>' : '') + '</button>';
+            ' title="' + e.sec + ' 還有 ' + e.n + ' 個節點" onclick="goToTask(\'' + mod + '\',\'' + e.sec + '\')">' + e.sec + '</button>';
         }).join('') + (row.secs.length > SHOW ? '<span class="tsum-more">另有 ' + (row.secs.length - SHOW) + ' 個小節</span>' : '') + '</div>' : '') +
       '</div>';
     }).join('') + '</div>' +
@@ -4779,21 +4799,27 @@ applyPalette(document.documentElement.getAttribute('data-palette') || 'dark');
 })();
 
 // The gear next to the KR title: open the settings at the bottom of the page and go there
+// 完工預測設定 opens as a modal over the page
+var baselineReturn = null;
 function openBaseline() {
-  var body = document.getElementById('baseline-body');
-  if (body && body.style.display === 'none') toggleBaseline();
   var bar = document.getElementById('baseline-bar');
-  if (bar) bar.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  if (!bar) return;
+  baselineReturn = document.activeElement;
+  bar.hidden = false;
+  document.body.classList.add('modal-open');
+  var first = bar.querySelector('input:not([disabled]), select:not([disabled])') || bar.querySelector('.baseline-close');
+  if (first) first.focus();
 }
-
-function toggleBaseline() {
-  var body = document.getElementById('baseline-body');
-  var btn  = document.querySelector('.baseline-toggle');
-  if (!body) return;
-  var isOpen = body.style.display !== 'none';
-  body.style.display = isOpen ? 'none' : 'block';
-  if (btn) { btn.querySelector('span').textContent = isOpen ? '展開設定' : '收合設定'; btn.setAttribute('aria-expanded', String(!isOpen)); }
+function closeBaseline() {
+  var bar = document.getElementById('baseline-bar');
+  if (!bar || bar.hidden) return;
+  bar.hidden = true;
+  document.body.classList.remove('modal-open');
+  if (baselineReturn && document.contains(baselineReturn)) baselineReturn.focus();
 }
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { var bar = document.getElementById('baseline-bar'); if (bar && !bar.hidden) { e.preventDefault(); closeBaseline(); } }
+});
 
 function renderBaselineForm() {
   // Module start dates + section counts
@@ -6090,7 +6116,7 @@ window.toggleOvDone      = toggleOvDone;
 window.updateScore       = updateScore;
 window.toggleAcc         = toggleAcc;
 window.exportCSV         = exportCSV;
-window.toggleBaseline    = toggleBaseline;
+window.closeBaseline     = closeBaseline;
 window.openBaseline      = openBaseline;
 window.toggleTheme       = toggleTheme;
 window.togglePalettePicker = togglePalettePicker;
@@ -6687,13 +6713,13 @@ function sheetToggleFold(src, gid) {
   if (i >= 0) f.splice(i, 1); else f.push(gid);
   st.forceRow = null;
   storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(f));
-  renderSheetTable(src);
+  renderSheetControls(src, true); renderSheetTable(src);
 }
 function sheetFoldAll(src, fold) {
   var st = sheetState[src], sheet = st.data.sheets[st.tab];
   storeSet(sheetPrefKey('fold', src, sheet), JSON.stringify(fold ? sheet.groups.map(function(g){ return g.gid; }) : []));
   st.forceRow = null;
-  renderSheetTable(src);
+  renderSheetControls(src); renderSheetTable(src);
 }
 function sheetToggleEmpty(src, gid) {
   var st = sheetState[src];
@@ -6726,8 +6752,11 @@ function renderSheetControls(src, keepMenu) {
             (c.filled ? '' : '<small>空白</small>') + '</label>';
         }).join('') +
         '<button type="button" class="sheet-more" onclick="sheetResetCols(\'' + src + '\')">恢復預設（藏起空白欄位）</button></div></details>' +
-      (sheet.groups.length > 1 ? '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', true)">全部收合</button>' +
-        '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', false)">全部展開</button>' : '') +
+      (sheet.groups.length > 1 ? (function() {
+        // One button: fold everything while anything is open, otherwise open everything
+        var allFolded = sheetFolded(src, sheet).length >= sheet.groups.length;
+        return '<button type="button" class="weekly-settings-btn" onclick="sheetFoldAll(\'' + src + '\', ' + !allFolded + ')">' + (allFolded ? '全部展開' : '全部收合') + '</button>';
+      })() : '') +
       (sheet.cols.some(function(c){ return c.required; }) ? '<button type="button" class="weekly-settings-btn sheet-misstoggle' + (st.missingOnly ? ' on' : '') + '" aria-pressed="' + !!st.missingOnly + '" onclick="sheetToggleMissing(\'' + src + '\')">只看缺資料</button>' : '') +
       '<span class="sheet-count" id="sheet-count-' + src + '"></span>' +
     '</div>';
@@ -7207,18 +7236,16 @@ var TOURS = {
       body: '達成率、OKR 分數和「依時程應達」的計算方式都寫在這裡。' }
   ],
   overview: [
-    { sel: '#overview-filter', title: '切換模組',
-      body: '看全部模組，或點某個模組只看它。' },
     { sel: '#ov-project', title: '整體完成度',
       body: '整個專案的完成度，是各模組完成度的平均。' },
     { sel: '#ov-module-cards', title: '模組卡片',
-      body: '每張卡是一個模組的完成狀況。點卡片展開，可以看到各 Gate 和每個小節的進度。這頁只能看，要更新進度請到「進度填報」。' }
+      body: '每一列是一個模組的完成狀況，點一下展開，可以看到各 Gate 和每個小節的進度。已完成的模組收在最下面。這頁只能看，要更新進度請到「進度填報」。' }
   ],
   tracker: [
     { sel: '.reporter-module-bar', title: '選模組與小節',
       body: '上排選模組，「小節」下拉選單選小節。右邊的綠點代表即時同步中，別人填報時這裡會馬上更新；「匯出 CSV」可以下載全部進度。' },
     { sel: '.tsum', title: '模組進度',
-      body: '選中模組的完成度，以及每個 Gate 還有幾個節點待完成（一個節點＝一個小節裡的一項任務）。下方的小節編號是還沒完成的地方，×2 表示那一節還差兩項；點一下就跳到那個小節。' },
+      body: '選中模組的完成度，以及每個 Gate 還有幾個節點待完成（一個節點＝一個小節裡的一項任務）。下方的小節編號是還有任務沒完成的地方，點一下就跳到那個小節。' },
     { sel: '#tracker-assist', title: '我的待處理',
       body: '選了身分之後，這裡會列出你手上可以開始或進行中的任務，按一下就跳到那個小節。還沒選身分時只能檢視，按「選擇身分」登入。' },
     { sel: '#gates-grid', title: '填報進度',
