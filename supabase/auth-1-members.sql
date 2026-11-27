@@ -26,9 +26,9 @@ drop policy if exists "company read members" on public.bb6_members;
 create policy "company read members" on public.bb6_members
   for select to authenticated using (public.bb6_is_company());
 
--- 把下面三行的信箱換成真的（全部小寫），再一起跑
+-- 成員信箱（全部小寫）；之後加人或換信箱，改這裡再跑一次即可
 insert into public.bb6_members (email, name) values
   ('daniel@hcatwn.com', 'Daniel'),
-  ('ken@hcatwn.com',    'Ken'),
+  ('ken.lai@hcatwn.com', 'Ken'),
   ('ellen@hcatwn.com',  'Ellen')
 on conflict (email) do update set name = excluded.name;
