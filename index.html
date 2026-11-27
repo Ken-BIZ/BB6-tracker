@@ -2898,7 +2898,7 @@ body.modal-open { overflow: hidden; }
           <div class="baseline-task-rows" id="baseline-task-rows"></div>
         </div>
       </div>
-      <div class="baseline-readonly-note" id="baseline-readonly-note" style="display:none">僅 Ken、Daniel 可以修改設定</div>
+      <div class="baseline-readonly-note" id="baseline-readonly-note" style="display:none">僅 Ken、Daniel 和管理員可以修改設定</div>
       <div id="baseline-actions" style="margin-top:16px;display:flex;gap:10px;justify-content:flex-end">
         <button class="btn btn-ghost" onclick="resetBaseline()">重設</button>
         <button class="btn btn-yellow" onclick="saveBaseline()">儲存設定</button>
@@ -2983,7 +2983,7 @@ function authUse(session) {
   db.from('bb6_members').select('name').eq('email', email).maybeSingle().then(function(res) {
     var name = res && res.data && res.data.name;
     document.getElementById('login-overlay').style.display = 'none';
-    if (name && MEMBERS.indexOf(name) >= 0) selectMember(name, MEMBER_COLORS[name]);
+    if (name && isKnownUser(name)) selectMember(name, MEMBER_COLORS[name]);
     else enterViewOnly();
     if (authResolve) { authResolve(); authResolve = null; }
   });
@@ -3118,7 +3118,12 @@ const MEMBERS       = ['Daniel','Ken','Ellen'];
 const TASK_OWNERS   = ['Daniel','Ken','Ellen','AI'];  // who tasks are assigned to; AI tasks are reported by Ken
 const OWNER_CLASS   = { Ken:'ken', Daniel:'daniel', Ellen:'ellen', AI:'ai' };
 const CHIP_CLASS    = { Ken:'chip-ken', Daniel:'chip-daniel', Ellen:'chip-ellen', AI:'chip-ai' };
-const MEMBER_COLORS = { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C' };
+// Admins (AI-native developers): full rights everywhere, but no tasks of their own,
+// so they stay out of task owners, member cards and the board
+const ADMINS        = ['Yumin','Luka'];
+const MEMBER_COLORS = { Ken:'#2563EB', Daniel:'#16A34A', Ellen:'#EA580C', Yumin:'#7C3AED', Luka:'#0E7490' };
+function isAdmin(member) { return ADMINS.indexOf(member) >= 0; }
+function isKnownUser(name) { return MEMBERS.indexOf(name) >= 0 || isAdmin(name); }
 const GATE_COLORS   = ['','var(--gate1)','var(--gate2)','var(--gate3)','var(--gate4)','var(--gate5)'];
 const GATE_TEXT     = ['','var(--gate1-text)','var(--gate2-text)','var(--gate3-text)','var(--gate4-text)','var(--gate5-text)'];  // same hues, lightened to pass 4.5:1 as text
 
@@ -3150,8 +3155,8 @@ function initScores() {
 }
 initScores();
 
-function hasFullEditAccess(member) { return member === 'Ken'; }
-function canEditBaseline(member) { return ['Ken','Daniel'].indexOf(member) >= 0; }
+function hasFullEditAccess(member) { return member === 'Ken' || isAdmin(member); }
+function canEditBaseline(member) { return ['Ken','Daniel'].indexOf(member) >= 0 || isAdmin(member); }
 
 function getModuleSectionCount(mod) {
   var total = parseInt(baseline.videoSections[mod]) || 0;
@@ -3404,7 +3409,7 @@ function selectMember(name, color) {
   if (authEmail) document.getElementById('login-chip').title = authEmail;
   document.getElementById('login-avatar').textContent      = name[0];
   document.getElementById('login-avatar').style.background = color;
-  document.getElementById('login-avatar').style.color      = name === 'Ken' ? '#fff' : 'var(--black)';
+  document.getElementById('login-avatar').style.color      = (name === 'Ken' || isAdmin(name)) ? '#fff' : 'var(--black)';
   document.getElementById('login-name').textContent        = name;
   document.getElementById('login-chip').style.display      = 'flex';
   document.getElementById('login-overlay').style.display   = 'none';
@@ -4116,8 +4121,8 @@ const OKR_METRICS = {
   project_completion: { name: '自動：整體專案完成度', note: '自動計算・全部模組完成度平均（同整體專案進度）' },
   manual:             { name: '手動填報',             note: '' },
 };
-function canEditOKR(member) { return member === 'Daniel'; }
-function canUpdateKR(member, kr) { return (kr.updaters || []).indexOf(member) >= 0; }
+function canEditOKR(member) { return member === 'Daniel' || isAdmin(member); }
+function canUpdateKR(member, kr) { return (kr.updaters || []).indexOf(member) >= 0 || isAdmin(member); }
 
 var okr = { objectives: [], krs: [], updates: [], quarter: null, loaded: false, error: null };
 
@@ -4174,7 +4179,7 @@ function krCurrent(kr) {
 
 /* ── KR 時程：截止日＋里程碑（Daniel、Ken 設定）
    應達值 = 從季初實際值出發，依序直線連到每個里程碑，截止日達到目標值 ── */
-function canEditKRSchedule(member) { return ['Daniel','Ken'].indexOf(member) >= 0; }
+function canEditKRSchedule(member) { return ['Daniel','Ken'].indexOf(member) >= 0 || isAdmin(member); }
 function krObjective(kr) { return okr.objectives.filter(function(o){ return o.id === kr.objective_id; })[0]; }
 function krDueStr(kr) { var o = krObjective(kr); return kr.due_date || (o ? o.end_date : null); }
 function dayEnd(str) { var d = parseDay(str); d.setHours(23, 59, 59, 999); return d; }
@@ -4692,7 +4697,7 @@ function dropTrimmedSections() {
 }
 
 function saveBaseline() {
-  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Daniel 可以修改設定'); return; }
+  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Daniel 和管理員可以修改設定'); return; }
   if (!confirmSectionShrink()) return;
   // Read values from form
   FORECAST_TASKS.forEach(function(t) {
@@ -4728,7 +4733,7 @@ function saveBaseline() {
 }
 
 function resetBaseline() {
-  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Daniel 可以修改設定'); return; }
+  if (!canEditBaseline(currentMember)) { showToast('僅 Ken、Daniel 和管理員可以修改設定'); return; }
   var over = MODULES.filter(function(mod){ return getModuleSectionCount(mod) > SECTIONS_PER_MODULE; });
   if (over.length && !confirm('重設後小節數會回到預設 ' + SECTIONS_PER_MODULE + ' 節，' + over.join('、') + ' 超出的小節資料會永久刪除，無法復原。確定重設？')) return;
   FORECAST_TASKS.forEach(function(t) {
@@ -7692,7 +7697,7 @@ initSupabase().then(function() {
     return authStart();
   }
   var _savedMember = localStorage.getItem('bb6-member');
-  if (_savedMember && MEMBERS.indexOf(_savedMember) >= 0) {
+  if (_savedMember && isKnownUser(_savedMember)) {
     selectMember(_savedMember, MEMBER_COLORS[_savedMember]);
   } else if (_savedMember === VIEW_ONLY_KEY) {
     enterViewOnly();
