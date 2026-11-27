@@ -2099,117 +2099,118 @@ td.sc.editing { min-width: 320px; padding: 8px; background: var(--raised-2); }
   .chg-col-row { grid-template-columns: minmax(0, 1fr); }
   .chg-cols { padding-left: 0; }
 }
-/* ═══ 配色 palettes: two-tone. The frame and sidebar take one temperature, the content the other, and the accent pair crosses them ═══ */
+/* ═══ 配色 palettes: the sidebar is a deep shade of the named colour and the content a light tint of it,
+   so each palette reads as its name; the opposite temperature carries buttons, accent text and flip numbers ═══ */
 body { background: var(--frame, var(--bg)); }
 :root[data-palette="milktea"] {
-  --frame: #2E221B;
-  --bg: #F4ECE1; --panel: #F7F0E6; --card: #FFFBF5; --raised: #FFFBF5; --raised-2: #FFFBF5; --pass: #EFE5D7;
-  --sunken: rgba(59,42,32,0.04); --fg-rgb: 59,42,32; --text: #3B2A20; --grey-dark: #6E5A4C;
-  --yellow: #267A70; --on-accent: #FFFFFF; --accent-ink: #1F6E65; --chart-accent: #267A70; --chart-accent-2: #C8864A;
-  --flap-bg: #EADCC8; --flap-ink: #8A4E22; --lift: 0 12px 28px rgba(59,42,32,0.10);
+  --frame: #4A3426;
+  --bg: #EADCC9; --panel: #F1E6D7; --card: #FBF5EC; --raised: #FBF5EC; --raised-2: #FFFFFF; --pass: #EDE1D0;
+  --text: #3A2A1F; --fg-rgb: 58,42,31; --grey-dark: #6A5646; --sunken: rgba(58,42,31,0.04); --lift: 0 12px 28px rgba(58,42,31,0.10);
+  --yellow: #267A70; --on-accent: #FFFFFF; --accent-ink: #1B675E; --chart-accent: #267A70; --chart-accent-2: #B87A45;
+  --flap-bg: #E3D2BC; --flap-ink: #7A4A25;
 }
 :root[data-palette="milktea"] .sidebar {
-  --bg: #2E221B; --panel: #2E221B; --card: #3E2F26; --text: #F3E9DD; --fg-rgb: 243,233,221;
-  --grey-dark: #B9A796; --accent-ink: #E9B27E;
+  --bg: #4A3426; --panel: #4A3426; --card: #5C4334; --text: #F5EBDD; --fg-rgb: 245,235,221;
+  --grey-dark: #CDB7A2; --accent-ink: #E8B98A;
 }
 :root[data-palette="lavender"] {
-  --frame: #2B2347;
-  --bg: #F1EEF8; --panel: #F6F4FB; --card: #FFFFFF; --raised: #FFFFFF; --raised-2: #FFFFFF; --pass: #ECE8F5;
-  --sunken: rgba(42,36,64,0.04); --fg-rgb: 42,36,64; --text: #2A2440; --grey-dark: #635C7D;
-  --yellow: #F08A5D; --on-accent: #2A1408; --accent-ink: #5B45A8; --chart-accent: #7C64C8; --chart-accent-2: #F08A5D;
-  --flap-bg: #E7E1F4; --flap-ink: #4B3699; --lift: 0 12px 28px rgba(42,36,64,0.10);
+  --frame: #2E2650;
+  --bg: #E9E4F5; --panel: #F2EFFA; --card: #FCFBFF; --raised: #FCFBFF; --raised-2: #FFFFFF; --pass: #E8E3F4;
+  --text: #2A2440; --fg-rgb: 42,36,64; --grey-dark: #5F5880; --sunken: rgba(42,36,64,0.04); --lift: 0 12px 28px rgba(42,36,64,0.10);
+  --yellow: #E9825A; --on-accent: #2A1408; --accent-ink: #5B45A8; --chart-accent: #7C64C8; --chart-accent-2: #E9825A;
+  --flap-bg: #E2DBF3; --flap-ink: #4B3699;
 }
 :root[data-palette="lavender"] .sidebar {
-  --bg: #2B2347; --panel: #2B2347; --card: #3B3262; --text: #EEEAF7; --fg-rgb: 238,234,247;
-  --grey-dark: #A9A2C4; --accent-ink: #FFB48A;
+  --bg: #2E2650; --panel: #2E2650; --card: #3D3466; --text: #EEEAF7; --fg-rgb: 238,234,247;
+  --grey-dark: #ABA4C8; --accent-ink: #FFB48A;
 }
 :root[data-palette="matcha"] {
-  --frame: #E9DFCC;
-  --bg: #EEF2EA; --panel: #F4F7F1; --card: #FFFFFF; --raised: #FFFFFF; --raised-2: #FFFFFF; --pass: #E8EEE3;
-  --sunken: rgba(31,43,29,0.04); --fg-rgb: 31,43,29; --text: #1F2B1D; --grey-dark: #56634F;
-  --yellow: #E07A45; --on-accent: #2A1206; --accent-ink: #3F6B2A; --chart-accent: #6E9650; --chart-accent-2: #E07A45;
-  --flap-bg: #E2EADB; --flap-ink: #2F5A1E; --lift: 0 12px 28px rgba(31,43,29,0.10);
+  --frame: #2C3F27;
+  --bg: #E2EBD0; --panel: #EDF3E1; --card: #FAFCF4; --raised: #FAFCF4; --raised-2: #FFFFFF; --pass: #E5EDD6;
+  --text: #1F2B1B; --fg-rgb: 31,43,27; --grey-dark: #53613F; --sunken: rgba(31,43,27,0.04); --lift: 0 12px 28px rgba(31,43,27,0.10);
+  --yellow: #A8423B; --on-accent: #FFFFFF; --accent-ink: #416E1C; --chart-accent: #6E9A3A; --chart-accent-2: #A8423B;
+  --flap-bg: #DAE6C3; --flap-ink: #3E6A1C;
 }
 :root[data-palette="matcha"] .sidebar {
-  --bg: #E9DFCC; --panel: #E9DFCC; --card: #F7F1E6; --text: #3A2E20; --fg-rgb: 58,46,32;
-  --grey-dark: #6A5B48; --accent-ink: #9A421D;
+  --bg: #2C3F27; --panel: #2C3F27; --card: #3B5334; --text: #EEF3E4; --fg-rgb: 238,243,228;
+  --grey-dark: #AFC09E; --accent-ink: #C6DE94;
 }
 :root[data-palette="mist"] {
-  --frame: #1B2A3E;
-  --bg: #ECF1F6; --panel: #F3F6F9; --card: #FFFFFF; --raised: #FFFFFF; --raised-2: #FFFFFF; --pass: #E6ECF2;
-  --sunken: rgba(30,42,56,0.04); --fg-rgb: 30,42,56; --text: #1E2A38; --grey-dark: #536171;
+  --frame: #1E2E44;
+  --bg: #E2EAF2; --panel: #EEF3F8; --card: #FAFCFE; --raised: #FAFCFE; --raised-2: #FFFFFF; --pass: #E3EAF2;
+  --text: #1E2A38; --fg-rgb: 30,42,56; --grey-dark: #506073; --sunken: rgba(30,42,56,0.04); --lift: 0 12px 28px rgba(30,42,56,0.10);
   --yellow: #E9B23F; --on-accent: #2B1E05; --accent-ink: #2F5F8F; --chart-accent: #4F84BD; --chart-accent-2: #E0A12E;
-  --flap-bg: #E1E8F0; --flap-ink: #2F5F8F; --lift: 0 12px 28px rgba(30,42,56,0.10);
+  --flap-bg: #DDE6F0; --flap-ink: #2F5F8F;
 }
 :root[data-palette="mist"] .sidebar {
-  --bg: #1B2A3E; --panel: #1B2A3E; --card: #27394F; --text: #E6EEF6; --fg-rgb: 230,238,246;
-  --grey-dark: #9FB0C3; --accent-ink: #F2C15B;
+  --bg: #1E2E44; --panel: #1E2E44; --card: #2A3D57; --text: #E6EEF6; --fg-rgb: 230,238,246;
+  --grey-dark: #A2B3C6; --accent-ink: #F2C15B;
 }
 :root[data-palette="sakura"] {
-  --frame: #1F3B39;
-  --bg: #F8EFEF; --panel: #FBF5F4; --card: #FFFFFF; --raised: #FFFFFF; --raised-2: #FFFFFF; --pass: #F4E8E8;
-  --sunken: rgba(58,35,40,0.04); --fg-rgb: 58,35,40; --text: #3A2328; --grey-dark: #725A5F;
-  --yellow: #E07890; --on-accent: #2E0E16; --accent-ink: #1F6E68; --chart-accent: #D9607C; --chart-accent-2: #2E8C84;
-  --flap-bg: #F1E1E3; --flap-ink: #A33A55; --lift: 0 12px 28px rgba(58,35,40,0.10);
+  --frame: #3D2531;
+  --bg: #F6E6EA; --panel: #FAF0F2; --card: #FFFBFC; --raised: #FFFBFC; --raised-2: #FFFFFF; --pass: #F4E3E7;
+  --text: #3A2328; --fg-rgb: 58,35,40; --grey-dark: #6E555B; --sunken: rgba(58,35,40,0.04); --lift: 0 12px 28px rgba(58,35,40,0.10);
+  --yellow: #B84560; --on-accent: #FFFFFF; --accent-ink: #2F7048; --chart-accent: #D9607C; --chart-accent-2: #3F8A5A;
+  --flap-bg: #F1DAE0; --flap-ink: #A23A57;
 }
 :root[data-palette="sakura"] .sidebar {
-  --bg: #1F3B39; --panel: #1F3B39; --card: #2C4E4B; --text: #EAF3F1; --fg-rgb: 234,243,241;
-  --grey-dark: #9DB8B4; --accent-ink: #F5A6B6;
+  --bg: #3D2531; --panel: #3D2531; --card: #4F3241; --text: #F8EAEE; --fg-rgb: 248,234,238;
+  --grey-dark: #CFAAB6; --accent-ink: #F5A6B6;
 }
 :root[data-palette="dusk"] {
-  --frame: #2A1B19;
-  --bg: #15132A; --panel: #1A1830; --card: #221F3C; --raised: #272347; --raised-2: #2F2A54; --pass: #2A2648;
-  --text: #ECEAF8; --fg-rgb: 236,234,248; --grey-dark: #A39FC0;
+  --frame: #16112A;
+  --bg: #15132A; --panel: #1C1933; --card: #241F40; --raised: #29234A; --raised-2: #312A57; --pass: #2B2550;
+  --text: #ECEAF8; --fg-rgb: 236,234,248; --grey-dark: #A6A1C3;
   --yellow: #F4A97A; --on-accent: #2A1408; --accent-ink: #C9BBFF; --chart-accent: #A994EE; --chart-accent-2: #F4A97A;
-  --flap-bg: #3A2722; --flap-ink: #F7B98B;
+  --flap-bg: #2E2650; --flap-ink: #F7B98B;
 }
 :root[data-palette="dusk"] .sidebar {
-  --bg: #2A1B19; --panel: #2A1B19; --card: #3A2622; --text: #F6E6DE; --fg-rgb: 246,230,222;
-  --grey-dark: #BFA49A; --accent-ink: #F7B98B;
+  --bg: #16112A; --panel: #16112A; --card: #251C40; --text: #EDE8F8; --fg-rgb: 237,232,248;
+  --grey-dark: #A79FC6; --accent-ink: #F7B98B;
 }
 :root[data-palette="cocoa"] {
-  --frame: #0F2420;
-  --bg: #1A1410; --panel: #211A15; --card: #2A211B; --raised: #2E241D; --raised-2: #362B23; --pass: #31271F;
-  --text: #F3EAE0; --fg-rgb: 243,234,224; --grey-dark: #AE9E91;
+  --frame: #1C130F;
+  --bg: #211812; --panel: #2A1F18; --card: #33261D; --raised: #382A20; --raised-2: #413127; --pass: #3A2C22;
+  --text: #F3EAE0; --fg-rgb: 243,234,224; --grey-dark: #B6A495;
   --yellow: #6FCFB8; --on-accent: #08241D; --accent-ink: #E8C29C; --chart-accent: #6FCFB8; --chart-accent-2: #E0A86E;
-  --flap-bg: #163631; --flap-ink: #7FDCC4;
+  --flap-bg: #1F3530; --flap-ink: #7FDCC4;
 }
 :root[data-palette="cocoa"] .sidebar {
-  --bg: #0F2420; --panel: #0F2420; --card: #183530; --text: #E2F3EE; --fg-rgb: 226,243,238;
-  --grey-dark: #93B5AD; --accent-ink: #7FDCC4;
+  --bg: #1C130F; --panel: #1C130F; --card: #2E1F18; --text: #F3E6DA; --fg-rgb: 243,230,218;
+  --grey-dark: #B59E8E; --accent-ink: #7FDCC4;
 }
 :root[data-palette="ocean"] {
-  --frame: #2A1612;
-  --bg: #0C1620; --panel: #101C27; --card: #162635; --raised: #1A2C3C; --raised-2: #213446; --pass: #1D3041;
-  --text: #E6F0F6; --fg-rgb: 230,240,246; --grey-dark: #93A8B8;
+  --frame: #06111F;
+  --bg: #0B1A2B; --panel: #10223A; --card: #162B46; --raised: #1A3150; --raised-2: #213A5C; --pass: #1C3452;
+  --text: #E6F0F6; --fg-rgb: 230,240,246; --grey-dark: #9DB3C7;
   --yellow: #FF8A6B; --on-accent: #2B0E05; --accent-ink: #7FDCD4; --chart-accent: #5CC8C0; --chart-accent-2: #FF8A6B;
-  --flap-bg: #33211B; --flap-ink: #F2C879;
+  --flap-bg: #3A2420; --flap-ink: #FFB199;
 }
 :root[data-palette="ocean"] .sidebar {
-  --bg: #2A1612; --panel: #2A1612; --card: #3B211B; --text: #F7E7E0; --fg-rgb: 247,231,224;
-  --grey-dark: #C2A196; --accent-ink: #FF9C80;
+  --bg: #06111F; --panel: #06111F; --card: #0F2036; --text: #E3EEF7; --fg-rgb: 227,238,247;
+  --grey-dark: #92A9BE; --accent-ink: #FF9C80;
 }
 :root[data-palette="forest"] {
-  --frame: #2A1E0D;
-  --bg: #0F1712; --panel: #131D17; --card: #1A271F; --raised: #1E2C23; --raised-2: #25352B; --pass: #213027;
-  --text: #E8F0E6; --fg-rgb: 232,240,230; --grey-dark: #9AAE9C;
+  --frame: #0B1A10;
+  --bg: #102016; --panel: #15291C; --card: #1C3324; --raised: #203A29; --raised-2: #274431; --pass: #223D2B;
+  --text: #E8F0E6; --fg-rgb: 232,240,230; --grey-dark: #A0B7A3;
   --yellow: #F2A65A; --on-accent: #2B1603; --accent-ink: #B5D88F; --chart-accent: #8FBF6A; --chart-accent-2: #F2A65A;
-  --flap-bg: #35290F; --flap-ink: #F5B36E;
+  --flap-bg: #3A2C14; --flap-ink: #F5B36E;
 }
 :root[data-palette="forest"] .sidebar {
-  --bg: #2A1E0D; --panel: #2A1E0D; --card: #3A2A13; --text: #F6ECDC; --fg-rgb: 246,236,220;
-  --grey-dark: #C2AD8C; --accent-ink: #F5B36E;
+  --bg: #0B1A10; --panel: #0B1A10; --card: #162A1C; --text: #E6F0E2; --fg-rgb: 230,240,226;
+  --grey-dark: #98B09A; --accent-ink: #F5B36E;
 }
 :root[data-palette="wine"] {
-  --frame: #0B2423;
-  --bg: #1A0F13; --panel: #201318; --card: #2A1A20; --raised: #2F1D24; --raised-2: #38232B; --pass: #331F27;
-  --text: #F4E8EB; --fg-rgb: 244,232,235; --grey-dark: #B19AA1;
+  --frame: #1A0910;
+  --bg: #200C14; --panel: #2A111B; --card: #351623; --raised: #3B1927; --raised-2: #451E2F; --pass: #3E1B2A;
+  --text: #F6E8EC; --fg-rgb: 246,232,236; --grey-dark: #C0A0AA;
   --yellow: #4FC2B0; --on-accent: #04221D; --accent-ink: #F0A9B9; --chart-accent: #E0809A; --chart-accent-2: #4FC2B0;
-  --flap-bg: #0F3533; --flap-ink: #6FD3C2;
+  --flap-bg: #3A2A12; --flap-ink: #E8C27A;
 }
 :root[data-palette="wine"] .sidebar {
-  --bg: #0B2423; --panel: #0B2423; --card: #133533; --text: #E0F4F1; --fg-rgb: 224,244,241;
-  --grey-dark: #8FB8B2; --accent-ink: #6FD3C2;
+  --bg: #1A0910; --panel: #1A0910; --card: #2C111A; --text: #F6E4EA; --fg-rgb: 246,228,234;
+  --grey-dark: #C09AA6; --accent-ink: #E8C27A;
 }
 /* 配色 picker */
 .palette-pop { position: fixed; z-index: 80; width: 300px; padding: 14px; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.14); border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.3); }
@@ -4833,16 +4834,16 @@ function storeSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 var PALETTES = [
   { id: 'dark',     name: '深色',   base: 'dark',  sw: ['#0B0D10', '#191C22', '#FFEA41', '#FFEA41'] },
   { id: 'light',    name: '淺色',   base: 'light', sw: ['#E6E8EB', '#FFFFFF', '#FFEA41', '#6E5A00'] },
-  { id: 'milktea',  name: '奶茶',   base: 'light', sw: ['#2E221B', '#FFFBF5', '#267A70', '#1F6E65'] },
-  { id: 'lavender', name: '薰衣草', base: 'light', sw: ['#2B2347', '#FFFFFF', '#F08A5D', '#5B45A8'] },
-  { id: 'matcha',   name: '抹茶',   base: 'light', sw: ['#E9DFCC', '#FFFFFF', '#E07A45', '#3F6B2A'] },
-  { id: 'mist',     name: '霧藍',   base: 'light', sw: ['#1B2A3E', '#FFFFFF', '#E9B23F', '#2F5F8F'] },
-  { id: 'sakura',   name: '櫻花',   base: 'light', sw: ['#1F3B39', '#FFFFFF', '#E07890', '#1F6E68'] },
-  { id: 'dusk',     name: '夜紫',   base: 'dark',  sw: ['#2A1B19', '#221F3C', '#F4A97A', '#C9BBFF'] },
-  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#0F2420', '#2A211B', '#6FCFB8', '#E8C29C'] },
-  { id: 'ocean',    name: '深海',   base: 'dark',  sw: ['#2A1612', '#162635', '#FF8A6B', '#7FDCD4'] },
-  { id: 'forest',   name: '森林',   base: 'dark',  sw: ['#2A1E0D', '#1A271F', '#F2A65A', '#B5D88F'] },
-  { id: 'wine',     name: '酒紅',   base: 'dark',  sw: ['#0B2423', '#2A1A20', '#4FC2B0', '#F0A9B9'] }
+  { id: 'milktea',  name: '奶茶',   base: 'light', sw: ['#4A3426', '#F1E6D7', '#267A70', '#1B675E'] },
+  { id: 'lavender', name: '薰衣草', base: 'light', sw: ['#2E2650', '#F2EFFA', '#E9825A', '#5B45A8'] },
+  { id: 'matcha',   name: '抹茶',   base: 'light', sw: ['#2C3F27', '#EDF3E1', '#A8423B', '#416E1C'] },
+  { id: 'mist',     name: '霧藍',   base: 'light', sw: ['#1E2E44', '#EEF3F8', '#E9B23F', '#2F5F8F'] },
+  { id: 'sakura',   name: '櫻花',   base: 'light', sw: ['#3D2531', '#FAF0F2', '#B84560', '#2F7048'] },
+  { id: 'dusk',     name: '夜紫',   base: 'dark',  sw: ['#16112A', '#1C1933', '#F4A97A', '#C9BBFF'] },
+  { id: 'cocoa',    name: '可可',   base: 'dark',  sw: ['#1C130F', '#2A1F18', '#6FCFB8', '#E8C29C'] },
+  { id: 'ocean',    name: '深海',   base: 'dark',  sw: ['#06111F', '#10223A', '#FF8A6B', '#7FDCD4'] },
+  { id: 'forest',   name: '森林',   base: 'dark',  sw: ['#0B1A10', '#15291C', '#F2A65A', '#B5D88F'] },
+  { id: 'wine',     name: '酒紅',   base: 'dark',  sw: ['#1A0910', '#2A111B', '#4FC2B0', '#F0A9B9'] }
 ];
 function currentPalette() {
   var id = document.documentElement.getAttribute('data-palette');
