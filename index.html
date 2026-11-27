@@ -2308,6 +2308,15 @@ body { background: var(--frame, var(--bg)); }
       <img class="login-logo-mark" src="logo-mark.png" alt="BizCivilization">
       <div class="login-logo-text">BB6 課程製作</div>
     </div>
+    <div class="login-box-sub" role="status">確認登入狀態中…</div>
+  </div>
+</div>
+<!-- Old name picker, used only when Google sign-in (AUTH_DOMAIN) is off -->
+<template id="member-picker-tpl">
+    <div class="login-logo-row">
+      <img class="login-logo-mark" src="logo-mark.png" alt="BizCivilization">
+      <div class="login-logo-text">BB6 課程製作</div>
+    </div>
     <div class="login-box-title" id="login-box-title">你是哪一位？</div>
     <div class="login-box-sub">請選擇你的名字以繼續填報進度</div>
     <div class="member-select-grid rows">
@@ -2328,8 +2337,7 @@ body { background: var(--frame, var(--bg)); }
       </button>
     </div>
     <button type="button" class="login-viewonly" onclick="enterViewOnly()">只檢視，不填報<span>Esc</span></button>
-  </div>
-</div>
+  </template>
 
 <!-- APP SHELL: sidebar + content panel -->
 <div class="app">
@@ -3250,6 +3258,8 @@ function showLogin() {
     else showSignIn();
     return;
   }
+  var box = document.querySelector('#login-overlay .login-box');
+  if (!box.querySelector('.member-select-grid')) box.innerHTML = document.getElementById('member-picker-tpl').innerHTML;
   document.getElementById('login-overlay').style.display = 'flex';
 }
 function loginIsOpen() { return document.getElementById('login-overlay').style.display !== 'none'; }
