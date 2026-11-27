@@ -2344,6 +2344,25 @@ body.modal-open { overflow: hidden; }
 .members-details[open] > summary { margin-bottom: 20px; }
 .sidebar .sb-item[hidden] { display: none; }
 .sidebar .sb-item:disabled { cursor: progress; opacity: 0.7; }
+.reporter-title-row { scroll-margin-top: 24px; }
+@media (max-width: 900px) { .reporter-title-row { scroll-margin-top: 92px; } }
+@keyframes gates-opened { 0%, 30% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--yellow) 55%, transparent); } 100% { box-shadow: 0 0 0 3px transparent; } }
+#gates-grid.just-opened { border-radius: 16px; animation: gates-opened 1.4s var(--ease); }
+/* Summary chip tooltip: the missing steps by name */
+.tsum-secwrap { position: relative; display: inline-flex; }
+.tsum-tip { position: absolute; z-index: 30; bottom: calc(100% + 8px); left: 50%; display: flex; flex-direction: column; gap: 6px; width: max-content; max-width: 260px; padding: 10px 12px; font-size: 13px; line-height: 1.45; color: var(--text); text-align: left; background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.16); border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.35); opacity: 0; visibility: hidden; transform: translate(-50%, 4px); transition: opacity .15s var(--ease), transform .15s var(--ease), visibility .15s; pointer-events: none; }
+.tsum-tip b { font-size: 12px; color: var(--grey-dark); }
+.tsum-step { display: grid; grid-template-columns: 8px minmax(0, 1fr); column-gap: 8px; align-items: baseline; font-weight: 600; }
+.tsum-step i { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid var(--grey-dark); transform: translateY(-1px); }
+.tsum-step i.doing { border-color: var(--yellow); background: var(--yellow); }
+.tsum-step small { grid-column: 2; font-size: 12px; font-weight: 500; color: var(--grey-dark); }
+.tsum-secwrap:hover .tsum-tip, .tsum-sec:focus-visible + .tsum-tip { opacity: 1; visibility: visible; transform: translate(-50%, 0); }
+/* keep the tip inside the card at the left and right edges */
+.tsum-gate:first-child .tsum-secwrap:first-child .tsum-tip { left: 0; transform: translate(0, 4px); }
+.tsum-gate:first-child .tsum-secwrap:first-child:hover .tsum-tip, .tsum-gate:first-child .tsum-secwrap:first-child .tsum-sec:focus-visible + .tsum-tip { transform: none; }
+.tsum-gate:last-child .tsum-tip { left: auto; right: 0; transform: translate(0, 4px); }
+.tsum-gate:last-child .tsum-secwrap:hover .tsum-tip, .tsum-gate:last-child .tsum-sec:focus-visible + .tsum-tip { transform: none; }
+@media (prefers-reduced-motion: reduce) { .tsum-tip { transition: none; } #gates-grid.just-opened { animation: none; } }
 </style>
 
 <body>
@@ -3656,6 +3675,18 @@ function memberOpenTasks(member) {
   // In progress first, then the order modules and sections appear
   return out.sort(function(a, b){ return (b.doing ? 1 : 0) - (a.doing ? 1 : 0); });
 }
+// From a summary chip or 我的待處理: open that 小節 and bring its reporting area into view
+function goToTaskAndShow(mod, sec) {
+  goToTask(mod, sec);
+  var target = document.querySelector('#page-tracker .reporter-title-row');
+  if (!target) return;
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  requestAnimationFrame(function() {
+    target.scrollIntoView({ block: 'start', behavior: reduce ? 'auto' : 'smooth' });
+    var grid = document.getElementById('gates-grid');
+    if (grid) { grid.classList.remove('just-opened'); void grid.offsetWidth; grid.classList.add('just-opened'); }
+  });
+}
 function goToTask(mod, sec) {
   if (mod !== currentModule) switchRModule(mod);
   if (sec !== currentSection) { currentSection = sec; document.getElementById('section-select').value = sec; switchSection(sec); }
@@ -3691,7 +3722,7 @@ function renderTrackerAssist() {
       var here = g.mod === currentModule && g.secs.indexOf(currentSection) >= 0;
       var next = here ? g.secs[(g.secs.indexOf(currentSection) + 1) % g.secs.length] : g.secs[0];
       return '<button type="button" class="my-open-item' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
-        ' title="' + g.secs.join('、') + '" onclick="goToTask(\'' + g.mod + '\',\'' + next + '\')"><span class="my-open-where">' + g.mod + '</span>' +
+        ' title="' + g.secs.join('、') + '" onclick="goToTaskAndShow(\'' + g.mod + '\',\'' + next + '\')"><span class="my-open-where">' + g.mod + '</span>' +
         escHtml(g.t.name) + '<span class="my-open-st">' + g.secs.length + ' 個小節' + (g.doing ? '・進行中 ' + g.doing : '') + '</span></button>';
     }).join('') +
   '</div></div>';
@@ -3720,8 +3751,9 @@ function moduleOpenNodes(mod) {
       row.left++;
       if (sc > 0) row.doing++;
       var e = row.secs.find(function(x){ return x.sec === sec; });
-      if (!e) { e = { sec: sec, n: 0 }; row.secs.push(e); }
+      if (!e) { e = { sec: sec, n: 0, steps: [] }; row.secs.push(e); }
       e.n++;
+      e.steps.push({ name: t.name, doing: sc > 0, who: (t.owners || []).join('、') });
     });
   });
   return gates;
@@ -3765,8 +3797,12 @@ function renderModuleSummary() {
         '<div class="tsum-gbar" aria-hidden="true"><i style="width:' + Math.min(100, gp) + '%"></i></div>' +
         (row.secs.length ? '<div class="tsum-secs">' + row.secs.slice(0, SHOW).map(function(e) {
           var here = e.sec === currentSection;
-          return '<button type="button" class="tsum-sec' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
-            ' title="' + e.sec + ' 還有 ' + e.n + ' 個節點" onclick="goToTask(\'' + mod + '\',\'' + e.sec + '\')">' + e.sec + '</button>';
+          var tipId = 'tsum-tip-' + mod + '-' + g.num + '-' + e.sec.replace(/\W/g, '_');
+          return '<span class="tsum-secwrap"><button type="button" class="tsum-sec' + (here ? ' here' : '') + '"' + (here ? ' aria-current="true"' : '') +
+            ' aria-describedby="' + tipId + '" onclick="goToTaskAndShow(\'' + mod + '\',\'' + e.sec + '\')">' + e.sec + '</button>' +
+            '<span class="tsum-tip" role="tooltip" id="' + tipId + '"><b>' + e.sec + ' 還缺</b>' + e.steps.map(function(st) {
+              return '<span class="tsum-step"><i class="' + (st.doing ? 'doing' : '') + '"></i>' + escHtml(st.name) + '<small>' + (st.doing ? '進行中' : '未開始') + (st.who ? '・' + escHtml(st.who) : '') + '</small></span>';
+            }).join('') + '</span></span>';
         }).join('') + (row.secs.length > SHOW ? '<span class="tsum-more">另有 ' + (row.secs.length - SHOW) + ' 個小節</span>' : '') + '</div>' : '') +
       '</div>';
     }).join('') + '</div>' +
@@ -6132,6 +6168,7 @@ window.goToBottleneck    = goToBottleneck;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;
+window.goToTaskAndShow = goToTaskAndShow;
 window.authSignIn = authSignIn; window.authSignOut = authSignOut; window.downloadSnapshot = downloadSnapshot;
 window.renderReporterTabs = renderReporterTabs;
 window.renderOverviewTabs = renderOverviewTabs;
