@@ -2399,6 +2399,51 @@ body.modal-open { overflow: hidden; }
 .section-select { background-image: linear-gradient(45deg, transparent 50%, var(--grey-dark) 50%), linear-gradient(135deg, var(--grey-dark) 50%, transparent 50%); background-position: calc(100% - 17px) 52%, calc(100% - 12px) 52%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; }
 .section-select:hover { border-color: rgba(var(--fg-rgb),0.35); }
 @media (prefers-reduced-motion: reduce) { .kr-stuck-link::after, .board-advice-btn::after, .chg-head::after, .flag-main::after { transition: none; } }
+/* ═══ 本週變動 ═══ */
+.wk-card .board-title-row { align-items: baseline; }
+.wk-range { font-size: 14px; color: var(--grey-dark); font-variant-numeric: tabular-nums; }
+.wk-h { margin: 0; font-size: 16px; font-weight: 700; }
+.wk-stuck { margin-top: 14px; padding: 18px 20px; background: var(--sunken); border: 1px solid rgba(var(--fg-rgb),0.07); border-radius: 14px; }
+.wk-stuck > .wk-h { margin-bottom: 10px; }
+.wk-stuck .kr-others:empty, .wk-stuck .kr-stuck:empty { display: none; }
+.wk-stuck .kr-stuck { margin: 4px 0 6px; }
+.wk-stuck #bottleneck { margin-top: 14px; }
+.wk-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 14px; }
+.wk-panel { display: flex; flex-direction: column; min-width: 0; height: 380px; padding: 16px 18px; background: var(--sunken); border: 1px solid rgba(var(--fg-rgb),0.07); border-radius: 14px; }
+.wk-panel-head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.wk-panel-head .focus-n .flap { font-size: 20px; }
+.wk-list { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; margin: 0 -6px; padding: 0 6px; border-top: 1px solid rgba(var(--fg-rgb),0.08); }
+.wk-sub { margin: 12px 0 6px; font-size: 12px; font-weight: 700; color: var(--grey-dark); }
+.wk-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.wk-chip { display: inline-flex; align-items: baseline; gap: 6px; padding: 5px 11px; font-family: var(--mono); font-stretch: 75%; font-size: 13px; font-weight: 600; color: var(--text); background: transparent; border: 1px solid rgba(var(--fg-rgb),0.24); border-radius: 999px; cursor: pointer; }
+.wk-chip b { color: var(--accent-ink); }
+.wk-chip:hover { border-color: var(--accent-ink); }
+.wk-who { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 14px; }
+.wk-who b { color: var(--accent-ink); font-variant-numeric: tabular-nums; }
+.wk-item { position: relative; display: flex; flex-direction: column; gap: 3px; width: 100%; padding: 10px 30px 10px 8px; font: inherit; color: var(--text); text-align: left; background: transparent; border: 0; border-bottom: 1px solid rgba(var(--fg-rgb),0.07); border-radius: 8px; cursor: pointer; }
+.wk-item::after { content: '→'; position: absolute; top: 10px; right: 8px; font-weight: 700; color: var(--grey-dark); }
+.wk-item:hover { background: rgba(var(--fg-rgb),0.06); }
+.wk-item:hover::after { color: var(--accent-ink); }
+.wk-item:focus-visible, .wk-chip:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: -2px; }
+.wk-item-where { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 13px; font-weight: 700; overflow-wrap: anywhere; }
+.wk-item-where .chg-col { font-size: 12px; }
+.wk-item-text { font-size: 14px; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; }
+.wk-item-meta { font-size: 12px; color: var(--grey-dark); }
+@media (max-width: 1100px) { .wk-grid { grid-template-columns: minmax(0, 1fr); } .wk-panel { height: auto; max-height: 420px; } }
+/* KR speed line above the chart (was three tiles) */
+.kr-pace { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 6px 0 14px; }
+.kr-pace span { display: grid; grid-template-columns: auto; gap: 1px; }
+.kr-pace small { font-size: 12px; color: var(--grey-dark); }
+.kr-pace b { font-family: var(--mono); font-stretch: 75%; font-size: 20px; color: var(--text); font-variant-numeric: tabular-nums; }
+.kr-pace em { font-style: normal; font-size: 12px; color: var(--grey-dark); }
+.kr-pace .warn b, .kr-pace .warn em { color: var(--alert-text); }
+/* 對焦看板: the three panels share one height; lists scroll inside */
+@media (min-width: 1101px) {
+  .focus-board { height: 680px; align-items: stretch; }
+  .focus-changes, .focus-side { min-height: 0; }
+  .focus-side > .focus-panel { flex: 1 1 0; min-height: 0; }
+  .focus-panel .focus-list { flex: 1; min-height: 0; max-height: none; }
+}
 </style>
 
 <body>
@@ -2811,13 +2856,25 @@ body.modal-open { overflow: hidden; }
     <div class="board-head">
       <div class="board-head-main">
         <div id="kr-verdict"></div>
-        <div class="kr-stuck" id="kr-stuck"></div>
-        <div class="kr-others" id="kr-others"></div>
-        <div class="greet-hello" id="weekly-greeting"></div>
       </div>
       <div class="kr-big" id="kr-big"></div>
     </div>
-    <div id="kr-tiles"></div>
+
+    <!-- ── 本週變動：部門會議先看這裡 ── -->
+    <section class="chart-card kr-card wk-card" id="week-card" tabindex="-1" aria-labelledby="wk-title">
+      <div class="board-title-row"><h3 class="chart-card-title" id="wk-title">本週變動</h3><span class="wk-range" id="wk-range"></span></div>
+      <div class="wk-stuck" id="bottleneck-card" tabindex="-1">
+        <h4 class="wk-h">卡關・需要處理</h4>
+        <div class="kr-others" id="kr-others"></div>
+        <div class="kr-stuck" id="kr-stuck"></div>
+        <div id="bottleneck"></div>
+      </div>
+      <div class="wk-grid">
+        <div class="wk-panel" id="wk-progress"></div>
+        <div class="wk-panel" id="wk-discuss"></div>
+        <div class="wk-panel" id="wk-notes"></div>
+      </div>
+    </section>
 
     <!-- ── 模組對 KR 的貢獻（依預計完工排序） ── -->
     <div class="chart-card kr-card board-card">
@@ -2827,17 +2884,11 @@ body.modal-open { overflow: hidden; }
       <div id="contrib-summary"></div>
     </div>
 
-    <!-- ── 關卡瓶頸 ── -->
-    <div class="chart-card kr-card" id="bottleneck-card" tabindex="-1">
-      <h3 class="chart-card-title">關卡瓶頸</h3>
-      <div class="chart-card-sub">待處理小節最多的 3 項<b>任務</b>（上方「卡最多的關卡」是整個 Gate 所有任務的合計）。待處理＝可開始（前置已完成、尚未動工）＋進行中；只算製作中模組（未完成，且已有進度或起算日期已到）</div>
-      <div id="bottleneck"></div>
-    </div>
 
     <!-- ── KR 燃起圖 ── -->
     <div class="chart-card kr-card">
       <h3 class="chart-card-title">KR 進度與預測</h3>
-      <div class="chart-card-sub">實際進度、依時程的應達線，以及照近 4 週速度推估的預測</div>
+      <div id="kr-tiles"></div>
       <div id="kr-burnup-chart"></div>
       <div class="kr-legend" id="kr-burnup-legend"></div>
       <div id="kr-note"></div>
@@ -4237,6 +4288,7 @@ function loadLogData() {
     lastLogData = rows.map(function(r) {
       return { mod: r.module, sec: r.section, taskId: r.task_id, score: r.score, member: r.member, ts: r.ts };
     });
+    renderWeekChanges();
     return lastLogData;
   });
 }
@@ -5306,17 +5358,17 @@ function renderKRPanel() {
       (reach ? '' : '<div id="kr-scen"></div>');
     renderScenarioRow();
   }
+  var slow = s.required !== null && s.rate < s.required;
   tiles.innerHTML =
-    '<div class="kr-tiles">' +
-      krTile('目標 ' + dueFull, fmtNum(s.k.target) + '%', '還差 <span class="nw">' + fmtNum(s.gap) + ' 個百分點</span>・<span class="nw">約 ' + fmtNum(s.modulesEq) + ' 個模組</span>', '', 'kr-target') +
-      krTile('需要的週速度', s.required === null ? '—' : signed(s.required) + '%', s.required === null ? '本季已結束' : '離期限剩 <span class="nw">' + fmtNum(s.weeksLeft) + ' 週</span>，每週需這麼多', '', 'kr-req') +
-      krTile('近 4 週實際速度', signed(s.rate) + '%', '每週平均增量（' + mdLabel(new Date(getWeekCutoff(s.now).getTime() - 4 * WEEK_MS)) + '–' + mdLabel(getWeekCutoff(s.now)) + '）' + (s.spikes.length ? '，含 ' + s.spikes.length + ' 週特別高' : ''), s.required !== null && s.rate < s.required ? 'warn' : '', 'kr-rate') +
+    '<div class="kr-pace">' +
+      '<span><small>目標 ' + dueFull + '</small><b>' + fmtNum(s.k.target) + '%</b><em>' + (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點・約 ' + fmtNum(s.modulesEq) + ' 個模組' : '已達成') + '</em></span>' +
+      '<span><small>需要的週速度</small><b>' + (s.required === null ? '—' : signed(s.required) + '%') + '</b><em>' + (s.required === null ? '本季已結束' : '剩 ' + fmtNum(s.weeksLeft) + ' 週') + '</em></span>' +
+      '<span class="' + (slow ? 'warn' : '') + '"><small>近 4 週實際速度</small><b>' + signed(s.rate) + '%</b><em>' + (slow ? '低於所需速度' : '每週平均') + (s.spikes.length ? '・含 ' + s.spikes.length + ' 週特別高' : '') + '</em></span>' +
     '</div>';
   var noteEl = document.getElementById('kr-note');
   if (noteEl) noteEl.innerHTML =
     '<div class="kr-note">' +
-      (s.gap > 0 ? '還差 ' + fmtNum(s.gap) + ' 個百分點，約等於再完成 <b>' + fmtNum(s.modulesEq) + '</b> 個完整模組（每個模組佔整體 ' + fmtNum(100 / MODULES.length) + '%）。' : '已達到 KR 目標。') +
-      ' 應達線：今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + dueFull + ' 的 ' + fmtNum(s.k.target) + '%）。' +
+      '應達線：今天應達 ' + fmtNum(s.paceNow) + '%（季初 ' + fmtNum(s.startVal) + '%' + (krMilestones(s.k.kr).length ? '，沿里程碑' : '') + '直線推進到 ' + dueFull + ' 的 ' + fmtNum(s.k.target) + '%）。' +
       (s.next ? '<br>下一個里程碑 ' + formatDay(s.next.date) + ' 應達 ' + fmtNum(s.next.value) + '%' + (s.next.note ? '（' + escHtml(s.next.note) + '）' : '') + '，' +
         (s.cur >= s.next.value ? '<span class="kr-good">已提前達成</span>。' : '每週需 ' + signed(s.nextRequired) + '%。') : '') +
     '</div>';
@@ -5341,11 +5393,6 @@ function flap(str, key) {
     var flip = prev !== undefined && Array.from(prev)[i] !== ch ? ' flip' : '';
     return ch === ' ' ? '<i class="sp" aria-hidden="true"></i>' : '<i class="' + flip.trim() + '" aria-hidden="true">' + escHtml(ch) + '</i>';
   }).join('') + '</span>';
-}
-var KR_TILE_CHIP = { ok: '預計達標', behind: '預計未達標', warn: '低於所需速度' };
-function krTile(label, value, sub, cls, key) {
-  return '<div class="kr-tile' + (cls ? ' ' + cls : '') + '"><div class="kr-tile-label">' + label + '</div><div class="kr-tile-val">' + flap(value, key) + '</div><div class="kr-tile-sub">' + sub +
-    (cls && KR_TILE_CHIP[cls] ? ' <span class="kr-tile-chip ' + cls + '">' + KR_TILE_CHIP[cls] + '</span>' : '') + '</div></div>';
 }
 
 function renderKRBurnup(s) {
@@ -5463,17 +5510,9 @@ function goToBoard() {
   b.focus({ preventScroll: true });
 }
 
-function renderWeeklyGreeting() {
-  renderOtherKRs();
-  var el = document.getElementById('weekly-greeting');
-  if (!el) return;
-  // The hello itself is in the header card; here only what is waiting for this person
-  if (!currentMember || !boardDataReady() || krTopOwner === currentMember) { el.innerHTML = ''; return; }
-  var p = memberPending(currentMember);
-  el.innerHTML = '<div class="greet-line">' + escHtml(currentMember) + '，' + (p.total
-    ? '你目前有 <b>' + p.total + '</b> 個小節待處理，最多的是「' + escHtml(p.top) + '」（' + p.topCount + ' 個）。'
-    : '你目前沒有等著處理的小節。') + '</div>';
-}
+// The 專案概況 header no longer repeats the personal pending line (進度填報 shows 我的待處理);
+// this still refreshes the warnings in 卡關
+function renderWeeklyGreeting() { renderOtherKRs(); }
 
 var krTopOwner = null;   // who carries the most pending sections, set by renderBottleneck
 function renderBottleneck() {
@@ -5559,10 +5598,11 @@ function renderBottleneck() {
       ? '卡最多的關卡：<b class="kr-stuck-gate">Gate ' + topGate.num + '・' + escHtml(topGate.name) + '</b><span class="kr-stuck-wf">（' + topGate.wf.name + '）</span> ' +
         '<b class="kr-stuck-n">' + (topGate.ready + topGate.doing) + '</b> 個小節待處理（可開始 ' + topGate.ready + '・進行中 ' + topGate.doing + '），<span class="nw">主要等 ' +
         '<span class="owner-chip ' + CHIP_CLASS[topOwner] + '">' + (isMe ? '你（' + topOwner + '）' : topOwner) + '</span>' +
-        ' <button type="button" class="kr-stuck-link" onclick="goToBottleneck()">看關卡瓶頸</button></span>'
+        '</span>'
       : '';
   }
   renderWeeklyGreeting();
+  renderWeekChanges();
   // Most pending sections first; ties go to the task with more not yet started
   pending.sort(function(a, b){ return (b.c.ready + b.c.doing) - (a.c.ready + a.c.doing) || b.c.ready - a.c.ready; });
   var top = pending.slice(0, 3);
@@ -6177,6 +6217,8 @@ function onModuleTrendChange(mod) {
 }
 
 function renderWeekly() {
+  ensureSheetData('video'); ensureSheetData('material');
+  renderWeekChanges();
   renderBaselineForm();
   renderKRPanel();
   renderForecastCards();
@@ -6206,6 +6248,7 @@ window.startTour = startTour;
 window.cheerNext = cheerNext; window.cheerHide = cheerHide;
 window.markBoardSeen     = markBoardSeen;
 window.goToBottleneck    = goToBottleneck;
+window.openSheetAt = openSheetAt;
 window.toggleSidebar     = toggleSidebar;
 window.toggleSidebarMenu = toggleSidebarMenu;
 window.enterViewOnly     = enterViewOnly;
@@ -6257,13 +6300,17 @@ function sheetFetch(src, params, opts) {
     .then(function(r){ return r.json(); });
 }
 
+function sheetNewState(src) {
+  var range = Number(storeGet('bb6-sheet-range'));
+  return { tab: 0, group: '', q: '', changeCol: '', range: [1, 3, 7].indexOf(range) >= 0 ? range : 3, missingOnly: false, visited: false, seenAt: 0 };
+}
 function sheetOpen(src) {
   sheetActive = src;
   var st = sheetState[src];
-  if (!st) {
-    var range = Number(storeGet('bb6-sheet-range'));
-    st = sheetState[src] = { tab: 0, group: '', q: '', changeCol: '', range: [1, 3, 7].indexOf(range) >= 0 ? range : 3, missingOnly: false };
+  if (!st) st = sheetState[src] = sheetNewState(src);
+  if (!st.visited) {
     // Edits newer than the last visit from this browser are marked 新
+    st.visited = true;
     st.seenAt = Number(storeGet('bb6-sheet-seen-' + src)) || 0;
     storeSet('bb6-sheet-seen-' + src, String(Date.now()));
   }
@@ -6293,6 +6340,7 @@ function sheetLoad(src, quiet) {
     st.loadedAt = new Date();
     if (sheetEditing && sheetEditing.src === src) { renderSheetFeed(src); renderSheetStatus(src); }
     else renderSheetPage(src);
+    if (st.jumpTo && sheetActive === src) { var j = st.jumpTo; st.jumpTo = null; sheetJump(src, j.sheet, j.cell); }
   }).catch(function() {
     st.loading = false;
     st.error = '連不上試算表，請稍後再試';
@@ -7277,72 +7325,70 @@ document.addEventListener('visibilitychange', function() {
    head = heading inside the block that gets its own small「？」, which opens the guide at that step */
 var SHEET_TOUR = [
   { sel: '.sheet-top', title: '和試算表同步',
-    body: '這一頁和 Google 試算表雙向同步，每分鐘自動更新。在這裡改的內容會直接寫回試算表；按「在試算表開啟」可以回到原本的表。' },
+    body: '和 Google 試算表雙向同步、每分鐘更新；在這裡改會直接寫回試算表。' },
   { sel: '.focus-changes', head: '.focus-head h4', title: '有變化',
-    body: '一張卡是一列，合併這段時間對那一列的所有修改：哪一欄、改成什麼、原本是什麼。用「今天／近 3 天／近 7 天」切換範圍；點卡片會跳到表格裡那一格。' },
+    body: '一列一張卡，列出改了哪一欄、改成什麼。可切換今天／近 3 天／近 7 天，點卡片跳到那一格。' },
   { sel: '.focus-discuss', head: '.focus-head h4', title: '待討論',
-    body: '開會要討論的項目。點表格任一格，可以「標記待討論」並寫下原因；討論完按「已處理」。備註欄出現「待確認」「？」等字眼的格子會自動列進來，不需要的按「略過」。' },
+    body: '點任一格可「標記待討論」，討論完按「已處理」。備註裡有「待確認」「？」的格子會自動列入。' },
   { sel: '.focus-missing', head: '.focus-head h4', title: '還缺資料',
-    body: '大部分列都有填的欄位，空著就算缺（備註類欄位不算）。依章節列出缺幾格、缺哪幾欄；點一下會切到表格，只留有缺的列，空格用橘框標出。' },
+    body: '依章節列出還沒填的格子，點一下只顯示有缺的列，空格用橘框標出。' },
   { sel: '.sheet-controls', title: '篩選表格',
-    body: '切換工作表、選章節、搜尋任何文字。「欄位」可以隱藏或顯示欄位；「只看缺資料」只留下有空格的列。' },
+    body: '切換工作表、章節、搜尋文字；「欄位」可隱藏欄位，「只看缺資料」只留有空格的列。' },
   { sel: '.sheet-table-wrap', title: '查看與編輯',
-    body: '點一格會先跳出完整內容和連結；按「編輯這一格」，或雙擊、按 F2 直接修改，⌘／Ctrl＋Enter 儲存。檔案晶片貼上雲端硬碟網址就能更換檔案；公式格要回試算表改。淡色底是 7 天內改過的格子，左側橘線是待討論。' }
+    body: '點格子看內容與連結，雙擊或 F2 直接改，⌘／Ctrl＋Enter 儲存。檔案晶片貼雲端硬碟網址即可更換。' }
 ];
 var TOURS = {
   weekly: [
     { sel: '.weekly-topbar', head: '.sec-label', title: '這頁在看什麼',
-      body: '專案概況回答一件事：照目前的速度，KR 能不能如期達標。右側「資料截至」是最後同步時間；「完工預測設定」可以調整各模組的起算日和每小節任務時數，預測會跟著重算（Ken、Daniel 可以修改）。' },
-    { sel: '.board-head', title: '結論與目前完成度',
-      body: '大標是照近 4 週速度推估的結論。下面三格是速度預測、保守估計（扣掉特別高的週）和只計已排程模組，三個都達標才算穩。右邊的翻牌數字是目前完成度；再往下會點出卡最多的關卡和逾期的模組，旁邊的按鈕可以直接跳過去。' },
-    { sel: '#kr-tiles', title: '目標與速度',
-      body: '比較「需要的週速度」和「近 4 週實際速度」：實際速度比需要的高，就能如期完成；比較低，就要討論加人力或調整範圍。' },
+      body: 'KR 能不能如期達標。右上「完工預測設定」可調整各模組起算日與工時。' },
+    { sel: '.board-head', title: '結論',
+      body: '大標是照近 4 週速度的推估，三個數字都達標才算穩；右邊是目前完成度。' },
+    { sel: '#week-card', head: '.chart-card-title', title: '本週變動',
+      body: '部門會議先看這裡：卡關的地方、本週完成了什麼、試算表的待討論與新備註。點任一項直接跳過去。' },
     { sel: '.board-card', head: '.chart-card-title', title: '出發看板',
-      body: '每個模組一列，依預計完工日排序。Gate 或狀態有變動的模組會亮起，點一下就算看過；對焦前按「全部標為已看過」，下次就只會亮新的變動。' },
-    { sel: '#bottleneck-card', head: '.chart-card-title', title: '關卡瓶頸',
-      body: '列出待處理小節最多的 3 項任務。待處理＝前置已完成、可以開始的，加上進行中的。數字最大的就是目前卡住整體進度的地方，對焦時優先處理。' },
+      body: '模組依預計完工排序。亮起的是有變動的模組，點一下就算看過。' },
     { sel: '.chart-card:has(#kr-burnup-chart)', head: '.chart-card-title', title: 'KR 進度與預測',
-      body: '實際進度、依時程應達的進度，以及照近 4 週速度的預測畫在同一張圖。實際線在應達線下方代表落後；預測線在截止日前碰到目標，就能如期達標。' },
+      body: '上方是目標、需要的週速度與實際速度；實線在虛線（應達線）下方代表落後。' },
     { sel: '.charts-stack', head: '.chart-card-title', title: '模組完成度趨勢',
-      body: '右上切換「進度趨勢」（整體或單一模組）和「各模組總覽」，下拉選單選模組。點任一長條，可以看那週是哪些小節完成。最下面的「單日完成度增量」平常收合，要看逐日細節再展開。' }
+      body: '切換整體或單一模組；點長條看那週完成了哪些小節。' }
   ],
   okr: [
     { sel: '.okr-top', head: '.section-title', title: '選季度',
-      body: '右上的下拉選單切換季度。Daniel 可以新增或編輯目標與 KR。' },
+      body: '右上切換季度；Daniel 和管理員可新增或編輯目標。' },
     { sel: '.okr-obj-head', title: '目標與 OKR 分數',
-      body: '每個目標（O）都有期間和剩餘天數。右邊的 OKR 分數是底下各 KR 達成率的平均，1.00 代表全部達成。下方時間條是本季已經過了多少，可以和 KR 的進度對照。' },
+      body: 'OKR 分數是各 KR 達成率的平均；時間條是本季已過多少。' },
     { sel: '.okr-kr', title: '每一個 KR',
-      body: '翻牌數字是目前值。進度條上的兩個標記，一個是目標，一個是「依時程今天應達」；進度沒有超過今天應達，狀態就會顯示落後。下方是里程碑與截止日，Ken、Daniel 可以按「時程」調整。' },
+      body: '進度條上兩個標記是目標與「今天應達」，沒超過應達就顯示落後。' },
     { sel: '.okr-update', title: '填報進度',
-      body: '手動填報的 KR，被指定的人會在這裡看到輸入框：填目前的百分比和一句近況，按「更新進度」。自動計算的 KR 會從進度填報的資料算出來，不用手填。' },
+      body: '手動填報的 KR 在這裡填百分比和近況，按「更新進度」。' },
     { sel: '.okr-rule', title: '怎麼計算',
-      body: '達成率、OKR 分數和「依時程應達」的計算方式都寫在這裡。' }
+      body: '達成率、OKR 分數與應達線的算法。' }
   ],
   overview: [
     { sel: '#ov-project', title: '整體完成度',
       body: '整個專案的完成度，是各模組完成度的平均。' },
-    { sel: '#ov-module-cards', title: '模組卡片',
-      body: '每一列是一個模組的完成狀況，點一下展開，可以看到各 Gate 和每個小節的進度。已完成的模組收在最下面。這頁只能看，要更新進度請到「進度填報」。' }
+    { sel: '#ov-module-cards', title: '模組',
+      body: '點一列展開各 Gate 與小節進度；已完成的模組收在最下面。這頁只能看。' }
   ],
   tracker: [
     { sel: '.reporter-module-bar', title: '選模組與小節',
-      body: '上排選模組，「小節」下拉選單選小節。右邊的綠點代表即時同步中，別人填報時這裡會馬上更新；「匯出 CSV」可以下載全部進度。' },
+      body: '上排選模組、下拉選小節；綠點代表即時同步中。' },
     { sel: '.tsum', title: '模組進度',
-      body: '選中模組的完成度，以及每個 Gate 還有幾個節點待完成（一個節點＝一個小節裡的一項任務）。下方的小節編號是還有任務沒完成的地方，點一下就跳到那個小節。' },
+      body: '模組完成度與各 Gate 還缺幾個節點。滑過小節編號看缺哪幾步，點一下跳到那一節填報。' },
     { sel: '#tracker-assist', title: '我的待處理',
-      body: '選了身分之後，這裡會列出你手上可以開始或進行中的任務，按一下就跳到那個小節。還沒選身分時只能檢視，按「選擇身分」登入。' },
+      body: '你手上可以做的任務，點一下直接跳過去。' },
     { sel: '#gates-grid', title: '填報進度',
-      body: '每個 Gate 一欄，列出這個小節的任務和負責人。按「未開始／進行中／完成」回報。只有負責人能填自己的任務，別人的會顯示由誰填報；前置任務還沒完成時，會提示要等哪一項。' },
+      body: '按「未開始／進行中／完成」回報；只能填自己的任務，前置沒完成時會提示。' },
     { sel: '#members', head: '.section-title', title: '組員狀態',
-      body: '每個人在這個小節的任務完成情況，一眼看出誰還有任務沒做完。' }
+      body: '每個人在這個小節的完成情況，預設收合。' }
   ],
   flow: [
     { sel: '#phases', head: '.section-title', title: '製作流程圖',
-      body: '課程從取得原檔到上架 QC 分成 4 個 Gate，每項任務用顏色標出負責人（看右上的圖例）。前一個 Gate 完成，後面的任務才能開始。' },
+      body: '從取得原檔到上架分成 4 個 Gate，顏色代表負責人；前一關完成後一關才能開始。' },
     { sel: '#team', head: '.section-title', title: '負責人與交接',
-      body: '每個人負責哪些任務，以及做完要交給誰。' },
+      body: '每個人負責哪些任務、做完交給誰。' },
     { sel: '#outputs', head: '.section-title', title: '最終交付項目',
-      body: '每個模組最後要交出的成品清單。' }
+      body: '每個模組最後要交出的成品。' }
   ],
   video: SHEET_TOUR,
   material: SHEET_TOUR
@@ -7685,6 +7731,118 @@ function downloadSnapshot() {
     })
     .catch(function(e){ showToast('快照沒有下載成功：' + (e && e.message || e)); })
     .then(function(){ btn.disabled = false; label.textContent = '下載資料快照'; });
+}
+
+/* ═══ 本週變動：部門會議要看的東西集中在一處 ═══
+   卡關（逾期、落後 KR、瓶頸任務）由 renderBottleneck / renderOtherKRs 填；
+   這裡填三格：本週完成的節點、兩份試算表的待討論、本週新增的備註。 */
+function weekStart() {
+  var d = new Date(); d.setHours(0, 0, 0, 0);
+  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));   // Monday
+  return d;
+}
+function logTime(ts) { return new Date(String(ts || '').replace(/\//g, '-').replace(' ', 'T')); }
+
+// Both sheets are read once in the background for this page; the sheet pages reuse what is loaded
+var weekSheetsLoading = {};
+function ensureSheetData(src) {
+  var st = sheetState[src];
+  if (st && st.data && st.loadedAt && Date.now() - st.loadedAt.getTime() < 5 * 60000) return;
+  if (weekSheetsLoading[src] || (st && st.loading)) return;
+  weekSheetsLoading[src] = true;
+  Promise.all([sheetFetch(src, '&action=read'), sheetFetch(src, '&action=changes&days=' + SHEET_DAYS)]).then(function(res) {
+    weekSheetsLoading[src] = false;
+    var d = res[0], c = res[1];
+    if (!d || !d.ok) return;
+    st = sheetState[src] || (sheetState[src] = sheetNewState(src));
+    st.data = prepareSheetData(d);
+    if (st.tab >= st.data.sheets.length) st.tab = 0;
+    st.changes = c && c.ok ? c.changes : [];
+    st.loadedAt = new Date();
+    renderWeekChanges();
+  }).catch(function(){ weekSheetsLoading[src] = false; });
+}
+// From 本週變動 to a cell on a sheet page
+function openSheetAt(src, sheetName, cell) {
+  var st = sheetState[src];
+  if (st) st.jumpTo = { sheet: sheetName, cell: cell };
+  switchPage(src);
+  if (st && st.data) setTimeout(function(){ if (st.jumpTo) { var j = st.jumpTo; st.jumpTo = null; sheetJump(src, j.sheet, j.cell); } }, 60);
+}
+
+function wkPanel(title, n, unit, body, emptyText) {
+  return '<div class="wk-panel-head"><h4 class="wk-h">' + title + '</h4>' + (n === null ? '' : '<span class="focus-n">' + flap(String(n)) + '<small>' + unit + '</small></span>') + '</div>' +
+    (body ? '<div class="wk-list">' + body + '</div>' : '<p class="focus-empty">' + emptyText + '</p>');
+}
+function renderWeekChanges() {
+  var range = document.getElementById('wk-range');
+  if (!range) return;
+  var start = weekStart();
+  range.textContent = (start.getMonth() + 1) + '/' + start.getDate() + '（一）起';
+
+  // 本週進度：本週有回報完成、現在也仍是完成的節點
+  var prog = document.getElementById('wk-progress');
+  if (prog) {
+    if (!lastLogData || !boardDataReady()) {
+      prog.innerHTML = wkPanel('本週完成', null, '', '', '讀取中…');
+    } else {
+      var seen = {}, byMod = {}, byWho = {}, n = 0;
+      lastLogData.forEach(function(r) {
+        if (r.score < 10 || logTime(r.ts) < start) return;
+        var key = r.mod + '|' + r.sec + '|' + r.taskId;
+        if (seen[key] || getScore(r.taskId, r.mod, r.sec) < 10) return;
+        seen[key] = true; n++;
+        byMod[r.mod] = (byMod[r.mod] || 0) + 1;
+        if (r.member) byWho[r.member] = (byWho[r.member] || 0) + 1;
+      });
+      var mods = Object.keys(byMod).sort(function(a, b){ return byMod[b] - byMod[a]; });
+      var who = Object.keys(byWho).sort(function(a, b){ return byWho[b] - byWho[a]; });
+      prog.innerHTML = wkPanel('本週完成', n, '個節點', n ? (
+        '<div class="wk-sub">依模組</div><div class="wk-chips">' + mods.map(function(m) {
+          return '<button type="button" class="wk-chip" onclick="switchPage(\'tracker\');switchRModule(\'' + m + '\')">' + m + '<b>' + byMod[m] + '</b></button>';
+        }).join('') + '</div>' +
+        '<div class="wk-sub">依回報人</div><div class="wk-who">' + who.map(function(w) {
+          return '<span>' + escHtml(w) + ' <b>' + byWho[w] + '</b></span>';
+        }).join('') + '</div>') : '', '本週還沒有完成的節點。');
+    }
+  }
+
+  // 待討論 and 本週備註 from both sheets
+  var dis = document.getElementById('wk-discuss'), notes = document.getElementById('wk-notes');
+  var items = [], noteRows = [], loaded = 0;
+  ['video', 'material'].forEach(function(src) {
+    var st = sheetState[src];
+    if (!st || !st.data) return;
+    loaded++;
+    var title = SHEET_META[src].title, d = sheetDiscussItems(st);
+    d.open.forEach(function(f) {
+      items.push({ src: src, title: title, sheet: f.sheet, cell: f.cell, where: f.row || f.cell, col: f.column, text: f.note || '（沒寫要討論什麼）', meta: sheetWho(f.by) + ' 標記・' + sheetWhen(f.at) });
+    });
+    d.auto.forEach(function(a) {
+      items.push({ src: src, title: title, sheet: a.sheet, cell: a.cell, where: a.label, col: a.column, text: a.text, meta: '備註裡有「' + a.hit + '」' });
+    });
+    (st.changes || []).forEach(function(x) {
+      if (new Date(x.at) < start || !String(x.to).trim() || String(x.cell).indexOf(':') >= 0) return;
+      if (!SHEET_NOTE_COL_RE.test(x.column || '')) return;
+      noteRows.push({ src: src, title: title, x: x });
+    });
+  });
+  noteRows.sort(function(a, b){ return String(b.x.at).localeCompare(String(a.x.at)); });
+  function item(src, title, sheet, cell, where, col, text, meta) {
+    return '<button type="button" class="wk-item" data-src="' + src + '" data-sheet="' + escHtml(sheet) + '" data-cell="' + escHtml(cell) + '" onclick="openSheetAt(this.dataset.src, this.dataset.sheet, this.dataset.cell)">' +
+      '<span class="wk-item-where"><span class="focus-tab">' + title + '</span>' + escHtml(where) + (col ? '<span class="chg-col">' + escHtml(col) + '</span>' : '') + '</span>' +
+      '<span class="wk-item-text">' + escHtml(text) + '</span>' +
+      '<span class="wk-item-meta">' + escHtml(meta) + '</span></button>';
+  }
+  var waiting = loaded < 2;
+  if (dis) dis.innerHTML = wkPanel('待討論', waiting && !items.length ? null : items.length, '項',
+    items.map(function(i){ return item(i.src, i.title, i.sheet, i.cell, i.where, i.col, i.text, i.meta); }).join(''),
+    waiting ? '讀取試算表中…' : '兩份試算表目前沒有待討論的項目。');
+  if (notes) notes.innerHTML = wkPanel('本週新備註', waiting && !noteRows.length ? null : noteRows.length, '筆',
+    noteRows.slice(0, 40).map(function(r) {
+      return item(r.src, r.title, r.x.sheet, r.x.cell, r.x.row || r.x.cell, r.x.column, r.x.to, sheetWho(r.x.by) + '・' + sheetWhen(r.x.at));
+    }).join(''),
+    waiting ? '讀取試算表中…' : '本週試算表的備註欄沒有新內容。');
 }
 
 /* ── INIT ── */
