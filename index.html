@@ -2444,6 +2444,29 @@ body.modal-open { overflow: hidden; }
   .focus-side > .focus-panel { flex: 1 1 0; min-height: 0; }
   .focus-panel .focus-list { flex: 1; min-height: 0; max-height: none; }
 }
+/* 本週變動 tickets: number stub + task, details on hover / focus */
+#page-weekly .bn-top { gap: 16px; }
+#page-weekly .bn-top-item { grid-template-columns: 96px minmax(0, 1fr); align-items: stretch; min-height: 116px; cursor: default; }
+#page-weekly .bn-top-num { padding: 14px 8px; }
+#page-weekly .bn-top-num b { font-size: 38px; }
+#page-weekly .bn-top-num span { font-size: 12px; }
+#page-weekly .bn-top-main { display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 14px 18px; min-width: 0; }
+#page-weekly .bn-top-task { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden; font-size: 16px; line-height: 1.4; }
+.bn-top-owners { display: flex; flex-wrap: wrap; gap: 4px 12px; }
+#page-weekly .bn-top-owners .owner-chip { display: inline-flex; align-items: center; gap: 6px; padding: 0; background: transparent; color: var(--text); font-size: 13px; }
+#page-weekly .bn-top-owners .owner-chip::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--grey-dark); }
+#page-weekly .bn-top-owners .chip-ken::before { background: var(--ken); }
+#page-weekly .bn-top-owners .chip-daniel::before { background: var(--daniel); }
+#page-weekly .bn-top-owners .chip-ellen::before { background: var(--ellen); }
+#page-weekly .bn-top-owners .chip-ai::before { background: var(--ai); }
+.bn-tip { position: absolute; z-index: 30; left: 96px; top: calc(100% + 8px); display: flex; flex-direction: column; gap: 4px; width: max-content; max-width: 300px; padding: 10px 12px; font-size: 13px; line-height: 1.5; color: rgba(var(--fg-rgb),0.85); background: var(--raised); border: 1px solid rgba(var(--fg-rgb),0.16); border-radius: 10px; box-shadow: 0 10px 28px rgba(0,0,0,0.35); opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity .15s var(--ease), transform .15s var(--ease), visibility .15s; pointer-events: none; }
+.bn-tip b { color: var(--text); }
+.bn-tip-mods { font-family: var(--mono); font-stretch: 75%; color: var(--text); }
+#page-weekly .bn-top-item:hover .bn-tip, #page-weekly .bn-top-item:focus-visible .bn-tip { opacity: 1; visibility: visible; transform: none; }
+#page-weekly .bn-top-item:focus-visible { outline: 2px solid var(--accent-ink); outline-offset: 2px; }
+#page-weekly .bn-top-item:last-child .bn-tip { left: auto; right: 0; }
+@media (max-width: 1100px) { #page-weekly .bn-top { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .bn-tip { transition: none; } }
 </style>
 
 <body>
@@ -5610,14 +5633,18 @@ function renderBottleneck() {
     ? '<ol class="bn-top">' + top.map(function(p) {
         var load = p.c.ready + p.c.doing;
         var where = Object.keys(p.perMod).map(function(m){ return m + ' ' + p.perMod[m]; }).join('、');
-        return '<li class="bn-top-item">' +
+        var tipId = 'bn-tip-' + p.t.id;
+        return '<li class="bn-top-item" tabindex="0" aria-describedby="' + tipId + '">' +
           '<div class="bn-top-num"><b>' + load + '</b><span>小節待處理</span></div>' +
           '<div class="bn-top-main">' +
-            '<div class="bn-top-task">' + escHtml(p.t.name) +
-              p.t.owners.map(function(o){ return '<span class="owner-chip ' + CHIP_CLASS[o] + '">' + o + '</span>'; }).join('') + '</div>' +
-            '<div class="bn-top-meta">' + p.wf.name + '・Gate ' + p.t.gate + (p.gate ? '・' + p.gate.name : '') +
-              '・可開始 ' + p.c.ready + '・進行中 ' + p.c.doing + '</div>' +
-            '<div class="bn-top-mods">' + where + '</div>' +
+            '<div class="bn-top-task">' + escHtml(p.t.name) + '</div>' +
+            '<div class="bn-top-owners">' + p.t.owners.map(function(o){ return '<span class="owner-chip ' + CHIP_CLASS[o] + '">' + o + '</span>'; }).join('') + '</div>' +
+          '</div>' +
+          '<div class="bn-tip" role="tooltip" id="' + tipId + '">' +
+            '<b>' + escHtml(p.t.name) + '</b>' +
+            '<span>' + p.wf.name + '・Gate ' + p.t.gate + (p.gate ? '・' + escHtml(p.gate.name) : '') + '</span>' +
+            '<span>可開始 ' + p.c.ready + '・進行中 ' + p.c.doing + '</span>' +
+            '<span class="bn-tip-mods">' + where + '</span>' +
           '</div>' +
         '</li>';
       }).join('') + '</ol>'
@@ -7344,7 +7371,7 @@ var TOURS = {
     { sel: '.board-head', title: '結論',
       body: '大標是照近 4 週速度的推估，三個數字都達標才算穩；右邊是目前完成度。' },
     { sel: '#week-card', head: '.chart-card-title', title: '本週變動',
-      body: '部門會議先看這裡：卡關的地方、本週完成了什麼、試算表的待討論與新備註。點任一項直接跳過去。' },
+      body: '部門會議先看這裡（每週四起算，週三 18:30 結算）：卡關的地方、本週完成了什麼、試算表的待討論與新備註。滑過卡關的票卡看細節，點項目直接跳過去。' },
     { sel: '.board-card', head: '.chart-card-title', title: '出發看板',
       body: '模組依預計完工排序。亮起的是有變動的模組，點一下就算看過。' },
     { sel: '.chart-card:has(#kr-burnup-chart)', head: '.chart-card-title', title: 'KR 進度與預測',
@@ -7736,11 +7763,8 @@ function downloadSnapshot() {
 /* ═══ 本週變動：部門會議要看的東西集中在一處 ═══
    卡關（逾期、落後 KR、瓶頸任務）由 renderBottleneck / renderOtherKRs 填；
    這裡填三格：本週完成的節點、兩份試算表的待討論、本週新增的備註。 */
-function weekStart() {
-  var d = new Date(); d.setHours(0, 0, 0, 0);
-  d.setDate(d.getDate() - ((d.getDay() + 6) % 7));   // Monday
-  return d;
-}
+// The company week runs Thursday → Wednesday; Wednesday 18:30 is when every department closes its numbers
+function weekStart() { return getWeekCutoff(new Date()); }
 function logTime(ts) { return new Date(String(ts || '').replace(/\//g, '-').replace(' ', 'T')); }
 
 // Both sheets are read once in the background for this page; the sheet pages reuse what is loaded
@@ -7778,7 +7802,8 @@ function renderWeekChanges() {
   var range = document.getElementById('wk-range');
   if (!range) return;
   var start = weekStart();
-  range.textContent = (start.getMonth() + 1) + '/' + start.getDate() + '（一）起';
+  var thu = new Date(start.getTime() + 86400000), wed = new Date(start.getTime() + 7 * 86400000);
+  range.textContent = (thu.getMonth() + 1) + '/' + thu.getDate() + '（四）～ ' + (wed.getMonth() + 1) + '/' + wed.getDate() + '（三）18:30';
 
   // 本週進度：本週有回報完成、現在也仍是完成的節點
   var prog = document.getElementById('wk-progress');
